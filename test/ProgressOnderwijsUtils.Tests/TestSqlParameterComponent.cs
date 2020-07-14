@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
@@ -71,9 +70,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void ValidatesConvertibleArgumentsOK()
         {
             var asString = Wrap("Aap");
-            using (var transactedLocalConnection = new TransactedLocalConnection()) {
-                PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Connection) == "Aap");
-            }
+            using var transactedLocalConnection = new TransactedLocalConnection();
+            PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Connection) == "Aap");
         }
 
         static ParameterizedSql Wrap<T>(T value)

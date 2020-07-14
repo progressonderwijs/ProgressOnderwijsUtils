@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
@@ -13,7 +12,7 @@ namespace ProgressOnderwijsUtils
     public static class PocoUtils
     {
         [Pure]
-        public static IPocoProperties<IPocoProperty> GetProperties([NotNull] this IPoco poco)
+        public static IPocoProperties<IPocoProperty> GetProperties(this IPoco poco)
             => GetCache(poco.GetType());
 
         // ReSharper disable once UnusedParameter.Global
@@ -22,10 +21,8 @@ namespace ProgressOnderwijsUtils
             where T : IPoco
             => PocoProperties<T>.Instance;
 
-        [NotNull]
         [Pure]
-        [CodeThatsOnlyUsedForTests]
-        public static IPocoProperty<TPoco> GetByExpression<TPoco, T>([NotNull] Expression<Func<TPoco, T>> propertyExpression)
+        public static IPocoProperty<TPoco> GetByExpression<TPoco, T>(Expression<Func<TPoco, T>> propertyExpression)
             where TPoco : IPoco
             => PocoProperties<TPoco>.Instance.GetByExpression(propertyExpression);
 
@@ -34,7 +31,7 @@ namespace ProgressOnderwijsUtils
         {
             [UsefulToKeep("library method for getting base-class poco-property")]
             [Pure]
-            public static IReadonlyPocoProperty<TPoco> Get<TParent, T>([NotNull] Expression<Func<TParent, T>> propertyExpression)
+            public static IReadonlyPocoProperty<TPoco> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
@@ -63,9 +60,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
         [Pure]
-        public static MemberInfo GetMemberInfo<TObject, TProperty>([NotNull] Expression<Func<TObject, TProperty>> property)
+        public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
         {
             var bodyExpr = property.Body;
 

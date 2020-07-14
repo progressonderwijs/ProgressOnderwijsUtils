@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -70,11 +69,10 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void ConcurrentReadersCrash()
         {
             var enumerable = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
-            using (var enumerator = enumerable.GetEnumerator())
-            using (var enumerator2 = enumerable.GetEnumerator()) {
-                enumerator.MoveNext();
-                Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
-            }
+            using var enumerator = enumerable.GetEnumerator();
+            using var enumerator2 = enumerable.GetEnumerator();
+            enumerator.MoveNext();
+            Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
         }
     }
 }

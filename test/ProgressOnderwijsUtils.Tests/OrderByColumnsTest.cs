@@ -14,20 +14,13 @@ namespace ProgressOnderwijsUtils.Tests
         static readonly ColumnSort monsterD = new ColumnSort("monster", SortDirection.Desc);
         static readonly ColumnSort acolA = new ColumnSort("acol", SortDirection.Asc);
         static readonly ColumnSort acolD = new ColumnSort("acol", SortDirection.Desc);
-        static readonly ColumnSort[] someOrder = new[] { ziggyA, abcA, acolD };
+        static readonly ColumnSort[] someOrder = { ziggyA, abcA, acolD };
         static readonly OrderByColumns colSort = new OrderByColumns(someOrder);
 
         [Fact]
         public void BasicOrderingOk()
             //check that order works as exepcted:
             => PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
-
-        [Fact]
-        public void SortRankOk()
-        {
-            PAssert.That(() => colSort.GetColumnSortRank("monster") == null);
-            PAssert.That(() => colSort.GetColumnSortRank("abc") == 2); //"rank" is 1-based
-        }
 
         [Fact]
         public void SortDirectionOk()
@@ -39,7 +32,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ColumnCountOk()
-            => PAssert.That(() => colSort.ColumnCount == 3);
+            => PAssert.That(() => colSort.Columns.Length == 3);
 
         [Fact]
         public void ToStringOk()
@@ -50,7 +43,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             foreach (var col in colSort.Columns) {
                 // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                colSort.ToggleSortDirection(col.ColumnName); //we're testing if this really is pure.
+                colSort.ToggleSortDirection(col.ColumnName.AssertNotNull()); //we're testing if this really is pure.
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
@@ -68,7 +61,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void DefaultIsEmpty()
             //check that default order is the empty order:
-            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
+            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default);
 
         [Fact]
         public void ToggleOk()
@@ -90,7 +83,7 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(
                 () =>
                     colSort.Columns.Concat(colSort.Columns).Reverse()
-                        .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName))
+                        .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName.AssertNotNull()))
                     == colSort);
 
         [Fact]

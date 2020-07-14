@@ -9,17 +9,16 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public struct ProcessStartSettings
     {
-        public string ExecutableName;
-        public string Arguments;
-        public string Stdlnput;
-        public string WorkingDirectory;
-        public Dictionary<string, string> Environment;
+        public string? ExecutableName;
+        public string? Arguments;
+        public string? Stdlnput;
+        public string? WorkingDirectory;
+        public Dictionary<string, string>? Environment;
 
         public void PrintProcessArgs(int? exitCode)
         {
@@ -35,8 +34,8 @@ namespace ProgressOnderwijsUtils
                     CreateNoWindow = true, // we donot need a UI
                     RedirectStandardInput = true,
                     UseShellExecute = false, //required to be able to redirect streams
-                    FileName = ExecutableName,
-                    Arguments = Arguments,
+                    FileName = ExecutableName.AssertNotNull(),
+                    Arguments = Arguments ?? "",
                     WorkingDirectory = WorkingDirectory ?? System.Environment.CurrentDirectory,
                 },
                 EnableRaisingEvents = true,
@@ -48,19 +47,22 @@ namespace ProgressOnderwijsUtils
             return proc;
         }
 
-        [NotNull]
         public AsyncProcessResult StartProcess(CancellationToken token = default)
         {
             var exitCodeCompletion = new TaskCompletionSource<int>();
             var proc = CreateProcessObj();
             var stopwatch = new Stopwatch();
             var closedParts = 0;
-            void MarkOnePartClosed()
-            {
+
+#pragma warning disable IDE0039 // Use local function
+            // ReSharper disable once ConvertToLocalFunction - workaround apparent roslyn bug that considers proc to be nullable otherwise.
+            Action MarkOnePartClosed = () => {
                 if (Interlocked.Increment(ref closedParts) == 3) {
                     proc.Dispose();
                 }
-            }
+            };
+#pragma warning restore IDE0039 // Use local function
+
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 

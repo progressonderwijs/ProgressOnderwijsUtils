@@ -1,5 +1,4 @@
-﻿using ExpressionToCodeLib;
-using Xunit;
+﻿using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -18,16 +17,6 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
 
             Assert.False(new ColumnSort("abc", SortDirection.Asc).Equals(null));
-        }
-
-        [Fact]
-        public void OperatorsOk()
-        {
-            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test")));
-
-            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
-            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc)));
         }
 
         [Fact]

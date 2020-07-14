@@ -1,9 +1,8 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -21,7 +20,7 @@ namespace ProgressOnderwijsUtils.Html
             => Name + "=" + Value;
     }
 
-    public struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
+    public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         readonly HtmlAttribute[] attributes;
         readonly int count;
@@ -86,8 +85,7 @@ namespace ProgressOnderwijsUtils.Html
             public HtmlAttribute Current
                 => attributes[pos];
 
-            [NotNull]
-            object IEnumerator.Current
+                object IEnumerator.Current
                 => attributes[pos];
 
             public void Dispose() { }
@@ -100,9 +98,9 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlAttributes Empty
-            => default(HtmlAttributes);
+            => default;
 
-        public static HtmlAttributes FromArray([NotNull] HtmlAttribute[] arr)
+        public static HtmlAttributes FromArray(HtmlAttribute[] arr)
             => new HtmlAttributes(arr, arr.Length);
 
         public override string ToString()

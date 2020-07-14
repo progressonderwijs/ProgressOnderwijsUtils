@@ -50,10 +50,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CustomizableComparerWorks()
         {
-            var tree1 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree2 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("B"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree3 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree4 = Tree.Node("a", Tree.Nullable("y"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
+            var tree1 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree2 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("B".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree3 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree4 = Tree.Node("a".PretendNullable(), Tree.Node("y".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
 
             PAssert.That(() => !tree1.Equals(tree2));
             PAssert.That(() => tree1.Equals(tree3));
@@ -96,8 +96,8 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => tree1.GetHashCode() == tree3.GetHashCode());
             PAssert.That(() => tree2.GetHashCode() != tree3.GetHashCode());
 
-            PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
-            PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
+            PAssert.That(() => comparer.GetHashCode(tree1!) == comparer.GetHashCode(tree2!));
+            PAssert.That(() => comparer.GetHashCode(tree1!) != comparer.GetHashCode(tree4!));
         }
 
         [Fact]
@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => root_a_b.NodeValue == "b" && root_b.NodeValue == "b", "Test should select 'b' branches correctly");
         }
 
-        [Fact(Skip = "This causes OOM post-xUnit conversion; still needs to be investigated")]
+        [Fact]
         public void BuildDetectsCycles()
         {
             // ReSharper disable once NotAccessedVariable
@@ -238,12 +238,13 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CanWorkWithDeepTreesWithoutStackoverflow()
         {
-            var input = Tree.BuildRecursively(0u, i => i < 100000 ? new[] { i + 1 } : new uint[0]);
-            var output = Tree.BuildRecursively(0L, i => i < 100000 ? new[] { i + 1 } : new long[0]);
+            const int targetHeight = 1000_000;
+            var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : new uint[0]);
+            var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : new long[0]);
             var mappedInput = input.Select(i => (long)i);
             var areEqual = mappedInput.Equals(output);
             PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");
-            PAssert.That(() => input.Height() == 100001);
+            PAssert.That(() => input.Height() == targetHeight);
         }
 
         [Fact]

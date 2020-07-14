@@ -201,7 +201,7 @@ namespace ProgressOnderwijsUtils.Html
             => "HtmlFragment: " + this.ToStringWithoutDoctype();
 
         public static HtmlFragment Empty
-            => default(HtmlFragment);
+            => default;
 
         public static implicit operator HtmlFragment(CustomHtmlElement element)
             => Element(element);
@@ -230,7 +230,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public HtmlFragment[] ChildNodes()
             => Implementation is IHtmlElementAllowingContent elem
-                ? elem.Contents().NodesOfFragment()
+                ? elem.GetContent().NodesOfFragment()
                 : Implementation as HtmlFragment[] ?? EmptyNodes;
 
         public static HtmlFragment[] EmptyNodes

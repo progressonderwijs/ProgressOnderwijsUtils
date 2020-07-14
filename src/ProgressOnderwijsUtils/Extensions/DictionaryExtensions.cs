@@ -13,14 +13,16 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
         /// </summary>
-        public static T Field<T>(this IDictionary<string, object> dict, string key)
+        [return: MaybeNull]
+        public static T Field<T>(this IDictionary<string, object?> dict, string key)
             => DbValueConverter.FromDb<T>(dict[key]);
 
         /// <summary>
         /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
         /// </summary>
+        [return: MaybeNull]
         [UsefulToKeep("library method; interface is used, since method above is used")]
-        public static T Field<T>(this IReadOnlyDictionary<string, object> dict, string key)
+        public static T Field<T>(this IReadOnlyDictionary<string, object?> dict, string key)
             => DbValueConverter.FromDb<T>(dict[key]);
 
         /// <summary>
@@ -151,7 +153,6 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="old">This dictionary</param>
         /// <param name="others">The dictionary which should be merged into this array</param>
-        [CanBeNull]
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>(
             this Dictionary<TKey, TValue> old,
             params Dictionary<TKey, TValue>[] others)

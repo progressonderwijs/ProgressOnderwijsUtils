@@ -1,50 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlElementAlterations
     {
-        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, HtmlAttributes attributes)
-            => element.ApplyChange(new AttributeAlteration(attributes));
+        public static IHtmlElement ReplaceAttributesWith(this IHtmlElement element, HtmlAttributes attributes)
+            => element.ApplyAlteration(new AttributeAlteration(attributes));
 
-        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes)
-            => element.ApplyChange(new AttributeAlteration(attributes.ToHtmlAttributes()));
+        public static IHtmlElementAllowingContent ReplaceContentWith(this IHtmlElementAllowingContent element, HtmlFragment children)
+            => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
-        public static IHtmlElementAllowingContent ReplaceContents([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
-            => (IHtmlElementAllowingContent)element.ApplyChange(new ContentAlteration(children));
 
-        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment children)
-            => ReplaceAttributesAndContents(element, attributes.ToHtmlAttributes(), children);
-
-        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
-        {
-            if (!children.IsEmpty && !(element is IHtmlElementAllowingContent)) {
-                throw new InvalidOperationException("Cannot insert content into empty tag");
-            }
-            return element.ApplyChange(new HtmlElementContentAndAttributeAlteration(attributes, children));
-        }
-
-        struct HtmlElementContentAndAttributeAlteration : IHtmlElementAlteration
-        {
-            readonly HtmlAttributes newAttributes;
-            readonly HtmlFragment newContents;
-
-            public HtmlElementContentAndAttributeAlteration(HtmlAttributes newAttributes, HtmlFragment newContents)
-            {
-                this.newContents = newContents;
-                this.newAttributes = newAttributes;
-            }
-
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlElement<TSelf>
-                => typed.WithAttributes(newAttributes);
-
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithAttributes(newAttributes).WithContents(newContents);
-        }
+        public static IHtmlElement ReplaceAttributesAndContents(this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
+            => element.ApplyAlteration(new ContentAlteration(children)).ReplaceAttributesWith(attributes);
 
         struct ContentAlteration : IHtmlElementAlteration
         {
@@ -53,13 +21,13 @@ namespace ProgressOnderwijsUtils.Html
             public ContentAlteration(HtmlFragment newContent)
                 => this.newContent = newContent;
 
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
+            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
-                => typed;
+                => newContent.IsEmpty ? typed : throw new InvalidOperationException("Cannot insert content into empty tag");
 
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
+            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithContents(newContent);
+                => typed.ReplaceContentWith(newContent);
         }
 
         struct AttributeAlteration : IHtmlElementAlteration
@@ -71,13 +39,13 @@ namespace ProgressOnderwijsUtils.Html
                 this.newAttributes = newAttributes;
             }
 
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
+            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
-                => typed.WithAttributes(newAttributes);
+                => typed.ReplaceAttributesWith(newAttributes);
 
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
+            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithAttributes(newAttributes);
+                => typed.ReplaceAttributesWith(newAttributes);
         }
     }
 }

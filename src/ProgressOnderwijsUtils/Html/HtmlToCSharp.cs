@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToCSharp
     {
-        [NotNull]
         public static string ToCSharp(this HtmlFragment fragment)
         {
             var builder = FastShortStringBuilder.Create();
@@ -17,25 +15,25 @@ namespace ProgressOnderwijsUtils.Html
         static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
         {
             if (fragment.Implementation is string stringContent) {
-                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent));
+                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent).AssertNotNull());
             } else if (fragment.Implementation is IHtmlElement htmlTag) {
                 var description = TagDescription.LookupTag(htmlTag.TagName);
                 if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
                 } else {
                     stringBuilder.AppendText("new HtmlElement(");
-                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName));
+                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName).AssertNotNull());
                     stringBuilder.AppendText(")");
                 }
                 var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
-                if (htmlTag is IHtmlElementAllowingContent withContent && !withContent.Contents().IsEmpty) {
+                if (htmlTag is IHtmlElementAllowingContent withContent && !withContent.GetContent().IsEmpty) {
                     var subIndent = wereAttributesRendered ? indent + 8 : indent + 4;
                     if (wereAttributesRendered) {
                         AppendNewline(ref stringBuilder);
                         AppendIndent(ref stringBuilder, indent + 4);
                     }
                     stringBuilder.AppendText(".Content(");
-                    AppendCommaSeparatedFragments(ref stringBuilder, withContent.Contents(), subIndent);
+                    AppendCommaSeparatedFragments(ref stringBuilder, withContent.GetContent(), subIndent);
                     AppendIndent(ref stringBuilder, indent);
                     stringBuilder.AppendText(")");
                 }
@@ -99,10 +97,10 @@ namespace ProgressOnderwijsUtils.Html
                     stringBuilder.AppendText("(");
                 } else {
                     stringBuilder.AppendText(".Attribute(");
-                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Name));
+                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Name).AssertNotNull());
                     stringBuilder.AppendText(",");
                 }
-                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Value));
+                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Value).AssertNotNull());
                 stringBuilder.AppendText(")");
             }
             return hasRenderedAttribute;

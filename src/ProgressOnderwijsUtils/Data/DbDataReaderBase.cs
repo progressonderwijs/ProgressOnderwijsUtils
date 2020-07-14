@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -35,7 +34,6 @@ namespace ProgressOnderwijsUtils
         public override DataTable GetSchemaTable()
             => throw new NotSupportedException();
 
-        [NotNull]
         public override string GetDataTypeName(int ordinal)
             => (GetFieldType(ordinal) ?? throw new Exception("column " + ordinal + " untyped")).ToString();
 

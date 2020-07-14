@@ -2,7 +2,6 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,7 +10,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Tests whether an exception is non-null and matches a predicate, or any of its inner exceptions do.  For AggregateExceptions, tests wether *all* children match.
         /// </summary>
-        public static bool AnyNestingLevelMatches(this Exception? exception, [NotNull] Func<Exception, bool> predicate)
+        public static bool AnyNestingLevelMatches(this Exception? exception, Func<Exception, bool> predicate)
         {
             if (exception == null) {
                 return false;

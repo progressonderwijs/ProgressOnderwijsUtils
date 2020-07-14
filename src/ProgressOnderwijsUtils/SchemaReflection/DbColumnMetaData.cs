@@ -9,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public sealed class DbColumnMetaData
+    public sealed class DbColumnMetaData : ValueBase<DbColumnMetaData>
     {
         struct CompressedSysColumnsValue : IWrittenImplicitly
         {
@@ -49,8 +49,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 where 1=1
             ");
 
-            [NotNull]
-            public static DbColumnMetaData[] RunQuery([NotNull] SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
+                public static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
                 => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
@@ -151,22 +150,18 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public SqlTypeInfo SqlTypeInfo()
             => new SqlTypeInfo(UserTypeId, MaxLength, Precision, Scale, IsNullable);
 
-        [NotNull]
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
 
-        [NotNull]
         public DataColumn ToDataColumn()
             => new DataColumn(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
-        [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, ParameterizedSql objectName)
+        public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, ParameterizedSql objectName)
             => ColumnMetaDatas(conn, objectName.CommandText());
 
-        [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, [NotNull] string qualifiedObjectName)
+        public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, string qualifiedObjectName)
         {
             var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
                 ? CompressedSysColumnsValue.RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
@@ -174,13 +169,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             return Sort(dbColumnMetaDatas);
         }
 
-        [NotNull]
-        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlConnection conn)
+        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlConnection conn)
             => CompressedSysColumnsValue.RunQuery(conn, false, default)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 
-        [NotNull]
-        static DbColumnMetaData[] Sort([NotNull] DbColumnMetaData[] toArray)
+        static DbColumnMetaData[] Sort(DbColumnMetaData[] toArray)
         {
             Array.Sort(toArray, byColumnId);
             return toArray;
@@ -197,7 +190,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public static class DbColumnMetaDataExtensions
     {
         [Pure]
-        public static ParameterizedSql CreateNewTableQuery([NotNull] this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
+        public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
         {
             var keyColumns = columns
                 .Where(md => md.IsPrimaryKey)

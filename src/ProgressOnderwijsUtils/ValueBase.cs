@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -38,7 +39,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Equals(T other)
+        public bool Equals([AllowNull] T other)
             => other != null && FieldwiseEquality<T>.Instance((T)this, other);
 
         public override bool Equals(object? obj)
@@ -47,12 +48,10 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode()
             => FieldwiseHasher<T>.Instance((T)this);
 
-        [NotNull]
         public T Copy()
             => (T)MemberwiseClone();
 
-        [NotNull]
-        public T CopyWith([NotNull] Action<T> action)
+        public T CopyWith(Action<T> action)
         {
             var copied = Copy();
             action(copied);
@@ -69,19 +68,18 @@ namespace ProgressOnderwijsUtils
             => ToStringByMembers<T>.Func(obj);
     }
 
+    static class StringifierMethod
+    {
+        internal static readonly MethodInfo? MethodInfo = ((Func<object, string>)ObjectToCode.ComplexObjectToPseudoCode).Method;
+    }
+
     public static class ToStringByMembers<T>
     {
         public static readonly Func<T, string> Func = byPublicMembers();
 
-        [NotNull]
-        static MemberExpression MemberAccessExpression(Expression expr, [NotNull] MemberInfo mi)
+        static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi)
             => mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
 
-        [UsedImplicitly]
-        static string ToString(object o)
-            => ObjectToCode.ComplexObjectToPseudoCode(o);
-
-        [NotNull]
         static Func<T, string> byPublicMembers()
         {
             var concatMethod = ((Func<string[], string>)string.Concat).Method;
@@ -91,7 +89,7 @@ namespace ProgressOnderwijsUtils
 
             var type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("missing ToString?");
+            var toStringMethod = StringifierMethod.MethodInfo ?? throw new InvalidOperationException($"missing {nameof(StringifierMethod)}?");
 
             var parA = Expression.Parameter(type, "a");
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -130,8 +128,7 @@ namespace ProgressOnderwijsUtils
             return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
         }
 
-        [NotNull]
-        static string FriendlyMemberName([NotNull] MemberInfo fi)
+        static string FriendlyMemberName(MemberInfo fi)
         {
             bool isPublic;
             if (fi is FieldInfo fieldinfo) {

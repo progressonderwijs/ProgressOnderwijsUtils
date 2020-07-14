@@ -43,14 +43,21 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void RefersToExistingLocalDirectory()
         {
-            PAssert.That(() => !new Uri(Assembly.GetExecutingAssembly().Location).RefersToExistingLocalDirectory());
-            PAssert.That(() => new Uri(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).EnsureRefersToDirectory().RefersToExistingLocalDirectory());
+            PAssert.That(() => !new Uri(MyDllPath()).RefersToExistingLocalDirectory(), "An existing file should not appear to be an existing directory");
+            PAssert.That(() => new Uri(MyDllFolderPath()).EnsureRefersToDirectory().RefersToExistingLocalDirectory(), "An existing directory should appear thus");
         }
+
+        static string MyDllFolderPath()
+            => Path.GetDirectoryName(MyDllPath()).AssertNotNull();
+
+        static string MyDllPath()
+            => Assembly.GetExecutingAssembly().Location;
+
         [Fact]
         public void RefersToExistingLocalFile()
         {
-            PAssert.That(() => new Uri(Assembly.GetExecutingAssembly().Location).RefersToExistingLocalFile());
-            PAssert.That(() => !new Uri(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).EnsureRefersToDirectory().RefersToExistingLocalFile());
+            PAssert.That(() => new Uri(MyDllPath()).RefersToExistingLocalFile(), "An existing file should appear thus");
+            PAssert.That(() => !new Uri(MyDllFolderPath()).EnsureRefersToDirectory().RefersToExistingLocalFile(), "An existing directory should not appear to be an existing file");
         }
     }
 }

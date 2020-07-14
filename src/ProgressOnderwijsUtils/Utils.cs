@@ -5,54 +5,21 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class ErrorUtils
-    {
-        // ReSharper disable once FunctionRecursiveOnAllPaths
-        // ReSharper disable once UnusedParameter.Global
-        public static string TestErrorStackOverflow(int rounds)
-            //This is intended for testing error-handling in case of dramatic errors.
-            => TestErrorStackOverflow(rounds + 1);
-
-        public static void TestErrorOutOfMemory()
-        {
-            // ReSharper disable once CollectionNeverQueried.Local
-            var memorySlurper = new List<byte[]>();
-            for (long i = 0; i < long.MaxValue; i++) { //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
-                memorySlurper.Add(
-                    Encoding.UTF8.GetBytes(
-                        @"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
-            }
-        }
-
-        public static void TestErrorNormalException()
-            => throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
-    }
-
-    public static class DisposableExtensions
-    {
-        public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func)
-            where TDisposable : IDisposable
-        {
-            using (disposable) {
-                return func(disposable);
-            }
-        }
-    }
-
     public static class Utils
     {
         /// <summary>
-        /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
+        /// Compares two floating point number for approximate equality (up to a 1 part per 2^13 deviation, i.e. 4 significant digits)
         /// </summary>
-        [CodeThatsOnlyUsedForTests]
         public static bool FuzzyEquals(double x, double y)
         {
-            const double relativeEpsilon = 1.0 / (1ul << 32);
+            const double relativeEpsilon = 1.0 / (1ul << 13);
 
             var delta = Math.Abs(x - y);
             var magnitude = Math.Abs(x) + Math.Abs(y);
@@ -62,15 +29,6 @@ namespace ProgressOnderwijsUtils
 
         public static Lazy<T> Lazy<T>(Func<T> factory)
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
-
-        public static bool ElfProef(int getal)
-        {
-            var res = 0;
-            for (var i = 1; getal != 0; getal /= 10, ++i) {
-                res += i * (getal % 10);
-            }
-            return res != 0 && res % 11 == 0;
-        }
 
         /// <summary>
         /// Uses the sieve of erasthenos
@@ -173,10 +131,13 @@ namespace ProgressOnderwijsUtils
                 completedOk = true;
                 cleanup();
                 return retval;
-            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
-                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                //That means a catch-rethrow should only occur when we know both fail.
-                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            } catch (Exception computationEx) when (!completedOk) {
+                //Catch(cleanup) is checked with an if and not in the when clause because
+                //a function in the when clause causes the exection order to change
+                if (Catch(cleanup) is Exception cleanupEx) {
+                    throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+                }
+                throw;
             }
         }
 
@@ -185,18 +146,7 @@ namespace ProgressOnderwijsUtils
         /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
         /// </summary>
         public static void TryWithCleanup(Action computation, Action cleanup)
-        {
-            var completedOk = false;
-            try {
-                computation();
-                completedOk = true;
-                cleanup();
-            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
-                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                //That means a catch-rethrow should only occur when we know both fail.
-                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
-            }
-        }
+            => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
         static Exception? Catch(Action cleanup)
         {
@@ -271,44 +221,39 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
-            //TODO:add tests
             var fI = culture.NumberFormat;
-            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
-            var idx = 0;
-            var isNeg = number < 0;
-            if (isNeg) {
-                number = -number;
-            }
+            Span<char> str = stackalloc char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
 
-            ulong mult = 1;
+            var mult = 1ul;
             for (var i = 0; i < precision; i++) {
                 mult *= 10;
             }
-            var rounded = number * mult + 0.5;
+            var rounded = Math.Abs(number) * mult + 0.5;
             if (!(rounded <= ulong.MaxValue - 1024)) {
                 if (double.IsNaN(number)) {
                     return fI.NaNSymbol;
                 }
                 if (double.IsInfinity(number)) {
-                    return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
+                    return number < 0 ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
                 }
                 return number.ToString("f" + precision, culture);
             }
             var x = (ulong)rounded;
 
-            isNeg = isNeg && x > 0;
+            var isNeg = x > 0 && number < 0;
 
+            var idx = 0;
             if (precision > 0) {
                 do {
                     var tmp = x;
-                    x = x / 10;
+                    x /= 10;
                     str[idx++] = (char)('0' + (tmp - x * 10));
                 } while (idx < precision);
                 str[idx++] = fI.PercentDecimalSeparator[0];
             }
             do {
                 var tmp = x;
-                x = x / 10;
+                x /= 10;
                 str[idx++] = (char)('0' + (tmp - x * 10));
             } while (x != 0);
             if (isNeg) {
@@ -319,28 +264,7 @@ namespace ProgressOnderwijsUtils
                 str[i] = str[j];
                 str[j] = tmp;
             }
-            return new string(str, 0, idx);
-        }
-
-        [CodeThatsOnlyUsedForTests]
-        public static DateTime? DateMax(DateTime? d1, DateTime? d2)
-        {
-            if (d1 == null) {
-                return d2;
-            }
-
-            if (d2 == null) {
-                return d1;
-            }
-
-            return d2 > d1 ? d2 : d1;
-        }
-
-        [CodeThatsOnlyUsedForTests]
-        public static decimal RoundUp(decimal input, int places)
-        {
-            var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
-            return Math.Ceiling(input * multiplier) / multiplier;
+            return new string(str.Slice(0, idx));
         }
 
         /// <summary>
@@ -352,19 +276,19 @@ namespace ProgressOnderwijsUtils
             var res = 0;
             if (x >= 1 << 16) {
                 res += 16;
-                x = x >> 16;
+                x >>= 16;
             }
             if (x >= 1 << 8) {
                 res += 8;
-                x = x >> 8;
+                x >>= 8;
             }
             if (x >= 1 << 4) {
                 res += 4;
-                x = x >> 4;
+                x >>= 4;
             }
             if (x >= 1 << 2) {
                 res += 2;
-                x = x >> 2;
+                x >>= 2;
             }
             if (x >= 1 << 1) {
                 res += 1;
@@ -403,12 +327,10 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
 
         public ComparisonComparer(Comparison<T> comparer)
-        {
-            this.comparer = comparer;
-        }
+            => this.comparer = comparer;
 
-        public int Compare(T x, T y)
-            => comparer(x, y);
+        public int Compare([AllowNull] T x, [AllowNull] T y)
+            => comparer(x!, y!);
     }
 
     public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -422,10 +344,11 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y)
-            => equals(x, y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals([AllowNull] T x, [AllowNull] T y)
+            => x == null ? y == null : y != null && equals(x, y);
 
-        public int GetHashCode([DisallowNull] T obj)
-            => hashCode == null ? obj!/*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
+        public int GetHashCode(T obj)
+            => hashCode != null ? hashCode(obj) : obj != null ? obj.GetHashCode() : 0;
     }
 }

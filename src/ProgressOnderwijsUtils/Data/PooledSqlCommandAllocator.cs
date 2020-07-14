@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Data.SqlClient;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,7 +12,6 @@ namespace ProgressOnderwijsUtils
         //conceptually, a ConcurrentBag that doesn't allocation on .Add(...) is what we're looking for here, and a queue is close enough.
         static readonly ConcurrentQueue<SqlCommand>[] bagsByIndex = InitBags();
 
-        [NotNull]
         static ConcurrentQueue<SqlCommand>[] InitBags()
         {
             var allBags = new ConcurrentQueue<SqlCommand>[IndexCount];
@@ -40,7 +38,7 @@ namespace ProgressOnderwijsUtils
             return cmd;
         }
 
-        public static void ReturnToPool([NotNull] SqlCommand cmd)
+        public static void ReturnToPool(SqlCommand cmd)
         {
             var parameters = cmd.Parameters;
             var parameterCount = parameters.Count;

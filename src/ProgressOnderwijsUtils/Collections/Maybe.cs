@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Collections
     /// 
     /// "Maybe" is immutable and hence thread safe (assuming the wrapped value is thread safe).
     /// </summary>
-    public struct Maybe<TOk, TError>
+    public readonly struct Maybe<TOk, TError>
     {
         readonly object okOrError;
 
@@ -61,16 +61,11 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [MustUseReturnValue]
         public TOut Extract<TOut>(Func<TOk, TOut> ifOk, Func<TError, TOut> ifError)
-        {
-            switch (okOrError) {
-                case Maybe_Ok<TOk> okValue:
-                    return ifOk(okValue.Value);
-                case Maybe_Error<TError> errValue:
-                    return ifError(errValue.Error);
-                default:
-                    throw new Exception($"Maybe is neither Ok nor Error.");
-            }
-        }
+            => okOrError switch {
+                Maybe_Ok<TOk> okValue => ifOk(okValue.Value),
+                Maybe_Error<TError> errValue => ifError(errValue.Error),
+                _ => throw new Exception($"Maybe is neither Ok nor Error.")
+            };
 
         /// <summary>
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.
@@ -100,7 +95,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        public void Deconstruct(out bool isOk, out TOk okValueIfOk, out TError errorValueIfError)
+        public void Deconstruct(out bool isOk, [MaybeNull] out TOk okValueIfOk, [MaybeNull] out TError errorValueIfError)
             => isOk = TryGet(out okValueIfOk, out errorValueIfError);
     }
 
@@ -144,15 +139,15 @@ namespace ProgressOnderwijsUtils.Collections
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
-            where TError : class?
-            => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val);
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError? val)
+            where TError : class
+            => val != null ? Error(val) : Ok(Unit.Value).AsMaybeWithoutError<TError>();
 
         /// <summary>
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError? val)
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError? val)
             where TError : struct
             => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val.Value);
 
@@ -160,15 +155,15 @@ namespace ProgressOnderwijsUtils.Collections
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
         /// </summary>
         [Pure]
-        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk val)
-            where TOk : class?
-            => val != null ? Ok(val).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>(TOk? val)
+            where TOk : class
+            => val is TOk notNull ? Ok(notNull).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
         /// <summary>
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
         /// </summary>
         [Pure]
-        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk? val)
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>(TOk? val)
             where TOk : struct
             => val != null ? Ok(val.Value).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
@@ -185,7 +180,7 @@ namespace ProgressOnderwijsUtils.Collections
             => new MaybeTryBody<TOk>(tryBody);
     }
 
-    public struct MaybeTryBody
+    public readonly struct MaybeTryBody
     {
         readonly Action tryBody;
 
@@ -219,7 +214,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
     }
 
-    public struct MaybeTryBody<TOk>
+    public readonly struct MaybeTryBody<TOk>
     {
         readonly Func<TOk> tryBody;
 

@@ -138,63 +138,15 @@ namespace ProgressOnderwijsUtils.Tests
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
             var slowQueryWithTimeout = SQL($"WAITFOR DELAY '00:00:02'").OfNonQuery().WithTimeout(CommandTimeout.AbsoluteSeconds(1));
-            using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => slowQueryWithTimeout.Execute(localdb.Connection));
-                PAssert.That(() => ex.IsRetriableConnectionFailure());
-            }
+            using var localdb = new TransactedLocalConnection();
+            var ex = Assert.ThrowsAny<Exception>(() => slowQueryWithTimeout.Execute(localdb.Connection));
+            PAssert.That(() => ex.IsRetriableConnectionFailure());
         }
 
         [Fact]
         public void ClrDefaultIsSemanticDefault()
         {
             PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
-        }
-
-        [Fact]
-        public void DateMaxTest()
-        {
-            DateTime? d1 = null;
-            DateTime? d2 = null;
-
-            PAssert.That(() => Utils.DateMax(d1, d2) == null);
-
-            d1 = DateTime.Today;
-            PAssert.That(() => Utils.DateMax(d1, d2) == d1);
-
-            d1 = null;
-            d2 = DateTime.Today;
-            PAssert.That(() => Utils.DateMax(d1, d2) == d2);
-
-            d1 = DateTime.Today;
-            d2 = DateTime.Today;
-            PAssert.That(() => Utils.DateMax(d1, d2) == d1);
-
-            d1 = DateTime.Today.AddDays(-1);
-            d2 = DateTime.Today;
-            PAssert.That(() => Utils.DateMax(d1, d2) == d2);
-
-            d1 = DateTime.Today.AddDays(1);
-            d2 = DateTime.Today;
-            PAssert.That(() => Utils.DateMax(d1, d2) == d1);
-
-            d1 = DateTime.Today;
-            d2 = DateTime.Today.AddDays(-1);
-            PAssert.That(() => Utils.DateMax(d1, d2) == d1);
-
-            d1 = DateTime.Today;
-            d2 = DateTime.Today.AddDays(1);
-            PAssert.That(() => Utils.DateMax(d1, d2) == d2);
-        }
-
-        [Fact]
-        public void RoundUp()
-        {
-            PAssert.That(() => Utils.RoundUp(1.12m, 2) == 1.12m);
-            PAssert.That(() => Utils.RoundUp(1.0m, 2) == 1.0m);
-            PAssert.That(() => Utils.RoundUp(1.121m, 2) == 1.13m);
-            PAssert.That(() => Utils.RoundUp(1.129m, 2) == 1.13m);
-            PAssert.That(() => Utils.RoundUp(1000001.122m, 2) == 1000001.13m);
-            PAssert.That(() => Utils.RoundUp(1000001.129m, 2) == 1000001.13m);
         }
 
         [Fact]
@@ -258,9 +210,30 @@ namespace ProgressOnderwijsUtils.Tests
 
             var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
 
-            PAssert.That(() => ex.Message == "1337" && ex.TargetSite == buggyComputation.Method);
+            PAssert.That(() => ex.Message == "1337");
             PAssert.That(() => value == 0);
             PAssert.That(() => cleanupCalled == 1);
+        }
+
+        [Fact]
+        public void TryWithCleanup_CleanUpHappensAfterComputationFinally()
+        {
+            var finallyReached = false;
+            var wasComputationFinallyReachedBeforeCleanup = false;
+            try {
+                Utils.TryWithCleanup((Func<int>)(() => {
+                        try {
+                            throw new Exception("1337");
+                        } finally {
+                            finallyReached = true;
+                        }
+                    }),
+                    () => wasComputationFinallyReachedBeforeCleanup = finallyReached);
+            } catch {
+                //the pointof this test is to test crash situations!
+            }
+
+            PAssert.That(() => finallyReached && wasComputationFinallyReachedBeforeCleanup);
         }
 
         [Fact]

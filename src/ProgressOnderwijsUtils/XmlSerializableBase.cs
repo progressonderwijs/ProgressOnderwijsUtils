@@ -4,37 +4,33 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>([NotNull] string xml)
+        public static T Deserialize<T>(string xml)
             => XmlSerializerHelper<T>.Deserialize(xml);
 
-        public static T Deserialize<T>([NotNull] XDocument xml)
+        public static T Deserialize<T>(XDocument xml)
             => XmlSerializerHelper<T>.Deserialize(xml);
 
-        [NotNull]
-        public static string SerializeToString([NotNull] object o)
+        public static string SerializeToString(object o)
         {
-            using (var writer = new StringWriter()) {
-                using (var xw = XmlWriter.Create(writer)) {
-                    ((IXmlSerializeHelper)
-                            typeof(XmlSerializerHelper<>)
-                                .MakeGenericType(o.GetType())
-                                .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                                .Single()
-                                .Invoke(null)
-                        ).SerializeToInst(xw, o);
-                }
-                return writer.ToString();
+            using var writer = new StringWriter();
+            using (var xw = XmlWriter.Create(writer)) {
+                ((IXmlSerializeHelper)
+                        typeof(XmlSerializerHelper<>)
+                            .MakeGenericType(o.GetType())
+                            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .Single()
+                            .Invoke(null)
+                    ).SerializeToInst(xw, o);
             }
+            return writer.ToString();
         }
 
-        [NotNull]
-        public static XDocument SerializeToXDocument([NotNull] object o)
+        public static XDocument SerializeToXDocument(object o)
         {
             var doc = new XDocument();
             using (var xw = doc.CreateWriter()) {
@@ -60,36 +56,31 @@ namespace ProgressOnderwijsUtils
     {
         public static readonly XmlSerializer serializer = new XmlSerializer(typeof(T));
 
-        public static T Deserialize([NotNull] XDocument from)
+        public static T Deserialize(XDocument from)
         {
-            using (var reader = from.CreateReader()) {
-                return Deserialize(reader);
-            }
+            using var reader = from.CreateReader();
+            return Deserialize(reader);
         }
 
-        public static T Deserialize([NotNull] XmlReader from)
+        public static T Deserialize(XmlReader from)
             => (T)serializer.Deserialize(from);
 
-        public static T Deserialize([NotNull] string from)
+        public static T Deserialize(string from)
         {
-            using (var reader = new StringReader(from)) {
-                return (T)serializer.Deserialize(reader);
-            }
+            using var reader = new StringReader(from);
+            return (T)serializer.Deserialize(reader);
         }
 
-        [NotNull]
-        [CodeThatsOnlyUsedForTests]
-        public static string Serialize([NotNull] T val)
+        public static string Serialize(T val)
         {
-            using (var writer = new StringWriter()) {
-                serializer.Serialize(writer, val);
-                return writer.ToString();
-            }
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, val);
+            return writer.ToString();
         }
 
         internal XmlSerializerHelper() { }
 
-        void IXmlSerializeHelper.SerializeToInst([NotNull] XmlWriter xw, [NotNull] object val)
+        void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val)
             => serializer.Serialize(xw, val);
     }
 }

@@ -1,10 +1,7 @@
-﻿using JetBrains.Annotations;
-
-namespace ProgressOnderwijsUtils.Html
+﻿namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToTextContent
     {
-        [NotNull]
         public static string TextContent(this HtmlFragment fragment)
         {
             var fastStringBuilder = FastShortStringBuilder.Create();
@@ -20,7 +17,7 @@ namespace ProgressOnderwijsUtils.Html
                 foreach (var child in childFragments) {
                     AppendTextContent(ref fastStringBuilder, child.Implementation);
                 }
-            } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.Contents().Implementation is object nonNullFragmentContent) {
+            } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.GetContent().Implementation is object nonNullFragmentContent) {
                 AppendTextContent(ref fastStringBuilder, nonNullFragmentContent);
             }
         }

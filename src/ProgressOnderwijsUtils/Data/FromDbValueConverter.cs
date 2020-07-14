@@ -1,5 +1,5 @@
-#nullable disable
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -16,7 +16,8 @@ namespace ProgressOnderwijsUtils
         /// - it supports casting fromDb when the target type is <see cref="IPocoConvertibleProperty"/>
         /// </summary>
         [Pure]
-        public static T FromDb<T>(object valueFromDb)
+        [return: MaybeNull]
+        public static T FromDb<T>(object? valueFromDb)
         {
             try {
                 return FromDbHelper<T>.Convert(valueFromDb == DBNull.Value ? null : valueFromDb);
@@ -33,7 +34,8 @@ namespace ProgressOnderwijsUtils
         /// - it supports casting ToDb when the passed value is <see cref="IPocoConvertibleProperty"/>.
         /// </summary>
         [Pure]
-        public static T ToDb<T>(object valueFromCode)
+        [return: NotNullIfNotNull("valueFromCode")]
+        public static T ToDb<T>(object? valueFromCode)
         {
             try {
                 return ToDbHelper<T>.Convert(valueFromCode);
@@ -53,57 +55,55 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         static class FromDbHelper<T>
         {
-            public static readonly Func<object, T> Convert = MakeConverter(typeof(T));
+            public static readonly Func<object?, T> Convert = MakeConverter(typeof(T));
 
-            [NotNull]
-            static Func<object, T> MakeConverter([NotNull] Type type)
+            static Func<object?, T> MakeConverter(Type type)
             {
                 var converter = PocoPropertyConverter.GetOrNull(type);
                 if (converter != null) {
                     return ForConvertible(type, converter);
                 }
                 if (!type.IsValueType) {
-                    return obj => (T)obj;
+                    return obj => (T)obj!;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
-                    return obj => (T)obj;
+                    return obj => (T)obj!;
                 }
 
-                return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
+                return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
 
-            static Func<object, T> ForConvertible(Type type, PocoPropertyConverter converter)
+            static Func<object?, T> ForConvertible(Type type, PocoPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
-                    return obj => obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
+                    return obj => obj == null ? default! : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj)!;
                 } else {
-                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
+                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj)!;
                 }
             }
         }
 
         static class ToDbHelper<T>
         {
-            public static readonly Func<object, T> Convert = MakeConverter(typeof(T));
+            public static readonly Func<object?, T> Convert = MakeConverter(typeof(T));
 
-            [NotNull]
-            static Func<object, T> MakeConverter([NotNull] Type type)
+            static Func<object?, T> MakeConverter(Type type)
             {
                 if (!type.IsValueType) {
-                    return obj => obj == null ? default(T) : obj is IPocoConvertibleProperty<T> ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                    return obj => obj == null ? default! : obj is IPocoConvertibleProperty<T> && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
-                    return obj => obj is IPocoConvertibleProperty ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                    return obj => obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
                 }
-                return obj => obj == null ? default(T) : obj is IPocoConvertibleProperty ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                return obj => obj == null ? default! : obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
             }
         }
 
-        static readonly MethodInfo extractNullableValueTypeMethod = typeof(DbValueConverter).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
+        static readonly MethodInfo extractNullableValueTypeMethod = typeof(DbValueConverter).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic).AssertNotNull();
 
-        static TStruct? ExtractNullableValueType<TStruct>([CanBeNull] object obj)
+        static TStruct? ExtractNullableValueType<TStruct>(object? obj)
             where TStruct : struct
         // ReSharper disable once MergeConditionalExpression //does not work for enums!
             => obj == null ? default(TStruct?) : (TStruct)obj;
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo genericCastMethod = ((Func<object, int>)FromDb<int>).Method.GetGenericMethodDefinition();
 
         [Pure]
-        public static object DynamicCast(object val, Type type)
+        public static object? DynamicCast(object? val, Type type)
         {
             if (type.IsInstanceOfType(val)) {
                 return val;
@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool EqualsConvertingIntToEnum([CanBeNull] object val1, [CanBeNull] object val2)
+        public static bool EqualsConvertingIntToEnum(object? val1, object? val2)
         {
             if (val1 is Enum && val2 != null && !(val2 is Enum)) {
                 return Equals(val1, Enum.ToObject(val1.GetType(), val2));

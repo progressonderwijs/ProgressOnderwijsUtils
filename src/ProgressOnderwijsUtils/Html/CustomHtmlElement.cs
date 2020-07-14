@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
+    public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
     {
         readonly HtmlFragment contents;
 
@@ -28,20 +28,18 @@ namespace ProgressOnderwijsUtils.Html
         public string TagName { get; }
         public HtmlAttributes Attributes { get; }
 
-        public HtmlFragment Contents()
+        public HtmlFragment GetContent()
             => contents;
 
         [Pure]
         public HtmlFragment AsFragment()
             => this;
 
-        [NotNull]
         string IHtmlElement.TagStart
             => "<" + TagName;
 
-        [NotNull]
         string IHtmlElement.EndTag
-            => !Contents().IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
+            => !GetContent().IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
         /// <summary>
         /// Returns the predefined implementation for non-custom html tags (e.g. HtmlTagKinds.TABLE for a custom-tag with name "table").
@@ -51,12 +49,11 @@ namespace ProgressOnderwijsUtils.Html
             var tagDescription = TagDescription.LookupTag(TagName);
             return tagDescription.EmptyValue == null
                 ? this
-                : HtmlElementAlterations.ReplaceAttributesAndContents(tagDescription.EmptyValue, Attributes, Contents());
+                : tagDescription.EmptyValue.ReplaceAttributesAndContents(Attributes, GetContent());
         }
 
-        [NotNull]
-        IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change)
-            => change.ChangeWithContent(this);
+        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change)
+            => change.AlterElementAllowingContent(this);
 
         public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail)
             => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
@@ -64,10 +61,10 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment operator +(string head, CustomHtmlElement tail)
             => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
 
-        CustomHtmlElement IHtmlElement<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes)
-            => new CustomHtmlElement(TagName, replacementAttributes, Contents());
+        CustomHtmlElement IHtmlElement<CustomHtmlElement>.ReplaceAttributesWith(HtmlAttributes replacementAttributes)
+            => new CustomHtmlElement(TagName, replacementAttributes, GetContent());
 
-        CustomHtmlElement IHtmlElementAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment replacementContents)
+        CustomHtmlElement IHtmlElementAllowingContent<CustomHtmlElement>.ReplaceContentWith(HtmlFragment replacementContents)
             => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }
 }

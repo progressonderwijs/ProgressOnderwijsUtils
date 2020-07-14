@@ -1,52 +1,52 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class DistinctArray
     {
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items)
+        public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items)
             => DistinctArray<T>.FromPossiblyNotDistinct(items, EqualityComparer<T>.Default);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this ISet<T> items)
+        public static DistinctArray<T> ToDistinctArray<T>(this ISet<T> items)
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T, TVal>([NotNull] this Dictionary<T, TVal>.KeyCollection items)
+        public static DistinctArray<T> ToDistinctArray<T, TVal>(this Dictionary<T, TVal>.KeyCollection items)
             where T : notnull
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
             => items is HashSet<T> set && (object)set.Comparer == (object)comparer ? set.ToDistinctArray() : DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items)
+        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items)
             => DistinctArray<T>.FromDistinctNonMutatedArray(items.ToArray(), EqualityComparer<T>.Default);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
             => DistinctArray<T>.FromDistinctNonMutatedArray(items.ToArray(), comparer);
 
-        public static DistinctArray<T> ToDistinctArrayFromDistinct_Unchecked<T>([NotNull] this T[] items)
+        public static DistinctArray<T> ToDistinctArrayFromDistinct_Unchecked<T>(this T[] items)
             => DistinctArray<T>.FromDistinct_ClaimDistinctnessWithoutCheck(items);
     }
 
     [Serializable]
-    public struct DistinctArray<T> : IReadOnlyList<T>
+    public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
     {
         public static DistinctArray<T> Empty
             => new DistinctArray<T>(Array.Empty<T>());
 
-        public static DistinctArray<T> FromDistinct_ClaimDistinctnessWithoutCheck([NotNull] T[] items)
+        public static DistinctArray<T> FromDistinct_ClaimDistinctnessWithoutCheck(T[] items)
             => new DistinctArray<T>(items);
 
-        public static DistinctArray<T> FromDistinctNonMutatedArray([NotNull] T[] items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> FromDistinctNonMutatedArray(T[] items, IEqualityComparer<T> comparer)
         {
             var set = new HashSet<T>(items, comparer);
             if (set.Count != items.Length) {
@@ -55,15 +55,14 @@ namespace ProgressOnderwijsUtils
             return new DistinctArray<T>(items);
         }
 
-        public static DistinctArray<T> FromPossiblyNotDistinct([NotNull] IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> FromPossiblyNotDistinct(IEnumerable<T> items, IEqualityComparer<T> comparer)
             => new DistinctArray<T>(new HashSet<T>(items, comparer).ToArray());
 
-        readonly T[] items;
+        readonly T[]? items;
 
         DistinctArray(T[] items)
             => this.items = items;
 
-        [NotNull]
         public T[] UnderlyingArrayThatShouldNeverBeMutated()
             => items ?? Array.Empty<T>();
 
@@ -72,6 +71,22 @@ namespace ProgressOnderwijsUtils
 
         public T this[int index]
             => UnderlyingArrayThatShouldNeverBeMutated()[index];
+
+        public bool Equals(DistinctArray<T> other)
+            => UnderlyingArrayThatShouldNeverBeMutated() == other.UnderlyingArrayThatShouldNeverBeMutated();
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+            => obj is DistinctArray<T> other && Equals(other);
+
+        public override int GetHashCode()
+            => UnderlyingArrayThatShouldNeverBeMutated().GetHashCode();
+
+        public static bool operator ==(DistinctArray<T> a, DistinctArray<T> b)
+            => a.Equals(b);
+
+        public static bool operator !=(DistinctArray<T> a, DistinctArray<T> b)
+            => !(a == b);
 
         public Enumerator GetEnumerator()
             => new Enumerator(UnderlyingArrayThatShouldNeverBeMutated());
@@ -99,7 +114,7 @@ namespace ProgressOnderwijsUtils
             public bool MoveNext()
             {
                 if (idx + 1 < items.Length) {
-                    idx = idx + 1;
+                    idx += 1;
                     return true;
                 }
                 return false;

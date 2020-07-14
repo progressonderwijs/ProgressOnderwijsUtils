@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using JetBrains.Annotations;
+using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -30,6 +30,9 @@ namespace ProgressOnderwijsUtils
 
         public static ApprovalTest CreateForApprovedPath(string path)
             => new ApprovalTest(path);
+
+        public void AssertUnchangedAndSave(string[] line)
+            => line.Select(l => l + "\r\n").JoinStrings();
 
         public void AssertUnchangedAndSave(string text)
         {

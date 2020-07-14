@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -9,8 +10,21 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlHelpers
     {
+#pragma warning disable IDE1006 //Naming rule violation: Prefix '_' is not expected
+
+        public static THtmlTag _class<THtmlTag>(this THtmlTag inlineElement, params string?[]? classes)
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
+        {
+            if (classes != null) {
+                foreach (var className in classes) {
+                    inlineElement = inlineElement._class(className);
+                }
+            }
+            return inlineElement;
+        }
+
         [Pure]
-        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<HtmlAttribute> attributes)
+        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
         {
             foreach (var attribute in attributes) {
@@ -23,13 +37,13 @@ namespace ProgressOnderwijsUtils.Html
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[]? contents)
             where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
-            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), HtmlFragment.Fragment(contents)));
+            => htmlTagExpr.ReplaceContentWith(HtmlFragment.Fragment(htmlTagExpr.GetContent(), HtmlFragment.Fragment(contents)));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, HtmlFragment contents)
             where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
-            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), contents));
+            => htmlTagExpr.ReplaceContentWith(HtmlFragment.Fragment(htmlTagExpr.GetContent(), contents));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,10 +65,10 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
-            => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
+            => attrValue == null ? htmlTagExpr : htmlTagExpr.ReplaceAttributesWith(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
-        public static HtmlFragment AsFragment<T>([NotNull] this IEnumerable<T> htmlContents)
+        public static HtmlFragment AsFragment<T>(this IEnumerable<T> htmlContents)
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlContents.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
 
@@ -65,66 +79,65 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment AsFragment(this string? textContent)
             => string.IsNullOrEmpty(textContent) ? HtmlFragment.Empty : HtmlFragment.TextContent(textContent);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail)
+        public static HtmlFragment Append<T>([AllowNull] this T head, HtmlFragment tail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, params HtmlFragment[]? longTail)
+        public static HtmlFragment Append<T>([AllowNull] this T head, params HtmlFragment[]? longTail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(longTail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail)
+        public static HtmlFragment Append(this string? head, HtmlFragment tail)
             => head.AsFragment().Append(tail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[]? longTail)
+        public static HtmlFragment Append(this string? head, params HtmlFragment[]? longTail)
             => head.AsFragment().Append(longTail);
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls)
+        public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls)
             where TFragments : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.ToArray());
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
+        public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
             if (joiner.IsEmpty) {
                 return htmlEls.JoinHtml();
             }
-            using (var enumerator = htmlEls.GetEnumerator()) {
-                if (!enumerator.MoveNext()) {
-                    return HtmlFragment.Empty;
-                }
-                var retval = new ArrayBuilder<HtmlFragment>();
-                // ReSharper disable once PossibleNullReferenceException
-                var firstNode = enumerator.Current.AsFragment();
-                retval.Add(firstNode);
-                while (enumerator.MoveNext()) {
-                    retval.Add(joiner);
-                    // ReSharper disable once PossibleNullReferenceException
-                    var nextFragment = enumerator.Current.AsFragment();
-                    if (!nextFragment.IsEmpty) {
-                        retval.Add(nextFragment);
-                    }
-                }
-                return HtmlFragment.Fragment(retval.ToArray());
+            using var enumerator = htmlEls.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                return HtmlFragment.Empty;
             }
+            var retval = new ArrayBuilder<HtmlFragment>();
+            // ReSharper disable once PossibleNullReferenceException
+            var firstNode = enumerator.Current.AsFragment();
+            retval.Add(firstNode);
+            while (enumerator.MoveNext()) {
+                retval.Add(joiner);
+                // ReSharper disable once PossibleNullReferenceException
+                var nextFragment = enumerator.Current.AsFragment();
+                if (!nextFragment.IsEmpty) {
+                    retval.Add(nextFragment);
+                }
+            }
+            return HtmlFragment.Fragment(retval.ToArray());
         }
 
         public static HtmlFragment Contents(this IHtmlElement? element)
-            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.Contents() : HtmlFragment.Empty;
+            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.GetContent() : HtmlFragment.Empty;
 
         public static HtmlFragment[] ChildNodes(this IHtmlElement? element)
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
-        public static HtmlFragment[] ChildNodes([NotNull] this IHtmlElementAllowingContent elemWithContent)
-            => elemWithContent.Contents().NodesOfFragment() ?? HtmlFragment.EmptyNodes;
+        public static HtmlFragment[] ChildNodes(this IHtmlElementAllowingContent elemWithContent)
+            => elemWithContent.GetContent().NodesOfFragment();
 
-        public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
+        public static HtmlAttributes ToHtmlAttributes(this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
 
-        public static bool IsNamed([NotNull] this IHtmlElement element, string tagName)
+        public static bool IsNamed(this IHtmlElement element, string tagName)
             => element.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
 
-        public static bool IsNamed<TTag>([NotNull] this IHtmlElement element, TTag tagName)
+        public static bool IsNamed<TTag>(this IHtmlElement element, TTag tagName)
             where TTag : struct, IHtmlElement<TTag>
             => element.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
 

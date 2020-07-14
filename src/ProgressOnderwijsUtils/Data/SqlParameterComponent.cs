@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -65,7 +64,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static ISqlComponent ToTableValuedParameterFromPlainValues([NotNull] IEnumerable set)
+        public static ISqlComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
             if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out var factory)) {
@@ -78,7 +77,6 @@ namespace ProgressOnderwijsUtils
             return factory.CreateFromPlainValues(set);
         }
 
-        [NotNull]
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IReadImplicitly, new()
             => set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
@@ -87,7 +85,7 @@ namespace ProgressOnderwijsUtils
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory?> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory?>();
 
-        static ITableValuedParameterFactory? CreateTableValuedParameterFactory([NotNull] Type enumerableType)
+        static ITableValuedParameterFactory? CreateTableValuedParameterFactory(Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
@@ -162,12 +160,11 @@ namespace ProgressOnderwijsUtils
             public TableValuedParameterFactory(string sqlTableTypeName)
                 => this.sqlTableTypeName = sqlTableTypeName;
 
-            [NotNull]
-            public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
+                public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
                 => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInSinglePropertyPoco);
         }
 
-        static Type? TryGetNonAmbiguousEnumerableElementType([NotNull] Type enumerableType)
+        static Type? TryGetNonAmbiguousEnumerableElementType(Type enumerableType)
         {
             var elementType = default(Type);
             foreach (var interfaceType in enumerableType.GetInterfaces()) {
@@ -218,8 +215,7 @@ namespace ProgressOnderwijsUtils
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
-            [NotNull]
-            public static TableValuedParameterWrapper<T>[] WrapPlainValueInSinglePropertyPoco<T>([NotNull] IEnumerable<T> typedEnumerable)
+                public static TableValuedParameterWrapper<T>[] WrapPlainValueInSinglePropertyPoco<T>(IEnumerable<T> typedEnumerable)
             {
                 if (typedEnumerable is T[] typedArray) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];

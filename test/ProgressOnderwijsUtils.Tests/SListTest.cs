@@ -39,6 +39,13 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void SkipTest()
+        {
+            var list = SList.Create(new[] { 1, 3, 4, 1 });
+            PAssert.That(() => list.Skip(2).SequenceEqual(new[] { 4, 1 }));
+        }
+
+        [Fact]
         public void EqualsTest()
         {
             var a = SList.Create(new[] { 1, 2, 3 });
@@ -82,7 +89,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => list.Tail.Tail.Tail.IsEmpty);
             PAssert.That(() => list.Tail.Prepend(1) == list);
             // ReSharper disable once UnusedVariable
-            Assert.Throws<NullReferenceException>(() => {
+            Assert.Throws<Exception>(() => {
                 var x = list.Tail.Tail.Tail.Tail;
             });
         }
@@ -96,7 +103,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => list.Tail.Head == 2);
             PAssert.That(() => list.Tail.Tail.Head == 3);
             // ReSharper disable once UnusedVariable
-            Assert.Throws<NullReferenceException>(() => {
+            Assert.Throws<Exception>(() => {
                 var x = list.Tail.Tail.Tail.Head;
             });
         }

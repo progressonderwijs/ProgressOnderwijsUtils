@@ -2,7 +2,7 @@
 branches:
   only:
   - master
-image: Visual Studio 2019
+image: Visual Studio 2019 Preview
 environment:
   CONNECTION_STRING: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
 services: mssql2017
@@ -11,12 +11,13 @@ build_script:
 - cmd: dotnet pack -c Release --include-symbols --include-source
 test_script:
 - cmd: dotnet test test/ProgressOnderwijsUtils.Tests -c Release
+- cmd: dotnet test test/ProgressOnderwijsUtils.Analyzers.Tests -c Release
 artifacts:
 - path: '**\*.nupkg'
 deploy:
 - provider: NuGet
   api_key:
-    secure: s5HC3zMcWzkFJyWpQ4qjUW1Hvjk1A0XPttAjOGinVKqI11EQQSQoxvAKeGZfEI1M
+    secure: /1m0DV+awxxQ0gOeumLfOboCu6hTNERquBtpjGZ7AlfSwdF0LX8e8g9cpl7Uu5R2
   skip_symbols: true
   on:
     branch: master

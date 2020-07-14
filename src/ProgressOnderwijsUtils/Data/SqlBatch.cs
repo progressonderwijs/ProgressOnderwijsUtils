@@ -4,6 +4,7 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ProgressOnderwijsUtils
 {
@@ -32,8 +33,10 @@ namespace ProgressOnderwijsUtils
 
     public interface ITypedSqlCommand<out TQueryReturnValue>
     {
+        [UsefulToKeep("lib method")]
+        [return: MaybeNull]
         [MustUseReturnValue]
-        TQueryReturnValue Execute([NotNull] SqlConnection conn);
+        TQueryReturnValue Execute(SqlConnection conn);
     }
 
     public readonly struct NonQuerySqlCommand : INestableSql, IWithTimeout<NonQuerySqlCommand>
@@ -49,15 +52,14 @@ namespace ProgressOnderwijsUtils
 
         public int Execute(SqlConnection conn)
         {
-            using (var cmd = this.ReusableCommand(conn)) {
-                try {
-                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                        return 0;
-                    }
-                    return cmd.Command.ExecuteNonQuery();
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
+            using var cmd = this.ReusableCommand(conn);
+            try {
+                if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                    return 0;
                 }
+                return cmd.Command.ExecuteNonQuery();
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this);
             }
         }
     }
@@ -74,6 +76,7 @@ namespace ProgressOnderwijsUtils
         public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
             => new DataTableSqlCommand(Sql, timeout, MissingSchemaAction);
 
+        [UsefulToKeep("lib method")]
         public DataTableSqlCommand WithMissingSchemaAction(MissingSchemaAction missingSchemaAction)
             => new DataTableSqlCommand(Sql, CommandTimeout, missingSchemaAction);
 
@@ -81,19 +84,17 @@ namespace ProgressOnderwijsUtils
             => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
         [MustUseReturnValue]
-        [NotNull]
         public DataTable Execute(SqlConnection conn)
         {
-            using (var cmd = this.ReusableCommand(conn))
-            using (var adapter = new SqlDataAdapter(cmd.Command)) {
-                try {
-                    adapter.MissingSchemaAction = MissingSchemaAction;
-                    var dt = new DataTable();
-                    adapter.Fill(dt);
-                    return dt;
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
-                }
+            using var cmd = this.ReusableCommand(conn);
+            using var adapter = new SqlDataAdapter(cmd.Command);
+            try {
+                adapter.MissingSchemaAction = MissingSchemaAction;
+                var dt = new DataTable();
+                adapter.Fill(dt);
+                return dt;
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this);
             }
         }
     }
@@ -110,16 +111,16 @@ namespace ProgressOnderwijsUtils
             => new ScalarSqlCommand<T>(Sql, timeout);
 
         [MustUseReturnValue]
+        [return: MaybeNull]
         public T Execute(SqlConnection conn)
         {
-            using (var cmd = this.ReusableCommand(conn)) {
-                try {
-                    var value = cmd.Command.ExecuteScalar();
+            using var cmd = this.ReusableCommand(conn);
+            try {
+                var value = cmd.Command.ExecuteScalar();
 
-                    return DbValueConverter.FromDb<T>(value);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
-                }
+                return DbValueConverter.FromDb<T>(value);
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this);
             }
         }
     }
@@ -137,12 +138,11 @@ namespace ProgressOnderwijsUtils
 
         public T[] Execute(SqlConnection conn)
         {
-            using (var cmd = this.ReusableCommand(conn)) {
-                try {
-                    return ParameterizedSqlObjectMapper.ReadPlainUnpacker<T>(cmd.Command);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
-                }
+            using var cmd = this.ReusableCommand(conn);
+            try {
+                return ParameterizedSqlObjectMapper.ReadPlainUnpacker<T>(cmd.Command);
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this);
             }
         }
     }
@@ -160,6 +160,7 @@ namespace ProgressOnderwijsUtils
         public PocosSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
             => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
+        [UsefulToKeepAttribute("lib method")]
         public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new PocosSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
@@ -171,23 +172,22 @@ namespace ProgressOnderwijsUtils
 
         public T[] Execute(SqlConnection conn)
         {
-            using (var cmd = this.ReusableCommand(conn)) {
-                var lastColumnRead = -1;
-                SqlDataReader? reader = null;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
-                    var builder = new ArrayBuilder<T>();
-                    while (reader.Read()) {
-                        var nextRow = unpacker(reader, out lastColumnRead);
-                        builder.Add(nextRow);
-                    }
-                    return builder.ToArray();
-                } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments(ex, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
-                } finally {
-                    reader?.Dispose();
+            using var cmd = this.ReusableCommand(conn);
+            var lastColumnRead = -1;
+            SqlDataReader? reader = null;
+            try {
+                reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                var builder = new ArrayBuilder<T>();
+                while (reader.Read()) {
+                    var nextRow = unpacker(reader, out lastColumnRead);
+                    builder.Add(nextRow);
                 }
+                return builder.ToArray();
+            } catch (Exception ex) {
+                throw cmd.CreateExceptionWithTextAndArguments(ex, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
+            } finally {
+                reader?.Dispose();
             }
         }
     }
@@ -205,9 +205,11 @@ namespace ProgressOnderwijsUtils
         public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
             => new EnumeratedObjectsSqlCommand<T>(Sql, timeout, FieldMapping);
 
+        [UsefulToKeep("lib method")]
         public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
+        [UsefulToKeep("lib method")]
         public PocosSqlCommand<T> ToEagerlyEnumeratedCommand()
             => new PocosSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 

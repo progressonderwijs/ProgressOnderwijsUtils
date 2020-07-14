@@ -5,32 +5,22 @@
   <NuGetReference>ExpressionToCodeLib</NuGetReference>
   <NuGetReference>morelinq</NuGetReference>
   <Namespace>AngleSharp</Namespace>
-  <Namespace>AngleSharp.Attributes</Namespace>
-  <Namespace>AngleSharp.Css</Namespace>
-  <Namespace>AngleSharp.Css.Values</Namespace>
-  <Namespace>AngleSharp.Dom</Namespace>
-  <Namespace>AngleSharp.Dom.Css</Namespace>
-  <Namespace>AngleSharp.Dom.Html</Namespace>
-  <Namespace>AngleSharp.Html</Namespace>
-  <Namespace>AngleSharp.Parser.Html</Namespace>
   <Namespace>ExpressionToCodeLib</Namespace>
   <Namespace>MoreLinq</Namespace>
   <Namespace>System.Collections.Concurrent</Namespace>
   <Namespace>System.Globalization</Namespace>
-  <Namespace>System.Linq</Namespace>
   <Namespace>System.Net.Cache</Namespace>
   <Namespace>System.Net.Http</Namespace>
   <Namespace>System.Runtime.CompilerServices</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
+  <Namespace>AngleSharp.Html.Parser</Namespace>
 </Query>
 
 var specUri = new Uri("https://html.spec.whatwg.org/");
 
-using (var client = new HttpClient(new WebRequestHandler {
-    CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable),
-})) {
+using (var client = new HttpClient()) {
     var content = await client.GetStringAsync(specUri);
-    var document = new HtmlParser().Parse(content);
+    var document = new HtmlParser().ParseDocument(content);
     
     var voidElements = document.GetElementById("void-elements").ParentElement.NextElementSibling.TextContent.Split(',').Select(s=>s.Trim()).ToArray();
     var tableOfElements = document.QuerySelectorAll("h3#elements-3 + p + table").Single();
@@ -108,7 +98,7 @@ using (var client = new HttpClient(new WebRequestHandler {
 
     var globalAttributeExtensionMethods = globalAttributes
         .Select(attrName => $@"
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
@@ -122,7 +112,7 @@ using (var client = new HttpClient(new WebRequestHandler {
 );
     var elAttrExtensionMethods = specificAttributes
         .Select(attrName => $@"
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
@@ -149,9 +139,9 @@ using (var client = new HttpClient(new WebRequestHandler {
             string IHtmlElement.TagStart => ""<{el.elementName}"";
             string IHtmlElement.EndTag => """";
             HtmlAttributes attrs;
-            {el.csUpperName} IHtmlElement<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes }};
+            {el.csUpperName} IHtmlElement<{el.csUpperName}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes }};
             HtmlAttributes IHtmlElement.Attributes => attrs;
-            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
             public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
@@ -167,12 +157,12 @@ using (var client = new HttpClient(new WebRequestHandler {
             string IHtmlElement.TagStart => ""<{el.elementName}"";
             string IHtmlElement.EndTag => ""</{el.elementName}>"";
             HtmlAttributes attrs;
-            {el.csUpperName} IHtmlElement<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
+            {el.csUpperName} IHtmlElement<{el.csUpperName}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
-            {el.csUpperName} IHtmlElementAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
-            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
-            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            {el.csUpperName} IHtmlElementAllowingContent<{el.csUpperName}>.ReplaceContentWith(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
+            HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
             public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
@@ -196,7 +186,8 @@ using (var client = new HttpClient(new WebRequestHandler {
     {{{string.Join("",elFields)}
     }}";
 
-    $@"using JetBrains.Annotations;
+    $@"#nullable enable
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {{

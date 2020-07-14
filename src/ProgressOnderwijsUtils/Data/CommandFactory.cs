@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -9,7 +8,6 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -36,19 +34,18 @@ namespace ProgressOnderwijsUtils
     public struct ReusableCommand : IDisposable
     {
         public SqlCommand Command;
-        public IDisposable QueryTimer;
+        public IDisposable? QueryTimer;
 
         public void Dispose()
         {
             QueryTimer?.Dispose();
             if (Command != null) {
                 PooledSqlCommandAllocator.ReturnToPool(Command);
-                Command = null;
+                Command = null!;
             }
         }
 
-        [NotNull]
-        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string extraMessage = null)
+        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string? extraMessage = null)
             where TOriginCommand : IWithTimeout<TOriginCommand>
             => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
     }
@@ -82,7 +79,7 @@ namespace ProgressOnderwijsUtils
                 lookup = GetLookup()
             };
 
-        public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, CommandTimeout timeout)
+        public ReusableCommand FinishBuilding(SqlConnection conn, CommandTimeout timeout)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn;
@@ -108,7 +105,6 @@ namespace ProgressOnderwijsUtils
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
-        [NotNull]
         public string FinishBuilding_CommandTextOnly()
         {
             FreeParamsAndLookup();
@@ -119,10 +115,10 @@ namespace ProgressOnderwijsUtils
         {
             Array.Clear(paramObjs, 0, paramCount);
             sqlParamsArgsPool.Return(paramObjs);
-            paramObjs = null;
+            paramObjs = null!;
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
-            lookup = null;
+            lookup = null!;
         }
 
         const int ParameterNameCacheSize = 100;
@@ -130,13 +126,12 @@ namespace ProgressOnderwijsUtils
         static readonly string[] CachedParameterNames =
             Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => "@par" + parameterIndex).ToArray();
 
-        [NotNull]
         public static string IndexToParameterName(int parameterIndex)
             => parameterIndex < CachedParameterNames.Length
                 ? CachedParameterNames[parameterIndex]
                 : "@par" + parameterIndex;
 
-        public string RegisterParameterAndGetName<T>([NotNull] T o)
+        public string RegisterParameterAndGetName<T>(T o)
             where T : IQueryParameter
         {
             if (!lookup.TryGetValue(o.EquatableValue, out var paramName)) {
@@ -161,7 +156,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length)
+        public void AppendSql(string sql, int startIndex, int length)
             => queryText.AppendText(sql, startIndex, length);
     }
 
@@ -185,10 +180,10 @@ namespace ProgressOnderwijsUtils
         public static FastShortStringBuilder Create(int length)
             => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(length) };
 
-        public void AppendText([NotNull] string text)
+        public void AppendText(string text)
             => AppendText(text, 0, text.Length);
 
-        public void AppendText([NotNull] string text, int startIndex, int length)
+        public void AppendText(string text, int startIndex, int length)
         {
             if (CurrentCharacterBuffer.Length < CurrentLength + length) {
                 var newLen = Math.Max(CurrentCharacterBuffer.Length * 2, CurrentLength + length);
@@ -204,15 +199,13 @@ namespace ProgressOnderwijsUtils
         public void DiscardBuilder()
         {
             Free();
-            CurrentCharacterBuffer = null;
+            CurrentCharacterBuffer = null!;
         }
 
-        [NotNull]
         public string FinishBuilding()
         {
             var str = new string(CurrentCharacterBuffer, 0, CurrentLength);
-            Free();
-            CurrentCharacterBuffer = null;
+            DiscardBuilder();
             return str;
         }
     }
@@ -221,16 +214,14 @@ namespace ProgressOnderwijsUtils
     {
         FastShortStringBuilder debugText;
 
-        [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o)
+        public string RegisterParameterAndGetName<T>(T o)
             where T : IQueryParameter
             => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length)
+        public void AppendSql(string sql, int startIndex, int length)
             => debugText.AppendText(sql, startIndex, length);
 
-        [NotNull]
-        public static string DebugTextFor([CanBeNull] ISqlComponent impl)
+        public static string DebugTextFor(ISqlComponent? impl)
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
@@ -244,18 +235,17 @@ namespace ProgressOnderwijsUtils
         int argOffset;
         ArrayBuilder<object> paramValues;
 
-        [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o)
+        public string RegisterParameterAndGetName<T>(T o)
             where T : IQueryParameter
         {
             paramValues.Add(o.EquatableValue);
             return CommandFactory.IndexToParameterName(argOffset++);
         }
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length)
+        public void AppendSql(string sql, int startIndex, int length)
             => debugText.AppendText(sql, startIndex, length);
 
-        public static ParameterizedSqlEquatableKey EqualityKey([CanBeNull] ISqlComponent impl)
+        public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent? impl)
         {
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
@@ -279,7 +269,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(ParameterizedSqlEquatableKey other)
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
         public override int GetHashCode()
