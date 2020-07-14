@@ -16,7 +16,8 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     /// <typeparam name="T">The derived type; must be sealed</typeparam>
     [Serializable]
-    public abstract class ValueBase<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T> : IEquatable<T>
+    public abstract class ValueBase<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+        T> : IEquatable<T>
         where T : ValueBase<T>
     {
         protected ValueBase()
@@ -37,12 +38,18 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Equals(T other) => other != null && FieldwiseEquality<T>.Instance((T)this, other);
-        public override bool Equals(object obj) => obj is T typed && Equals(typed);
-        public override int GetHashCode() => FieldwiseHasher<T>.Instance((T)this);
+        public bool Equals(T other)
+            => other != null && FieldwiseEquality<T>.Instance((T)this, other);
+
+        public override bool Equals(object obj)
+            => obj is T typed && Equals(typed);
+
+        public override int GetHashCode()
+            => FieldwiseHasher<T>.Instance((T)this);
 
         [NotNull]
-        public T Copy() => (T)MemberwiseClone();
+        public T Copy()
+            => (T)MemberwiseClone();
 
         [NotNull]
         public T CopyWith([NotNull] Action<T> action)
@@ -52,12 +59,14 @@ namespace ProgressOnderwijsUtils
             return copied;
         }
 
-        public override string ToString() => ToStringByMembers<T>.Func((T)this);
+        public override string ToString()
+            => ToStringByMembers<T>.Func((T)this);
     }
 
     public static class ToStringByMembers
     {
-        public static string ToStringByPublicMembers<T>(T obj) => ToStringByMembers<T>.Func(obj);
+        public static string ToStringByPublicMembers<T>(T obj)
+            => ToStringByMembers<T>.Func(obj);
     }
 
     public static class ToStringByMembers<T>
@@ -71,7 +80,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly]
-        static string ToString(object o) => ObjectToCode.ComplexObjectToPseudoCode(o);
+        static string ToString(object o)
+            => ObjectToCode.ComplexObjectToPseudoCode(o);
 
         [NotNull]
         static Func<T, string> byPublicMembers()
@@ -93,8 +103,8 @@ namespace ProgressOnderwijsUtils
 
             var replaceMethod = ((Func<string, string, string>)"".Replace).Method;
 
-            Expression MemberToStringExpression(MemberInfo fi) =>
-                concatStringExpressions(
+            Expression MemberToStringExpression(MemberInfo fi)
+                => concatStringExpressions(
                     Expression.Constant("    " + FriendlyMemberName(fi) + " = "),
                     Expression.Condition(
                         Expression.Call(refEqMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)), Expression.Default(typeof(object))),
@@ -103,13 +113,13 @@ namespace ProgressOnderwijsUtils
                             Expression.Coalesce(
                                 Expression.Call(toStringMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object))),
                                 Expression.Constant("")
-                                ),
+                            ),
                             replaceMethod,
                             Expression.Constant("\n"),
                             Expression.Constant("\n    ")
-                            )),
+                        )),
                     Expression.Constant(",\n")
-                    );
+                );
 
             var toStringExpr =
                 concatStringExpressions(
@@ -117,7 +127,7 @@ namespace ProgressOnderwijsUtils
                         .Concat(nonCompilerGeneratedMembers.Select(MemberToStringExpression))
                         .Concat(new[] { Expression.Constant("}") })
                         .ToArray()
-                    );
+                );
 
             return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
         }

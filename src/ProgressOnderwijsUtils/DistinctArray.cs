@@ -58,16 +58,28 @@ namespace ProgressOnderwijsUtils
             => new DistinctArray<T>(new HashSet<T>(items, comparer).ToArray());
 
         readonly T[] items;
-        DistinctArray(T[] items) => this.items = items;
+
+        DistinctArray(T[] items)
+            => this.items = items;
 
         [NotNull]
-        public T[] UnderlyingArrayThatShouldNeverBeMutated() => items ?? Array.Empty<T>();
+        public T[] UnderlyingArrayThatShouldNeverBeMutated()
+            => items ?? Array.Empty<T>();
 
-        public int Count => UnderlyingArrayThatShouldNeverBeMutated().Length;
-        public T this[int index] => UnderlyingArrayThatShouldNeverBeMutated()[index];
-        public Enumerator GetEnumerator() => new Enumerator(UnderlyingArrayThatShouldNeverBeMutated());
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
+        public int Count
+            => UnderlyingArrayThatShouldNeverBeMutated().Length;
+
+        public T this[int index]
+            => UnderlyingArrayThatShouldNeverBeMutated()[index];
+
+        public Enumerator GetEnumerator()
+            => new Enumerator(UnderlyingArrayThatShouldNeverBeMutated());
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
+
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
+            => GetEnumerator();
 
         /// <summary>
         /// Efficient iterator for foreach.
@@ -97,8 +109,12 @@ namespace ProgressOnderwijsUtils
                 idx = 0;
             }
 
-            public T Current => items[idx];
-            object IEnumerator.Current => Current;
+            public T Current
+                => items[idx];
+
+            object IEnumerator.Current
+                => Current;
+
             public void Dispose() { }
         }
     }

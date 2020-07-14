@@ -27,8 +27,9 @@ namespace ProgressOnderwijsUtils
         /// <param name="halflifeFactor">The halflife (as a factor of the constantFailureDelayTarget) of the error rate estimate.  Larger values ramp and recover more slowly; smaller values ramp and recover more quickly.</param>
         public RetryDelayChooser(TimeSpan constantFailureDelayTarget, double halflifeFactor)
         {
-            if (halflifeFactor < 1.0)
+            if (halflifeFactor < 1.0) {
                 throw new Exception("For reasonably convergence, the error-rate half-life must exceed the delay target; i.e. halflifeFactor must exceed 1.0.  A reasonable value might be 10.");
+            }
             var delaysPerHalflife = 1.0 / halflifeFactor; //so this is at *most* 1, and typically much smaller, therefore...
             var empiracalConvergenceOverestimateRatio = 1 + 0.230 * delaysPerHalflife + 0.09761662037037 * delaysPerHalflife * delaysPerHalflife; //...this is at *most* 1.33
 

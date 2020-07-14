@@ -26,7 +26,9 @@ namespace ProgressOnderwijsUtils.Tests
         string PrivateProperty { get; }
         DateTime PrivateField;
         public readonly double ReadonlyField;
-        public double ReadonlyProperty => 0.0;
+
+        public double ReadonlyProperty
+            => 0.0;
 
         public char WriteonlyProperty
         {

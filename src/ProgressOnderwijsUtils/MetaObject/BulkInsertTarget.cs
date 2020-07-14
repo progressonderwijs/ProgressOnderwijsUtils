@@ -43,7 +43,8 @@ namespace ProgressOnderwijsUtils
         public BulkInsertTarget With(SqlBulkCopyOptions options)
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
-        public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>([NotNull] SqlCommandCreationContext sqlContext, [NotNull] IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
+        public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+            T>([NotNull] SqlCommandCreationContext sqlContext, [NotNull] IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => MetaObjectBulkInsertOperation.Execute(sqlContext, TableName, Columns, Mode, Options, metaObjects, cancellationToken);
     }

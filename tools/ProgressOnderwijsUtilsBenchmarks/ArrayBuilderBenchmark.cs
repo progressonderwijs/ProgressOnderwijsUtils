@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int,int), SmallStructArrayBuilderBenchmark.Factory>
+    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int, int), SmallStructArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<(int, int)>
         {
@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         () => {
                             foreach (var size in Sizes) {
                                 var builder = new List<T>();
-                                for (int i = 0; i < size; i++) {
+                                for (var i = 0; i < size; i++) {
                                     builder.Add(default(TFactory).Init(i));
                                 }
                                 GC.KeepAlive(builder.ToArray());
@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         () => {
                             foreach (var size in Sizes) {
                                 var builder = ArrayBuilder_WithArraySegments<T>.Create();
-                                for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                                     builder.Add(default(TFactory).Init(i));
                                 }
                                 GC.KeepAlive(builder.ToArray());
@@ -196,7 +196,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         () => {
                             foreach (var size in Sizes) {
                                 var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
-                                for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                                     builder.Add(default(TFactory).Init(i));
                                 }
                                 GC.KeepAlive(builder.ToArray());
@@ -212,7 +212,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         () => {
                             foreach (var size in Sizes) {
                                 var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
-                                for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                                     builder.Add(default(TFactory).Init(i));
                                 }
                                 GC.KeepAlive(builder.ToArray());
@@ -228,7 +228,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         () => {
                             foreach (var size in Sizes) {
                                 var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
-                                for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                                     builder.Add(default(TFactory).Init(i));
                                 }
                                 GC.KeepAlive(builder.ToArray());
@@ -422,7 +422,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;
@@ -486,7 +486,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;
@@ -547,7 +547,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;

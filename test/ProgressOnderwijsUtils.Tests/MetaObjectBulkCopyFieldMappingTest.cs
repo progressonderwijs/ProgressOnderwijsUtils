@@ -43,17 +43,13 @@ namespace ProgressOnderwijsUtils.Tests
         public void Exact_mapping_gives_exception_on_less_columns()
         {
             var bulkInsertTarget = CreateTargetTable();
-            Assert.Throws<InvalidOperationException>(() => {
-                bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new LessColumns { Id = 37, SomeColumn = 42 } });
-            });
+            Assert.Throws<InvalidOperationException>(() => { bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new LessColumns { Id = 37, SomeColumn = 42 } }); });
         }
 
         [Fact]
         public void Exact_mapping_gives_exception_on_more_columns()
         {
-            Assert.Throws<InvalidOperationException>(() => {
-                CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new MoreColumns() });
-            });
+            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new MoreColumns() }); });
         }
 
         [NotNull]
@@ -80,9 +76,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_gives_exception_on_more_columns()
         {
-            Assert.Throws<InvalidOperationException>(() => {
-                CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new MoreColumns() });
-            });
+            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new MoreColumns() }); });
         }
 
         [Fact]
@@ -102,9 +96,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_gives_exception_on_less_columns()
         {
-            Assert.Throws<InvalidOperationException>(() => {
-                CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new LessColumns() });
-            });
+            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new LessColumns() }); });
         }
 
         [Fact]

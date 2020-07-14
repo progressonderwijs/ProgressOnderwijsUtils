@@ -120,8 +120,10 @@ namespace ProgressOnderwijsUtils.Drawing
         }
 
         const int MAX_IMAGE_DIMENSION = 10000; //10 000 by 10 000 is quite insane ;-)
+
         [NotNull]
-        public static Image ToImage([NotNull] byte[] arr) => Image.FromStream(new MemoryStream(arr), true, true);
+        public static Image ToImage([NotNull] byte[] arr)
+            => Image.FromStream(new MemoryStream(arr), true, true);
 
         /// <summary>
         /// Given a width and a height, and a aspect ratio, computes the clipping rectangle fitting within that width and height but of the right aspect ratio.
@@ -156,13 +158,15 @@ namespace ProgressOnderwijsUtils.Drawing
 
         public static void SaveResizedImage([NotNull] byte[] pasfoto, int targetWidth, int targetHeight, [NotNull] Stream outputStream)
         {
-            using (var fromDatabase = ToImage(pasfoto))
+            using (var fromDatabase = ToImage(pasfoto)) {
                 if (fromDatabase.Height == targetHeight) {
                     outputStream.Write(pasfoto, 0, pasfoto.Length);
                 } else {
-                    using (Image smallImage = Resize(fromDatabase, targetWidth, targetHeight))
+                    using (Image smallImage = Resize(fromDatabase, targetWidth, targetHeight)) {
                         SaveImageAsJpeg(smallImage, outputStream);
+                    }
                 }
+            }
         }
     }
 }

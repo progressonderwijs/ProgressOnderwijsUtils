@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
@@ -9,13 +9,13 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.10.1" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.11.3" />
+    <PackageReference Include="AngleSharp" Version="0.11.0" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
-    <PackageReference Include="Dapper" Version="1.50.7" />
+    <PackageReference Include="Dapper" Version="1.60.1" />
     <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.109.2" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.110" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
     <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj" />
   </ItemGroup>

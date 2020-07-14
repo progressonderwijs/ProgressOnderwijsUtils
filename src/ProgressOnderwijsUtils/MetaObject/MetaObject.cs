@@ -15,11 +15,14 @@ namespace ProgressOnderwijsUtils
     public static class MetaObject
     {
         [Pure]
-        public static IMetaPropCache<IMetaProperty> GetMetaProperties([NotNull] this IMetaObject metaobj) => GetCache(metaobj.GetType());
+        public static IMetaPropCache<IMetaProperty> GetMetaProperties([NotNull] this IMetaObject metaobj)
+            => GetCache(metaobj.GetType());
 
         // ReSharper disable once UnusedParameter.Global
         [Pure]
-        public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject => MetaInfo<T>.Instance;
+        public static MetaInfo<T> GetMetaProperties<T>()
+            where T : IMetaObject
+            => MetaInfo<T>.Instance;
 
         [NotNull]
         [Pure]
@@ -43,7 +46,7 @@ namespace ProgressOnderwijsUtils
                     if (retval == null) {
                         throw new ArgumentException(
                             "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-                                "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
+                            "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
                     }
                     return retval;
                 } else if (typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TMetaObject))) {
@@ -59,7 +62,7 @@ namespace ProgressOnderwijsUtils
                 } else {
                     throw new InvalidOperationException(
                         "Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject)
-                            + " itself, nor a (base) class, nor a base interface.");
+                        + " itself, nor a (base) class, nor a base interface.");
                 }
             }
         }
@@ -75,7 +78,7 @@ namespace ProgressOnderwijsUtils
             if (!(innerExpr is MemberExpression)) {
                 throw new ArgumentException(
                     "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                        "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
+                    "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
             }
             var membExpr = (MemberExpression)innerExpr;
 
@@ -87,7 +90,7 @@ namespace ProgressOnderwijsUtils
             if (targetExpr != paramExpr) {
                 throw new ArgumentException(
                     "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                        "A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
+                    "A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
             }
             //*/
 
@@ -97,13 +100,13 @@ namespace ProgressOnderwijsUtils
             }
             throw new ArgumentException(
                 "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-                    "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
+                "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
         }
 
         [Pure]
         static Expression UnwrapCast(Expression bodyExpr)
         {
-            return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
+            return bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
         }
 
         [Pure]
@@ -121,7 +124,8 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
 
         [Pure]
-        static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
+        static IMetaPropCache<IMetaProperty> GetCache(Type t)
+            => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
 
         [Pure]
         public static ParameterizedSql SqlColumnName([NotNull] this IMetaProperty mp)

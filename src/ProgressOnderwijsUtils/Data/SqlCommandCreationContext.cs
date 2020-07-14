@@ -9,12 +9,15 @@ namespace ProgressOnderwijsUtils
         public SqlConnection Connection { get; }
         public ISqlCommandTracer Tracer { get; }
         public int CommandTimeoutInS { get; }
+
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
         [NotNull]
-        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
+        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
+            => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
 
         // ReSharper restore UnusedMember.Global
+
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, ISqlCommandTracer tracer)
         {
             Connection = conn;
@@ -28,6 +31,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
+        public static implicit operator SqlCommandCreationContext(SqlConnection conn)
+            => new SqlCommandCreationContext(conn, 0, null);
     }
 }

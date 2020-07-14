@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils.Tests
                 () =>
                     colSort.Columns.Concat(colSort.Columns).Reverse()
                         .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName))
-                        == colSort);
+                    == colSort);
         }
 
         [Fact]
@@ -171,15 +171,15 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD, ziggyA, abcA, }))
-                        == new OrderByColumns(new[] { ziggyA, abcA, }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, }));
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, ziggyA, acolD, }))
-                        == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolA }))
-                        == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
         }
     }
 }

@@ -44,25 +44,25 @@ namespace ProgressOnderwijsUtils
         static readonly Regex keyConstraintViolationRegex = new Regex(
             "Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
             RegexOptions.Compiled
-            );
+        );
 
         // message_id 2601
         static readonly Regex duplicateKeyUniqueIndexRegex = new Regex(
             "Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
             RegexOptions.Compiled
-            );
+        );
 
         // message_id 515
         static readonly Regex cannotInsertNullRegex = new Regex(
             "Cannot insert the value NULL into column '(?<ColumnName>[^']*)', table '(?<TableName>[^']*)'; column does not allow nulls\\. (?<StatementType>.*) fails\\.",
             RegexOptions.Compiled
-            );
+        );
 
         // message_id 547
         static readonly Regex genericConstraintViolationRegex = new Regex(
             "The (?<StatementType>.*) statement conflicted with the (?<ConstraintType>.*) constraint \"(?<ConstraintName>[^\"]*)\"\\.",
             RegexOptions.Compiled
-            );
+        );
 
         [CanBeNull]
         static ISqlErrorParseResult TryParseKeyConstraintViolation([NotNull] SqlError error)
@@ -125,7 +125,7 @@ namespace ProgressOnderwijsUtils
         public static ISqlErrorParseResult Parse([NotNull] SqlError error)
             => TryParseKeyConstraintViolation(error)
                 ?? TryParseDuplicateKeyUniqueIndex(error)
-                    ?? TryParseCannotInsertNull(error)
-                        ?? TryParseGenericConstraintViolation(error);
+                ?? TryParseCannotInsertNull(error)
+                ?? TryParseGenericConstraintViolation(error);
     }
 }

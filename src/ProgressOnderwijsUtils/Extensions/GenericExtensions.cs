@@ -67,7 +67,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool In(this string obj, [NotNull] params string[] values) => values.Contains(obj);
+        public static bool In(this string obj, [NotNull] params string[] values)
+            => values.Contains(obj);
 
         [UsefulToKeep("overload")]
         [Pure]

@@ -33,18 +33,20 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue GetOrDefaultR<TKey, TValue>([NotNull] this IReadOnlyDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue GetOrDefaultR<TKey, TValue>(
+            [NotNull] this IReadOnlyDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             TValue defaultValue)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
-        public static TValue GetOrDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue GetOrDefault<TKey, TValue>(
+            [NotNull] this IDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             TValue defaultValue)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -70,12 +72,13 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue? GetOrDefaultR<TKey, TValue>([NotNull] this IReadOnlyDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue? GetOrDefaultR<TKey, TValue>(
+            [NotNull] this IReadOnlyDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             TValue? defaultValue)
             where TValue : struct
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -86,12 +89,13 @@ namespace ProgressOnderwijsUtils
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
         [UsefulToKeep("library method; interface is used, since method above is used")]
-        public static TValue? GetOrDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue? GetOrDefault<TKey, TValue>(
+            [NotNull] this IDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             TValue? defaultValue)
             where TValue : struct
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -101,11 +105,12 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultFactory">The factory method to call to create a default value if not found.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue GetOrLazyDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue GetOrLazyDefault<TKey, TValue>(
+            [NotNull] this IDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             Func<TValue> defaultFactory)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultFactory();
+            return dict.TryGetValue(key, out var result) ? result : defaultFactory();
         }
 
         /// <summary>
@@ -124,17 +129,18 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Retrieves a value from a dictionary or adds a new value if the key does not yet exist. 
+        /// Retrieves a value from a dictionary or adds a new value if the key does not yet exist.
         /// </summary>
         /// <param name="dict">The dictionary possibly containing the key</param>
         /// <param name="key">The key whose value to get.</param>
         /// <param name="factory">The factory to create the value if the key does not yet exists.</param>
         /// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
-        public static TValue GetOrAdd<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key,
+        public static TValue GetOrAdd<TKey, TValue>(
+            [NotNull] this IDictionary<TKey, TValue> dict,
+            [NotNull] TKey key,
             Func<TKey, TValue> factory)
         {
-            TValue val;
-            if (dict.TryGetValue(key, out val)) {
+            if (dict.TryGetValue(key, out var val)) {
                 return val;
             }
             val = factory(key);
@@ -152,7 +158,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="old">This dictionary</param>
         /// <param name="others">The dictionary which should be merged into this array</param>
         [CanBeNull]
-        public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old,
+        public static Dictionary<TKey, TValue> Merge<TKey, TValue>(
+            [NotNull] this Dictionary<TKey, TValue> old,
             [NotNull] params Dictionary<TKey, TValue>[] others)
         {
             if (old == null) {

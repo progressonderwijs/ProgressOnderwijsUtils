@@ -36,8 +36,8 @@ namespace ProgressOnderwijsUtils.Tests
                     var threadName = "thread" + threadI;
                     for (var i = 0; i < lists.Length; i++) {
                         lists[i] = lists[i]
-                            .Add(threadName, "value")
-                            .Add(threadName, "value")
+                                .Add(threadName, "value")
+                                .Add(threadName, "value")
                             ;
                     }
                     barrier.SignalAndWait();

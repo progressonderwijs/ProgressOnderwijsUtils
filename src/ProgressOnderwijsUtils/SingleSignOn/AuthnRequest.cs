@@ -32,8 +32,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
             using (var stream = new MemoryStream()) {
-                using (var deflate = new DeflateStream(stream, CompressionMode.Compress))
+                using (var deflate = new DeflateStream(stream, CompressionMode.Compress)) {
                     deflate.Write(xml, 0, xml.Length);
+                }
                 return Convert.ToBase64String(stream.ToArray());
             }
         }
@@ -64,7 +65,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",
                 new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                 new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                new XAttribute("ID", XmlConvert.EncodeLocalName(ID)),
+                new XAttribute("ID", XmlConvert.EncodeLocalName(ID) ?? throw new InvalidOperationException("ID must not be null")),
                 new XAttribute("Version", "2.0"),
                 new XAttribute("IssueInstant", DateTime.UtcNow),
                 new XAttribute("Destination", Destination),
@@ -77,8 +78,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     : new XElement(
                         SamlNamespaces.SAMLP_NS + "RequestedAuthnContext",
                         new XElement(SamlNamespaces.SAML_NS + "AuthnContextClassRef", AuthnContextClassRef)
-                        )
-                );
+                    )
+            );
         }
     }
 }

@@ -27,7 +27,9 @@ namespace ProgressOnderwijsUtils
         readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
         T current;
         int rowsProcessed;
-        public int RowsProcessed => rowsProcessed;
+
+        public int RowsProcessed
+            => rowsProcessed;
 
         public MetaObjectDataReader([NotNull] IEnumerable<T> objects, CancellationToken cancellationToken)
         {
@@ -54,18 +56,28 @@ namespace ProgressOnderwijsUtils
             return hasnext;
         }
 
-        public override DataTable GetSchemaTable() => schemaTable;
-        public override int FieldCount => columnInfos.Length;
+        public override DataTable GetSchemaTable()
+            => schemaTable;
+
+        public override int FieldCount
+            => columnInfos.Length;
 
         [NotNull]
-        public override Type GetFieldType(int ordinal) => columnInfos[ordinal].ColumnType;
+        public override Type GetFieldType(int ordinal)
+            => columnInfos[ordinal].ColumnType;
 
-        public override string GetName(int ordinal) => columnInfos[ordinal].Name;
-        public override int GetOrdinal(string name) => columnIndexByName[name];
-        public override int GetInt32(int ordinal) => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
+        public override string GetName(int ordinal)
+            => columnInfos[ordinal].Name;
+
+        public override int GetOrdinal(string name)
+            => columnIndexByName[name];
+
+        public override int GetInt32(int ordinal)
+            => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
 
         [NotNull]
-        public override object GetValue(int ordinal) => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
+        public override object GetValue(int ordinal)
+            => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
 
         public override bool IsDBNull(int ordinal)
         {
@@ -84,13 +96,16 @@ namespace ProgressOnderwijsUtils
         struct ColumnInfo
         {
             public readonly string Name;
+
             //ColumnType is non nullable with enum types replaced by their underlying type
             [NotNull]
             public readonly Type ColumnType;
 
             public readonly Func<T, object> GetUntypedColumnValue;
+
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable
             public readonly Func<T, bool> WhenNullable_IsColumnDBNull;
+
             //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
@@ -173,6 +188,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull() => objectsOrNull_ForDebugging?.SelectIndexable(o => (o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o);
+        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull()
+            => objectsOrNull_ForDebugging?.SelectIndexable(o => (o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o);
     }
 }

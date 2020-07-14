@@ -38,10 +38,16 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public override string ToString() => $"[{Begin}, {End})";
-        public bool Equals(IntegerRange other) => Begin == other.Begin && End == other.End;
-        public override int GetHashCode() => Begin * 397 + End;
+        public override string ToString()
+            => $"[{Begin}, {End})";
 
-        public override bool Equals(object obj) => obj is IntegerRange typed && Equals(typed);
+        public bool Equals(IntegerRange other)
+            => Begin == other.Begin && End == other.End;
+
+        public override int GetHashCode()
+            => Begin * 397 + End;
+
+        public override bool Equals(object obj)
+            => obj is IntegerRange typed && Equals(typed);
     }
 }

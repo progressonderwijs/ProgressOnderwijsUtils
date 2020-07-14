@@ -31,10 +31,19 @@ namespace ProgressOnderwijsUtils.Collections
             : this(new Impl(head, tail.list)) { }
 
         readonly Impl list;
-        public static SList<T> Empty => default(SList<T>);
-        public bool IsEmpty => list == null;
-        public T Head => list.Head;
-        public SList<T> Tail => new SList<T>(list.Tail);
+
+        public static SList<T> Empty
+            => default(SList<T>);
+
+        public bool IsEmpty
+            => list == null;
+
+        public T Head
+            => list.Head;
+
+        public SList<T> Tail
+            => new SList<T>(list.Tail);
+
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 
@@ -57,7 +66,8 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public override bool Equals(object obj) => obj is SList<T> && Equals((SList<T>)obj);
+        public override bool Equals(object obj)
+            => obj is SList<T> other && Equals(other);
 
         [Pure]
         public override int GetHashCode()
@@ -97,7 +107,8 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            => ((IEnumerable<T>)this).GetEnumerator();
     }
 
     public static class SList
@@ -179,20 +190,20 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>([NotNull] IEnumerable<T> list)
+        public static SList<T> Create<T>([NotNull] IEnumerable<T> enumerable)
         {
-            if (list is IList<T>) {
-                return Create((IList<T>)list); //use IList interface for reverse iterability
+            if (enumerable is IList<T> list) {
+                return Create(list); //use IList interface for reverse iterability
             } else {
-                return Create(list.ToArray()); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
+                return Create(enumerable.ToArray()); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
             }
         }
 
         [Pure]
         public static SList<T> Create<T>([NotNull] IList<T> list)
         {
-            if (list is T[]) {
-                return Create((T[])list);
+            if (list is T[] array) {
+                return Create(array);
             }
             var retval = default(SList<T>);
             for (var i = list.Count - 1; i >= 0; i--) {
@@ -212,9 +223,11 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> SingleElement<T>(T element) => new SList<T>(element, default(SList<T>));
+        public static SList<T> SingleElement<T>(T element)
+            => new SList<T>(element, default(SList<T>));
 
         [UsefulToKeep("library method")]
-        public static SList<T> Empty<T>() => default(SList<T>);
+        public static SList<T> Empty<T>()
+            => default(SList<T>);
     }
 }

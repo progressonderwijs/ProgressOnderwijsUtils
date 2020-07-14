@@ -14,7 +14,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
         [Pure]
-        public static bool IsNullOrWhiteSpace([CanBeNull] this string s) => string.IsNullOrWhiteSpace(s);
+        public static bool IsNullOrWhiteSpace([CanBeNull] this string s)
+            => string.IsNullOrWhiteSpace(s);
 
         [CanBeNull]
         [Pure]
@@ -34,20 +35,24 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [NotNull]
         [Pure]
-        public static string NormalizeWhitespace([NotNull] this string str) => str.CollapseWhitespace().Trim();
+        public static string NormalizeWhitespace([NotNull] this string str)
+            => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.
         /// </summary>
         [NotNull]
         [Pure]
-        public static string CollapseWhitespace([NotNull] this string str) => COLLAPSE_WHITESPACE.Replace(str, " ");
+        public static string CollapseWhitespace([NotNull] this string str)
+            => COLLAPSE_WHITESPACE.Replace(str, " ");
 
         [Pure]
-        public static bool EqualsOrdinalCaseInsensitive(this string a, string b) => StringComparer.OrdinalIgnoreCase.Equals(a, b);
+        public static bool EqualsOrdinalCaseInsensitive(this string a, string b)
+            => StringComparer.OrdinalIgnoreCase.Equals(a, b);
 
         [Pure]
-        public static bool Contains([NotNull] this string str, [NotNull] string value, StringComparison compare) => str.IndexOf(value, compare) >= 0;
+        public static bool Contains([NotNull] this string str, [NotNull] string value, StringComparison compare)
+            => str.IndexOf(value, compare) >= 0;
 
         [CanBeNull]
         [Pure]
@@ -61,12 +66,13 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string Replace(this string s, [NotNull] IEnumerable<KeyValuePair<string, string>> replacements) => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
+        public static string Replace(this string s, [NotNull] IEnumerable<KeyValuePair<string, string>> replacements)
+            => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
 
         /// <summary>
-        /// Zet string met alleen hoofdletters om 
+        /// Zet string met alleen hoofdletters om
         /// naar Camel Case. Bv ADIS ABEBA -> Adis Abeba,
-        /// of JAN-BENJAMIN -> Jan-Benjamin, 
+        /// of JAN-BENJAMIN -> Jan-Benjamin,
         /// 'S-GRAVENHAGE -> 's-Gravenhage
         /// </summary>
         [Pure]
@@ -76,7 +82,7 @@ namespace ProgressOnderwijsUtils
                 return s;
             }
 
-            // reguliere conversie 
+            // reguliere conversie
             // (patroon A t/m Z gevolgd door 1 of meer wordcharacters, A t/m Z blijft staan, rest lowercase)
             var upc1 = Regex.Replace(
                 s,
@@ -85,7 +91,7 @@ namespace ProgressOnderwijsUtils
                     var v = match.ToString();
                     return char.ToUpper(v[0]) + v.Substring(1).ToLower();
                 }
-                );
+            );
             // ... maar letters voorafgegaan door ' ('s, 't etc.) naar lowercase
             return Regex.Replace(
                 upc1,

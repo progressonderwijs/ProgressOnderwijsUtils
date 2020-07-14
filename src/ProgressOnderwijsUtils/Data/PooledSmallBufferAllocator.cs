@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using JetBrains.Annotations;
 
@@ -32,8 +32,7 @@ namespace ProgressOnderwijsUtils
                 return new T[length];
             }
             var bag = bagsByIndex[length];
-            T[] result;
-            if (bag.TryDequeue(out result)) {
+            if (bag.TryDequeue(out var result)) {
                 return result;
             }
             return new T[length];

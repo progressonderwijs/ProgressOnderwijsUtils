@@ -11,7 +11,8 @@ namespace ProgressOnderwijsUtils
         public static readonly RandomHelper Secure = new RandomHelper(new RNGCryptoServiceProvider().GetBytes);
 
         [NotNull]
-        public static RandomHelper Insecure(int seed) => new RandomHelper(new Random(seed).NextBytes);
+        public static RandomHelper Insecure(int seed)
+            => new RandomHelper(new Random(seed).NextBytes);
 
         readonly Action<byte[]> fillWithRandomBytes;
 
@@ -28,10 +29,17 @@ namespace ProgressOnderwijsUtils
             return bytes;
         }
 
-        public byte GetByte() => GetBytes(1)[0];
-        public int GetNonNegativeInt32() => (int)GetUInt32((uint)int.MaxValue + 1);
-        public int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
-        public long GetInt64() => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
+        public byte GetByte()
+            => GetBytes(1)[0];
+
+        public int GetNonNegativeInt32()
+            => (int)GetUInt32((uint)int.MaxValue + 1);
+
+        public int GetInt32()
+            => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+
+        public long GetInt64()
+            => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
 
         public uint GetUInt32()
         {
@@ -71,16 +79,20 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public string GetStringOfLatinLower(int length) => GetString(length, 'a', 'z');
+        public string GetStringOfLatinLower(int length)
+            => GetString(length, 'a', 'z');
 
         [NotNull]
-        public string GetStringCapitalized(int length) => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
+        public string GetStringCapitalized(int length)
+            => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
 
         [NotNull]
-        public string GetStringOfLatinUpperOrLower(int length) => GetStringUpperAndLower(length, 'a', 'z');
+        public string GetStringOfLatinUpperOrLower(int length)
+            => GetStringUpperAndLower(length, 'a', 'z');
 
         [NotNull]
-        public string GetStringOfNumbers(int length) => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
+        public string GetStringOfNumbers(int length)
+            => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
 
         [NotNull]
         public string GetString(int length, char min, char max)

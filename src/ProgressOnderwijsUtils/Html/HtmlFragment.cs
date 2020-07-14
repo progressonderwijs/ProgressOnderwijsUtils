@@ -141,8 +141,11 @@ namespace ProgressOnderwijsUtils.Html
                 }
             }
 
-            public bool ShouldUseCollector() => flattenRelevant && totalKids < 64;
-            public KidCollector MakeCollector() => new KidCollector(totalKids);
+            public bool ShouldUseCollector()
+                => flattenRelevant && totalKids < 64;
+
+            public KidCollector MakeCollector()
+                => new KidCollector(totalKids);
         }
 
         struct KidCollector
@@ -167,7 +170,8 @@ namespace ProgressOnderwijsUtils.Html
                 }
             }
 
-            public bool IsFull() => writeIdx == retval.Length;
+            public bool IsFull()
+                => writeIdx == retval.Length;
         }
 
         [Pure]

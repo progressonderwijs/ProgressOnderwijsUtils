@@ -1,4 +1,4 @@
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Data.SqlClient;
 using JetBrains.Annotations;
 
@@ -27,8 +27,7 @@ namespace ProgressOnderwijsUtils
         {
             if (length <= MaxArrayLength) {
                 var bag = bagsByIndex[length];
-                SqlCommand result;
-                if (bag.TryDequeue(out result)) {
+                if (bag.TryDequeue(out var result)) {
                     return result;
                 }
             }

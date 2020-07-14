@@ -19,9 +19,15 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public int IterationsPerTry;
         public int Tries;
         public Action<string> Output = Console.WriteLine;
-        int ReshuffledIndex(int i) => (int)(((ulong)i + 654321ul) * 17547989ul % (uint)IterationsPerTry);
-        int ReshuffledIndexToRowCount(int i) => (int)(Math.Exp((double)i / IterationsPerTry * i / IterationsPerTry * 8) - 0.1);
-        int IndexToRowCount(int i) => ReshuffledIndexToRowCount(ReshuffledIndex(i));
+
+        int ReshuffledIndex(int i)
+            => (int)(((ulong)i + 654321ul) * 17547989ul % (uint)IterationsPerTry);
+
+        int ReshuffledIndexToRowCount(int i)
+            => (int)(Math.Exp((double)i / IterationsPerTry * i / IterationsPerTry * 8) - 0.1);
+
+        int IndexToRowCount(int i)
+            => ReshuffledIndexToRowCount(ReshuffledIndex(i));
 
         void ReportShufflingErrors()
         {
@@ -41,17 +47,18 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             Output($"Testing {Tries} groups of {IterationsPerTry} queries with {rowCounts.Min()}-{rowCounts.Max()} rows");
             Output(
                 $"median: {rowCounts.OrderBy(x => x).Skip((IterationsPerTry - 1) / 2).Take(2).Average()}; "
-                    + $"mean: {rowCounts.Average():f2}; "
-                    + $"{rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}% 0; "
-                    + $"{rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}% 1; "
-                    + $"{rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50; "
-                );
+                + $"mean: {rowCounts.Average():f2}; "
+                + $"{rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}% 0; "
+                + $"{rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}% 1; "
+                + $"{rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50; "
+            );
         }
 
         public void BenchSqlServer(string name, Func<SqlCommandCreationContext, int, int> action)
         {
-            using (var ctx = CreateSqlConnection())
+            using (var ctx = CreateSqlConnection()) {
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(ctx);
+            }
 
             Bench(name, CreateSqlConnection, action);
         }
@@ -64,7 +71,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static SqlCommandCreationContext CreateSqlConnection()
         {
             var conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB");
-            bool ok = false;
+            var ok = false;
             try {
                 conn.Open();
 
@@ -86,7 +93,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                 FailIfMissing = false,
                 DateTimeFormat = SQLiteDateFormats.Ticks,
             }.ToString());
-            bool ok = false;
+            var ok = false;
             try {
                 conn.Open();
 

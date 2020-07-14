@@ -34,7 +34,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] TId>(
+        public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+            TId>(
             [NotNull] SqlCommandCreationContext conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
@@ -173,7 +174,7 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialKeyColumns = pkColumns.Select(name=>initialTableAsEntered.Columns.Single(col=>col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
+            var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
             var delTable = SQL($"[#del_init]");
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialKeyColumns, delTable);

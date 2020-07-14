@@ -3,17 +3,15 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class LineScannerTest
     {
         [Fact]
         public void ReadAndPushbackTest()
         {
             var ls = new LineScanner("Hello\r\nWorld!\n");
-            string line;
 
             PAssert.That(() => !ls.Eof());
-            line = ls.GetLine();
+            var line = ls.GetLine();
             PAssert.That(() => line == "Hello");
 
             PAssert.That(() => !ls.Eof());

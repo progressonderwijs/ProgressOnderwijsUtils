@@ -20,16 +20,18 @@ namespace ProgressOnderwijsUtils
             if (typeof(T) != GetType()) {
                 throw new InvalidOperationException(
                     "Invalid inheritance:\n" +
-                        GetType().FriendlyName() + " inherits from " +
-                        GetType().BaseType.FriendlyName() + " but it was expected to inherit from " +
-                        typeof(ResourceStore<T>).FriendlyName());
+                    GetType().FriendlyName() + " inherits from " +
+                    GetType().BaseType.FriendlyName() + " but it was expected to inherit from " +
+                    typeof(ResourceStore<T>).FriendlyName());
             }
         }
 
         [NotNull]
-        public Stream GetResource(string filename) => typeof(T).GetResource(filename) ?? throw new KeyNotFoundException("Resource not found: " + filename);
+        public Stream GetResource(string filename)
+            => typeof(T).GetResource(filename) ?? throw new KeyNotFoundException("Resource not found: " + filename);
 
-        public bool ResourceExists(string filename) => typeof(T).GetResource(filename) != null;
+        public bool ResourceExists(string filename)
+            => typeof(T).GetResource(filename) != null;
 
         [ItemNotNull]
         public IEnumerable<string> GetResourceNames()

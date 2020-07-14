@@ -29,10 +29,12 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             cross join (select 0 as x union all select 1 union all select 2 union all select 3) f
             cross join (select 0 as x union all select 1 union all select 2 union all select 3) g
         ";
+
         static readonly string formatString = formattableQueryString.Format;
         public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Arg", "@Hehe");
-        public static ParameterizedSql ParameterizedSqlForRows(int rows) => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe"));
 
+        public static ParameterizedSql ParameterizedSqlForRows(int rows)
+            => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe"));
 
         static readonly FormattableString formattableSqliteQueryString = $@"
             select
@@ -45,9 +47,12 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             from example ex
             limit {0}
         ";
+
         static readonly string formatSqliteString = formattableSqliteQueryString.Format;
-        public static readonly string RawSqliteQueryString = string.Format(formatSqliteString,  "@Num2",  "@Hehe", "@Arg", "@Top");
+        public static readonly string RawSqliteQueryString = string.Format(formatSqliteString, "@Num2", "@Hehe", "@Arg", "@Top");
         public static readonly long someInt64Value = int.MaxValue * (long)short.MinValue;
-        public static ParameterizedSql ParameterizedSqliteForRows(int rows) => SafeSql.SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
+
+        public static ParameterizedSql ParameterizedSqliteForRows(int rows)
+            => SafeSql.SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
     }
 }

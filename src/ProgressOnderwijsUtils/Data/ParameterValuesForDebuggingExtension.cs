@@ -19,14 +19,17 @@ namespace ProgressOnderwijsUtils
             public List<object> arguments;
 
             [NotNull]
-            public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter
+            public string RegisterParameterAndGetName<T>([NotNull] T o)
+                where T : IQueryParameter
             {
                 arguments.Add(o.EquatableValue);
                 return "";
             }
 
             public void AppendSql(string sql, int startIndex, int length) { }
-            public static EquatableParameterValueCollector Create() => new EquatableParameterValueCollector { arguments = new List<object>() };
+
+            public static EquatableParameterValueCollector Create()
+                => new EquatableParameterValueCollector { arguments = new List<object>() };
         }
     }
 }

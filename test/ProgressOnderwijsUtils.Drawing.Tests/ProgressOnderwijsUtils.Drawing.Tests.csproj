@@ -3,7 +3,7 @@
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <OutputType>library</OutputType>
-    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils.Drawing\ProgressOnderwijsUtils.Drawing.csproj" />
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>

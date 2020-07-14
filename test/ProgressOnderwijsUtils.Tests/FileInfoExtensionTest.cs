@@ -18,12 +18,9 @@ namespace ProgressOnderwijsUtils.Tests
 
         public void Dispose()
         {
-            try
-            {
+            try {
                 sut.Delete();
-            }
-            finally
-            {
+            } finally {
                 other.Delete();
             }
         }
@@ -32,6 +29,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void SameContentsNull()
         {
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            // ReSharper disable once AssignNullToNotNullAttribute
             Assert.ThrowsAny<ArgumentNullException>(() => { sut.SameContents(null); });
         }
 
@@ -51,23 +49,25 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void SameContentsFilled()
         {
-            using (var fs1 = sut.OpenWrite())
+            using (var fs1 = sut.OpenWrite()) {
                 fs1.WriteByte(0);
-            using (var fs2 = other.OpenWrite())
+            }
+            using (var fs2 = other.OpenWrite()) {
                 fs2.WriteByte(0);
+            }
             PAssert.That(() => sut.SameContents(other));
         }
 
         [Fact]
         public void DifferentLength()
         {
-            using (var fs1 = sut.OpenWrite())
-            {
+            using (var fs1 = sut.OpenWrite()) {
                 fs1.WriteByte(0);
                 fs1.WriteByte(0);
             }
-            using (var fs2 = other.OpenWrite())
+            using (var fs2 = other.OpenWrite()) {
                 fs2.WriteByte(0);
+            }
             PAssert.That(() => !sut.SameContents(other));
         }
 
@@ -81,10 +81,12 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void DifferentContents()
         {
-            using (var fs1 = sut.OpenWrite())
+            using (var fs1 = sut.OpenWrite()) {
                 fs1.WriteByte(0);
-            using (var fs2 = other.OpenWrite())
+            }
+            using (var fs2 = other.OpenWrite()) {
                 fs2.WriteByte(1);
+            }
             PAssert.That(() => !sut.SameContents(other));
         }
     }
