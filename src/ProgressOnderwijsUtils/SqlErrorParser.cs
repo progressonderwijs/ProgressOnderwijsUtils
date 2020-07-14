@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using System.Text.RegularExpressions;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -67,7 +66,7 @@ namespace ProgressOnderwijsUtils
             RegexOptions.Compiled
         );
 
-        static ISqlErrorParseResult? TryParseKeyConstraintViolation([NotNull] string errorMessage)
+        static ISqlErrorParseResult? TryParseKeyConstraintViolation(string errorMessage)
         {
             var match = keyConstraintViolationRegex.Match(errorMessage);
             if (match.Success) {
@@ -81,7 +80,7 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult? TryParseDuplicateKeyUniqueIndex([NotNull] string errorMessage)
+        static ISqlErrorParseResult? TryParseDuplicateKeyUniqueIndex(string errorMessage)
         {
             var match = duplicateKeyUniqueIndexRegex.Match(errorMessage);
             if (match.Success) {
@@ -94,7 +93,7 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult? TryParseCannotInsertNull([NotNull] string errorMessage)
+        static ISqlErrorParseResult? TryParseCannotInsertNull(string errorMessage)
         {
             var match = cannotInsertNullRegex.Match(errorMessage);
             if (match.Success) {
@@ -107,7 +106,7 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult? TryParseGenericConstraintViolation([NotNull] string errorMessage)
+        static ISqlErrorParseResult? TryParseGenericConstraintViolation(string errorMessage)
         {
             var match = genericConstraintViolationRegex.Match(errorMessage);
             if (match.Success) {
@@ -123,13 +122,13 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        public static ISqlErrorParseResult? Parse([NotNull] string errorMessage)
+        public static ISqlErrorParseResult? Parse(string errorMessage)
             => TryParseKeyConstraintViolation(errorMessage)
                 ?? TryParseDuplicateKeyUniqueIndex(errorMessage)
                 ?? TryParseCannotInsertNull(errorMessage)
                 ?? TryParseGenericConstraintViolation(errorMessage);
 
-        public static ISqlErrorParseResult? Parse([NotNull] this SqlError error)
+        public static ISqlErrorParseResult? Parse(this SqlError error)
             => Parse(error.Message);
 
         public static SqlError? FirstContainedSqlErrorOrNull(this Exception? e)

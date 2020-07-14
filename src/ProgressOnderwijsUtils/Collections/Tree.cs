@@ -8,27 +8,22 @@ namespace ProgressOnderwijsUtils.Collections
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
-        [ItemNotNull]
-        [NotNull]
         IReadOnlyList<TTree> Children { get; }
     }
 
     public static class Tree
     {
-        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
             => new Tree<T>(value, children);
 
         // ReSharper disable MethodOverloadWithOptionalParameter
-        [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, params Tree<T>[] kids)
+        public static Tree<T> Node<T>(T value, params Tree<T>[]? kids)
             => new Tree<T>(value, kids);
 
         // ReSharper restore MethodOverloadWithOptionalParameter
 
-        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value)
             => new Tree<T>(value, null);
@@ -40,9 +35,8 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
             where T : notnull
-            => BuildRecursively(root, kidLookup.GetOrDefaultR);
+            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable());
 
-        [NotNull]
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
@@ -117,8 +111,6 @@ namespace ProgressOnderwijsUtils.Collections
     {
         readonly T nodeValue;
 
-        [ItemNotNull]
-        [NotNull]
         readonly Tree<T>[] kidArray;
 
         public T NodeValue
@@ -190,9 +182,8 @@ namespace ProgressOnderwijsUtils.Collections
             bool ShallowEquals(NodePair pair)
                 // ReSharper disable RedundantCast
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
-                => (object)pair.A == (object)pair.B ||
-                    (object)pair.A != null && (object)pair.B != null
-                    && pair.A.Children.Count == pair.B.Children.Count
+                => ReferenceEquals(pair.A, pair.B) ||
+                    pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
             // ReSharper restore RedundantCast
 
@@ -206,10 +197,10 @@ namespace ProgressOnderwijsUtils.Collections
                 }
                 // ReSharper restore HeuristicUnreachableCode
                 // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
+                ulong hash = obj.NodeValue is null ? 0 : (uint)ValueComparer.GetHashCode(obj.NodeValue);
                 ulong offset = 1; //keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
-                    hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
+                    hash += offset * ((uint)(node.NodeValue is null ? 0 : ValueComparer.GetHashCode(node.NodeValue!)) + ((ulong)node.Children.Count << 32));
                     offset += 2;
                 }
                 return (int)((uint)(hash >> 32) + (uint)hash);
@@ -232,9 +223,8 @@ namespace ProgressOnderwijsUtils.Collections
         public override string ToString()
             => "TREE:\n" + ToString("");
 
-        [NotNull]
         [Pure]
-        string ToString([NotNull] string indent)
+        string ToString(string indent)
         {
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";
@@ -244,18 +234,6 @@ namespace ProgressOnderwijsUtils.Collections
                     ? "."
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
                 );
-        }
-
-        [Pure]
-        public int Height()
-        {
-            var height = 1;
-            var nextSet = Children.ToArray();
-            while (nextSet.Length > 0) {
-                height++;
-                nextSet = nextSet.SelectMany(o => o.Children).ToArray();
-            }
-            return height;
         }
     }
 }

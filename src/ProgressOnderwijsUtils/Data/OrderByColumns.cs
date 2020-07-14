@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
             => sortColumns.EmptyIfNull();
 
         public static OrderByColumns Empty
-            => default(OrderByColumns);
+            => default;
 
         public OrderByColumns(IEnumerable<ColumnSort> order)
             => sortColumns = DeduplicateByName(order);
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
             var retval = new List<ColumnSort>();
             var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var col in order) {
-                if (names.Add(col.ColumnName)) {
+                if (names.Add(col.ColumnName.AssertNotNull())) {
                     retval.Add(col);
                 }
             }

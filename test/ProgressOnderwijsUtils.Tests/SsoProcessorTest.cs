@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils.Tests
             var base64EncodedRequest = new AuthnRequest("123", "http://example.com", new ServiceProviderConfig {
                 certificate = certificate,
                 entity = "http://example.com"
-            }).EncodeAndSignAsFormArgument(certificate.GetRSAPrivateKey());
+            }).EncodeAndSignAsFormArgument(certificate.GetRSAPrivateKey().AssertNotNull());
             var rawRequest = Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedRequest));
             var doc = new XmlDocument();
             doc.LoadXml(rawRequest);

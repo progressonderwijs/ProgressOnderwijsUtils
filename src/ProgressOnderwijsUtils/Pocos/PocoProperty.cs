@@ -1,40 +1,48 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IPocoProperty
     {
-        Func<object, object> UntypedGetter { get; }
-        object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
+        [UsefulToKeep("lib method")]
+        Func<object, object?>? UntypedGetter { get; }
+
+        [UsefulToKeep("lib method")]
+        object? UnsafeSetPropertyAndReturnObject(object obj, object? newValue);
+
         Expression PropertyAccessExpression(Expression paramExpr);
         bool IsKey { get; }
         bool CanRead { get; }
         bool CanWrite { get; }
         PropertyInfo PropertyInfo { get; }
+
+        [UsefulToKeep("lib method")]
         IReadOnlyList<object> CustomAttributes { get; }
+
         Type DataType { get; }
         string Name { get; }
+
+        [UsefulToKeep("lib method")]
         ParameterizedSql SqlColumnName { get; }
+
         int Index { get; }
     }
 
     public interface IReadonlyPocoProperty<in TOwner> : IPocoProperty
     {
-        Func<TOwner, object> Getter { get; }
+        Func<TOwner, object?>? Getter { get; }
     }
 
     public interface IPocoProperty<TOwner> : IReadonlyPocoProperty<TOwner>
     {
-        Setter<TOwner> Setter { get; }
+        Setter<TOwner>? Setter { get; }
     }
 
     public static class PocoProperty
@@ -51,7 +59,6 @@ namespace ProgressOnderwijsUtils
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
 
-            [NotNull]
             public Type DataType
                 => PropertyInfo.PropertyType;
 
@@ -63,42 +70,40 @@ namespace ProgressOnderwijsUtils
             public bool CanWrite
                 => setterMethod != null;
 
-            Func<TOwner, object> getter;
+            Func<TOwner, object?>? getter;
 
-            public Func<TOwner, object> Getter
+            public Func<TOwner, object?>? Getter
                 => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
 
-            Setter<TOwner> setter;
+            Setter<TOwner>? setter;
 
-            public Setter<TOwner> Setter
+            public Setter<TOwner>? Setter
                 => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
 
-            Func<object, object> untypedGetter;
+            Func<object, object?>? untypedGetter;
 
-            [CanBeNull]
-            public Func<object, object> UntypedGetter
+            public Func<object, object?>? UntypedGetter
             {
                 get {
                     if (untypedGetter == null) {
                         var localGetter = Getter;
-                        untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
+                        untypedGetter = localGetter is null ? default(Func<object, object?>?) : o => localGetter!((TOwner)o);
                     }
                     return untypedGetter;
                 }
             }
 
-            public object UnsafeSetPropertyAndReturnObject(object o, object newValue)
+            public object? UnsafeSetPropertyAndReturnObject(object o, object? newValue)
             {
                 var typedObj = (TOwner)o;
-                Setter(ref typedObj, newValue);
+                Setter.AssertNotNull()(ref typedObj, newValue);
                 return typedObj;
             }
 
-            [NotNull]
             public Expression PropertyAccessExpression(Expression paramExpr)
                 => Expression.Property(paramExpr, PropertyInfo);
 
-            public Impl([NotNull] PropertyInfo pi, int implicitOrder, [NotNull] object[] attrs)
+            public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
             {
                 PropertyInfo = pi;
                 Name = pi.Name;
@@ -117,7 +122,7 @@ namespace ProgressOnderwijsUtils
             public override string ToString()
                 => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
 
-            static Setter<TOwner> MkSetter([CanBeNull] MethodInfo setterMethod, Type propertyType)
+            static Setter<TOwner>? MkSetter(MethodInfo? setterMethod, Type propertyType)
             {
                 if (setterMethod == null) {
                     return null;
@@ -139,7 +144,7 @@ namespace ProgressOnderwijsUtils
                 //  ).Compile();
             }
 
-            static Func<TOwner, object> MkGetter([CanBeNull] MethodInfo getterMethod, Type propertyType)
+            static Func<TOwner, object?>? MkGetter(MethodInfo? getterMethod, Type propertyType)
             {
                 //TODO:optimize: this is still a hotspot :-(
                 if (getterMethod == null) {
@@ -159,18 +164,17 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            readonly MethodInfo setterMethod;
-            readonly MethodInfo getterMethod;
+            readonly MethodInfo? setterMethod;
+            readonly MethodInfo? getterMethod;
         }
 
-        [NotNull]
-        static T MkDelegate<T>([NotNull] MethodInfo mi)
+        static T MkDelegate<T>(MethodInfo mi)
             => (T)(object)Delegate.CreateDelegate(typeof(T), mi);
 
         interface IOutCaster
         {
-            Func<TObj, object> GetterBoxed<TObj>(MethodInfo method);
-            Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method);
+            Func<TObj, object?> GetterBoxed<TObj>(MethodInfo method);
+            Func<TObj, object?> StructGetterBoxed<TObj>(MethodInfo method);
             Setter<TObj> SetterChecked<TObj>(MethodInfo method);
             Setter<TObj> StructSetterChecked<TObj>(MethodInfo method);
         }
@@ -181,41 +185,37 @@ namespace ProgressOnderwijsUtils
 
         sealed class OutCaster<TOut> : IOutCaster
         {
-            [NotNull]
-            public Func<TObj, object> GetterBoxed<TObj>([NotNull] MethodInfo method)
+            public Func<TObj, object?> GetterBoxed<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<Func<TObj, TOut>>(method);
                 return o => f(o);
             }
 
-            [NotNull]
-            public Func<TObj, object> StructGetterBoxed<TObj>([NotNull] MethodInfo method)
+            public Func<TObj, object?> StructGetterBoxed<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
                 return o => f(ref o);
             }
 
-            [NotNull]
-            public Setter<TObj> SetterChecked<TObj>([NotNull] MethodInfo method)
+            public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<Action<TObj, TOut>>(method);
-                return (ref TObj o, object v) => f(o, (TOut)v);
+                return (ref TObj o, object? v) => f(o, (TOut)v!);
             }
 
-            [NotNull]
-            public Setter<TObj> StructSetterChecked<TObj>([NotNull] MethodInfo method)
+            public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
-                return (ref TObj o, object v) => f(ref o, (TOut)v);
+                return (ref TObj o, object? v) => f(ref o, (TOut)v!);
             }
         }
 
         static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
         static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
-        static IOutCaster GetCaster([NotNull] Type propType)
-            => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
+        static IOutCaster GetCaster(Type propType)
+            => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)).AssertNotNull());
     }
 
-    public delegate void Setter<T>(ref T obj, object value);
+    public delegate void Setter<T>(ref T obj, object? value);
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -22,10 +21,27 @@ namespace ProgressOnderwijsUtils
     public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
         where T : IReadImplicitly
     {
+        readonly struct Optional
+        {
+            public readonly bool HasValue;
+            readonly T Value;
+
+            public Optional(T value)
+            {
+                HasValue = true;
+                Value = value;
+            }
+
+            public static readonly Optional Empty = default;
+
+            public T GetValue()
+                => HasValue ? Value : throw new InvalidOperationException("Has no value");
+        }
+
         readonly CancellationToken _cancellationToken;
         readonly IEnumerator<T> pocos;
         readonly IReadOnlyList<T>? objectsOrNull_ForDebugging;
-        [AllowNull][MaybeNull] T current;
+        Optional current;
         int rowsProcessed;
 
         public int RowsProcessed
@@ -36,14 +52,14 @@ namespace ProgressOnderwijsUtils
             _cancellationToken = cancellationToken;
             pocos = objects.GetEnumerator();
             objectsOrNull_ForDebugging = objects as IReadOnlyList<T>;
-            current = default;
+            current = Optional.Empty;
         }
 
         public override void Close()
         {
             pocos.Dispose();
             isClosed = true;
-            current = default;
+            current = Optional.Empty;
         }
 
         protected override bool ReadImpl()
@@ -51,8 +67,10 @@ namespace ProgressOnderwijsUtils
             _cancellationToken.ThrowIfCancellationRequested();
             var hasnext = pocos.MoveNext();
             if (hasnext) {
-                current = pocos.Current;
+                current = new Optional(pocos.Current);
                 rowsProcessed++;
+            } else {
+                current = Optional.Empty;
             }
             return hasnext;
         }
@@ -73,15 +91,15 @@ namespace ProgressOnderwijsUtils
             => columnIndexByName[name];
 
         public override int GetInt32(int ordinal)
-            => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
+            => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current.GetValue());
 
         public override object GetValue(int ordinal)
-            => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
+            => columnInfos[ordinal].GetUntypedColumnValue(current.GetValue()) ?? DBNull.Value;
 
         public override bool IsDBNull(int ordinal)
         {
             var func = columnInfos[ordinal].WhenNullable_IsColumnDBNull;
-            return func != null && func(current);
+            return func != null && func(current.GetValue());
         }
 
         public override TColumn GetFieldValue<TColumn>(int ordinal)
@@ -89,16 +107,15 @@ namespace ProgressOnderwijsUtils
             if (!(columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter)) {
                 throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
             }
-            return getter(current);
+            return getter(current.GetValue());
         }
 
-        struct ColumnInfo
+        readonly struct ColumnInfo
         {
             public readonly string Name;
 
             //ColumnType is non nullable with enum types replaced by their underlying type
             public readonly Type ColumnType;
-
             public readonly Func<T, object> GetUntypedColumnValue;
 
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable

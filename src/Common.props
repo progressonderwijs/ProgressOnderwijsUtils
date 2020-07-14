@@ -1,0 +1,28 @@
+﻿<Project>
+  <PropertyGroup>
+    <Authors>Progress Onderwijs</Authors>
+    <Owners>Progress Onderwijs</Owners>
+
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <RepositoryUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>library</OutputType>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <NoWarn>CS1591, IDE1006</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Source link: -->
+    <DebugType>portable</DebugType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+</Project>

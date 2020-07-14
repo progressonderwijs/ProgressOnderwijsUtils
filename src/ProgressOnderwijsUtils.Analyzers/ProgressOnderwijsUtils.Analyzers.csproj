@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\NugetPackagesCommon.props" />
+  <PropertyGroup>
+    <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
+    <PackageTags>ProgressOnderwijs</PackageTags>
+    <PackageReleaseNotes>Removed the POU2001 analyzer because it adds significant compile-time overhead and can also be implemented with a Maybe.WhenOk() overload.</PackageReleaseNotes>
+    <Version>2.0.0</Version>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.6.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- It puts the dll in the expected folder of the NuGet package to be recognized as a C# analyzer -->
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+</Project>

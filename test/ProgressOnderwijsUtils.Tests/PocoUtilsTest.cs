@@ -24,8 +24,12 @@ namespace ProgressOnderwijsUtils.Tests
         public string HiddenProperty { get; set; }
         public string LabelledProperty { get; set; }
         public string MpReadonlyProperty { get; set; }
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0051 // Remove unused private members
         string PrivateProperty { get; }
         DateTime PrivateField;
+#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore IDE0051 // Remove unused private members
         public readonly double ReadonlyField;
 
         public double ReadonlyProperty
@@ -105,11 +109,11 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var o = new SimpleObject { Property = "foo", LabelledProperty = "bar" };
             var moDef = PocoUtils.GetProperties<SimpleObject>();
-            PAssert.That(() => (string)moDef.GetByName("Property").Getter(o) == "foo");
-            PAssert.That(() => (string)moDef.GetByName("labelledProperty").Getter(o) == "bar");
+            PAssert.That(() => (string?)moDef.GetByName("Property").Getter!(o) == "foo");
+            PAssert.That(() => (string?)moDef.GetByName("labelledProperty").Getter!(o) == "bar");
 
-            moDef.GetByName("property").Setter(ref o, "aha");
-            moDef.GetByName("LabelledProperty").Setter(ref o, "really");
+            moDef.GetByName("property").Setter!(ref o, "aha");
+            moDef.GetByName("LabelledProperty").Setter!(ref o, "really");
 
             PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
         }
@@ -127,9 +131,9 @@ namespace ProgressOnderwijsUtils.Tests
             var obj = new SetterTestStruct();
             var prop = PocoUtils.GetByExpression((SetterTestStruct o) => o.IntProperty);
 
-            PAssert.That(() => (int)prop.Getter(obj) == 0);
-            prop.Setter(ref obj, 42);
-            PAssert.That(() => (int)prop.Getter(obj) == 42);
+            PAssert.That(() => (int?)prop.Getter!(obj) == 0);
+            prop.Setter!(ref obj, 42);
+            PAssert.That(() => (int?)prop.Getter!(obj) == 42);
         }
 
         [Fact]
@@ -138,9 +142,9 @@ namespace ProgressOnderwijsUtils.Tests
             var obj = new SetterTestStruct();
             var prop = PocoUtils.GetByExpression((SetterTestStruct o) => o.StringProperty);
 
-            PAssert.That(() => prop.Getter(obj) == null);
-            prop.Setter(ref obj, "42");
-            PAssert.That(() => (string)prop.Getter(obj) == "42");
+            PAssert.That(() => prop.Getter!(obj) == null);
+            prop.Setter!(ref obj, "42");
+            PAssert.That(() => (string?)prop.Getter!(obj) == "42");
         }
 
         [Fact]
@@ -149,9 +153,9 @@ namespace ProgressOnderwijsUtils.Tests
             var obj = new SetterTestClass();
             var prop = PocoUtils.GetByExpression((SetterTestClass o) => o.IntProperty);
 
-            PAssert.That(() => (int)prop.Getter(obj) == 0);
-            prop.Setter(ref obj, 42);
-            PAssert.That(() => (int)prop.Getter(obj) == 42);
+            PAssert.That(() => (int?)prop.Getter!(obj) == 0);
+            prop.Setter!(ref obj, 42);
+            PAssert.That(() => (int?)prop.Getter!(obj) == 42);
         }
 
         [Fact]
@@ -160,9 +164,9 @@ namespace ProgressOnderwijsUtils.Tests
             var obj = new SetterTestClass();
             var prop = PocoUtils.GetByExpression((SetterTestClass o) => o.StringProperty);
 
-            PAssert.That(() => prop.Getter(obj) == null);
-            prop.Setter(ref obj, "42");
-            PAssert.That(() => (string)prop.Getter(obj) == "42");
+            PAssert.That(() => prop.Getter!(obj) == null);
+            prop.Setter!(ref obj, "42");
+            PAssert.That(() => (string?)prop.Getter!(obj) == "42");
         }
     }
 }

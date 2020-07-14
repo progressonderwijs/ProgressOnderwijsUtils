@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using ProgressOnderwijsUtils.Collections;
@@ -245,14 +246,14 @@ namespace ProgressOnderwijsUtils
             if (precision > 0) {
                 do {
                     var tmp = x;
-                    x = x / 10;
+                    x /= 10;
                     str[idx++] = (char)('0' + (tmp - x * 10));
                 } while (idx < precision);
                 str[idx++] = fI.PercentDecimalSeparator[0];
             }
             do {
                 var tmp = x;
-                x = x / 10;
+                x /= 10;
                 str[idx++] = (char)('0' + (tmp - x * 10));
             } while (x != 0);
             if (isNeg) {
@@ -275,19 +276,19 @@ namespace ProgressOnderwijsUtils
             var res = 0;
             if (x >= 1 << 16) {
                 res += 16;
-                x = x >> 16;
+                x >>= 16;
             }
             if (x >= 1 << 8) {
                 res += 8;
-                x = x >> 8;
+                x >>= 8;
             }
             if (x >= 1 << 4) {
                 res += 4;
-                x = x >> 4;
+                x >>= 4;
             }
             if (x >= 1 << 2) {
                 res += 2;
-                x = x >> 2;
+                x >>= 2;
             }
             if (x >= 1 << 1) {
                 res += 1;
@@ -326,12 +327,10 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
 
         public ComparisonComparer(Comparison<T> comparer)
-        {
-            this.comparer = comparer;
-        }
+            => this.comparer = comparer;
 
-        public int Compare(T x, T y)
-            => comparer(x, y);
+        public int Compare([AllowNull] T x, [AllowNull] T y)
+            => comparer(x!, y!);
     }
 
     public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -345,10 +344,11 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y)
-            => equals(x, y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals([AllowNull] T x, [AllowNull] T y)
+            => x == null ? y == null : y != null && equals(x, y);
 
-        public int GetHashCode([DisallowNull] T obj)
-            => hashCode == null ? obj! /*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
+        public int GetHashCode(T obj)
+            => hashCode != null ? hashCode(obj) : obj != null ? obj.GetHashCode() : 0;
     }
 }

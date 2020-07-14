@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Tests
                 if (delay.TotalHours >= 0.5) { //half of the convergened limit
                     break;
                 }
-                currentMoment = currentMoment + delay;
+                currentMoment += delay;
                 errorsNecessaryToReachHalfOfDelayLimit++;
             }
 

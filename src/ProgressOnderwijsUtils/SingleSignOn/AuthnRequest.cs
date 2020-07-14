@@ -6,7 +6,6 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -27,20 +26,17 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             AuthnContextClassRef = null;
         }
 
-        [NotNull]
         public string EncodeAsQueryArgument()
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
-            using (var stream = new MemoryStream()) {
-                using (var deflate = new DeflateStream(stream, CompressionMode.Compress)) {
-                    deflate.Write(xml, 0, xml.Length);
-                }
-                return Convert.ToBase64String(stream.ToArray());
+            using var stream = new MemoryStream();
+            using (var deflate = new DeflateStream(stream, CompressionMode.Compress)) {
+                deflate.Write(xml, 0, xml.Length);
             }
+            return Convert.ToBase64String(stream.ToArray());
         }
 
-        [NotNull]
-        public string EncodeAndSignAsFormArgument([NotNull] RSA key)
+        public string EncodeAndSignAsFormArgument(RSA key)
         {
             var doc = new XmlDocument { PreserveWhitespace = false };
             doc.Load(ToXml().CreateReader());
@@ -58,7 +54,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.InnerXml));
         }
 
-        [NotNull]
         XElement ToXml()
             => new XElement(
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",

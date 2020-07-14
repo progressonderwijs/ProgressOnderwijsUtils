@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using JetBrains.Annotations;
 using MoreLinq;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
@@ -51,13 +50,13 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public sealed class ReferenceTypeArrayBuilderBenchmark : ArrayBuilderBenchmark<object, ReferenceTypeArrayBuilderBenchmark.Factory>
+    public sealed class ReferenceTypeArrayBuilderBenchmark : ArrayBuilderBenchmark<object?, ReferenceTypeArrayBuilderBenchmark.Factory>
     {
-        public struct Factory : IFactory<object>
+        public struct Factory : IFactory<object?>
         {
-            static readonly object[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
+            static readonly object?[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
 
-            public object Init(int value)
+            public object? Init(int value)
                 => Values[value & 7];
         }
     }
@@ -265,7 +264,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {
@@ -327,7 +325,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {
@@ -388,7 +385,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {

@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void AppendingNullToNullReturnsEmpty()
-            => PAssert.That(() => default(int[]).ConcatArray(default(int[])) == Array.Empty<int>());
+            => PAssert.That(() => default(int[]).ConcatArray(default) == Array.Empty<int>());
 
         [Fact]
         public void AppendingSomethingToNullOrViceVersaReturnsSomething()

@@ -36,6 +36,6 @@ namespace ProgressOnderwijsUtils
 
     [AttributeUsage(AttributeTargets.All)]
     [UsefulToKeep("library attribute")]
-    [MeansImplicitUse]
+    [MeansImplicitUse(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public sealed class UsedImplicitlyBySerializationAttribute : Attribute { }
 }

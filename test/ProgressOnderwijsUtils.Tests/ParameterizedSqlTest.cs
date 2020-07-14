@@ -217,9 +217,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var badQuery = SQL($@"A{{x{1}}}Z");
             Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
-            using (var conn = new SqlConnection()) {
-                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
-            }
+            using var conn = new SqlConnection();
+            Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
         }
 
         [Fact]

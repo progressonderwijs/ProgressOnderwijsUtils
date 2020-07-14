@@ -43,11 +43,11 @@ namespace ProgressOnderwijsUtils.Tests
             var orderOfWhereTrueCalls = new List<string>();
             var orderOfWhereFalseCalls = new List<string>();
 
-            var unused = tree.Where(n => {
+            var unused1 = tree.Where(n => {
                 orderOfWhereTrueCalls.Add(n.NodeValue);
                 return true;
             });
-            unused = tree.Where(n => {
+            var unused2 = tree.Where(n => {
                 orderOfWhereFalseCalls.Add(n.NodeValue);
                 return false;
             });

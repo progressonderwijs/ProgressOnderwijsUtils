@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
@@ -61,7 +60,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public IEnumerable<View> AllViews
             => viewById.Values;
 
-        [NotNull]
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 

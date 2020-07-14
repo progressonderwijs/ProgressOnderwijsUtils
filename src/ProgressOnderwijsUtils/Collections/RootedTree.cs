@@ -5,19 +5,17 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
+    public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
-        public static RootedTree<T> RootTree([NotNull] Tree<T> rootNode)
+        public static RootedTree<T> RootTree(Tree<T> rootNode)
             => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
 
-        [NotNull]
         public IEnumerable<RootedTree<T>> PathSelfToRoot()
             => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
 
         public int IndexInParent()
             => PathSegments.Head.Index;
 
-        [NotNull]
         public Tree<T> UnrootedSubTree()
             => PathSegments.Head.ThisSubTree;
 
@@ -44,6 +42,12 @@ namespace ProgressOnderwijsUtils.Collections
         public RootedTree<T> Root
             => PathSegments.Last().ThisSubTree.RootHere();
 
+        public RootedTree<T> PreviousSibling()
+            => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? default : Parent.Children[IndexInParent() - 1];
+
+        public RootedTree<T> NextSibling()
+            => !HasValue || IsRoot || IndexInParent() + 1 >= Parent.Children.Count ? default : Parent.Children[IndexInParent() + 1];
+
         public bool Equals(RootedTree<T> other)
             //two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
             => PathSegments.Last().ThisSubTree.Equals(other.PathSegments.Last().ThisSubTree)
@@ -61,14 +65,13 @@ namespace ProgressOnderwijsUtils.Collections
 
         readonly SList<TreePathSegment> PathSegments;
 
-        struct TreePathSegment
+        readonly struct TreePathSegment
         {
             public readonly int Index;
 
-            [NotNull]
             public readonly Tree<T> ThisSubTree;
 
-            public TreePathSegment(int index, [NotNull] Tree<T> node)
+            public TreePathSegment(int index, Tree<T> node)
             {
                 Index = index;
                 ThisSubTree = node;
@@ -76,7 +79,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public RootedTree<T> ReplaceSubTree([NotNull] Tree<T> newSubTree)
+        public RootedTree<T> ReplaceSubTree(Tree<T> newSubTree)
         {
             if (IsRoot) {
                 return newSubTree.RootHere();
@@ -90,9 +93,8 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        [NotNull]
         [Pure]
-        static Tree<T>[] CopyArrayWithNewValueOnIndex([NotNull] IReadOnlyList<Tree<T>> oldArray, int index, Tree<T> newValue)
+        static Tree<T>[] CopyArrayWithNewValueOnIndex(IReadOnlyList<Tree<T>> oldArray, int index, Tree<T> newValue)
         {
             var copy = oldArray.ToArray();
             copy[index] = newValue;

@@ -19,7 +19,6 @@ namespace ProgressOnderwijsUtils
             => string.IsNullOrWhiteSpace(s);
 
         [Pure]
-        [return: NotNullIfNotNull("str")]
         public static string? NullIfWhiteSpace(this string? str)
         {
             if (string.IsNullOrWhiteSpace(str)) {

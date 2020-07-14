@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
@@ -10,19 +9,21 @@ namespace ProgressOnderwijsUtils.Collections
     {
         sealed class TreeNodeBuilder
         {
-            public T value;
-            public TreeNodeBuilder parent;
+            public readonly T value;
+            public TreeNodeBuilder? parent;
             public int idxInParent;
-            public Tree<T>[] kids;
+            public Tree<T>[]? kids;
+            public TreeNodeBuilder(T value)
+                => this.value = value;
         }
 
         [Pure]
-        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
+        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>?> kidLookup)
         {
             var needsKids = new Stack<TreeNodeBuilder>();
 
             var generatedNodes = 0;
-            var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+            var rootBuilder = new TreeNodeBuilder (rootNodeValue);
             generatedNodes++;
 
             needsKids.Push(rootBuilder);
@@ -33,7 +34,7 @@ namespace ProgressOnderwijsUtils.Collections
                 if (kids != null) { //allow null to represent absence of kids
                     var kidIdx = 0;
                     foreach (var kid in kids) {
-                        var builderForKid = new TreeNodeBuilder { value = kid, idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids };
+                        var builderForKid = new TreeNodeBuilder(kid) { idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids };
                         generatedNodes++;
 
                         if (generatedNodes >= 10_000_000) {
@@ -54,12 +55,12 @@ namespace ProgressOnderwijsUtils.Collections
                         if (toGenerate.parent == null) {
                             return finishedNode;
                         }
-                        Debug.Assert(toGenerate.parent.kids[toGenerate.idxInParent] == null, "has already been generated");
-                        toGenerate.parent.kids[toGenerate.idxInParent] = finishedNode;
+                        Debug.Assert(toGenerate.parent.kids?[toGenerate.idxInParent] == null, "has already been generated");
+                        toGenerate.parent.kids![toGenerate.idxInParent] = finishedNode;
                         toGenerate = toGenerate.parent;
                     } else {
-                        Debug.Assert(toGenerate.parent.kids[toGenerate.idxInParent] == null, "has already been generated");
-                        toGenerate.parent.kids[toGenerate.idxInParent] = finishedNode;
+                        Debug.Assert(toGenerate.parent?.kids?[toGenerate.idxInParent] == null, "has already been generated");
+                        toGenerate.parent!.kids![toGenerate.idxInParent] = finishedNode;
                         break;
                     }
                 }

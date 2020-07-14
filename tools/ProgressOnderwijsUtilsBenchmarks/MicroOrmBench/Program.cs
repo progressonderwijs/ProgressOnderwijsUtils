@@ -1,7 +1,4 @@
-#nullable disable
-using JetBrains.Annotations;
-
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
+﻿namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class MicroOrmBenchmarkProgram
     {
@@ -13,7 +10,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             RunCurrentBenchmarks(benchmarker);
         }
 
-        static void RunCurrentBenchmarks([NotNull] Benchmarker benchmarker)
+        static void RunCurrentBenchmarks(Benchmarker benchmarker)
         {
             ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);

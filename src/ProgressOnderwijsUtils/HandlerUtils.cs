@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,7 +12,6 @@ namespace ProgressOnderwijsUtils
         /// Only one output event can be called simultaneously, so if the handler takes longer than "delay" then the next call will start after the previous has ended.
         /// Only one such
         /// </summary>
-        [NotNull]
         public static Action Debounce(TimeSpan delay, Action handler)
         {
             var sync = new object();

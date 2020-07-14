@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
@@ -45,7 +44,6 @@ namespace ProgressOnderwijsUtils
         public int Count
             => Properties.Length;
 
-        [NotNull]
         static IPocoProperty<T>[] GetPropertiesImpl()
         {
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -58,8 +56,7 @@ namespace ProgressOnderwijsUtils
             return properties;
         }
 
-        [NotNull]
-        public IPocoProperty<T> GetByExpression<TProp>([NotNull] Expression<Func<T, TProp>> propertyExpression)
+        public IPocoProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = PocoUtils.GetMemberInfo(propertyExpression);
             if (indexByName.TryGetValue(memberInfo.Name, out var propIdx)) {

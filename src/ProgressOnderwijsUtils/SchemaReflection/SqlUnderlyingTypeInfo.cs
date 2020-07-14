@@ -24,7 +24,7 @@
                 return "(" + Precision + "," + Scale + ")";
             } else if (XType == SqlXType.NVarChar || XType == SqlXType.NChar) {
                 return MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength / 2 + ")";
-            } else if (XType == SqlXType.VarChar || XType == SqlXType.Char || XType == SqlXType.VarBinary) {
+            } else if (XType == SqlXType.VarChar || XType == SqlXType.Char || XType == SqlXType.VarBinary || XType == SqlXType.Binary) {
                 return MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength + ")";
             } else {
                 return "";
