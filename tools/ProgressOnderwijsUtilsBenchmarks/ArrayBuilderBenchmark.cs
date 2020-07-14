@@ -127,8 +127,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void List()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -141,12 +140,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -159,12 +156,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder2()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -177,12 +172,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_WithArraySegments()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -195,12 +188,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline63ValuesAndSegments()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -213,12 +204,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline16ValuesAndSegments()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -231,12 +220,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline32ValuesAndSegments()
-        {
-            Task.WaitAll(
+            => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
                     __ => Task.Factory.StartNew(
                         () => {
@@ -249,7 +236,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
                             }
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         public static void SanityCheck()
         {
