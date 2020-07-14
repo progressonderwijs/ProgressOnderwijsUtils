@@ -27,11 +27,9 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void SameContentsNull()
-        {
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
             // ReSharper disable once AssignNullToNotNullAttribute
-            Assert.ThrowsAny<ArgumentNullException>(() => { sut.SameContents(null); });
-        }
+            => Assert.ThrowsAny<ArgumentNullException>(() => sut.SameContents(null));
 
         [Fact]
         public void SameContentsSame()
@@ -42,9 +40,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void SameContentsEmpty()
-        {
-            PAssert.That(() => sut.SameContents(other));
-        }
+            => PAssert.That(() => sut.SameContents(other));
 
         [Fact]
         public void SameContentsFilled()

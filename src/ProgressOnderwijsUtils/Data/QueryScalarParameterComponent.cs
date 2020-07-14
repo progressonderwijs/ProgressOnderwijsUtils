@@ -8,15 +8,17 @@ namespace ProgressOnderwijsUtils
         public object EquatableValue { get; private set; }
 
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
-        {
-            paramArgs.Value = EquatableValue == CurrentTimeToken.Instance ? DateTime.Now : EquatableValue;
-        }
+            => paramArgs.Value = EquatableValue == CurrentTimeToken.Instance ? DateTime.Now : EquatableValue;
 
         public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, [CanBeNull] object o)
             where TCommandFactory : struct, ICommandFactory
         {
-            var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
-            ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+            if (o == null || o == DBNull.Value) {
+                ParameterizedSqlFactory.AppendSql(ref factory, "NULL");
+            } else {
+                var param = new QueryScalarParameterComponent { EquatableValue = o };
+                ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+            }
         }
     }
 }

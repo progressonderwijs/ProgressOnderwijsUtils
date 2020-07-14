@@ -13,10 +13,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         public static int CollegeJaar(this DateTime datetime)
-        {
             //Als startdatum januari t/m augustus dan is het collegejaar een jaar eerder
-            return datetime.Year - (datetime.Month < 9 ? 1 : 0);
-        }
+            => datetime.Year - (datetime.Month < 9 ? 1 : 0);
 
         [Pure]
         public static bool Overlapt(this Periode periode1, Periode periode2)

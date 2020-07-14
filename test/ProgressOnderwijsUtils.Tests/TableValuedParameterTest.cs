@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgressOnderwijsUtils.Internal;
 using ProgressOnderwijsUtils.SchemaReflection;
+using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -19,10 +21,41 @@ namespace ProgressOnderwijsUtils.Tests
         public enum SomeEnum { }
 
         [Fact]
+        public void ConvertibleProperty()
+        {
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>>(Connection);
+            PAssert.That(() => value.Value == "aap");
+        }
+
+        [Fact]
+        public void ConvertibleNullablePropertyWitValue()
+        {
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>?>(Connection);
+            PAssert.That(() => value.Value.Value == "aap");
+        }
+
+        [Fact]
+        public void ConvertibleNullablePropertyWithoutValue()
+        {
+            var value = SQL($@"select {default(TrivialConvertibleValue<string>?)}").ReadScalar<TrivialConvertibleValue<string>?>(Connection);
+            PAssert.That(() => value == null);
+        }
+
+        [Fact]
+        public void ConvertibleNonNullablePropertyWithoutValueShouldThrow()
+        {
+            var nullStringReturningQuery = SQL($@"select cast(null as nvarchar(max))");
+
+            var unused = nullStringReturningQuery.ReadScalar<string>(Connection); //assert query OK.
+
+            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialConvertibleValue<string>>(Connection));
+        }
+
+        [Fact]
         public void DatabaseCanProcessTableValuedParameters()
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
-            var sum = q.ReadScalar<int>(Context);
+            var sum = q.ReadScalar<int>(Connection);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -30,7 +63,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ParameterizedSqlCanIncludeTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
-            var sum = q.ReadScalar<int>(Context);
+            var sum = q.ReadScalar<int>(Connection);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -38,11 +71,11 @@ namespace ProgressOnderwijsUtils.Tests
         public void SingletonTvPsCanBeExecuted()
         {
             var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
-            using (var cmd = q.CreateSqlCommand(Context)) {
+            using (var cmd = q.CreateSqlCommand(Connection, CommandTimeout.WithoutTimeout)) {
                 //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
                 PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
             }
-            var sum = q.ReadScalar<int>(Context);
+            var sum = q.ReadScalar<int>(Connection);
             PAssert.That(() => sum == 1);
         }
 
@@ -50,7 +83,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (SomeEnum)i)} x");
-            var sum = (int)q.ReadScalar<SomeEnum>(Context);
+            var sum = (int)q.ReadScalar<SomeEnum>(Connection);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -58,7 +91,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
             var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
-            var dayCount = q.ReadScalar<int>(Context);
+            var dayCount = q.ReadScalar<int>(Connection);
             PAssert.That(() => dayCount == 5);
         }
 
@@ -66,7 +99,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ParameterizedSqlTvpsCanCountStrings()
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
-            var dayCount = q.ReadScalar<int>(Context);
+            var dayCount = q.ReadScalar<int>(Connection);
             PAssert.That(() => dayCount == 2);
         }
 
@@ -77,23 +110,21 @@ namespace ProgressOnderwijsUtils.Tests
             var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
             var tableName = SQL($"#strings");
-            SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
+            SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+            metaObjects.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-            var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
-            SQL($@"drop table #strings").ExecuteNonQuery(Context);
+            var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Connection);
+            SQL($@"drop table #strings").ExecuteNonQuery(Connection);
             PAssert.That(() => stringsWithNull.SetEqual(output));
         }
 
         [Fact]
         public void Binary_columns_can_be_used_in_tvps()
-        {
-            PAssert.That(() => SQL($@"
+            => PAssert.That(() => SQL($@"
                 select sum(datalength(hashes.QueryTableValue))
                 from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
-            ").ReadPlain<long>(Context).Single() == 16);
-        }
+            ").ReadPlain<long>(Connection).Single() == 16);
 
         public sealed class TestDataMetaObject : IMetaObject
         {
@@ -121,9 +152,9 @@ namespace ProgressOnderwijsUtils.Tests
 
                 insert into get_bytes_test
                 values ({testData});
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Context))
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault))
             using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
                 Assert_DataReader_GetBytes_works(reader);
             }

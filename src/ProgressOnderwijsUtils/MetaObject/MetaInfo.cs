@@ -64,13 +64,16 @@ namespace ProgressOnderwijsUtils
         public IMetaProperty<T> GetByExpression<TProp>([NotNull] Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
-            var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.
-            if (retval == null) {
-                throw new ArgumentException(
-                    "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-                    "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
+            if (indexByName.TryGetValue(memberInfo.Name, out var metapropIdx)) {
+                var metaprop = MetaProperties[metapropIdx];
+                if (metaprop.PropertyInfo == memberInfo) {
+                    return metaprop;
+                }
             }
-            return retval;
+
+            throw new ArgumentException(
+                "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+                "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
         }
 
         public IEnumerator<IMetaProperty<T>> GetEnumerator()

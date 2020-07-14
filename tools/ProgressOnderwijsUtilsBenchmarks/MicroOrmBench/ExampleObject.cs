@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     public sealed class ExampleObject : IMetaObject
     {
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Arg", "@Hehe");
 
         public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe"));
+            => SQL(FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe"));
 
         static readonly FormattableString formattableSqliteQueryString = $@"
             select
@@ -53,6 +54,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static readonly long someInt64Value = int.MaxValue * (long)short.MinValue;
 
         public static ParameterizedSql ParameterizedSqliteForRows(int rows)
-            => SafeSql.SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
+            => SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
     }
 }

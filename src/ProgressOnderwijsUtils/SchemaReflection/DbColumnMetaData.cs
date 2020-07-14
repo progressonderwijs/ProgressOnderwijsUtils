@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
@@ -41,7 +42,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                         + 2*c.is_computed
                         + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
                         + 8*c.is_identity
-                        + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
+                        + 16*iif(c.default_object_id <> 0, convert(bit, 1), convert(bit, 0))
                         )
                 from {fromTempDb && SQL($"tempdb.")}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
@@ -49,7 +50,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             ");
 
             [NotNull]
-            public static DbColumnMetaData[] RunQuery([NotNull] SqlCommandCreationContext conn, bool fromTempDb, ParameterizedSql filter)
+            public static DbColumnMetaData[] RunQuery([NotNull] SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
                 => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
@@ -159,11 +160,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
         [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, ParameterizedSql objectName)
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, ParameterizedSql objectName)
             => ColumnMetaDatas(conn, objectName.CommandText());
 
         [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, [NotNull] string qualifiedObjectName)
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, [NotNull] string qualifiedObjectName)
         {
             var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
                 ? CompressedSysColumnsValue.RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
@@ -172,7 +173,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         [NotNull]
-        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlCommandCreationContext conn)
+        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlConnection conn)
             => CompressedSysColumnsValue.RunQuery(conn, false, default)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 

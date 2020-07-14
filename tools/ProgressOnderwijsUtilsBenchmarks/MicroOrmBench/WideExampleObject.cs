@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     public sealed class WideExampleObject : IMetaObject
     {
@@ -70,6 +71,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static readonly string RawQueryString = string.Format(formatString, "@Top");
 
         public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows));
+            => SQL(FormattableStringFactory.Create(formatString, rows));
     }
 }

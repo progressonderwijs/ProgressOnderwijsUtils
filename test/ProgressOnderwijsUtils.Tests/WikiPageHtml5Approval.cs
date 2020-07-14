@@ -8,8 +8,6 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ApproveWikiHtml5Page()
-        {
-            ApprovalTest.Verify(WikiPageHtml5.MakeHtml().SerializeToString());
-        }
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(WikiPageHtml5.MakeHtml().ToStringWithDoctype());
     }
 }

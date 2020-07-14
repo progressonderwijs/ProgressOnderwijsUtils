@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -36,8 +36,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [NotNull]
         static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
-        {
-            return typeof(AttributeConstructionMethods)
+            => typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
                 .Where(mi => {
                     var typeArgument = mi.GetGenericArguments().Single();
@@ -50,7 +49,6 @@ namespace ProgressOnderwijsUtils.Html
                     method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
                     method => method.Name,
                     StringComparer.OrdinalIgnoreCase);
-        }
 
         public static TagDescription LookupTag([NotNull] string tagName)
             => ByTagName.TryGetValue(tagName, out var desc)

@@ -21,8 +21,7 @@ namespace ProgressOnderwijsUtils.Log4Net
             => LoggerCache<T>.Log;
 
         public static Lazy<ILog> For([NotNull] Type type)
-        {
-            return dict.GetOrAdd(
+            => dict.GetOrAdd(
                 type,
                 _type =>
                     new Lazy<ILog>(
@@ -30,6 +29,5 @@ namespace ProgressOnderwijsUtils.Log4Net
                             LogManager.GetLogger(CurrentAssembly, _type),
                         LazyThreadSafetyMode.PublicationOnly)
             );
-        }
     }
 }

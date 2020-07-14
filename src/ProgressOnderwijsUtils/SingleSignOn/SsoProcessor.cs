@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return Maybe.Ok(
                 new SsoAttributes {
                     uid = GetAttribute(assertion, UID),
-                    domain = GetAttribute(assertion, DOMAIN),
+                    domain = GetNullableAttribute(assertion, DOMAIN),
                     email = GetAttributes(assertion, MAIL),
                     roles = GetAttributes(assertion, ROLE),
                     InResponseTo = GetInResponseTo(assertion),
@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             var result = GetNullableAttribute(assertion, key);
             if (result == null) {
-                throw new InvalidOperationException("Sequence contains no elements");
+                throw new InvalidOperationException($"No value for attribute {key}");
             }
 
             return result;
@@ -120,25 +120,21 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         [CanBeNull]
         static string GetNullableAttribute([NotNull] XElement assertion, string key)
-        {
-            return (
+            => (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-            ).SingleOrDefault();
-        }
+                ).SingleOrNull();
 
         [NotNull]
         static string[] GetAttributes([NotNull] XElement assertion, string key)
-        {
-            return (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
+            => (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value).ToArray();
-        }
 
         static readonly XmlSchemaSet schemaSet = new XmlSchemaSet { XmlResolver = null };
 
@@ -161,8 +157,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         public static void ValidateSchema(XElement assertion)
-        {
-            new XDocument(assertion).Validate(schemaSet, null, false);
-        }
+            => new XDocument(assertion).Validate(schemaSet, null, false);
     }
 }

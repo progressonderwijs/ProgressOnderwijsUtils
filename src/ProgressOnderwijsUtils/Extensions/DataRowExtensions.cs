@@ -10,8 +10,6 @@ namespace ProgressOnderwijsUtils
     {
         [Pure]
         public static T Field<T>([NotNull] this DataRowView row, [NotNull] string fieldname)
-        {
-            return (T)row.Row[fieldname];
-        }
+            => (T)row.Row[fieldname];
     }
 }

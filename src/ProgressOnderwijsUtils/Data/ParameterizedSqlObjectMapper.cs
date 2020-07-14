@@ -6,11 +6,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
+// ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
     public enum FieldMappingMode
@@ -21,32 +21,29 @@ namespace ProgressOnderwijsUtils
 
     public static class ParameterizedSqlObjectMapper
     {
+        public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
+            => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
+
+        public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql)
+            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
+
+        public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
+            => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+
+        public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
+            => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+
+        public static ObjectsSqlCommand<T> OfObjects<T>(this ParameterizedSql sql)
+            where T : IMetaObject, new()
+            => new ObjectsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+
         [MustUseReturnValue]
-        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfScalar<T>().Execute(sqlConn);
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
-        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                        return 0;
-                    }
-                    return cmd.Command.ExecuteNonQuery();
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ExecuteNonQuery) + " failed", e);
-                }
-            }
-        }
+        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfNonQuery().Execute(sqlConn);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
@@ -56,114 +53,17 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
-        /// <param name="fieldMapping"> </param>
+        /// <param name="sqlConn">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches)
+            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IMetaObject, new()
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var lastColumnRead = -1;
-                SqlDataReader reader = null;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
-                    return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                } finally {
-                    reader?.Dispose();
-                }
-            }
-        }
+            => q.OfObjects<T>().Execute(sqlConn);
 
         [NotNull]
-        static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null)
-            => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
-
-        /// <summary>
-        /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
-        /// </summary>
-        /// <param name="sql">De uit-te-voeren query</param>
-        /// <param name="conn">De database om tegen te query-en</param>
-        /// <param name="missingSchemaAction"></param>
-        [MustUseReturnValue]
-        [NotNull]
-        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
-        {
-            using (var cmd = sql.CreateSqlCommand(conn))
-            using (var adapter = new SqlDataAdapter(cmd.Command)) {
-                try {
-                    adapter.MissingSchemaAction = missingSchemaAction;
-                    var dt = new DataTable();
-                    adapter.Fill(dt);
-                    return dt;
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ReadDataTable) + "() failed", e);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Reads all records of the given query from the database, lazily unpacking them into the yielded rows using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
-        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
-        /// The number of fields+properties must be the same as the number of columns
-        /// Watch out: while this enumerator is open, the underlying connection remains in use.
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        [MustUseReturnValue]
-        [NotNull]
-        public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
-            where T : IMetaObject, new()
-        {
-            var cmd = q.CreateSqlCommand(qCommandCreationContext);
-            SqlDataReader reader = null;
-            var lastColumnRead = -1;
-            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
-                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-
-            try {
-                DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e);
-                }
-
-                while (true) {
-                    bool isDone;
-                    try {
-                        isDone = !reader.Read();
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    if (isDone) {
-                        break;
-                    }
-                    T nextRow;
-                    try {
-                        nextRow = unpacker(reader, out lastColumnRead);
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    yield return nextRow; //cannot yield in try-catch block
-                }
-            } finally {
-                reader?.Dispose();
-                cmd.Dispose();
-            }
-        }
-
-        [NotNull]
-        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
+        internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
             where T : IMetaObject, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
@@ -199,28 +99,26 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The command creation context</param>
+        /// <param name="sqlConn">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                try {
-                    return ReadPlainUnpacker<T>(cmd.Command);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
+            => q.OfBuiltins<T>().Execute(sqlConn);
 
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
+        internal static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out _);
+                var unpacker = DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
+                var builder = new ArrayBuilder<T>();
+                while (reader.Read()) {
+                    var nextRow = unpacker(reader);
+                    builder.Add(nextRow);
+                }
+                return builder.ToArray();
             }
         }
 
@@ -228,20 +126,20 @@ namespace ProgressOnderwijsUtils
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
-                { typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-                { typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
-                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
-                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-                { typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-                { typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-                { typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
-                { typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
-                { typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
-                { typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
-                { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
-                { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
+                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding) },
+                { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding) },
+                { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding) },
+                { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding) },
+                { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding) },
+                { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding) },
+                { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding) },
+                { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding) },
+                { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding) },
+                { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding) },
+                { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding) },
+                { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding) },
             };
 
         [NotNull]
@@ -292,24 +190,10 @@ namespace ProgressOnderwijsUtils
             return true;
         }
 
-        static class DataReaderSpecialization<TReader>
+        internal static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
-            public delegate T[] TRowArrayReader<out T>(TReader reader, out int lastColumnRead);
-
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
-
-            struct TRowArrayReaderWithCols<T>
-            {
-                public string[] Cols;
-                public TRowArrayReader<T> RowArrayReader;
-            }
-
-            struct TRowReaderWithCols<T>
-            {
-                public string[] Cols;
-                public TRowReader<T> RowReader;
-            }
 
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
@@ -317,8 +201,8 @@ namespace ProgressOnderwijsUtils
 
             // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
-            static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             // ReSharper restore AssignNullToNotNullAttribute
+
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
             static bool IsSupportedBasicType([NotNull] Type type)
@@ -331,23 +215,7 @@ namespace ProgressOnderwijsUtils
             }
 
             static bool IsSupportedType([NotNull] Type type)
-                => IsSupportedBasicType(type) || CustomLoaderForType(type) != null;
-
-            [CanBeNull]
-            static MethodInfo CustomLoaderForType([NotNull] Type type)
-            {
-                var underlyingType = type.GetNonNullableUnderlyingType();
-                var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-                var method = methods.SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                return
-                    method != null
-                    && method.ReturnType == underlyingType
-                    && method.GetParameters() is var parameters
-                    && parameters.Length == 1
-                    && IsSupportedBasicType(parameters[0].ParameterType)
-                        ? method
-                        : null;
-            }
+                => IsSupportedBasicType(type) || MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter converter && IsSupportedBasicType(converter.DbType);
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
             {
@@ -355,8 +223,8 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (CustomLoaderForType(underlyingType) is var methodInfo && methodInfo != null) {
-                    return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
+                } else if (MetaObjectPropertyConverter.GetOrNull(underlyingType) is MetaObjectPropertyConverter converter) {
+                    return InterfaceMap[getterMethodsByType[converter.DbType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
                 }
@@ -365,13 +233,12 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var methodInfo = CustomLoaderForType(underlyingType);
-                var isTypeWithCreateMethod = methodInfo != null;
+                var converter = MetaObjectPropertyConverter.GetOrNull(underlyingType);
 
                 var needsCast = underlyingType != type.GetNonNullableType();
 
-                if (isTypeWithCreateMethod) {
-                    return Expression.Call(methodInfo, callExpression);
+                if (converter != null) {
+                    return Expression.Invoke(Expression.Constant(converter.CompiledConverterFromDb), callExpression);
                 } else if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
                 } else {
@@ -403,82 +270,28 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
-            [NotNull]
-            static TRowArrayReader<T> CreateLoadRowsMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
-            {
-                //read this method bottom-to-top, because expression trees need to be constructed inside-out.
-                // ReSharper disable AssignNullToNotNullAttribute
-                var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var arrayBuilderOfRowsType = typeof(ArrayBuilder<T>);
-                var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
-                var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
-                var resetLastColumnRead = Expression.Assign(lastColumnReadParamExpr, Expression.Constant(-1));
-                var callReader_Read = Expression.Block(resetLastColumnRead, Expression.Call(dataReaderParamExpr, ReadMethod));
-                var loopExitLabel = Expression.Label("loopExit");
-                var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
-                var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
-                var finishArrayExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("ToArray"));
-                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVar, Expression.New(arrayBuilderOfRowsType));
-                var rowVar = Expression.Variable(typeof(T), "row");
-                var addRowVarToArrayBuilder = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), rowVar);
-                var createArrayGivenRowInVarAndReaderAtValidRow =
-                    Expression.Block(initializeArrayBuilderExpr, addRowVarToArrayBuilder, loopAddRowThenReadExpr, finishArrayExpr);
-                var singleRowArrayExpr = Expression.NewArrayInit(typeof(T), rowVar);
-                var createArrayGivenFirstRowInVar = Expression.Condition(callReader_Read, createArrayGivenRowInVarAndReaderAtValidRow, singleRowArrayExpr);
-                var createArrayGivenReaderAtValidFirstRow = Expression.Block(Expression.Assign(rowVar, constructRowExpr), createArrayGivenFirstRowInVar);
-                var callEmptyArrayMethod = Expression.Call(((Func<T[]>)Array.Empty<T>).Method);
-                var returnEmptyArrayOrRunRestOfCode = Expression.Condition(callReader_Read, createArrayGivenReaderAtValidFirstRow, callEmptyArrayMethod);
-                var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVar, }, returnEmptyArrayOrRunRestOfCode);
-                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowArrayReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
-                // ReSharper restore AssignNullToNotNullAttribute
-
-                return ConvertLambdaExpressionIntoDelegate<T, TRowArrayReader<T>>(loadRowsLambda);
-            }
-
-            [NotNull]
-            static TRowReader<T> CreateLoadRowMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
-            {
-                var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
-                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
-
-                return ConvertLambdaExpressionIntoDelegate<T, TRowReader<T>>(loadRowsLambda);
-            }
-
-            [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
-                where TDelegate : class
-            {
-                try {
-                    return loadRowsLambda.Compile(); //CompileFast<TDelegate> causes IL errors
-                } catch (Exception e) {
-                    throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
-                }
-            }
-
             public static class ByMetaObjectImpl<T>
                 where T : IMetaObject, new()
             {
-                struct ColumnOrdering : IEquatable<ColumnOrdering>
+                readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
                     readonly ulong cachedHash;
                     public readonly string[] Cols;
 
-                    public ColumnOrdering([NotNull] TReader reader)
+                    ColumnOrdering(ulong _cachedHash, string[] _cols)
+                        => (cachedHash, Cols) = (_cachedHash, _cols);
+
+                    public static ColumnOrdering FromReader([NotNull] TReader reader)
                     {
                         var primeArr = ColHashPrimes;
-                        Cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
-                        cachedHash = 0;
-                        for (var i = 0; i < Cols.Length; i++) {
+                        var cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
+                        var cachedHash = 0uL;
+                        for (var i = 0; i < cols.Length; i++) {
                             var name = reader.GetName(i);
-                            Cols[i] = name;
+                            cols[i] = name;
                             cachedHash += primeArr[i] * CaseInsensitiveHash(name);
                         }
+                        return new ColumnOrdering(cachedHash, cols);
                     }
 
                     public bool Equals(ColumnOrdering other)
@@ -502,8 +315,8 @@ namespace ProgressOnderwijsUtils
                         => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
                 }
 
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>> LoadRows;
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRow;
+                static readonly object constructionSync = new object();
+                static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> loadRow_by_ordering;
 
                 [NotNull]
                 static Type type
@@ -539,34 +352,21 @@ namespace ProgressOnderwijsUtils
                         }
                     }
 
-                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>>();
-                    LoadRow = new ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>>();
-                }
-
-                public static TRowArrayReader<T> DataReaderToRowArrayUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
-                {
-                    AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
-                    var ordering = new ColumnOrdering(reader);
-
-                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, Delegate_ConstructTRowArrayReaderWithCols);
-                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
-                        //our ordering isn't in the cache, so it's string array can be returned to the pool
-                        PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
-                    }
-                    return cachedRowReaderWithCols.RowArrayReader;
+                    loadRow_by_ordering = new ConcurrentDictionary<ColumnOrdering, TRowReader<T>>();
                 }
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
                 {
                     AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
-                    var ordering = new ColumnOrdering(reader);
-
-                    var cachedRowReaderWithCols = LoadRow.GetOrAdd(ordering, Delegate_ConstructTRowReaderWithCols);
-                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
-                        //our ordering isn't in the cache, so it's string array can be returned to the pool
+                    var ordering = ColumnOrdering.FromReader(reader);
+                    if (loadRow_by_ordering.TryGetValue(ordering, out var cachedRowReaderWithCols)) {
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
+                        return cachedRowReaderWithCols;
+                    } else {
+                        lock (constructionSync) {
+                            return loadRow_by_ordering.GetOrAdd(ordering, constructTRowReaderWithCols);
+                        }
                     }
-                    return cachedRowReaderWithCols.RowReader;
                 }
 
                 static void AssertColumnsCanBeMappedToObject([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
@@ -589,149 +389,37 @@ namespace ProgressOnderwijsUtils
                     }
                 }
 
-                /// <summary>
-                /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
-                /// See also: http://blogs.msmvps.com/jonskeet/2011/08/22/optimization-and-generics-part-2-lambda-expressions-and-reference-types/
-                /// </summary>
-                static readonly Func<ColumnOrdering, TRowArrayReaderWithCols<T>> Delegate_ConstructTRowArrayReaderWithCols = ConstructTRowArrayReaderWithCols;
+                static readonly Func<ColumnOrdering, TRowReader<T>> constructTRowReaderWithCols = columnOrdering => {
+                    var cols = columnOrdering.Cols;
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
+                    var statements = new List<Expression>(2 + cols.Length * 2);
+                    var rowVar = Expression.Variable(typeof(T));
+                    statements.Add(Expression.Assign(rowVar, Expression.New(typeof(T))));
+                    ReadAllFields(dataReaderParamExpr, rowVar, cols, lastColumnReadParamExpr, statements);
+                    statements.Add(rowVar);
+                    var constructRowExpr = Expression.Block(typeof(T), new[] { rowVar }, statements);
+                    var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
+                    var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
+                    return loadRowsLambda.Compile();
+                };
 
-                static TRowArrayReaderWithCols<T> ConstructTRowArrayReaderWithCols(ColumnOrdering ordering)
-                {
-                    return new TRowArrayReaderWithCols<T> {
-                        Cols = ordering.Cols,
-                        RowArrayReader = CreateLoadRowsMethod<T>(
-                            (readerParamExpr, lastColumnReadParameter) =>
-                                Expression.MemberInit(
-                                    Expression.New(type),
-                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
-                    };
-                }
-
-                static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
-
-                static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
-                {
-                    return new TRowReaderWithCols<T> {
-                        Cols = ordering.Cols,
-                        RowReader = CreateLoadRowMethod<T>(
-                            (readerParamExpr, lastColumnReadParameter) =>
-                                Expression.MemberInit(
-                                    Expression.New(type),
-                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
-                    };
-                }
-
-                static IEnumerable<MemberAssignment> CreateColumnBindings(
-                    ColumnOrdering orderingP,
-                    ParameterExpression readerParamExpr,
-                    ParameterExpression lastColumnReadParameter)
+                static void ReadAllFields(ParameterExpression dataReaderParamExpr, ParameterExpression rowVar, string[] cols, ParameterExpression lastColumnReadParamExpr, List<Expression> statements)
                 {
                     var isMetaPropertyIndexAlreadyUsed = new bool[metadata.Count];
-                    var cols = orderingP.Cols;
                     for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        var metaPropertyIndexOrNull = metadata.IndexByName.GetOrDefaultR(colName, default(int?));
-                        if (metaPropertyIndexOrNull == null) {
+                        if (!metadata.IndexByName.TryGetValue(colName, out var metaPropertyIndex)) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }
-                        var metaPropertyIndex = metaPropertyIndexOrNull.Value;
                         if (isMetaPropertyIndexAlreadyUsed[metaPropertyIndex]) {
                             throw new InvalidOperationException("IDataReader has two identically named columns " + colName + "!");
                         }
                         isMetaPropertyIndexAlreadyUsed[metaPropertyIndex] = true;
                         var member = metadata[metaPropertyIndex];
-                        yield return Expression.Bind(
-                            member.PropertyInfo,
-                            Expression.Block(
-                                Expression.Assign(lastColumnReadParameter, Expression.Constant(i)),
-                                GetColValueExpr(readerParamExpr, i, member.DataType)
-                            )
-                        );
-                    }
-                }
-            }
-
-            [UsefulToKeep("This might be a nice thing to stick in an OSS library")]
-            public static class ReadByConstructorImpl<T>
-            {
-                // ReSharper disable UnusedMember.Local
-                public static T[] VerifyShapeAndLoadRows([NotNull] SqlDataReader reader)
-                    // ReSharper restore UnusedMember.Local
-                {
-                    DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
-                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out _);
-                }
-
-                public static readonly TRowArrayReader<T> LoadRows;
-
-                [NotNull]
-                static Type type
-                    => typeof(T);
-
-                static string FriendlyName
-                    => type.ToCSharpFriendlyTypeName();
-
-                static readonly ConstructorInfo constructor;
-
-                [NotNull]
-                static ParameterInfo[] ConstructorParameters
-                    => constructor.GetParameters();
-
-                static ReadByConstructorImpl()
-                {
-                    constructor = VerifyTypeValidityAndGetConstructor();
-                    LoadRows = CreateLoadRowsMethod<T>(
-                        (readerParamExpr, lastReadExpr) => Expression.New(
-                            constructor,
-                            ConstructorParameters.Select(
-                                (ci, i) =>
-                                    Expression.Block(Expression.Assign(lastReadExpr, Expression.Constant(i)), GetColValueExpr(readerParamExpr, i, ci.ParameterType)))));
-                }
-
-                [NotNull]
-                static ConstructorInfo VerifyTypeValidityAndGetConstructor()
-                {
-                    if (!type.IsSealed || !type.IsPublic) {
-                        throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must be a public, sealed type.");
-                    }
-
-                    var constructors = type.GetConstructors().Where(ci => ci.GetParameters().Any()).ToArray();
-                    if (constructors.Length != 1) {
-                        throw new ArgumentException(
-                            FriendlyName + " : ILoadFromDbByConstructor must have a single public constructor (not counting a structs implicit constructor), not "
-                            + constructors.Length);
-                    }
-                    var retval = constructors.Single();
-
-                    if (!retval.GetParameters().All(pi => IsSupportedBasicType(pi.ParameterType))) {
-                        throw new ArgumentException(
-                            FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
-                            + retval.GetParameters()
-                                .Where(pi => !IsSupportedBasicType(pi.ParameterType))
-                                .Select(pi => pi.ParameterType.ToCSharpFriendlyTypeName() + " " + pi.Name)
-                                .JoinStrings(", "));
-                    }
-                    return retval;
-                }
-
-                public static void VerifyDataReaderShape([NotNull] TReader reader)
-                {
-                    if (reader.FieldCount != ConstructorParameters.Length) {
-                        throw new InvalidOperationException(
-                            "Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; constructr parameter count = "
-                            + ConstructorParameters.Length);
-                    }
-                    if (!Enumerable.Range(0, reader.FieldCount).Select(reader.GetName)
-                            .SequenceEqual(ConstructorParameters.Select(ci => ci.Name), StringComparer.OrdinalIgnoreCase)
-                        ||
-                        !Enumerable.Range(0, reader.FieldCount).Select(reader.GetFieldType)
-                            .SequenceEqual(ConstructorParameters.Select(ci => ci.ParameterType.GetNonNullableUnderlyingType()))) {
-                        throw new InvalidOperationException(
-                            "Cannot unpack DbDataReader:\n"
-                            + Enumerable.Range(0, reader.FieldCount)
-                                .Select(i => reader.GetName(i) + " : " + reader.GetFieldType(i).ToCSharpFriendlyTypeName())
-                                .JoinStrings(", ") + "\n\t into type " + FriendlyName + ":\n"
-                            + ConstructorParameters.Select(ci => ci.Name + " : " + ci.ParameterType.ToCSharpFriendlyTypeName()).JoinStrings(", "));
+                        var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(member.PropertyInfo) ?? (MemberInfo)member.PropertyInfo;
+                        statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(i)));
+                        statements.Add(Expression.Assign(Expression.MakeMemberAccess(rowVar, memberInfo), GetColValueExpr(dataReaderParamExpr, i, member.DataType)));
                     }
                 }
             }
@@ -741,7 +429,7 @@ namespace ProgressOnderwijsUtils
                 static string FriendlyName
                     => type.ToCSharpFriendlyTypeName();
 
-                public static readonly TRowArrayReader<T> LoadRows;
+                public static readonly Func<TReader, T> ReadValue;
 
                 [NotNull]
                 static Type type
@@ -750,7 +438,9 @@ namespace ProgressOnderwijsUtils
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
-                    LoadRows = CreateLoadRowsMethod<T>((readerParamExpr, lastReadColumnExpr) => GetColValueExpr(readerParamExpr, 0, type));
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
+                    ReadValue = loadRowsLambda.Compile();
                 }
 
                 static void VerifyTypeValidity()
@@ -778,41 +468,6 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
-        }
-    }
-
-    public static class DbLoadingHelperImpl
-    {
-        [NotNull]
-        [UsedImplicitly]
-        public static byte[] GetBytes([NotNull] this IDataRecord row, int colIndex)
-        {
-            var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
-            if (byteCount > int.MaxValue) {
-                throw new NotSupportedException("Array too large!");
-            }
-            var arr = new byte[byteCount];
-            long offset = 0;
-            while (offset < byteCount) {
-                offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
-            }
-            return arr;
-        }
-
-        [NotNull]
-        [UsedImplicitly]
-        public static char[] GetChars([NotNull] this IDataRecord row, int colIndex)
-        {
-            var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
-            if (charCount > int.MaxValue) {
-                throw new NotSupportedException("Array too large!");
-            }
-            var arr = new char[charCount];
-            long offset = 0;
-            while (offset < charCount) {
-                offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
-            }
-            return arr;
         }
     }
 }

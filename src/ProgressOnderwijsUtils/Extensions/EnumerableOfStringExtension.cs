@@ -4,6 +4,8 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
+    using static System.String;
+
     public static class EnumerableOfStringExtension
     {
         /// <summary>
@@ -24,15 +26,13 @@ namespace ProgressOnderwijsUtils
         /// <returns>a string</returns>
         [NotNull]
         public static string JoinStrings([NotNull] this IEnumerable<string> strings, string separator)
-            => string.Join(separator, strings);
+            => Join(separator, strings);
 
         [NotNull]
         public static string JoinStringsLimitLength(
             [NotNull] this IReadOnlyCollection<string> strings,
             string separator,
             int maxCount)
-        {
-            return string.Join(separator, strings.Take(maxCount)) + (strings.Count > maxCount ? separator + "..." : "");
-        }
+            => JoinStrings(strings.Take(maxCount), separator) + (strings.Count > maxCount ? separator + "..." : "");
     }
 }

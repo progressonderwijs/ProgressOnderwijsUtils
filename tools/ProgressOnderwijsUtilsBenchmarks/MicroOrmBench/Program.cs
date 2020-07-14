@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class MicroOrmBenchmarkProgram
     {
@@ -16,12 +16,12 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         {
             ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);
-            //ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
-            //DapperExecutor.RunQuery(benchmarker);
-            //ParameterizedSqlExecutor.RunWideQuery(benchmarker);
-            //HandrolledAdoNetExecutor.RunQuery(benchmarker);
-            //HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
-            //DapperExecutor.RunWideQuery(benchmarker);
+            ParameterizedSqlExecutor.RunWideQuery(benchmarker);
+            ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
+            DapperExecutor.RunQuery(benchmarker);
+            HandrolledAdoNetExecutor.RunQuery(benchmarker);
+            HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
+            DapperExecutor.RunWideQuery(benchmarker);
         }
     }
 }

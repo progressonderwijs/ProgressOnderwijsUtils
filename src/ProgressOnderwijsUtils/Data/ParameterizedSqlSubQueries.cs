@@ -24,10 +24,8 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static ParameterizedSql CreateOrderByClause(OrderByColumns sortOrder)
-        {
-            return !sortOrder.Columns.Any()
+            => !sortOrder.Columns.Any()
                 ? ParameterizedSql.Empty
                 : ParameterizedSql.CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
-        }
     }
 }

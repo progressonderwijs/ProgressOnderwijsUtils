@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using AngleSharp.Dom;
+using AngleSharp.Html.Parser;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -55,7 +58,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public static HtmlFragment TextContent(string textContent)
-            => new HtmlFragment(textContent);
+            => new HtmlFragment(textContent != "" ? textContent : null);
 
         [Pure]
         public static HtmlFragment Element(IHtmlElement element)
@@ -193,7 +196,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public override string ToString()
-            => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
+            => "HtmlFragment: " + this.ToStringWithoutDoctype();
 
         public static HtmlFragment Empty
             => default(HtmlFragment);
@@ -230,5 +233,48 @@ namespace ProgressOnderwijsUtils.Html
 
         public static HtmlFragment[] EmptyNodes
             => Array.Empty<HtmlFragment>();
+
+        /// <summary>
+        /// Attempts to parse an html fragment as html5.
+        /// 
+        /// This is not a security check; the output of this function can still contain dangerous tags!
+        /// 
+        /// Use Sanitze() to clean up parsed html.
+        /// </summary>
+        /// <returns>The html fragment.</returns>
+        public static HtmlFragment ParseFragment([CanBeNull] string str)
+            => ParseFragment(str, new HtmlParserOptions());
+
+        public static HtmlFragment ParseFragment([CanBeNull] string str, HtmlParserOptions options)
+        {
+            if (string.IsNullOrEmpty(str)) {
+                return Empty;
+            }
+            var body = new HtmlParser().ParseDocument("").DocumentElement.GetElementsByTagName("body").Single();
+            return new HtmlParser(options)
+                .ParseFragment(str, body)
+                .Select(CreateFromAngleSharpNode)
+                .AsFragment();
+        }
+
+        public static HtmlFragment CreateFromAngleSharpNode(INode node)
+        {
+            if (node is IText text) {
+                return TextContent(text.NodeValue);
+            }
+
+            if (node is IElement element) {
+                return Element(
+                    element.TagName.ToLowerInvariant(),
+                    element.Attributes.Select(attr => new HtmlAttribute(attr.Name, attr.Value)).ToArray(),
+                    element.ChildNodes.Select(CreateFromAngleSharpNode).ToArray()
+                );
+            }
+            if (node is IDocumentFragment) {
+                return node.ChildNodes.Select(CreateFromAngleSharpNode).AsFragment();
+            }
+
+            return Empty;
+        }
     }
 }

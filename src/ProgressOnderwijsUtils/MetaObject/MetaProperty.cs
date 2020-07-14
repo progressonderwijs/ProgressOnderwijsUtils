@@ -22,6 +22,7 @@ namespace ProgressOnderwijsUtils
         IReadOnlyList<object> CustomAttributes { get; }
         Type DataType { get; }
         string Name { get; }
+        ParameterizedSql SqlColumnName { get; }
         int Index { get; }
     }
 
@@ -41,6 +42,11 @@ namespace ProgressOnderwijsUtils
         {
             public bool IsKey { get; }
             public string Name { get; }
+            ParameterizedSql sqlColumnName;
+
+            public ParameterizedSql SqlColumnName
+                => sqlColumnName ? sqlColumnName : sqlColumnName = ParameterizedSql.CreateDynamic(Name);
+
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
 
@@ -158,9 +164,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         static T MkDelegate<T>([NotNull] MethodInfo mi)
-        {
-            return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
-        }
+            => (T)(object)Delegate.CreateDelegate(typeof(T), mi);
 
         interface IOutCaster
         {
@@ -209,9 +213,7 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
         static IOutCaster GetCaster([NotNull] Type propType)
-        {
-            return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
-        }
+            => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
     }
 
     public delegate void Setter<T>(ref T obj, object value);

@@ -5,6 +5,7 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using Xunit;
 using System.Data;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -59,7 +60,7 @@ namespace ProgressOnderwijsUtils.Tests
             ).Concat(
                 from a in samplePoints
                 select new[] { a }
-            );
+            ).ToArray();
 
             foreach (var combo1 in combos) {
                 foreach (var combo2 in combos) {
@@ -71,7 +72,7 @@ namespace ProgressOnderwijsUtils.Tests
                         Math.Sign(
                             combo1.Cast<long?>()
                                 .ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare)
-                                .FirstOrDefault(x => x != 0));
+                                .FirstOrNullable(x => x != 0) ?? 0L);
                     if (strComparison != seqComparison) {
                         throw new Exception(
                             $"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
@@ -116,31 +117,37 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void IsDbConnFailureTest()
         {
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new Exception()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new DataException()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException()));
+            PAssert.That(() => !new Exception().IsRetriableConnectionFailure());
+            PAssert.That(() => !new DataException().IsRetriableConnectionFailure());
+            PAssert.That(() => !new ParameterizedSqlExecutionException().IsRetriableConnectionFailure());
             PAssert.That(
                 () =>
-                    Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException("bla",
-                        new DataException("The underlying provider failed on Open."))));
+                    new ParameterizedSqlExecutionException("bla",
+                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
             PAssert.That(
                 () =>
-                    Utils.IsRetriableConnectionFailure(
-                        new AggregateException(
-                            new ParameterizedSqlExecutionException("bla",
-                                new DataException("The underlying provider failed on Open.")),
-                            new DataException("The underlying provider failed on Open."))));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new AggregateException()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(null));
+                    new AggregateException(
+                        new ParameterizedSqlExecutionException("bla",
+                            new DataException("The underlying provider failed on Open.")),
+                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
+            PAssert.That(() => !new AggregateException().IsRetriableConnectionFailure());
+            PAssert.That(() => !default(Exception).IsRetriableConnectionFailure());
         }
 
         [Fact]
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
+            var slowQueryWithTimeout = SQL($"WAITFOR DELAY '00:00:02'").OfNonQuery().WithTimeout(CommandTimeout.AbsoluteSeconds(1));
             using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => { SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1)); });
-                PAssert.That(() => Utils.IsRetriableConnectionFailure(ex));
+                var ex = Assert.ThrowsAny<Exception>(() => slowQueryWithTimeout.Execute(localdb.Connection));
+                PAssert.That(() => ex.IsRetriableConnectionFailure());
             }
+        }
+
+        [Fact]
+        public void ClrDefaultIsSemanticDefault()
+        {
+            PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
         }
 
         [Fact]

@@ -10,45 +10,31 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ToCamelCase_is_robuust_bij_null()
-        {
-            PAssert.That(() => ((string)null).ToCamelCase() == null);
-        }
+            => PAssert.That(() => ((string)null).ToCamelCase() == null);
 
         [Fact]
         public void ToCamelCase_werkt_ook_bij_lege_string()
-        {
-            PAssert.That(() => string.Empty.ToCamelCase() == string.Empty);
-        }
+            => PAssert.That(() => string.Empty.ToCamelCase() == string.Empty);
 
         [Fact]
         public void ToCamelCase_ADIS_ABEBA_wordt_Adis_Abeba()
-        {
-            PAssert.That(() => "ADIS ABEBA".ToCamelCase() == "Adis Abeba");
-        }
+            => PAssert.That(() => "ADIS ABEBA".ToCamelCase() == "Adis Abeba");
 
         [Fact]
         public void ToCamelCase_JAN_BENJAMIN_wordt_Jan_Benjamin()
-        {
-            PAssert.That(() => "JAN-BENJAMIN".ToCamelCase() == "Jan-Benjamin");
-        }
+            => PAssert.That(() => "JAN-BENJAMIN".ToCamelCase() == "Jan-Benjamin");
 
         [Fact]
         public void ToCamelCase_S_GRAVENHAGE_wordt_s_Gravenhage()
-        {
-            PAssert.That(() => "'S-GRAVENHAGE".ToCamelCase() == "'s-Gravenhage");
-        }
+            => PAssert.That(() => "'S-GRAVENHAGE".ToCamelCase() == "'s-Gravenhage");
 
         [Fact]
         public void ToCamelCase_Hoodletters_met_lees_tekens_worden_ook_meegenomen()
-        {
-            PAssert.That(() => "ÖSTERREICH".ToCamelCase() == "Österreich");
-        }
+            => PAssert.That(() => "ÖSTERREICH".ToCamelCase() == "Österreich");
 
         [Fact]
         public void ToCamelCase_Combi_van_meerdere_omzettingen()
-        {
-            PAssert.That(() => "'S-ÖSTERREICH".ToCamelCase() == "'s-Österreich");
-        }
+            => PAssert.That(() => "'S-ÖSTERREICH".ToCamelCase() == "'s-Österreich");
 
         [Fact]
         public void WithoutDiakriet()
@@ -134,14 +120,12 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void testLangeNaam2Upper()
-        {
-            PAssert.That(
+            => PAssert.That(
                 () =>
                     StringUtils.Name2UpperCasedName(
                         "miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja")
                     ==
                     "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja");
-        }
 
         [Fact]
         public void testDepluralize()

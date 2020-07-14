@@ -156,44 +156,35 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void TreeSelectSingleNode()
-        {
-            AssertTreeSelectMapsInputAsExpected(
+            => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u),
                 Tree.Node(1L)
             );
-        }
 
         [Fact]
         public void TreeSelectOneChild()
-        {
-            AssertTreeSelectMapsInputAsExpected(
+            => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u)),
                 Tree.Node(1L, Tree.Node(2L))
             );
-        }
 
         [Fact]
         public void TreeSelectTwoChildren()
-        {
-            AssertTreeSelectMapsInputAsExpected(
+            => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u), Tree.Node(3u)),
                 Tree.Node(1L, Tree.Node(2L), Tree.Node(3L))
             );
-        }
 
         [Fact]
         public void TreeSelectTwoChildrenWithChild()
-        {
-            AssertTreeSelectMapsInputAsExpected(
+            => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(5u))),
                 Tree.Node(1L, Tree.Node(2L, Tree.Node(4L)), Tree.Node(3L, Tree.Node(5L)))
             );
-        }
 
         [Fact]
         public void ComplexTreeSelectTwoChildrenWithChild()
-        {
-            AssertTreeSelectMapsInputAsExpected(
+            => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(
                     1u,
                     Tree.Node(
@@ -227,7 +218,6 @@ namespace ProgressOnderwijsUtils.Tests
                             Tree.Node(
                                 8L))))
             );
-        }
 
         [Fact]
         public void TreeSelectVisitsInReversePreorderTraversal()
@@ -258,21 +248,15 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void SingleNodeHasHeight1()
-        {
-            PAssert.That(() => Tree.Node(0).Height() == 1);
-        }
+            => PAssert.That(() => Tree.Node(0).Height() == 1);
 
         [Fact]
         public void RightLeaningTreeComputesHeight4()
-        {
-            PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u)), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u)))).Height() == 4);
-        }
+            => PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u)), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u)))).Height() == 4);
 
         [Fact]
         public void MessyTreeComputesHeight4()
-        {
-            PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u))), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u))).Height() == 4);
-        }
+            => PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u))), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u))).Height() == 4);
 
         static void AssertTreeSelectMapsInputAsExpected(Tree<uint> input, Tree<long> expected)
         {

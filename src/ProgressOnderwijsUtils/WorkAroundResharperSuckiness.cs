@@ -9,8 +9,6 @@ namespace ProgressOnderwijsUtils
         //shut up about "Parameter 'Foobaar' is used only for precondition checks"
         [DebuggerHidden]
         public static void ThrowPreconditionViolation(this Exception e)
-        {
-            throw e;
-        }
+            => throw e;
     }
 }

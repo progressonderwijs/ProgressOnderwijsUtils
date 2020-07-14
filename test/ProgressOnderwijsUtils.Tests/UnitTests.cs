@@ -22,8 +22,6 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ReturnIsTheIdentityFunction()
-        {
-            PAssert.That(() => Unit.Value.Return(3) == 3);
-        }
+            => PAssert.That(() => Unit.Value.Return(3) == 3);
     }
 }

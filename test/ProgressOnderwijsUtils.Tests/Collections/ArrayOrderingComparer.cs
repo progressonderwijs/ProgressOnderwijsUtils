@@ -10,16 +10,11 @@ namespace ProgressOnderwijsUtils.Tests.Collections
             => ArrayOrderingComparer<int>.Default.Compare(a, b);
 
         static void AssertLessThan(int[] a, int[] b)
-        {
-            //for symmetry:assert both ways.
-            PAssert.That(() => Compare(a, b) < 0 && Compare(b, a) > 0);
-        }
+            => PAssert.That(() => Compare(a, b) < 0 && Compare(b, a) > 0);
 
         [Fact]
         public void NullIsLessThanEmpty()
-        {
-            AssertLessThan(null, new int[0]);
-        }
+            => AssertLessThan(null, new int[0]);
 
         [Fact]
         public void SingleElementArraysCompare()

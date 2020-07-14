@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -20,7 +21,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DbObjectId ObjectId { get; set; }
         public string QualifiedName { get; set; }
 
-        public static DbNamedTableId[] LoadAll(SqlCommandCreationContext conn)
+        public static DbNamedTableId[] LoadAll(SqlConnection conn)
             => SQL($@"
                 select
                     ObjectId = t.object_id
@@ -42,7 +43,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
-        public static DatabaseDescription LoadFromSchemaTables(SqlCommandCreationContext conn)
+        public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         {
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
             return new DatabaseDescription(DbNamedTableId.LoadAll(conn), columnsByTableId, ForeignKeyLookup.LoadAll(conn));

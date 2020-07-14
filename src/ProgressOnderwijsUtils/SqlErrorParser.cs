@@ -34,6 +34,9 @@ namespace ProgressOnderwijsUtils
         public string StatementType { get; set; }
         public string ConstraintType { get; set; }
         public string ConstraintName { get; set; }
+        public string DatabaseName { get; set; }
+        public string TableName { get; set; }
+        public string ColumnName { get; set; }
     }
 
     public static class SqlErrorParser
@@ -42,25 +45,25 @@ namespace ProgressOnderwijsUtils
 
         // message_id 2627
         static readonly Regex keyConstraintViolationRegex = new Regex(
-            "Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
+            @"Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\. The duplicate key value is \((?<DuplicateKeyValue>.*)\)\.",
             RegexOptions.Compiled
         );
 
         // message_id 2601
         static readonly Regex duplicateKeyUniqueIndexRegex = new Regex(
-            "Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
+            @"Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\. The duplicate key value is \((?<DuplicateKeyValue>.*)\)\.",
             RegexOptions.Compiled
         );
 
         // message_id 515
         static readonly Regex cannotInsertNullRegex = new Regex(
-            "Cannot insert the value NULL into column '(?<ColumnName>[^']*)', table '(?<TableName>[^']*)'; column does not allow nulls\\. (?<StatementType>.*) fails\\.",
+            @"Cannot insert the value NULL into column '(?<ColumnName>[^']*)', table '(?<TableName>[^']*)'; column does not allow nulls\. (?<StatementType>.*) fails\.",
             RegexOptions.Compiled
         );
 
         // message_id 547
         static readonly Regex genericConstraintViolationRegex = new Regex(
-            "The (?<StatementType>.*) statement conflicted with the (?<ConstraintType>.*) constraint \"(?<ConstraintName>[^\"]*)\"\\.",
+            @"The (?<StatementType>.*) statement conflicted with the (?<ConstraintType>.*) constraint ""(?<ConstraintName>[^""]*)""\.( The conflict occurred in database ""(?<DatabaseName>[^""]+)"", table ""(?<TableName>[^""]+)"", column '(?<ColumnName>[^']+)'\.)?",
             RegexOptions.Compiled
         );
 
@@ -116,16 +119,31 @@ namespace ProgressOnderwijsUtils
                     StatementType = match.Groups["StatementType"].Value,
                     ConstraintType = match.Groups["ConstraintType"].Value,
                     ConstraintName = match.Groups["ConstraintName"].Value,
+                    DatabaseName = match.Groups["DatabaseName"].Value.NullIfWhiteSpace(),
+                    TableName = match.Groups["TableName"].Value.NullIfWhiteSpace(),
+                    ColumnName = match.Groups["ColumnName"].Value.NullIfWhiteSpace(),
                 };
             }
             return null;
         }
 
         [CanBeNull]
-        public static ISqlErrorParseResult Parse([NotNull] SqlError error)
+        public static ISqlErrorParseResult Parse([NotNull] this SqlError error)
             => TryParseKeyConstraintViolation(error)
                 ?? TryParseDuplicateKeyUniqueIndex(error)
                 ?? TryParseCannotInsertNull(error)
                 ?? TryParseGenericConstraintViolation(error);
+
+        [CanBeNull]
+        public static SqlError FirstContainedSqlErrorOrNull([CanBeNull] this Exception e)
+        {
+            if (e is SqlException sqlException) {
+                return sqlException.Errors[0];
+            } else if (e?.InnerException != null) {
+                return FirstContainedSqlErrorOrNull(e.InnerException);
+            } else {
+                return null;
+            }
+        }
     }
 }

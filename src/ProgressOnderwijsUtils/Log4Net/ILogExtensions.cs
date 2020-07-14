@@ -31,14 +31,10 @@ namespace ProgressOnderwijsUtils.Log4Net
         }
 
         public static void Debug([NotNull] this Lazy<ILog> log, object msg)
-        {
-            log.Value.Debug(msg);
-        }
+            => log.Value.Debug(msg);
 
         public static void DebugFormat([NotNull] this Lazy<ILog> log, string format, params object[] args)
-        {
-            log.Value.DebugFormat(format, args);
-        }
+            => log.Value.DebugFormat(format, args);
 
         public static void Info([NotNull] this ILog log, Func<object> msg)
         {
@@ -62,9 +58,7 @@ namespace ProgressOnderwijsUtils.Log4Net
         }
 
         public static void Info([NotNull] this Lazy<ILog> log, object msg)
-        {
-            log.Value.Info(msg);
-        }
+            => log.Value.Info(msg);
 
         public static void Warn([NotNull] this ILog log, Func<object> msg)
         {
@@ -88,14 +82,10 @@ namespace ProgressOnderwijsUtils.Log4Net
         }
 
         public static void Warn([NotNull] this Lazy<ILog> log, object msg)
-        {
-            log.Value.Warn(msg);
-        }
+            => log.Value.Warn(msg);
 
         public static void WarnFormat([NotNull] this Lazy<ILog> log, string format, params object[] args)
-        {
-            log.Value.WarnFormat(format, args);
-        }
+            => log.Value.WarnFormat(format, args);
 
         public static void Error([NotNull] this ILog log, Func<object> msg)
         {
@@ -119,14 +109,10 @@ namespace ProgressOnderwijsUtils.Log4Net
         }
 
         public static void Error([NotNull] this Lazy<ILog> log, object msg)
-        {
-            log.Value.Error(msg);
-        }
+            => log.Value.Error(msg);
 
         public static void ErrorFormat([NotNull] this Lazy<ILog> log, string format, params object[] args)
-        {
-            log.Value.ErrorFormat(format, args);
-        }
+            => log.Value.ErrorFormat(format, args);
 
         public static void Fatal([NotNull] this ILog log, Func<object> msg)
         {

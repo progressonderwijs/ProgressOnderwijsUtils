@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -35,7 +36,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public sealed class ForeignKeyLookup
     {
-        public static ForeignKeyLookup LoadAll(SqlCommandCreationContext conn)
+        public static ForeignKeyLookup LoadAll(SqlConnection conn)
         {
             var foreignKeys = SQL($@"
                 select 

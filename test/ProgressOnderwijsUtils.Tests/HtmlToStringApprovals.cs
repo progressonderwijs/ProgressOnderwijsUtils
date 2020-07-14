@@ -9,11 +9,11 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void BasicDocWorks()
-            => ApprovalTest.Verify(basicDoc.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(basicDoc.ToStringWithDoctype());
 
         [Fact]
         public void BasicDocWorksToCSharp()
-            => ApprovalTest.Verify(basicDoc.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(basicDoc.ToCSharp());
 
         static readonly HtmlTagKinds.HTML basicDoc =
             _html.Content(
@@ -27,11 +27,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithEmptyClass()
-            => ApprovalTest.Verify(docWithEmptyClass.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEmptyClass.ToStringWithDoctype());
 
         [Fact]
         public void DocWithEmptyClassToCSharp()
-            => ApprovalTest.Verify(docWithEmptyClass.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEmptyClass.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithEmptyClass =
             _html.Content(
@@ -45,11 +45,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOneClass()
-            => ApprovalTest.Verify(docWithOneClass.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOneClass.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOneClassToCSharp()
-            => ApprovalTest.Verify(docWithOneClass.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOneClass.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithOneClass =
             _html.Content(
@@ -63,11 +63,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithTwoClasses()
-            => ApprovalTest.Verify(docWithTwoClasses.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTwoClasses.ToStringWithDoctype());
 
         [Fact]
         public void DocWithTwoClassesToCSharp()
-            => ApprovalTest.Verify(docWithTwoClasses.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTwoClasses.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithTwoClasses =
             _html.Content(
@@ -81,11 +81,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOddChars()
-            => ApprovalTest.Verify(docWithOddChars.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddChars.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOddCharsToCSharp()
-            => ApprovalTest.Verify(docWithOddChars.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddChars.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithOddChars =
             _html.Content(
@@ -99,11 +99,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOddCharsInAttribute()
-            => ApprovalTest.Verify(docWithOddCharsInAttribute.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddCharsInAttribute.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOddCharsInAttributeToCSharp()
-            => ApprovalTest.Verify(docWithOddCharsInAttribute.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddCharsInAttribute.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithOddCharsInAttribute =
             _html.Content(
@@ -117,11 +117,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithSelfClosingTags()
-            => ApprovalTest.Verify(docWithSelfClosingTags.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithSelfClosingTags.ToStringWithDoctype());
 
         [Fact]
         public void DocWithSelfClosingTagsToCSharp()
-            => ApprovalTest.Verify(docWithSelfClosingTags.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithSelfClosingTags.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithSelfClosingTags =
             _html.Content(
@@ -140,11 +140,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithEscapableRawText()
-            => ApprovalTest.Verify(docWithEscapableRawText.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEscapableRawText.ToStringWithDoctype());
 
         [Fact]
         public void DocWithEscapableRawTextToCSharp()
-            => ApprovalTest.Verify(docWithEscapableRawText.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEscapableRawText.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithEscapableRawText =
             _html.Content(
@@ -158,11 +158,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithTrulyRawText()
-            => ApprovalTest.Verify(docWithTrulyRawText.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTrulyRawText.ToStringWithDoctype());
 
         [Fact]
         public void DocWithTrulyRawTextToCSharp()
-            => ApprovalTest.Verify(docWithTrulyRawText.ToCSharp());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTrulyRawText.ToCSharp());
 
         static readonly HtmlTagKinds.HTML docWithTrulyRawText =
             _html.Content(

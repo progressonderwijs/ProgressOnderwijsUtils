@@ -11,10 +11,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void LogOfHalfIsCorrect()
-        {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            PAssert.That(() => Math.Exp(ExponentialDecayEstimator.LogOfHalf) == 0.5);
-        }
+            => PAssert.That(() => Math.Exp(ExponentialDecayEstimator.LogOfHalf) == 0.5);
 
         [Fact]
         public void ValueIsInitially0()

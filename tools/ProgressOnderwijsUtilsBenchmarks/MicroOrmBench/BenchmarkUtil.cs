@@ -12,7 +12,7 @@ using Dapper;
 using IncrementalMeanVarianceAccumulator;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     sealed class Benchmarker
     {
@@ -54,10 +54,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             );
         }
 
-        public void BenchSqlServer(string name, Func<SqlCommandCreationContext, int, int> action)
+        public void BenchSqlServer(string name, Func<SqlConnection, int, int> action)
         {
-            using (var ctx = CreateSqlConnection()) {
-                ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(ctx);
+            using (var sqlConn = CreateSqlConnection()) {
+                ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(sqlConn);
             }
 
             Bench(name, CreateSqlConnection, action);
@@ -68,26 +68,21 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             Bench(name, CreateSqliteConnection, action);
         }
 
-        public static SqlCommandCreationContext CreateSqlConnection()
+        public static SqlConnection CreateSqlConnection()
         {
-            var conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB");
-            var ok = false;
+            var sqlConn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB");
             try {
-                conn.Open();
-
-                var sqlCommandCreationContext = new SqlCommandCreationContext(conn, 0, null);
-                ok = true;
-                return sqlCommandCreationContext;
-            } finally {
-                if (!ok) {
-                    conn.Dispose();
-                }
+                sqlConn.Open();
+            } catch {
+                sqlConn.Dispose();
+                throw;
             }
+            return sqlConn;
         }
 
         public static SQLiteConnection CreateSqliteConnection()
         {
-            var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder {
+            var sqliteConn = new SQLiteConnection(new SQLiteConnectionStringBuilder {
                 DataSource = @":memory:", //benchmark.db
                 JournalMode = SQLiteJournalModeEnum.Wal,
                 FailIfMissing = false,
@@ -95,9 +90,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             }.ToString());
             var ok = false;
             try {
-                conn.Open();
+                sqliteConn.Open();
 
-                conn.Query<ExampleObject>(@"
+                sqliteConn.Query<ExampleObject>(@"
                     create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
 
                     insert into example (a,b,c,d,e)
@@ -116,10 +111,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                     cross join(select 0 as x union all select 1 union all select 2 union all select 3) g
                 ");
                 ok = true;
-                return conn;
+                return sqliteConn;
             } finally {
                 if (!ok) {
-                    conn.Dispose();
+                    sqliteConn.Dispose();
                 }
             }
         }

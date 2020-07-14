@@ -13,18 +13,14 @@ namespace ProgressOnderwijsUtils
         /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
         /// </summary>
         public static T Field<T>([NotNull] this IDictionary<string, object> dict, [NotNull] string key)
-        {
-            return DBNullRemover.Cast<T>(dict[key]);
-        }
+            => DbValueConverter.FromDb<T>(dict[key]);
 
         /// <summary>
         /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
         /// </summary>
         [UsefulToKeep("library method; interface is used, since method above is used")]
         public static T Field<T>([NotNull] this IReadOnlyDictionary<string, object> dict, string key)
-        {
-            return DBNullRemover.Cast<T>(dict[key]);
-        }
+            => DbValueConverter.FromDb<T>(dict[key]);
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
@@ -37,17 +33,13 @@ namespace ProgressOnderwijsUtils
             [NotNull] this IReadOnlyDictionary<TKey, TValue> dict,
             [NotNull] TKey key,
             TValue defaultValue)
-        {
-            return dict.TryGetValue(key, out var result) ? result : defaultValue;
-        }
+            => dict.TryGetValue(key, out var result) ? result : defaultValue;
 
         public static TValue GetOrDefault<TKey, TValue>(
             [NotNull] this IDictionary<TKey, TValue> dict,
             [NotNull] TKey key,
             TValue defaultValue)
-        {
-            return dict.TryGetValue(key, out var result) ? result : defaultValue;
-        }
+            => dict.TryGetValue(key, out var result) ? result : defaultValue;
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
@@ -56,14 +48,10 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
         public static TValue GetOrDefaultR<TKey, TValue>([NotNull] this IReadOnlyDictionary<TKey, TValue> dict, [NotNull] TKey key)
-        {
-            return GetOrDefaultR(dict, key, default(TValue));
-        }
+            => GetOrDefaultR(dict, key, default(TValue));
 
         public static TValue GetOrDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key)
-        {
-            return GetOrDefault(dict, key, default(TValue));
-        }
+            => GetOrDefault(dict, key, default(TValue));
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
@@ -77,9 +65,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             TValue? defaultValue)
             where TValue : struct
-        {
-            return dict.TryGetValue(key, out var result) ? result : defaultValue;
-        }
+            => dict.TryGetValue(key, out var result) ? result : defaultValue;
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
@@ -94,9 +80,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             TValue? defaultValue)
             where TValue : struct
-        {
-            return dict.TryGetValue(key, out var result) ? result : defaultValue;
-        }
+            => dict.TryGetValue(key, out var result) ? result : defaultValue;
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary.
@@ -109,9 +93,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] this IDictionary<TKey, TValue> dict,
             [NotNull] TKey key,
             Func<TValue> defaultFactory)
-        {
-            return dict.TryGetValue(key, out var result) ? result : defaultFactory();
-        }
+            => dict.TryGetValue(key, out var result) ? result : defaultFactory();
 
         /// <summary>
         /// Retrieves a value from a dictionary or adds a new value if the key does not yet exist.  An overload to lazily create the new value also exists.
@@ -175,8 +157,6 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict)
-        {
-            return new ReadOnlyDictionary<TKey, TValue>(dict);
-        }
+            => new ReadOnlyDictionary<TKey, TValue>(dict);
     }
 }

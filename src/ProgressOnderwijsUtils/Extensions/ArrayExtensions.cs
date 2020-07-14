@@ -15,9 +15,7 @@ namespace ProgressOnderwijsUtils
         /// <returns>The value at the index, or the default if the array does encompass that index.</returns>
         [Pure]
         public static TValue GetOrDefault<TValue>([CanBeNull] this TValue[] array, int index, TValue defaultValue)
-        {
-            return array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
-        }
+            => array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
 
         /// <summary>
         /// Return an empty array if it's null
@@ -25,9 +23,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static T[] EmptyIfNull<T>([CanBeNull] this T[] array)
-        {
-            return array ?? Array.Empty<T>();
-        }
+            => array ?? Array.Empty<T>();
 
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
@@ -89,7 +85,7 @@ namespace ProgressOnderwijsUtils
         /// Concatenates two arrays.  Null arrays are interpreted as the empty array. The returned array may be the same as one of the parameters.
         /// </summary>
         [NotNull]
-        public static T[] AppendArrays<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
+        public static T[] ConcatArray<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
         {
             if (end == null || end.Length == 0) {
                 return beginning ?? Array.Empty<T>();

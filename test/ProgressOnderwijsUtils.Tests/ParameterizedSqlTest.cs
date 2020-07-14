@@ -183,9 +183,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void PrependingEmptyHasNoEffect()
-        {
-            PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
-        }
+            => PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
 
         [Fact]
         public void EmptyParameterizedSql()
@@ -220,7 +218,7 @@ namespace ProgressOnderwijsUtils.Tests
             var badQuery = SQL($@"A{{x{1}}}Z");
             Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
             using (var conn = new SqlConnection()) {
-                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn));
+                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
             }
         }
 
@@ -229,7 +227,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
 
-            var cmd = result.CreateSqlCommand(new SqlCommandCreationContext(null, 0, null));
+            var cmd = result.CreateSqlCommand(new SqlConnection(), CommandTimeout.WithoutTimeout);
 
             var commandText = @"A@par0[@par1@par0]Z";
             PAssert.That(() => cmd.Command.CommandText == commandText);
@@ -238,34 +236,23 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ParameterizedSqlToStringIsClearForEnumParams()
-        {
-            PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
-        }
+            => PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
 
         [Fact]
         public void ParameterizedSqlUsesLiteralsForValidEnumConstants()
-        {
-            PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
-        }
+            => PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
 
         [Fact]
         public void ParameterizedSqlUsesLiteralsForBooleanConstants()
-        {
-            PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
-        }
+            => PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
 
         [Fact]
         public void ParameterizedSqlSupportsNullParameters()
-        {
-            //TODO: do we want to make these literal?
-            PAssert.That(() => SQL($"select {null}").CommandText() == "select @par0");
-        }
+            => PAssert.That(() => SQL($"select {null}").CommandText() == "select NULL");
 
         [Fact]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
-        {
-            PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
-        }
+            => PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
 
         [TestNotLiteral]
         enum ExampleNonLiteralEnum

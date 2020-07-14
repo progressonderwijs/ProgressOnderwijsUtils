@@ -9,8 +9,6 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static ReadOnlySet<T> AsReadOnly<T>(this ISet<T> set)
-        {
-            return new ReadOnlySet<T>(set);
-        }
+            => new ReadOnlySet<T>(set);
     }
 }

@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Data.SQLite;
+using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class HandrolledAdoNetExecutor
     {
@@ -21,11 +21,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             benchmarker.BenchSqlServer("Raw (SqlDbTypes)", ExecuteQuery2);
         }
 
-        static int ExecuteQuery([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var argP = new SqlParameter {
                     SqlDbType = SqlDbType.BigInt,
                     ParameterName = "@Arg",
@@ -71,12 +71,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             }
         }
 
-        static int ExecuteSqliteQuery(SQLiteConnection ctx, int rows)
+        static int ExecuteSqliteQuery(SQLiteConnection sqliteConn, int rows)
         {
-            var conn = ctx;
-            using (var cmd = conn.CreateCommand()) {
+            using (var cmd = sqliteConn.CreateCommand()) {
                 cmd.CommandText = ExampleObject.RawSqliteQueryString;
-                cmd.Connection = ctx;
+                cmd.Connection = sqliteConn;
                 var argP = new SQLiteParameter {
                     DbType = DbType.Int64,
                     ParameterName = "@Arg",
@@ -124,10 +123,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 
         static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>>();
 
-        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection ctx, int rows)
+        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection sqliteConn, int rows)
         {
-            if (!connCmdCache.TryGetValue(ctx, out var cmdCache)) {
-                cmdCache = connCmdCache.GetOrAdd(ctx, conn => {
+            if (!connCmdCache.TryGetValue(sqliteConn, out var cmdCache)) {
+                cmdCache = connCmdCache.GetOrAdd(sqliteConn, conn => {
                     conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
                     return new Dictionary<string, SQLiteCommand>();
                 });
@@ -163,7 +162,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                 sqliteCmd.Parameters.Add(numP);
                 sqliteCmd.Parameters.Add(heheP);
                 sqliteCmd.Parameters.Add(argP);
-                sqliteCmd.Connection = ctx;
+                sqliteCmd.Connection = sqliteConn;
             }
 
             sqliteCmd.Parameters[0].Value = rows;
@@ -192,12 +191,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             return list.Count;
         }
 
-        // ReSharper disable once UnusedMember.Local
-        static int ExecuteQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery2([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var argP = new SqlParameter {
                     SqlDbType = SqlDbType.BigInt,
                     ParameterName = "@Arg",
@@ -260,13 +258,63 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("Raw (26-col)", ExecuteWideQuery);
+            benchmarker.BenchSqlServer("Raw (26-col, SqlDbTypes)", ExecuteWideQuery2);
         }
 
-        static int ExecuteWideQuery([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteWideQuery2([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
+                var topP = new SqlParameter {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@Top",
+                    IsNullable = false,
+                    Value = rows,
+                };
+                cmd.Parameters.Add(topP);
+                using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
+                    var list = new List<WideExampleObject>();
+                    while (reader.Read()) {
+                        list.Add(new WideExampleObject {
+                            SalesOrderId = reader.GetInt32(0),
+                            RevisionNumber = reader.GetByte(1),
+                            OrderDate = reader.GetDateTime(2),
+                            DueDate = reader.GetDateTime(3),
+                            ShipDate = reader.IsDBNull(4) ? default(DateTime?) : reader.GetDateTime(4),
+                            Status = reader.GetByte(5),
+                            OnlineOrderFlag = reader.GetBoolean(6),
+                            SalesOrderNumber = reader.GetSqlString(7).ToNullableString(),
+                            PurchaseOrderNumber = reader.GetSqlString(8).ToNullableString(),
+                            AccountNumber = reader.GetSqlString(9).ToNullableString(),
+                            CustomerId = reader.GetInt32(10),
+                            SalesPersonId = reader.GetSqlInt32(11).ToNullableInt(),
+                            TerritoryId = reader.GetSqlInt32(12).ToNullableInt(),
+                            BillToAddressId = reader.GetInt32(13),
+                            ShipToAddressId = reader.GetInt32(14),
+                            ShipMethodId = reader.GetInt32(15),
+                            CreditCardId = reader.GetSqlInt32(16).ToNullableInt(),
+                            CreditCardApprovalCode = reader.GetSqlString(17).ToNullableString(),
+                            CurrencyRateId = reader.GetSqlInt32(18).ToNullableInt(),
+                            SubTotal = reader.GetDecimal(19),
+                            TaxAmt = reader.GetDecimal(20),
+                            Freight = reader.GetDecimal(21),
+                            TotalDue = reader.GetDecimal(22),
+                            Comment = reader.GetSqlString(23).ToNullableString(),
+                            Rowguid = reader.GetGuid(24),
+                            ModifiedDate = reader.GetDateTime(25),
+                        });
+                    }
+                    return list.Count;
+                }
+            }
+        }
+
+        static int ExecuteWideQuery([NotNull] SqlConnection sqlConn, int rows)
+        {
+            using (var cmd = new SqlCommand()) {
+                cmd.CommandText = WideExampleObject.RawQueryString;
+                cmd.Connection = sqlConn;
                 var topP = new SqlParameter {
                     SqlDbType = SqlDbType.Int,
                     ParameterName = "@Top",
