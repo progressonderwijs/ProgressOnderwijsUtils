@@ -121,12 +121,12 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [GlobalSetup]
         public void Setup()
         {
-            Sizes = GetSizes(Config.Count, Config.MaxSize).RandomSubset(Config.Count + 1, new Random(42)).ToArray();
+            Sizes = GetSizes(Config.Count, Config.MaxSize);
             Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
         }
 
         static int[] GetSizes(int count, int maxSize)
-            => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).RandomSubset(count + 1, new Random(42)).ToArray();
+            => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Shuffle(new Random(42)).ToArray();
 
         [Benchmark]
         public void List()
