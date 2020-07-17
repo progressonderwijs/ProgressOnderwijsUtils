@@ -90,14 +90,14 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    class ArrBenchConfig : ManualConfig
+    sealed class ArrBenchConfig : ManualConfig
     {
         public ArrBenchConfig()
         {
-            Add(
+            AddJob(
                 new Job(RunMode.Dry) {
-                    Run = { UnrollFactor = 1, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, WarmupCount = 3, TargetCount = 100, InvocationCount = 2, },
-                    Accuracy = { MaxRelativeError = 0.01, RemoveOutliers = true, MinInvokeCount = 50, }
+                    Run = { UnrollFactor = 1, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, WarmupCount = 3, IterationCount = 100, InvocationCount = 2, },
+                    Accuracy = { MaxRelativeError = 0.01, MinInvokeCount = 50, OutlierMode = OutlierMode.RemoveAll }
                 }.WithGcForce(true));
         }
     }
