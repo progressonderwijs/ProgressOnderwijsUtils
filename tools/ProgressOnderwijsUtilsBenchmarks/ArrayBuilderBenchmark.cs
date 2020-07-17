@@ -9,12 +9,10 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using JetBrains.Annotations;
 using MoreLinq;
-using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
+
 // ReSharper disable ClassCanBeSealed.Global  - for Benchmark.NET
-
-
 namespace ProgressOnderwijsUtilsBenchmarks
 {
     public interface IFactory<out T>
@@ -93,14 +91,14 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public ArrBenchConfig()
         {
             AddJob(
-                new Job(RunMode.Dry) {
-                    Run = { UnrollFactor = 1, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, WarmupCount = 3, IterationCount = 100, InvocationCount = 2, },
-                    Accuracy = { MaxRelativeError = 0.01, MinInvokeCount = 50, OutlierMode = OutlierMode.RemoveAll }
+                new Job {
+                    Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000 },
+                    Accuracy = { MaxRelativeError = 0.01, }
                 }.WithGcForce(true));
         }
     }
 
-    [RankColumn]
+    [MedianColumn]
     [Config(typeof(ArrBenchConfig))]
     public abstract class ArrayBuilderBenchmark<T, TFactory>
         where TFactory : struct, IFactory<T>
@@ -110,10 +108,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public (int MaxSize, int Threads, int Count, double avgLength) Config;
 
         public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
-            => from maxSize in new[] { 3, 17, 98, 561, 18_347 /*,104_920,600_000*/ }
+            => from maxSize in new[] { 3, 17, 98, 561, 18_347, /*104_920,600_000*/ }
                 from threads in new[] { 1, /* 4, 8*/ }
-                let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 12
-                let count = (int)(0.5 + 60_000_000.0 / ((maxSize + 1) * (objCost + 1) + 20))
+                let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 8
+                let count = (int)(0.5 + 100_000_000.0 / ((maxSize + 2) * (objCost + 2) + 30))
                 select (maxSize, threads, count, Math.Round(GetSizes(count, maxSize).Average(), 2));
 
         public int[]? Sizes;
