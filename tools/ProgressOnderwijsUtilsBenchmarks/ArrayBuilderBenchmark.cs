@@ -237,10 +237,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                         },
                         TaskCreationOptions.LongRunning)).ToArray());
 
-        public static void SanityCheck()
+        public static void SanityCheck(int maxLen)
         {
             var r = new Random(37);
-            for (var j = 0; j < 100000; j++) {
+            for (var j = 0; j < maxLen; j++) {
                 var builder = AlternativeArrayBuilders.WithoutInlineValues<T>.Allocate();
                 var len = r.Next(j + 1);
                 for (var i = 0; i < len; i++) {

@@ -17,6 +17,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [UsedImplicitly]
         static void RunArrayBuilderBenchmarks()
         {
+            IntArrayBuilderBenchmark.SanityCheck(10000);
             new BenchmarkSwitcher(new[] {
                 typeof(IntArrayBuilderBenchmark),
                 typeof(BigStructArrayBuilderBenchmark),
