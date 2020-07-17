@@ -8,6 +8,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using MoreLinq;
+using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
@@ -148,118 +149,105 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void ArrayBuilder()
-            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(
-                __ => Task.Factory.StartNew(
-                    () => {
-                        foreach (var size in Sizes) {
-                            var builder = new ArrayBuilder<T>();
-                            for (int i = 0; i < size; i++) {
-                                builder.Add(default(TFactory).Init(i));
-                            }
-                            GC.KeepAlive(builder.ToArray());
+            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(
+                () => {
+                    foreach (var size in Sizes.AssertNotNull()) {
+                        var builder = new ArrayBuilder<T>();
+                        for (var i = 0; i < size; i++) {
+                            builder.Add(default(TFactory).Init(i));
                         }
-                    },
-                    TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder2()
-            => Task.WaitAll(
-                Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
-                        () => {
-                            foreach (var size in Sizes) {
-                                var builder = ArrayBuilder2<T>.Allocate();
-                                for (int i = 0; i < size; i++) {
-                                    builder.Add(default(TFactory).Init(i));
-                                }
-                                GC.KeepAlive(builder.ToArray());
-                            }
-                        },
-                        TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder_WithArraySegments()
-            => Task.WaitAll(
-                Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
-                        () => {
-                            foreach (var size in Sizes) {
-                                var builder = ArrayBuilder_WithArraySegments<T>.Create();
-                                for (var i = 0; i < size; i++) {
-                                    builder.Add(default(TFactory).Init(i));
-                                }
-                                GC.KeepAlive(builder.ToArray());
-                            }
-                        },
-                        TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder_Inline63ValuesAndSegments()
-            => Task.WaitAll(
-                Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
-                        () => {
-                            foreach (var size in Sizes) {
-                                var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
-                                for (var i = 0; i < size; i++) {
-                                    builder.Add(default(TFactory).Init(i));
-                                }
-                                GC.KeepAlive(builder.ToArray());
-                            }
-                        },
-                        TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder_Inline16ValuesAndSegments()
-            => Task.WaitAll(
-                Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
-                        () => {
-                            foreach (var size in Sizes) {
-                                var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
-                                for (var i = 0; i < size; i++) {
-                                    builder.Add(default(TFactory).Init(i));
-                                }
-                                GC.KeepAlive(builder.ToArray());
-                            }
-                        },
-                        TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder_Inline32ValuesAndSegments()
-            => Task.WaitAll(
-                Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
-                        () => {
-                            foreach (var size in Sizes) {
-                                var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
-                                for (var i = 0; i < size; i++) {
-                                    builder.Add(default(TFactory).Init(i));
-                                }
-                                GC.KeepAlive(builder.ToArray());
-                            }
-                        },
-                        TaskCreationOptions.LongRunning)).ToArray());
-
-        [Benchmark]
-        public void ArrayBuilder()
-            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes.AssertNotNull()) {
-                    var builder = new ArrayBuilder<T>();
-                    for (var i = 0; i < size; i++) {
-                        builder.Add(default(TFactory).Init(i));
+                        GC.KeepAlive(builder.ToArray());
                     }
-                    GC.KeepAlive(builder.ToArray());
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
+                },
+                TaskCreationOptions.LongRunning)).ToArray());
+
+        [Benchmark]
+        public void WithoutInlineValues()
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    __ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = AlternativeArrayBuilders.WithoutInlineValues<T>.Allocate();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning)).ToArray());
+
+        [Benchmark]
+        public void WithSegmentsAsArray()
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    __ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = AlternativeArrayBuilders.WithSegmentsAsArray<T>.Create();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning)).ToArray());
+
+        [Benchmark]
+        public void Inline63ValuesAndSegments()
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    __ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = new AlternativeArrayBuilders.Inline63ValuesAndSegments<T>();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning)).ToArray());
+
+        [Benchmark]
+        public void Inline16ValuesAndSegments()
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    __ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = new AlternativeArrayBuilders.Inline16ValuesAndSegments<T>();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning)).ToArray());
+
+        [Benchmark]
+        public void Inline32ValuesAndSegments()
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    __ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = new AlternativeArrayBuilders.Inline32ValuesAndSegments<T>();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning)).ToArray());
 
         public static void SanityCheck()
         {
             var r = new Random(37);
-            for (int j = 0; j < 100000; j++) {
-                var builder = ArrayBuilder2<T>.Allocate();
+            for (var j = 0; j < 100000; j++) {
+                var builder = AlternativeArrayBuilders.WithoutInlineValues<T>.Allocate();
                 var len = r.Next(j + 1);
-                for (int i = 0; i < len; i++) {
+                for (var i = 0; i < len; i++) {
                     builder.Add(default(TFactory).Init(i));
                 }
                 var array = builder.ToArray();
@@ -269,134 +257,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 }
             }
         }
+    }
 
-        public struct ArrayBuilder_WithArraySegments<T>
-        {
-            const int InitSize2Pow = 4;
-            const int InitSize = (1 << InitSize2Pow) - 1; // 15;
-            int idx, sI;
-            T[] current;
-            T[][] segments;
-
-            public static ArrayBuilder_WithArraySegments<T> Create()
-                => new ArrayBuilder_WithArraySegments<T> { current = new T[InitSize] };
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Add(T item)
-            {
-                if (idx < current.Length) {
-                    current[idx++] = item;
-                } else {
-                    if (segments == null) {
-                        segments = new T[31 - InitSize2Pow][];
-                    }
-                    segments[sI++] = current;
-                    current = new T[current.Length << 1 & ~current.Length];
-                    current[0] = item;
-                    idx = 1;
-                }
-            }
-
-            public T[] ToArray()
-            {
-                if (segments == null) {
-                    var retval = current;
-                    Array.Resize(ref retval, idx);
-                    return retval;
-                } else {
-                    var sumlength = (1 << sI + InitSize2Pow - 1) + idx - 1;
-                    var retval = new T[sumlength];
-                    var j = 0;
-                    for (var sJ = 0; sJ < sI; sJ++) {
-                        var subarr = segments[sJ];
-                        subarr.CopyTo(retval, j);
-                        j += subarr.Length;
-                    }
-                    Array.Copy(current, 0, retval, j, idx);
-                    return retval;
-                }
-            }
-        }
-
-        /// <summary>
-        /// A fast way to build arrays.  Store the first 16 values inline (no heap allocation); then grows the scratch-space by less than 10% each time so that not too much memory is wasted during building.
-        /// </summary>
-        public struct ArrayBuilder2<T>
-        {
-            const int InitSize2Pow = 3;
-            const int InitSize = 1 << InitSize2Pow;
-            const int InlineArrays = 12;
-            const int SubArraysNeeded = 218;
-            int idx, sI;
-            T[] current;
-#pragma warning disable 169
-            T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;
-#pragma warning restore 169
-            T[][] LongTail;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Add(T item)
-            {
-                if (idx < current.Length) {
-                    current[idx++] = item;
-                } else {
-                    Expand(item);
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public static ArrayBuilder2<T> Allocate()
-                => new ArrayBuilder2<T> { current = new T[InitSize], };
-
-            [MethodImpl(MethodImplOptions.NoInlining)]
-            void Expand(T item)
-            {
-                if (sI < InlineArrays) {
-                    Unsafe.Add(ref a00, sI++) = current;
-                } else {
-                    if (sI == InlineArrays) {
-                        LongTail = new T[SubArraysNeeded - InlineArrays][];
-                    }
-                    LongTail[sI++ - InlineArrays] = current;
-                }
-                var nextArr = new T[current.Length + 16 + (current.Length >> 4)];
-                nextArr[0] = item;
-                idx = 1;
-                current = nextArr;
-            }
-
-            [NotNull]
-            public T[] ToArray()
-            {
-                var sumlength = 0;
-                var inlineArrCount = sI > InlineArrays ? InlineArrays : sI;
-                for (var sJ = 0; sJ < inlineArrCount; sJ++) {
-                    sumlength += Unsafe.Add(ref a00, sJ).Length;
-                }
-
-                for (var sJ = InlineArrays; sJ < sI; sJ++) {
-                    sumlength += LongTail[sJ - InlineArrays].Length;
-                }
-                sumlength += idx;
-                var retval = new T[sumlength];
-                var j = 0;
-                for (var sJ = 0; sJ < inlineArrCount; sJ++) {
-                    var subarr = Unsafe.Add(ref a00, sJ);
-                    subarr.CopyTo(retval, j);
-                    j += subarr.Length;
-                }
-                for (var sJ = InlineArrays; sJ < sI; sJ++) {
-                    var subarr = LongTail[sJ - InlineArrays];
-                    subarr.CopyTo(retval, j);
-                    j += subarr.Length;
-                }
-
-                Array.Copy(current, 0, retval, j, idx);
-                return retval;
-            }
-        }
-
-        public struct ArrayBuilder_Inline63ValuesAndSegments<T>
+    static class AlternativeArrayBuilders
+    {
+        public struct Inline63ValuesAndSegments<T>
         {
             const int InitSize2Pow = 6;
             const int InitSize = (1 << InitSize2Pow) - 1;
@@ -459,7 +324,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        public struct ArrayBuilder_Inline16ValuesAndSegments<T>
+        public struct Inline16ValuesAndSegments<T>
         {
             const int InitSize2Pow = 4;
             const int InitSize = 1 << InitSize2Pow;
@@ -522,7 +387,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        public struct ArrayBuilder_Inline32ValuesAndSegments<T>
+        public struct Inline32ValuesAndSegments<T>
         {
             const int InitSize = 32;
             int idx, sI;
@@ -584,4 +449,130 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 }
             }
         }
+
+        public struct WithSegmentsAsArray<T>
+        {
+            const int InitSize2Pow = 4;
+            const int InitSize = (1 << InitSize2Pow) - 1; // 15;
+            int idx, sI;
+            T[] current;
+            T[][] segments;
+
+            public static WithSegmentsAsArray<T> Create()
+                => new WithSegmentsAsArray<T> { current = new T[InitSize] };
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Add(T item)
+            {
+                if (idx < current.Length) {
+                    current[idx++] = item;
+                } else {
+                    if (segments == null) {
+                        segments = new T[31 - InitSize2Pow][];
+                    }
+                    segments[sI++] = current;
+                    current = new T[current.Length << 1 & ~current.Length];
+                    current[0] = item;
+                    idx = 1;
+                }
+            }
+
+            public T[] ToArray()
+            {
+                if (segments == null) {
+                    var retval = current;
+                    Array.Resize(ref retval, idx);
+                    return retval;
+                } else {
+                    var sumlength = (1 << sI + InitSize2Pow - 1) + idx - 1;
+                    var retval = new T[sumlength];
+                    var j = 0;
+                    for (var sJ = 0; sJ < sI; sJ++) {
+                        var subarr = segments[sJ];
+                        subarr.CopyTo(retval, j);
+                        j += subarr.Length;
+                    }
+                    Array.Copy(current, 0, retval, j, idx);
+                    return retval;
+                }
+            }
+        }
+
+        /// <summary>
+        /// A fast way to build arrays.  Store the first 16 values inline (no heap allocation); then grows the scratch-space by less than 10% each time so that not too much memory is wasted during building.
+        /// </summary>
+        public struct WithoutInlineValues<T>
+        {
+            const int InitSize2Pow = 3;
+            const int InitSize = 1 << InitSize2Pow;
+            const int InlineArrays = 12;
+            const int SubArraysNeeded = 218;
+            int idx, sI;
+            T[] current;
+#pragma warning disable 169
+            T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;
+#pragma warning restore 169
+            T[][] LongTail;
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void Add(T item)
+            {
+                if (idx < current.Length) {
+                    current[idx++] = item;
+                } else {
+                    Expand(item);
+                }
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public static WithoutInlineValues<T> Allocate()
+                => new WithoutInlineValues<T> { current = new T[InitSize], };
+
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            void Expand(T item)
+            {
+                if (sI < InlineArrays) {
+                    Unsafe.Add(ref a00, sI++) = current;
+                } else {
+                    if (sI == InlineArrays) {
+                        LongTail = new T[SubArraysNeeded - InlineArrays][];
+                    }
+                    LongTail[sI++ - InlineArrays] = current;
+                }
+                var nextArr = new T[current.Length + 16 + (current.Length >> 4)];
+                nextArr[0] = item;
+                idx = 1;
+                current = nextArr;
+            }
+
+            public T[] ToArray()
+            {
+                var sumlength = 0;
+                var inlineArrCount = sI > InlineArrays ? InlineArrays : sI;
+                for (var sJ = 0; sJ < inlineArrCount; sJ++) {
+                    sumlength += Unsafe.Add(ref a00, sJ).Length;
+                }
+
+                for (var sJ = InlineArrays; sJ < sI; sJ++) {
+                    sumlength += LongTail[sJ - InlineArrays].Length;
+                }
+                sumlength += idx;
+                var retval = new T[sumlength];
+                var j = 0;
+                for (var sJ = 0; sJ < inlineArrCount; sJ++) {
+                    var subarr = Unsafe.Add(ref a00, sJ);
+                    subarr.CopyTo(retval, j);
+                    j += subarr.Length;
+                }
+                for (var sJ = InlineArrays; sJ < sI; sJ++) {
+                    var subarr = LongTail[sJ - InlineArrays];
+                    subarr.CopyTo(retval, j);
+                    j += subarr.Length;
+                }
+
+                Array.Copy(current, 0, retval, j, idx);
+                return retval;
+            }
+        }
+    }
 }
