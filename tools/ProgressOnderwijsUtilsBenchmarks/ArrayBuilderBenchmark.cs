@@ -92,8 +92,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             AddJob(
                 new Job {
-                    Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000 },
-                    Accuracy = { MaxRelativeError = 0.01, }
+                    Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000, },
+                    Accuracy = { MaxRelativeError = 0.01, },
                 }.WithGcForce(true));
         }
     }
