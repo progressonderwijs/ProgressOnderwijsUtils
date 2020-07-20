@@ -99,6 +99,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
     }
 
     [MedianColumn]
+    [MemoryDiagnoser]
     [Config(typeof(ArrBenchConfig))]
     public abstract class ArrayBuilderBenchmark<T, TFactory>
         where TFactory : struct, IFactory<T>
@@ -109,9 +110,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
             => from maxSize in new[] { 3, 17, 98, 561, 18_347, /*104_920,600_000*/ }
-                from threads in new[] { 1, /* 4, 8*/ }
+                from threads in new[] { 1, 8 }
                 let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 8
-                let count = (int)(0.5 + 100_000_000.0 / ((maxSize + 2) * (objCost + 2) + 30))
+                let count = (int)(0.5 + 300_000_000.0 / ((maxSize + 2) * (objCost + 2) + 30))
                 select (maxSize, threads, count, Math.Round(GetSizes(count, maxSize).Average(), 2));
 
         public int[]? Sizes;
