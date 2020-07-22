@@ -263,8 +263,8 @@ namespace ProgressOnderwijsUtils
 
     struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
     {
-        public string SqlTextKey { get; set; }
-        public object[] Params { get; set; }
+        public string? SqlTextKey;
+        public object[]? Params;
 
         public bool Equals(ParameterizedSqlEquatableKey other)
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
@@ -273,6 +273,6 @@ namespace ProgressOnderwijsUtils
             => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
         public override int GetHashCode()
-            => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
+            => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params!);
     }
 }
