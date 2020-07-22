@@ -85,8 +85,8 @@ namespace ProgressOnderwijsUtils.Html
             public HtmlAttribute Current
                 => attributes[pos];
 
-                object IEnumerator.Current
-                => attributes[pos];
+            object IEnumerator.Current
+                => Current;
 
             public void Dispose() { }
 
