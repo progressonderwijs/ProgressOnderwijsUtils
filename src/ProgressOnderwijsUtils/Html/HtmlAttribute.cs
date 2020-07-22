@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Linq;
+using System;
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public struct HtmlAttribute
+    public struct HtmlAttribute : IEquatable<HtmlAttribute>
     {
         public string Name, Value;
 
@@ -18,6 +19,21 @@ namespace ProgressOnderwijsUtils.Html
 
         public override string ToString()
             => Name + "=" + Value;
+
+        public bool Equals(HtmlAttribute other)
+            => Name == other.Name && Value == other.Value;
+
+        public override bool Equals(object? obj)
+            => obj is HtmlAttribute other && Equals(other);
+
+        public override int GetHashCode()
+            => HashCode.Combine(Name, Value);
+
+        public static bool operator ==(HtmlAttribute a, HtmlAttribute b)
+            => a.Equals(b);
+
+        public static bool operator !=(HtmlAttribute a, HtmlAttribute b)
+            => !(a == b);
     }
 
     public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
@@ -36,6 +52,28 @@ namespace ProgressOnderwijsUtils.Html
 
         public HtmlAttribute this[int i]
             => attributes[i];
+
+        public string? this[string attrName]
+        {
+            get {
+                if (attrName == "class") {
+                    var className = default(string);
+                    foreach (var attr in this) {
+                        if (attr.Name == "class") {
+                            className = className == null ? attr.Value : className + " " + attr.Value;
+                        }
+                    }
+                    return className;
+                } else {
+                    foreach (var attr in this) {
+                        if (attr.Name == attrName) {
+                            return attr.Value;
+                        }
+                    }
+                    return null;
+                }
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public HtmlAttributes Add(string name, string val)
@@ -85,8 +123,8 @@ namespace ProgressOnderwijsUtils.Html
             public HtmlAttribute Current
                 => attributes[pos];
 
-                object IEnumerator.Current
-                => attributes[pos];
+            object IEnumerator.Current
+                => Current;
 
             public void Dispose() { }
 
@@ -94,7 +132,7 @@ namespace ProgressOnderwijsUtils.Html
                 => ++pos < count;
 
             public void Reset()
-                => pos = 0;
+                => pos = -1;
         }
 
         public static HtmlAttributes Empty
