@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>63.0.1</Version>
-    <PackageReleaseNotes>Make ToSqlTypeName include precision specifier when type is Binary.</PackageReleaseNotes>
+    <Version>63.1.0</Version>
+    <PackageReleaseNotes>Added indexer to HtmlAttributes, and IEquatable members to HtmlAttribute.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
