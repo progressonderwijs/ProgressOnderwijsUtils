@@ -109,5 +109,29 @@ namespace ProgressOnderwijsUtils.Tests
             var attrsOfConcurrentlyModifiedVariable = (div as IHtmlElement).Attributes;
             PAssert.That(() => attrsOfConcurrentlyModifiedVariable.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D"), new HtmlAttribute("class", "X"), new HtmlAttribute("class", "Y") }));
         }
+
+        [Fact]
+        public void IndexerExtractsUniquelyNamedAttr()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
+            IHtmlElement elem = div;
+            PAssert.That(() => elem.Attributes["id"] == "B");
+        }
+
+        [Fact]
+        public void IndexerExtractsFirstOccurenceWhenAmbiguousLikeTheDom()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+            IHtmlElement elem = div;
+            PAssert.That(() => elem.Attributes["data-xyz"] == "C");
+        }
+
+        [Fact]
+        public void IndexerSupportsClassNameJoining()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+            IHtmlElement elem = div;
+            PAssert.That(() => elem.Attributes["class"] == "A D");
+        }
     }
 }

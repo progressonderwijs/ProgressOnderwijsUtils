@@ -53,6 +53,28 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlAttribute this[int i]
             => attributes[i];
 
+        public string? this[string attrName]
+        {
+            get {
+                if (attrName == "class") {
+                    var className = default(string);
+                    foreach (var attr in this) {
+                        if (attr.Name == "class") {
+                            className = className == null ? attr.Value : className + " " + attr.Value;
+                        }
+                    }
+                    return className;
+                } else {
+                    foreach (var attr in this) {
+                        if (attr.Name == attrName) {
+                            return attr.Value;
+                        }
+                    }
+                    return null;
+                }
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public HtmlAttributes Add(string name, string val)
         {
