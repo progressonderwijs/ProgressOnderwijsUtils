@@ -110,7 +110,7 @@ namespace ProgressOnderwijsUtils.Html
                 => ++pos < count;
 
             public void Reset()
-                => pos = 0;
+                => pos = -1;
         }
 
         public static HtmlAttributes Empty
