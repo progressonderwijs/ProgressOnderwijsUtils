@@ -86,5 +86,28 @@ namespace ProgressOnderwijsUtils.Tests
             _ = div._class("X"); //this should not affect the enumeration.
             PAssert.That(() => elem.Attributes.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
         }
+
+        [Fact]
+        public void ResetReturnsTheSameDataAsInitiallyEvenIfConcurrentlyModified()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
+            IHtmlElement elem = div;
+            div = div._class("X"); //this should not affect the enumeration.
+            using var enumerator = elem.Attributes.GetEnumerator();
+
+            PAssert.That(() => enumerator.MoveNext());
+            PAssert.That(() => enumerator.Current == new HtmlAttribute("class", "A"));
+            div = div._class("Y"); //this should not affect the enumeration.
+            PAssert.That(() => enumerator.MoveNext());
+            PAssert.That(() => enumerator.Current == new HtmlAttribute("id", "B"));
+            enumerator.Reset();
+            var attrsPostReset = new List<HtmlAttribute>();
+            while (enumerator.MoveNext()) {
+                attrsPostReset.Add(enumerator.Current);
+            }
+            PAssert.That(() => attrsPostReset.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
+            var attrsOfConcurrentlyModifiedVariable = (div as IHtmlElement).Attributes;
+            PAssert.That(() => attrsOfConcurrentlyModifiedVariable.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D"), new HtmlAttribute("class", "X"), new HtmlAttribute("class", "Y") }));
+        }
     }
 }
