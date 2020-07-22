@@ -57,5 +57,23 @@ namespace ProgressOnderwijsUtils.Tests
             }
             PAssert.That(() => errors.None());
         }
+
+        [Fact]
+        public void EqualityMembersWork()
+        {
+            AssertEquality(new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), false);
+            AssertEquality(new HtmlAttribute("class", "A"), new HtmlAttribute("class", "B"), false);
+            AssertEquality(new HtmlAttribute("class", "A"), new HtmlAttribute("id", "A"), false);
+            AssertEquality(new HtmlAttribute("class", "A"), new HtmlAttribute("class", "A"), true);
+        }
+
+        static void AssertEquality(HtmlAttribute attr1, HtmlAttribute attr2, bool expectedEquality)
+        {
+            PAssert.That(() => attr1 != attr2 != expectedEquality);
+            PAssert.That(() => attr1 == attr2 == expectedEquality);
+            PAssert.That(() => attr1.Equals(attr2) == expectedEquality);
+            PAssert.That(() => attr1.GetHashCode() == attr2.GetHashCode() == expectedEquality);
+            PAssert.That(() => attr1.Equals((object)attr2) == expectedEquality);
+        }
     }
 }
