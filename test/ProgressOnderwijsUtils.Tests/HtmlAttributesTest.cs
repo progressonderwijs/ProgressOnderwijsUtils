@@ -1,10 +1,12 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Html;
 using Xunit;
+using static ProgressOnderwijsUtils.Html.Tags;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -74,6 +76,15 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => attr1.Equals(attr2) == expectedEquality);
             PAssert.That(() => attr1.GetHashCode() == attr2.GetHashCode() == expectedEquality);
             PAssert.That(() => attr1.Equals((object)attr2) == expectedEquality);
+        }
+
+        [Fact]
+        public void AttributesCanBeEnumerated()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
+            IHtmlElement elem = div;
+            _ = div._class("X"); //this should not affect the enumeration.
+            PAssert.That(() => elem.Attributes.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
         }
     }
 }
