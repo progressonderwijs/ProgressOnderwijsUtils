@@ -8,7 +8,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class HtmlAttributesThreadSafety
+    public sealed class HtmlAttributesTest
     {
         [Fact]
         public void HtmlAttributesUsedOnMultipleThreadsWorksAsIfUnshared()
