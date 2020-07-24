@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Linq;
 using System;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -73,6 +74,59 @@ namespace ProgressOnderwijsUtils.Html
                     return null;
                 }
             }
+        }
+
+        public bool HasClass(string className)
+        {
+            var classChars = className.AsSpan();
+            foreach (var attr in this) {
+                if (attr.Name == "class") {
+                    var haystack = attr.Value.AsSpan();
+                    while (haystack.Length > 0) {
+                        var endIdx = haystack.IndexOf(' ');
+
+                        ReadOnlySpan<char> head;
+                        if (endIdx == -1) {
+                            head = haystack;
+                            haystack = default;
+                        } else {
+                            head = haystack.Slice(0, endIdx);
+                            haystack = haystack.Slice(endIdx + 1);
+                        }
+                        if (head.SequenceEqual(classChars)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public string[] Classes()
+        {
+            var classes = new ArrayBuilder<string>();
+
+            foreach (var attr in this) {
+                if (attr.Name == "class") {
+                    var haystack = attr.Value.AsSpan();
+                    while (haystack.Length > 0) {
+                        var endIdx = haystack.IndexOf(' ');
+
+                        ReadOnlySpan<char> head;
+                        if (endIdx == -1) {
+                            head = haystack;
+                            haystack = default;
+                        } else {
+                            head = haystack.Slice(0, endIdx);
+                            haystack = haystack.Slice(endIdx + 1);
+                        }
+                        if (head.Length > 0) {
+                            classes.Add(head.Length == attr.Value.Length ? attr.Value : new string(head));
+                        }
+                    }
+                }
+            }
+            return classes.ToArray();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

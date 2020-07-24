@@ -131,5 +131,51 @@ namespace ProgressOnderwijsUtils.Tests
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
             PAssert.That(() => GetAttributes(div)["class"] == "A D");
         }
+
+        [Fact]
+        public void ClassesListTwoSeparatelyAppliedAttributes()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+            PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "D" }));
+        }
+
+        [Fact]
+        public void ClassesCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "X", "D", "C", "E", "Y" }));
+        }
+
+        [Fact]
+        public void ClassesCanBeEmpty()
+        {
+            var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
+            PAssert.That(() => GetAttributes(div).Classes().None());
+        }
+
+        [Fact]
+        public void HasClassCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => GetAttributes(div).HasClass("X"));
+            PAssert.That(() => GetAttributes(div).HasClass("Y"));
+            PAssert.That(() => !GetAttributes(div).HasClass("bla"));
+            PAssert.That(() => !GetAttributes(div).HasClass("a"));
+        }
+
+        [Fact]
+        public void HasClassCornerCases()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => GetAttributes(div).HasClass(""), "All classlists have the empty class");
+            PAssert.That(() => !GetAttributes(div).HasClass("A X"), "You cannot check multiple classes in one call");
+        }
+
+        [Fact]
+        public void HasClassCanBeEmpty()
+        {
+            var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
+            PAssert.That(() => !GetAttributes(div).HasClass("D"));
+        }
     }
 }
