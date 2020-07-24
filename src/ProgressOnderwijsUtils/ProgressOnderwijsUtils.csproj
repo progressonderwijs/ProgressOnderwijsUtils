@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>63.1.0</Version>
-    <PackageReleaseNotes>Added indexer to HtmlAttributes, and IEquatable members to HtmlAttribute.</PackageReleaseNotes>
+    <Version>63.2.0</Version>
+    <PackageReleaseNotes>Added convenience methods HasClass and Classes to HtmlAttributes, and imported the latest version of the html spec.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

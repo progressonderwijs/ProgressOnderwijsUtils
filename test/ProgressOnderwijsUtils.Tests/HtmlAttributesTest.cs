@@ -78,22 +78,24 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => attr1.Equals((object)attr2) == expectedEquality);
         }
 
+        static HtmlAttributes GetAttributes(IHtmlElement elem) //convenient due to explicit interface implementation
+            => elem.Attributes;
+
         [Fact]
         public void AttributesCanBeEnumerated()
         {
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
-            IHtmlElement elem = div;
             _ = div._class("X"); //this should not affect the enumeration.
-            PAssert.That(() => elem.Attributes.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
+            PAssert.That(() => GetAttributes(div).SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
         }
 
         [Fact]
         public void ResetReturnsTheSameDataAsInitiallyEvenIfConcurrentlyModified()
         {
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
-            IHtmlElement elem = div;
+            var attributes = GetAttributes(div);
             div = div._class("X"); //this should not affect the enumeration.
-            using var enumerator = elem.Attributes.GetEnumerator();
+            using var enumerator = attributes.GetEnumerator();
 
             PAssert.That(() => enumerator.MoveNext());
             PAssert.That(() => enumerator.Current == new HtmlAttribute("class", "A"));
@@ -106,32 +108,80 @@ namespace ProgressOnderwijsUtils.Tests
                 attrsPostReset.Add(enumerator.Current);
             }
             PAssert.That(() => attrsPostReset.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D") }));
-            var attrsOfConcurrentlyModifiedVariable = (div as IHtmlElement).Attributes;
-            PAssert.That(() => attrsOfConcurrentlyModifiedVariable.SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D"), new HtmlAttribute("class", "X"), new HtmlAttribute("class", "Y") }));
+            PAssert.That(() => GetAttributes(div).SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D"), new HtmlAttribute("class", "X"), new HtmlAttribute("class", "Y") }));
         }
 
         [Fact]
         public void IndexerExtractsUniquelyNamedAttr()
         {
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
-            IHtmlElement elem = div;
-            PAssert.That(() => elem.Attributes["id"] == "B");
+            PAssert.That(() => GetAttributes(div)["id"] == "B");
         }
 
         [Fact]
         public void IndexerExtractsFirstOccurenceWhenAmbiguousLikeTheDom()
         {
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
-            IHtmlElement elem = div;
-            PAssert.That(() => elem.Attributes["data-xyz"] == "C");
+            PAssert.That(() => GetAttributes(div)["data-xyz"] == "C");
         }
 
         [Fact]
         public void IndexerSupportsClassNameJoining()
         {
             var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
-            IHtmlElement elem = div;
-            PAssert.That(() => elem.Attributes["class"] == "A D");
+            PAssert.That(() => GetAttributes(div)["class"] == "A D");
+        }
+
+        [Fact]
+        public void ClassesListTwoSeparatelyAppliedAttributes()
+        {
+            var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+            PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "D" }));
+        }
+
+        [Fact]
+        public void ClassesCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "X", "D", "C", "E", "Y" }));
+        }
+
+        [Fact]
+        public void ClassesCanBeEmpty()
+        {
+            var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
+            PAssert.That(() => GetAttributes(div).Classes().None());
+        }
+
+        [Fact]
+        public void HasClassCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => GetAttributes(div).HasClass("X"));
+            PAssert.That(() => GetAttributes(div).HasClass("Y"));
+            PAssert.That(() => !GetAttributes(div).HasClass("bla"));
+            PAssert.That(() => !GetAttributes(div).HasClass("a"));
+        }
+
+        [Fact]
+        public void You_cannot_check_multiple_classes_in_one_call()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => !GetAttributes(div).HasClass("A X"));
+        }
+
+        [Fact]
+        public void TheEmptyClassIsNotPresent()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => !GetAttributes(div).HasClass(""));
+        }
+
+        [Fact]
+        public void HasClassReturnsFalseWhenThereIsNoClass()
+        {
+            var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
+            PAssert.That(() => !GetAttributes(div).HasClass("D"));
         }
     }
 }
