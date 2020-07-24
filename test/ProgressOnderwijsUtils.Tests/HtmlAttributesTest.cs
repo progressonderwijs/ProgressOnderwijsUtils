@@ -178,7 +178,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void HasClassCanBeEmpty()
+        public void HasClassReturnsFalseWhenThereIsNoClass()
         {
             var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
             PAssert.That(() => !GetAttributes(div).HasClass("D"));
