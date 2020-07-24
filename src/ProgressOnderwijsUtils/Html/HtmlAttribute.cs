@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils.Html
                             head = haystack.Slice(0, endIdx);
                             haystack = haystack.Slice(endIdx + 1);
                         }
-                        if (head.SequenceEqual(classChars)) {
+                        if (head.SequenceEqual(classChars) && head.Length > 0) {
                             return true;
                         }
                     }

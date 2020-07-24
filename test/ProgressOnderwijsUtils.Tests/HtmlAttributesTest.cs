@@ -164,11 +164,17 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void HasClassCornerCases()
+        public void You_cannot_check_multiple_classes_in_one_call()
         {
             var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
-            PAssert.That(() => GetAttributes(div).HasClass(""), "All classlists have the empty class");
-            PAssert.That(() => !GetAttributes(div).HasClass("A X"), "You cannot check multiple classes in one call");
+            PAssert.That(() => !GetAttributes(div).HasClass("A X"));
+        }
+
+        [Fact]
+        public void TheEmptyClassIsNotPresent()
+        {
+            var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+            PAssert.That(() => !GetAttributes(div).HasClass(""));
         }
 
         [Fact]
