@@ -33,6 +33,7 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
             => DistinctArray<T>.FromDistinctNonMutatedArray(items.ToArray(), comparer);
 
+        [Pure]
         public static DistinctArray<T> ToDistinctArrayFromDistinct_Unchecked<T>(this T[] items)
             => DistinctArray<T>.FromDistinct_ClaimDistinctnessWithoutCheck(items);
     }
