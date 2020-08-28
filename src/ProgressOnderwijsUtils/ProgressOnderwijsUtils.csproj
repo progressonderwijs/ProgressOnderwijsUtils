@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>63.2.0</Version>
-    <PackageReleaseNotes>Added convenience methods HasClass and Classes to HtmlAttributes, and imported the latest version of the html spec.</PackageReleaseNotes>
+    <Version>64.0.0</Version>
+    <PackageReleaseNotes>Improve the API of the Utils.TransitiveClosure to guarantee that the edgeLookup callback is always invoked with distinct values.</PackageReleaseNotes>
+
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

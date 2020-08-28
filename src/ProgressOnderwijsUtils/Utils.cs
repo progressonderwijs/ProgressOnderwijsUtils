@@ -59,24 +59,17 @@ namespace ProgressOnderwijsUtils
             => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
-        {
-            var distinctNewlyReachable = elems.ToArray();
-            var set = distinctNewlyReachable.ToSet(comparer);
-            while (distinctNewlyReachable.Length > 0) {
-                distinctNewlyReachable = distinctNewlyReachable.SelectMany(edgeLookup).Where(set.Add).ToArray();
-            }
-            return set;
-        }
+            => TransitiveClosure(elems, distinctArray => distinctArray.UnderlyingArrayThatShouldNeverBeMutated().SelectMany(edgeLookup), comparer);
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<DistinctArray<T>, IEnumerable<T>> multiEdgeLookup)
             => TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<DistinctArray<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
-            var distinctNewlyReachable = elems.ToArray();
-            var set = distinctNewlyReachable.ToSet(comparer);
-            while (distinctNewlyReachable.Length > 0) {
-                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+            var set = elems.ToSet(comparer);
+            var distinctNewlyReachable = set.ToDistinctArray();
+            while (distinctNewlyReachable.Count > 0) {
+                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray().ToDistinctArrayFromDistinct_Unchecked();
             }
             return set;
         }
