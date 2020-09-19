@@ -1,14 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
+    public interface IHasNodeValue<out T>
+    {
+        T NodeValue { get; }
+    }
+
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
         IReadOnlyList<TTree> Children { get; }
+    }
+
+    public interface IRecursiveStructure<out TTree, T> : IRecursiveStructure<TTree>, IHasNodeValue<T>
+        where TTree : IRecursiveStructure<TTree>
+    {
+        TTree TypedThis { get; }
+        Tree<T> UnrootedSubTree();
     }
 
     public static class Tree
@@ -46,10 +59,20 @@ namespace ProgressOnderwijsUtils.Collections
         /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
-        public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
+        public static Tree<TR> Select<TTree, T, TR>(this IRecursiveStructure<TTree, T> tree, Func<T, TR> mapper)
+            where TTree : IRecursiveStructure<TTree, T>
+            => tree.TypedThis.Select(node => mapper(node.NodeValue));
+
+        /// <summary>
+        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
+        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// </summary>
+        [Pure]
+        public static Tree<TR> Select<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
+            where TTree : IRecursiveStructure<TTree>
         {
-            var todo = new Stack<Tree<T>>(16);
-            var reconstruct = new Stack<Tree<T>>(16);
+            var todo = new Stack<TTree>(16);
+            var reconstruct = new Stack<TTree>(16);
             todo.Push(tree);
             while (todo.Count > 0) {
                 var next = todo.Pop();
@@ -67,10 +90,11 @@ namespace ProgressOnderwijsUtils.Collections
                 for (var i = 0; i < mappedChildren.Length; i++) {
                     mappedChildren[i] = output.Pop();
                 }
-                output.Push(Node(mapper(next.NodeValue), mappedChildren));
+                output.Push(Node(mapper(next), mappedChildren));
             }
             return output.Pop();
         }
+
 
         /// <summary>
         /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
@@ -83,7 +107,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
-        where TTree : IRecursiveStructure<TTree>
+            where TTree : IRecursiveStructure<TTree>
         {
             var todo = new Stack<TTree>(16);
             var reconstruct = new Stack<TTree>(16);
@@ -163,7 +187,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
     }
 
-    public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
+    public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
     {
         readonly T nodeValue;
         readonly Tree<T>[] kidArray;
@@ -290,5 +314,10 @@ namespace ProgressOnderwijsUtils.Collections
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
                 );
         }
+
+        Tree<T> IRecursiveStructure<Tree<T>, T>.TypedThis => this;
+
+        Tree<T> IRecursiveStructure<Tree<T>, T>.UnrootedSubTree()
+            => this;
     }
 }
