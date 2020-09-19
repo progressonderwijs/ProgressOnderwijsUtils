@@ -79,7 +79,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
-        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, Tree<TR>[], Tree<TR>[]?> mapper)
+        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, TR> mapValue, Func<Tree<T>, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
         {
             var todo = new Stack<Tree<T>>(16);
             var reconstruct = new Stack<Tree<T>>(16);
@@ -94,22 +94,31 @@ namespace ProgressOnderwijsUtils.Collections
             }
 
             var output = new List<Tree<TR>[]>(16);
+            var childBuilder = new List<Tree<TR>>(16);
             while (reconstruct.Count > 0) {
                 var next = reconstruct.Pop();
-                var newChildCount = 0;
                 var oldChildren = next.Children;
-                for (var childI = 1; childI <= oldChildren.Count; childI++) {
-                    newChildCount += output[^childI].Length;
-                }
-                var mappedChildren = newChildCount == 0 ? Array.Empty<Tree<TR>>() : new Tree<TR>[newChildCount];
-                var writeSlice = mappedChildren.AsSpan();
+                childBuilder.Clear();
                 for (var i = 0; i < oldChildren.Count; i++) {
-                    var popped = output[output.Count - 1 - i];
-                    popped.CopyTo(writeSlice);
-                    writeSlice = writeSlice.Slice(popped.Length);
+                    childBuilder.AddRange(output[^(1 + i)]);
                 }
                 output.RemoveRange(output.Count - oldChildren.Count, oldChildren.Count);
-                output.Add(mapper(next, mappedChildren) ?? Array.Empty<Tree<TR>>());
+                var newNodes = mapStructure(next, mapValue(next), childBuilder);
+                var newNodesArray = newNodes as Tree<TR>[] ?? newNodes?.ToArray() ?? Array.Empty<Tree<TR>>();
+                var writeIdx = 0;
+                for (var i = 0; i < newNodesArray.Length; i++) {
+                    if (newNodesArray[i] != null) {
+                        newNodesArray[writeIdx++] = newNodesArray[i];
+                    }
+                }
+                if (writeIdx != newNodesArray.Length) {
+                    if (writeIdx == 0) {
+                        newNodesArray = Array.Empty<Tree<TR>>();
+                    } else {
+                        Array.Resize(ref newNodesArray, writeIdx);
+                    }
+                }
+                output.Add(newNodesArray!);
             }
             return output[0];
         }
