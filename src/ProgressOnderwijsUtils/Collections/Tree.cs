@@ -73,10 +73,13 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         /// <summary>
-        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper argument.
-        /// Mapper is called exactly once for each node in the tree, and receives as arguments the node of the old tree being processed, the new children previous calls to mapper proposed,
-        /// and should return the nodes that should replace this one in the tree.
-        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
+        /// mapValue and mapStructure are called exactly once for each node in the tree.
+        /// mapValue is passed the old node and should return its new value.
+        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
+        ///
+        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
         /// </summary>
         [Pure]
         public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, TR> mapValue, Func<Tree<T>, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
