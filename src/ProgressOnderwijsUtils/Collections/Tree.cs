@@ -82,10 +82,11 @@ namespace ProgressOnderwijsUtils.Collections
         /// For a given node, mapValue is called first (and its return value passed to mapStructure).
         /// </summary>
         [Pure]
-        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, TR> mapValue, Func<Tree<T>, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
+        public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
+        where TTree : IRecursiveStructure<TTree>
         {
-            var todo = new Stack<Tree<T>>(16);
-            var reconstruct = new Stack<Tree<T>>(16);
+            var todo = new Stack<TTree>(16);
+            var reconstruct = new Stack<TTree>(16);
             todo.Push(tree);
             while (todo.Count > 0) {
                 var next = todo.Pop();
