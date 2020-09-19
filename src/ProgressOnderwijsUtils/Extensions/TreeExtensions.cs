@@ -6,6 +6,10 @@ namespace ProgressOnderwijsUtils
 {
     public static class TreeExtensions
     {
+        public static TTree[] AsSingletonArray<TTree>(this TTree tree)
+            where TTree : IRecursiveStructure<TTree> //to avoid namepsace pollution
+            => new[] { tree };
+
         [Pure]
         public static int Height<TTree>(this IRecursiveStructure<TTree> tree)
             where TTree : IRecursiveStructure<TTree>
