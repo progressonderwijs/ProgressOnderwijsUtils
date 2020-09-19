@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void WhereJaggyStructureSurvives()
         {
             var tree = Tree.Node("1", Tree.Node("2", Tree.Node("x", Tree.Node("deeper"))), Tree.Node("3"), Tree.Node("y", Tree.Node("4")));
-            var whereTrue = tree.Where(n => true);
+            var whereTrue = tree.Where((string n) => true);
             PAssert.That(() => tree.Equals(whereTrue));
         }
 

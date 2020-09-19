@@ -40,14 +40,15 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> Node<T>(T value)
             => new Tree<T>(value, null);
+
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>?> kidLookup)
-            => CachedTreeBuilder<T,T>.Resolve(root, kidLookup, Node);
+            => CachedTreeBuilder<T, T>.Resolve(root, kidLookup, Node);
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
             where T : notnull
-            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable());
+            => CachedTreeBuilder<T, T>.Resolve(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable(), Node);
 
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
@@ -69,42 +70,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<TR> Select<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
             where TTree : IRecursiveStructure<TTree>
-        {
-            var todo = new Stack<TTree>(16);
-            var reconstruct = new Stack<TTree>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-
-            var output = new Stack<Tree<TR>>(16);
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var mappedChildren = new Tree<TR>[next.Children.Count];
-                for (var i = 0; i < mappedChildren.Length; i++) {
-                    mappedChildren[i] = output.Pop();
-                }
-                output.Push(Node(mapper(next), mappedChildren));
-            }
-            return output.Pop();
-        }
-
-        [Pure]
-        public static Tree<TR> Select2<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
-            where TTree : IRecursiveStructure<TTree>
-            => CachedTreeBuilder<TTree,TR>.Resolve(tree, o=>o.Children, (o, kids) => Node(mapper(o), kids));
-
-
-        [Pure]
-        public static Tree<TR> Select3<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
-            where TTree : IRecursiveStructure<TTree>
-            => Rebuild(tree, mapper, (o,v, kids) => new []{ Node(v, kids) }).Single();
-
+            => CachedTreeBuilder<TTree, TR>.Resolve(tree, o => o.Children, (o, kids) => Node(mapper(o), kids));
 
         /// <summary>
         /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
@@ -167,7 +133,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
         /// </summary>
         [Pure]
-        public static Tree<T>? Where2<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
+        public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
             where TTree : IRecursiveStructure<TTree, T>
             => CachedTreeBuilder<TTree, T>.Resolve(tree.TypedThis, o => o.Children.Where(retainSubTree), (o, kids) => Node(o.NodeValue, kids));
 
@@ -177,46 +143,9 @@ namespace ProgressOnderwijsUtils.Collections
         /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
         /// </summary>
         [Pure]
-        public static Tree<T>? Where3<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<T, bool> retainSubTree)
+        public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<T, bool> retainSubTree)
             where TTree : IRecursiveStructure<TTree, T>
-            => CachedTreeBuilder<TTree, T>.Resolve(tree.TypedThis, o => o.Children.Where(o => retainSubTree(o.NodeValue)), (o, kids) => Node(o.NodeValue, kids));
-
-
-
-        /// <summary>
-        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
-        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
-        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
-        /// </summary>
-        [Pure]
-        public static Tree<T>? Where<T>(this Tree<T> tree, Func<Tree<T>, bool> retainSubTree)
-        {
-            var reconstruct = new Stack<Tree<T>>(16);
-            var todo = new Stack<Tree<T>>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-            var tmp = new List<Tree<T>>();
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var kidCount = next.Children.Count;
-                for (var i = 0; i < kidCount; i++) {
-                    var maybeKid = todo.Pop();
-                    if (retainSubTree(maybeKid)) {
-                        tmp.Add(maybeKid);
-                    }
-                }
-                todo.Push(Node(next.NodeValue, tmp.ToArray()));
-                tmp.Clear();
-            }
-            return todo.Pop() is var finalTree && retainSubTree(finalTree) ? finalTree : null;
-        }
+            => Where(tree, o => retainSubTree(o.NodeValue));
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
