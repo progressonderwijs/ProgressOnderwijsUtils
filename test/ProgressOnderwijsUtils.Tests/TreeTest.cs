@@ -207,6 +207,32 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void ComplexMess()
+        {
+            var used = new HashSet<int>();
+            var maxSize = 400;
+            var tree = Tree.BuildRecursively(maxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(n => 0 <= n && n < maxSize && used.Add(n)));
+            var a = tree.Rebuild(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
+                val % 2 == 0
+                    ? kids
+                    : val % 3 == 0
+                        ? null
+                        : new[] { Tree.Node(val, kids), Tree.Node(val+1, kids)  }
+            );
+            var b = tree.Rebuild2(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
+                val % 2 == 0
+                    ? kids
+                    : val % 3 == 0
+                        ? null
+                        : new[] { Tree.Node(val, kids), Tree.Node(val+1, kids)  }
+            );
+
+            PAssert.That(() => a.Max(n => n.Height()) == 3);
+            PAssert.That(() => b.Max(n => n.Height()) == 3);
+            PAssert.That(() => a.SequenceEqual(b));
+        }
+
+        [Fact]
         public void TreeSelectTwoChildren()
             => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u), Tree.Node(3u)),

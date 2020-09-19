@@ -72,8 +72,6 @@ namespace ProgressOnderwijsUtils.Collections
             where TTree : IRecursiveStructure<TTree>
             => CachedTreeBuilder<TTree, TR>.Resolve(tree, o => o.Children, (o, kids) => Node(mapper(o), kids));
 
-
-
         /// <summary>
         /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
         /// mapValue and mapStructure are called exactly once for each node in the tree.
@@ -98,6 +96,42 @@ namespace ProgressOnderwijsUtils.Collections
         /// For a given node, mapValue is called first (and its return value passed to mapStructure).
         /// </summary>
         [Pure]
+        public static Tree<TR>[] Rebuild3<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
+            where TTree : IRecursiveStructure<TTree>
+        {
+            var scratchPadA = new List<Tree<TR>>();
+            var scratchPadB = new List<Tree<TR>>();
+            var resolve = CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => {
+                    scratchPadA.Clear();
+                    foreach (var kid in kids) {
+                        scratchPadA.AddRange(kid.NodeValue);
+                    }
+                    var replacementNodes = mapStructure(n, mapValue(n), scratchPadA);
+                    if (replacementNodes == null) {
+                        return Node(Array.Empty<Tree<TR>>());
+                    }
+                    scratchPadB.Clear();
+                    foreach (var node in replacementNodes) {
+                        if (node != null) {
+                            scratchPadB.Add(node);
+                        }
+                    }
+                    return Node(scratchPadB.ToArray());
+                }
+            );
+            return resolve.NodeValue.ToArray();
+        }
+
+        /// <summary>
+        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
+        /// mapValue and mapStructure are called exactly once for each node in the tree.
+        /// mapValue is passed the old node and should return its new value.
+        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
+        ///
+        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
+        /// </summary>
+        //[Pure]
         public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
             where TTree : IRecursiveStructure<TTree>
         {
