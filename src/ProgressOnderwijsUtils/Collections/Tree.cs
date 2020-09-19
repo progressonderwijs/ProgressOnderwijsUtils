@@ -40,10 +40,9 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> Node<T>(T value)
             => new Tree<T>(value, null);
-
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>?> kidLookup)
-            => CachedTreeBuilder<T>.Resolve(root, kidLookup);
+            => CachedTreeBuilder<T,T>.Resolve(root, kidLookup, Node);
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
@@ -94,6 +93,17 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return output.Pop();
         }
+
+        [Pure]
+        public static Tree<TR> Select2<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
+            where TTree : IRecursiveStructure<TTree>
+            => CachedTreeBuilder<TTree,TR>.Resolve(tree, o=>o.Children, (o, kids) => Node(mapper(o), kids));
+
+
+        [Pure]
+        public static Tree<TR> Select3<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
+            where TTree : IRecursiveStructure<TTree>
+            => Rebuild(tree, mapper, (o,v, kids) => new []{ Node(v, kids) }).Single();
 
 
         /// <summary>
@@ -150,6 +160,28 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return output[0];
         }
+
+        /// <summary>
+        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
+        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
+        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
+        /// </summary>
+        [Pure]
+        public static Tree<T>? Where2<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
+            where TTree : IRecursiveStructure<TTree, T>
+            => CachedTreeBuilder<TTree, T>.Resolve(tree.TypedThis, o => o.Children.Where(retainSubTree), (o, kids) => Node(o.NodeValue, kids));
+
+        /// <summary>
+        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
+        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
+        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
+        /// </summary>
+        [Pure]
+        public static Tree<T>? Where3<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<T, bool> retainSubTree)
+            where TTree : IRecursiveStructure<TTree, T>
+            => CachedTreeBuilder<TTree, T>.Resolve(tree.TypedThis, o => o.Children.Where(o => retainSubTree(o.NodeValue)), (o, kids) => Node(o.NodeValue, kids));
+
+
 
         /// <summary>
         /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
@@ -315,7 +347,8 @@ namespace ProgressOnderwijsUtils.Collections
                 );
         }
 
-        Tree<T> IRecursiveStructure<Tree<T>, T>.TypedThis => this;
+        Tree<T> IRecursiveStructure<Tree<T>, T>.TypedThis
+            => this;
 
         Tree<T> IRecursiveStructure<Tree<T>, T>.UnrootedSubTree()
             => this;
