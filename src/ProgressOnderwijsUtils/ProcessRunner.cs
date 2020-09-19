@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils
                     CreateNoWindow = true, // we donot need a UI
                     RedirectStandardInput = true,
                     UseShellExecute = false, //required to be able to redirect streams
-                    FileName = ExecutableName,
-                    Arguments = Arguments,
+                    FileName = ExecutableName.AssertNotNull(),
+                    Arguments = Arguments ?? "",
                     WorkingDirectory = WorkingDirectory ?? System.Environment.CurrentDirectory,
                 },
                 EnableRaisingEvents = true,

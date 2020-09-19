@@ -1,15 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>61.0.0</Version>
-    <PackageReleaseNotes>RandomHelper removed from public api</PackageReleaseNotes>
+    <Version>64.0.0</Version>
+    <PackageReleaseNotes>Improve the API of the Utils.TransitiveClosure to guarantee that the edgeLookup callback is always invoked with distinct values.</PackageReleaseNotes>
+
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.14.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
@@ -19,7 +20,7 @@
     <PackageReference Include="ExpressionToCodeLib" version="3.3.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.7.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />

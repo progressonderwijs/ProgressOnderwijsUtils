@@ -9,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public sealed class DbColumnMetaData
+    public sealed class DbColumnMetaData : ValueBase<DbColumnMetaData>
     {
         struct CompressedSysColumnsValue : IWrittenImplicitly
         {

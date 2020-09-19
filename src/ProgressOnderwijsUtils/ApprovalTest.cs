@@ -31,8 +31,8 @@ namespace ProgressOnderwijsUtils
         public static ApprovalTest CreateForApprovedPath(string path)
             => new ApprovalTest(path);
 
-        public void AssertUnchangedAndSave(string[] line)
-            => line.Select(l => l + "\r\n").JoinStrings();
+        public void AssertUnchangedAndSave(string[] lines)
+            => lines.Select(line => line + "\r\n").JoinStrings();
 
         public void AssertUnchangedAndSave(string text)
         {

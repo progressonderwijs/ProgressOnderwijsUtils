@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
             where T : notnull
-            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg).AsEnumerable());
+            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable());
 
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)

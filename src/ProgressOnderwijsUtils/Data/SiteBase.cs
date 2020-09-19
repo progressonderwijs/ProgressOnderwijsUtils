@@ -11,13 +11,13 @@ namespace ProgressOnderwijsUtils
         public virtual IComponent Component
             => throw new NotSupportedException();
 
-        public virtual IContainer? Container
-            => null;
+        public virtual IContainer Container
+            => null!;
 
         public virtual bool DesignMode
             => throw new NotSupportedException();
 
-        public virtual string Name
+        public virtual string? Name
         {
             get
                 => throw new NotSupportedException();

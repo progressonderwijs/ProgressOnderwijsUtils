@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests
@@ -274,7 +272,33 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
 
             var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
             PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
-            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 7, 12, 17, 18, 20, 25 }));
+            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 7, 12, 17, 18, 20, 25, }));
+        }
+
+        [Fact]
+        public void Func_invocation_cannot_be_ignored()
+        {
+            var source = @"
+                using System;
+                using ProgressOnderwijsUtils.Collections;
+                
+                static class C
+                {
+                    static readonly Func<Maybe<Unit, string>> func = () => Maybe.Ok().AsMaybeWithoutError<string>();
+
+                    static void TestStatementBody()
+                    {
+                        func();
+                    }
+
+                    static void TestExpressionBody()
+                        => func();
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
+            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 10, 14, }));
         }
     }
 }
