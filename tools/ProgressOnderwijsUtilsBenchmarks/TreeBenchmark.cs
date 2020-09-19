@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public int MaxSize;
 
         public int iters;
-        Tree<int> tree;
+        Tree<int> tree = null!;
 
         [GlobalSetup]
         public void Setup()
