@@ -188,7 +188,9 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
             where TTree : IRecursiveStructure<TTree, T>
-            => CachedTreeBuilder<TTree, T>.Resolve(tree.TypedThis, o => o.Children.Where(retainSubTree), (o, kids) => Node(o.NodeValue, kids));
+            => tree.TypedThis is var treeTyped && retainSubTree(treeTyped)
+                ? CachedTreeBuilder<TTree, T>.Resolve(treeTyped, o => o.Children.Where(retainSubTree), (o, kids) => Node(o.NodeValue, kids))
+                : null;
 
         /// <summary>
         /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
