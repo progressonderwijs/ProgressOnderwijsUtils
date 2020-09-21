@@ -13,13 +13,14 @@ namespace ProgressOnderwijsUtils.Collections
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
+        TTree TypedThis { get; }
+
         IReadOnlyList<TTree> Children { get; }
     }
 
     public interface IRecursiveStructure<out TTree, T> : IRecursiveStructure<TTree>, IHasNodeValue<T>
         where TTree : IRecursiveStructure<TTree>
     {
-        TTree TypedThis { get; }
         Tree<T> UnrootedSubTree();
     }
 
@@ -185,7 +186,7 @@ namespace ProgressOnderwijsUtils.Collections
                 );
         }
 
-        Tree<T> IRecursiveStructure<Tree<T>, T>.TypedThis
+        Tree<T> IRecursiveStructure<Tree<T>>.TypedThis
             => this;
 
         Tree<T> IRecursiveStructure<Tree<T>, T>.UnrootedSubTree()

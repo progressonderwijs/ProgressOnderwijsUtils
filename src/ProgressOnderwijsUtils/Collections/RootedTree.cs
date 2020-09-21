@@ -101,6 +101,6 @@ namespace ProgressOnderwijsUtils.Collections
             return copy;
         }
 
-        RootedTree<T> IRecursiveStructure<RootedTree<T>, T>.TypedThis => this;
+        RootedTree<T> IRecursiveStructure<RootedTree<T>>.TypedThis => this;
     }
 }
