@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
             return x;
         }
-        
+
         [Benchmark]
         public int Rebuild3()
         {
