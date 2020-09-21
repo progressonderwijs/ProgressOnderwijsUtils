@@ -48,9 +48,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
             var used = new HashSet<int>();
             Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
             for (var iter = 0; iter < iters; iter++) {
-                var tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(predicate));
+                var tree2 = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(predicate));
                 used.Clear();
-                GC.KeepAlive(tree);
+                GC.KeepAlive(tree2);
             }
         }
 
