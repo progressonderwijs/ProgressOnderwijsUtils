@@ -3,13 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
-	ProjectSection(ProjectDependencies) = postProject
-		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {16178D44-BCC5-4C4C-B96C-69524EC194AD}
-	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Tests", "test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
@@ -19,6 +12,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		src\NugetPackagesCommon.props = src\NugetPackagesCommon.props
 		Performance1.psess = Performance1.psess
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {16178D44-BCC5-4C4C-B96C-69524EC194AD}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Tests", "test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtilsBenchmarks", "tools\ProgressOnderwijsUtilsBenchmarks\ProgressOnderwijsUtilsBenchmarks.csproj", "{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}"
 EndProject
@@ -78,17 +78,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
