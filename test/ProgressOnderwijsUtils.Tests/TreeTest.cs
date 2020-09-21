@@ -323,7 +323,7 @@ namespace ProgressOnderwijsUtils.Tests
             const int targetHeight = 1000_000;
             var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : new uint[0]);
             var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : new long[0]);
-            var mappedInput = input.Select(i => (long)i);
+            var mappedInput = input.SelectNodeValue(i => (long)i);
             var areEqual = mappedInput.Equals(output);
             PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");
             PAssert.That(() => input.Height() == targetHeight);
@@ -343,7 +343,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         static void AssertTreeSelectMapsInputAsExpected(Tree<uint> input, Tree<long> expected)
         {
-            var output = input.Select(i => (long)i);
+            var output = input.SelectNodeValue(i => (long)i);
             PAssert.That(() => output.Equals(expected));
         }
 

@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             var x = 0;
             Func<int, bool> predicate = node => node is var n && n % 3 != 0 && n < MaxSize * 2 / 3;
             for (var iter = 0; iter < iters; iter++) {
-                var output = tree.Select(predicate);
+                var output = tree.SelectNodeValue(predicate);
                 x += output.NodeValue ? 1 : 0;
             }
             return x;

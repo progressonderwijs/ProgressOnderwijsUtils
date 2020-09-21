@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils
         /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
-        public static Tree<TR> Select<TTree, T, TR>(this IRecursiveStructure<TTree, T> tree, Func<T, TR> mapper)
+        public static Tree<TR> SelectNodeValue<TTree, T, TR>(this IRecursiveStructure<TTree, T> tree, Func<T, TR> mapper)
             where TTree : IRecursiveStructure<TTree, T>
             => tree.TypedThis.Select(node => mapper(node.NodeValue));
 
@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtils
         /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
         /// </summary>
         [Pure]
-        public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<T, bool> retainSubTree)
+        public static Tree<T>? WhereNodeValue<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<T, bool> retainSubTree)
             where TTree : IRecursiveStructure<TTree, T>
             => Where(tree, o => retainSubTree(o.NodeValue));
     }
