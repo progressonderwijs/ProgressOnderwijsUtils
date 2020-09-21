@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils.Html
 
     public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
-        readonly HtmlAttribute[] attributes;
+        readonly HtmlAttribute[]? attributes;
         readonly int count;
 
         HtmlAttributes(HtmlAttribute[] attributes, int count)
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Html
             => count;
 
         public HtmlAttribute this[int i]
-            => attributes[i];
+            => attributes![i]; //only null if default, but then count is null... so this *should* crash.
 
         public string? this[string attrName]
         {
@@ -136,8 +136,8 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlAttributes Add(string name, string val)
         {
             var array = attributes;
-            if (attributes != null) {
-                if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null! /*null is placeholder*/) == null) {
+            if (array != null) {
+                if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null! /*null is placeholder*/) == null!) {
                     array[count].Value = val;
                     return new HtmlAttributes(array, count + 1);
                 } else {
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils.Html
 
             public Enumerator(HtmlAttributes attrs)
             {
-                attributes = attrs.attributes;
+                attributes = attrs.attributes!;
                 count = attrs.count;
                 pos = -1;
             }

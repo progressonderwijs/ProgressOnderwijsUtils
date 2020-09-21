@@ -7,7 +7,6 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -28,7 +27,7 @@ namespace ProgressOnderwijsUtils
     struct SqlParamArgs
     {
         public object Value;
-        public string TypeName;
+        public string? TypeName;
     }
 
     public struct ReusableCommand : IDisposable
@@ -39,7 +38,7 @@ namespace ProgressOnderwijsUtils
         public void Dispose()
         {
             QueryTimer?.Dispose();
-            if (Command != null) {
+            if (Command.PretendNullable() != null) {
                 PooledSqlCommandAllocator.ReturnToPool(Command);
                 Command = null!;
             }

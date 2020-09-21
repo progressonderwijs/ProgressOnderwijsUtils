@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Collections
         const int InlineArrays = 12;
         const int SubArraysNeeded = 217;
         int idx, sI;
-        T[] current;
+        T[]? current;
 #pragma warning disable 169
 #pragma warning disable IDE0044 // Add readonly modifier
 #pragma warning disable IDE0051 // Remove unused private members
