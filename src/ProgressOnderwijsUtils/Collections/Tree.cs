@@ -101,7 +101,10 @@ namespace ProgressOnderwijsUtils.Collections
         {
             var scratchPadA = new List<Tree<TR>>();
             var scratchPadB = new List<Tree<TR>>();
-            var resolve = CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => {
+            var resolve = CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(
+                tree,
+                n => n.Children,
+                (n, kids) => {
                     scratchPadA.Clear();
                     foreach (var kid in kids) {
                         scratchPadA.AddRange(kid.NodeValue);
@@ -272,8 +275,8 @@ namespace ProgressOnderwijsUtils.Collections
             bool ShallowEquals(NodePair pair)
                 // ReSharper disable RedundantCast
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
-                => ReferenceEquals(pair.A, pair.B) ||
-                    pair.A.Children.Count == pair.B.Children.Count
+                => ReferenceEquals(pair.A, pair.B)
+                    || pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
             // ReSharper restore RedundantCast
 
@@ -319,7 +322,9 @@ namespace ProgressOnderwijsUtils.Collections
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";
             }
-            return indent + (nodeValue?.ToString() ?? "<NULL>").Replace("\n", "\n" + indent) + " "
+            return indent
+                + (nodeValue?.ToString() ?? "<NULL>").Replace("\n", "\n" + indent)
+                + " "
                 + (Children.Count == 0
                     ? "."
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
