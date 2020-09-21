@@ -32,15 +32,19 @@ namespace ProgressOnderwijsUtils
 
     public struct ReusableCommand : IDisposable
     {
-        public SqlCommand Command;
-        public IDisposable? QueryTimer;
+        public SqlCommand Command => MutableCommand.AssertNotNull();
+        SqlCommand? MutableCommand;
+        public readonly IDisposable? QueryTimer;
+
+        public ReusableCommand(SqlCommand command, IDisposable? timer)
+            => (MutableCommand, QueryTimer) = (command, timer);
 
         public void Dispose()
         {
             QueryTimer?.Dispose();
-            if (Command.PretendNullable() != null) {
+            if (MutableCommand != null) {
                 PooledSqlCommandAllocator.ReturnToPool(Command);
-                Command = null!;
+                MutableCommand = null;
             }
         }
 
@@ -101,7 +105,7 @@ namespace ProgressOnderwijsUtils
             FreeParamsAndLookup();
 
             var timer = conn.Tracer()?.StartCommandTimer(command);
-            return new ReusableCommand { Command = command, QueryTimer = timer };
+            return new ReusableCommand(command, timer);
         }
 
         public string FinishBuilding_CommandTextOnly()
