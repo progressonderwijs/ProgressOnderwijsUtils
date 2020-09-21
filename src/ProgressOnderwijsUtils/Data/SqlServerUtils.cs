@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static bool IsSpidAlreadyDeadException(Exception exception)
-            => exception.Message != null && exception.Message.Contains("is not an active process ID.", StringComparison.Ordinal)
+            => exception.Message.PretendNullable() != null && exception.Message.Contains("is not an active process ID.", StringComparison.Ordinal)
                 || exception.InnerException != null && IsSpidAlreadyDeadException(exception.InnerException);
     }
 }

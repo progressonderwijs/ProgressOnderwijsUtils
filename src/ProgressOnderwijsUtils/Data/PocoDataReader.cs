@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtils
 
             //ColumnType is non nullable with enum types replaced by their underlying type
             public readonly Type ColumnType;
-            public readonly Func<T, object> GetUntypedColumnValue;
+            public readonly Func<T, object?> GetUntypedColumnValue;
 
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable
             public readonly Func<T, bool>? WhenNullable_IsColumnDBNull;

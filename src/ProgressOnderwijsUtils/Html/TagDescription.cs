@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsPredefined
             => FieldName != null;
 
-        public IHtmlElement EmptyValue { get; private set; }
+        public IHtmlElement? EmptyValue { get; private set; }
         public IReadOnlyDictionary<string, string> AttributeMethodsByName { get; private set; }
 
         static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =

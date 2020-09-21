@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ToCamelCase_is_robuust_bij_null()
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             => PAssert.That(() => ((string?)null).ToCamelCase() == null);
 
         [Fact]

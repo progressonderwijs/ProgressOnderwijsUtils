@@ -15,7 +15,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().Contains("hello world!") == false);
             // ReSharper disable once RedundantCast
             PAssert.That(() => Maybe.Ok((string?)"42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
+#pragma warning disable 8620 //R# bug?
             PAssert.That(() => Maybe.Ok(default(string)).AsMaybeWithoutError<Unit>().Contains(default(string)));
+#pragma warning restore 8620
         }
 
         [Fact]

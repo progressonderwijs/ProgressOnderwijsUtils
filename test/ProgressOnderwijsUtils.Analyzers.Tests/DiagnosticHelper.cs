@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -14,21 +15,21 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
         public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
         {
             var project = CreateProject(source);
-            var compilation = project.GetCompilationAsync().Result;
+            var compilation = project.GetCompilationAsync().Result.AssertNotNull();
             var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
             return compilationWithAnalyzers.GetAllDiagnosticsAsync().Result.ToArray();
         }
 
         static Project CreateProject(string source)
         {
-            var assemblyPath = Path.GetDirectoryName(typeof(object).Assembly.Location);
+            var assemblyPath = new Uri(typeof(object).Assembly.Location).Combine("./");
 
             var projectId = ProjectId.CreateNewId();
             var solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
                 .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(Path.Combine(assemblyPath, "System.Runtime.dll")))
+                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(assemblyPath.Combine("System.Runtime.dll").LocalPath))
                 .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
                 .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location))
                 .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Maybe).Assembly.Location));
@@ -36,4 +37,5 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
             solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
             return solution.GetProject(projectId);
         }
-    }}
+    }
+}

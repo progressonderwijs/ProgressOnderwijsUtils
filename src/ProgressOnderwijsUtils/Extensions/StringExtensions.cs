@@ -88,14 +88,14 @@ namespace ProgressOnderwijsUtils
                 @"\p{Lu}\w+",
                 match => {
                     var v = match.ToString();
-                    return char.ToUpper(v[0]) + v.Substring(1).ToLower();
+                    return char.ToUpper(v[0]) + v.Substring(1).ToLowerInvariant();
                 }
             );
             // ... maar letters voorafgegaan door ' ('s, 't etc.) naar lowercase
             return Regex.Replace(
                 upc1,
                 @"[']\p{Lu}",
-                match => match.ToString().ToLower());
+                match => match.ToString().ToLowerInvariant());
         }
     }
 }

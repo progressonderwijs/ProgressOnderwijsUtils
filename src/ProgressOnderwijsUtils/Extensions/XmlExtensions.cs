@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
             if (reader.HasAttributes) {
                 var next = reader.MoveToFirstAttribute();
                 while (next) {
-                    result[reader.Name.ToLower()] = reader.Value;
+                    result[reader.Name.ToLowerInvariant()] = reader.Value;
                     next = reader.MoveToNextAttribute();
                 }
                 reader.MoveToElement();
