@@ -43,43 +43,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
 
         [Benchmark]
-        public int Rebuild2()
-        {
-            var x = 0;
-            for (var iter = 0; iter < iters; iter++) {
-                var b = tree.Rebuild2(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
-                    val % 2 == 0
-                        ? kids
-                        : val % 3 == 0
-                            ? null
-                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
-                );
-
-                x += b.Sum(o => o.PreorderTraversal().Select(n => n.NodeValue).Sum());
-            }
-            return x;
-        }
-
-        [Benchmark]
-        public int Rebuild3()
-        {
-            var x = 0;
-            for (var iter = 0; iter < iters; iter++) {
-                var b = tree.Rebuild3(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
-                    val % 2 == 0
-                        ? kids
-                        : val % 3 == 0
-                            ? null
-                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
-                );
-
-                x += b.Sum(o => o.PreorderTraversal().Select(n => n.NodeValue).Sum());
-            }
-            return x;
-        }
-
-        /*
-        [Benchmark]
         public void BuildRecursivelyA()
         {
             var used = new HashSet<int>();
@@ -125,6 +88,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 x += output.NodeValue ? 1 : 0;
             }
             return x;
-        }*/
+        }
     }
 }

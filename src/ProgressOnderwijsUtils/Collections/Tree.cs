@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Html;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -82,102 +83,11 @@ namespace ProgressOnderwijsUtils.Collections
         /// For a given node, mapValue is called first (and its return value passed to mapStructure).
         /// </summary>
         [Pure]
-        public static Tree<TR>[] Rebuild2<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
-            where TTree : IRecursiveStructure<TTree>
-            => CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => Node(mapStructure(n, mapValue(n), kids.SelectMany(k => k.NodeValue).ToArray()).EmptyIfNull().WhereNotNull().ToArray())).NodeValue;
-
-        /// <summary>
-        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
-        /// mapValue and mapStructure are called exactly once for each node in the tree.
-        /// mapValue is passed the old node and should return its new value.
-        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
-        ///
-        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
-        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
-        /// </summary>
-        [Pure]
-        public static Tree<TR>[] Rebuild3<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
+        public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
             where TTree : IRecursiveStructure<TTree>
         {
-            var scratchPadA = new List<Tree<TR>>();
-            var scratchPadB = new List<Tree<TR>>();
-            var resolve = CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(
-                tree,
-                n => n.Children,
-                (n, kids) => {
-                    scratchPadA.Clear();
-                    foreach (var kid in kids) {
-                        scratchPadA.AddRange(kid.NodeValue);
-                    }
-                    var replacementNodes = mapStructure(n, mapValue(n), scratchPadA);
-                    if (replacementNodes == null) {
-                        return Node(Array.Empty<Tree<TR>>());
-                    }
-                    scratchPadB.Clear();
-                    foreach (var node in replacementNodes) {
-                        if (node != null) {
-                            scratchPadB.Add(node);
-                        }
-                    }
-                    return Node(scratchPadB.ToArray());
-                }
-            );
-            return resolve.NodeValue.ToArray();
-        }
-
-        /// <summary>
-        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
-        /// mapValue and mapStructure are called exactly once for each node in the tree.
-        /// mapValue is passed the old node and should return its new value.
-        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
-        ///
-        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
-        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
-        /// </summary>
-        //[Pure]
-        public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
-            where TTree : IRecursiveStructure<TTree>
-        {
-            var todo = new Stack<TTree>(16);
-            var reconstruct = new Stack<TTree>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-
-            var output = new List<Tree<TR>[]>(16);
-            var childBuilder = new List<Tree<TR>>(16);
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var oldChildren = next.Children;
-                childBuilder.Clear();
-                for (var i = 0; i < oldChildren.Count; i++) {
-                    childBuilder.AddRange(output[^(1 + i)]);
-                }
-                output.RemoveRange(output.Count - oldChildren.Count, oldChildren.Count);
-                var newNodes = mapStructure(next, mapValue(next), childBuilder);
-                var newNodesArray = newNodes as Tree<TR>[] ?? newNodes?.ToArray() ?? Array.Empty<Tree<TR>>();
-                var writeIdx = 0;
-                for (var i = 0; i < newNodesArray.Length; i++) {
-                    if (newNodesArray[i] != null) {
-                        newNodesArray[writeIdx++] = newNodesArray[i];
-                    }
-                }
-                if (writeIdx != newNodesArray.Length) {
-                    if (writeIdx == 0) {
-                        newNodesArray = Array.Empty<Tree<TR>>();
-                    } else {
-                        Array.Resize(ref newNodesArray, writeIdx);
-                    }
-                }
-                output.Add(newNodesArray!);
-            }
-            return output[0];
+            var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
+            return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
         }
 
         /// <summary>
