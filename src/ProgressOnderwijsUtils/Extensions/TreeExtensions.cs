@@ -13,12 +13,12 @@ namespace ProgressOnderwijsUtils
             => new[] { tree };
 
         [Pure]
-        public static int Height<TTree>(this IRecursiveStructure<TTree> tree)
+        public static int Height<TTree, T>(this IRecursiveStructure<TTree, T> tree)
             where TTree : IRecursiveStructure<TTree>
         {
             var maxHeight = 0;
-            var todo = new Stack<(IRecursiveStructure<TTree> tree, int height)>(16);
-            todo.Push((tree, 1));
+            var todo = new Stack<(Tree<T>, int)>(16);
+            todo.Push((tree.UnrootedSubTree(), 1));
 
             while (todo.Count > 0) {
                 var (next, height) = todo.Pop();
