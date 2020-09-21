@@ -43,14 +43,13 @@ namespace ProgressOnderwijsUtils.Collections
 
         /// <summary>
         /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
-        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
         {
             var todo = new Stack<Tree<T>>(16);
             var reconstruct = new Stack<Tree<T>>(16);
-            var output = new Stack<Tree<TR>>(16);
             todo.Push(tree);
             while (todo.Count > 0) {
                 var next = todo.Pop();
@@ -60,6 +59,8 @@ namespace ProgressOnderwijsUtils.Collections
                     todo.Push(children[i]);
                 }
             }
+
+            var output = new Stack<Tree<TR>>(16);
             while (reconstruct.Count > 0) {
                 var next = reconstruct.Pop();
                 var mappedChildren = new Tree<TR>[next.Children.Count];
@@ -69,6 +70,60 @@ namespace ProgressOnderwijsUtils.Collections
                 output.Push(Node(mapper(next.NodeValue), mappedChildren));
             }
             return output.Pop();
+        }
+
+        /// <summary>
+        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
+        /// mapValue and mapStructure are called exactly once for each node in the tree.
+        /// mapValue is passed the old node and should return its new value.
+        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
+        ///
+        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
+        /// </summary>
+        [Pure]
+        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, TR> mapValue, Func<Tree<T>, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
+        {
+            var todo = new Stack<Tree<T>>(16);
+            var reconstruct = new Stack<Tree<T>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
+            }
+
+            var output = new List<Tree<TR>[]>(16);
+            var childBuilder = new List<Tree<TR>>(16);
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var oldChildren = next.Children;
+                childBuilder.Clear();
+                for (var i = 0; i < oldChildren.Count; i++) {
+                    childBuilder.AddRange(output[^(1 + i)]);
+                }
+                output.RemoveRange(output.Count - oldChildren.Count, oldChildren.Count);
+                var newNodes = mapStructure(next, mapValue(next), childBuilder);
+                var newNodesArray = newNodes as Tree<TR>[] ?? newNodes?.ToArray() ?? Array.Empty<Tree<TR>>();
+                var writeIdx = 0;
+                for (var i = 0; i < newNodesArray.Length; i++) {
+                    if (newNodesArray[i] != null) {
+                        newNodesArray[writeIdx++] = newNodesArray[i];
+                    }
+                }
+                if (writeIdx != newNodesArray.Length) {
+                    if (writeIdx == 0) {
+                        newNodesArray = Array.Empty<Tree<TR>>();
+                    } else {
+                        Array.Resize(ref newNodesArray, writeIdx);
+                    }
+                }
+                output.Add(newNodesArray!);
+            }
+            return output[0];
         }
 
         /// <summary>
@@ -110,7 +165,6 @@ namespace ProgressOnderwijsUtils.Collections
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
     {
         readonly T nodeValue;
-
         readonly Tree<T>[] kidArray;
 
         public T NodeValue
