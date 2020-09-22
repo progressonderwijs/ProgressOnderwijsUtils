@@ -94,7 +94,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
 
             var now = DateTime.UtcNow;
-            if (now >= notOnOrAfter.ToUniversalTime()) {
+            if (now >= notOnOrAfter) {
                 return Maybe.Error($"Expired: {now} >= {notOnOrAfter}");
             }
 
