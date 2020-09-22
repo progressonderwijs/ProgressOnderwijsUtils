@@ -42,8 +42,10 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => tree2.Equals((object)tree1));
             PAssert.That(() => tree1.Equals(tree1));
             PAssert.That(() => !tree1.Equals(null));
+            // ReSharper disable ConditionIsAlwaysTrueOrFalse
             PAssert.That(() => !Equals(tree2, null));
             PAssert.That(() => !Equals(null, tree2));
+            // ReSharper restore ConditionIsAlwaysTrueOrFalse
             PAssert.That(() => !Equals(tree2, leaf2));
         }
 

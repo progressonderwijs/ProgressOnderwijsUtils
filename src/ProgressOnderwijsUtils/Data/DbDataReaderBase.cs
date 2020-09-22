@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             return read;
         }
 
-        public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
+        public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length)
         {
             var str = GetString(ordinal);
             length = Math.Min(length, str.Length);

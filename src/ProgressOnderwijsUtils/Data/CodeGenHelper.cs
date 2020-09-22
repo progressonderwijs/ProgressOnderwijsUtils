@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string DataTableToPocoClassDef(this DataTable dt, string? classNameOverride = null, Func<ColumnDefinition, string>? colNameOverride = null)
         {
-            classNameOverride ??= (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
+            classNameOverride ??= string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName;
 
             return ("public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
                     + "{\n"

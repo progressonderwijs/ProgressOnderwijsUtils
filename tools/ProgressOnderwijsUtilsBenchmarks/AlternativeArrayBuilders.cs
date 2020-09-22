@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             const int InitSize2Pow = 6;
             const int InitSize = (1 << InitSize2Pow) - 1;
             int idx, sI;
-            T[] current;
+            T[]? current;
 
             //InitSize total:
             T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58, v59, v60, v61, v62;
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             const int InitSize2Pow = 4;
             const int InitSize = 1 << InitSize2Pow;
             int idx, sI;
-            T[] current;
+            T[]? current;
 
             //InitSize total:
             T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15;
@@ -139,7 +139,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             const int InitSize = 32;
             int idx, sI;
-            T[] current;
+            T[]? current;
 #pragma warning disable 169
             //InitSize total:
             T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31; //, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58, v59, v60, v61, v62, v63;
@@ -204,7 +204,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             const int InitSize = (1 << InitSize2Pow) - 1; // 15;
             int idx, sI;
             T[] current;
-            T[][] segments;
+            T[][]? segments;
 
             public static WithSegmentsAsArray<T> Create()
                 => new WithSegmentsAsArray<T> { current = new T[InitSize] };
