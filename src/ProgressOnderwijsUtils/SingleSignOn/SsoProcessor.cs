@@ -89,9 +89,12 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
 
             var (inresponseTo, notOnOrAfter) = GetSubjectConfirmationData(assertion);
+            if (notOnOrAfter.Kind != DateTimeKind.Utc) {
+                return Maybe.Error($"NotOnOrAfter must be UTC");
+            }
 
             var now = DateTime.UtcNow;
-            if (now >= notOnOrAfter) {
+            if (now >= notOnOrAfter.ToUniversalTime()) {
                 return Maybe.Error($"Expired: {now} >= {notOnOrAfter}");
             }
 
