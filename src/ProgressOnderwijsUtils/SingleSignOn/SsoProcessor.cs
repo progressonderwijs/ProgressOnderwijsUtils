@@ -88,28 +88,37 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 return Maybe.Error("Missing attribute " + UID);
             }
 
+            var (inresponseTo, notOnOrAfter) = GetSubjectConfirmationData(assertion);
+            if (notOnOrAfter.Kind != DateTimeKind.Utc) {
+                return Maybe.Error($"NotOnOrAfter must be UTC");
+            }
+
+            var now = DateTime.UtcNow;
+            if (now >= notOnOrAfter) {
+                return Maybe.Error($"Expired: {now} >= {notOnOrAfter}");
+            }
+
             return Maybe.Ok(
                 new SsoAttributes {
                     uid = uid,
                     domain = GetNullableAttribute(assertion, DOMAIN),
                     email = GetAttributes(assertion, MAIL),
                     roles = GetAttributes(assertion, ROLE),
-                    InResponseTo = GetInResponseTo(assertion),
-                    IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
+                    InResponseTo = inresponseTo,
                     AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
                 });
         }
 
-        static string? GetInResponseTo(XElement assertion)
+        static (string? inresponseTo, DateTime notOnOrAfter) GetSubjectConfirmationData(XElement assertion)
         {
-            // ReSharper disable PossibleNullReferenceException
-            var rawInResponseTo = (string)assertion
-                .Element(SamlNamespaces.SAML_NS + "Subject")
-                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
-                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
-                .Attribute("InResponseTo");
-            // ReSharper restore PossibleNullReferenceException
-            return XmlConvert.DecodeName(rawInResponseTo);
+            var subjectConfirmationData = assertion
+                    .Element(SamlNamespaces.SAML_NS + "Subject")
+                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
+                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData");
+            return (
+                XmlConvert.DecodeName((string?)subjectConfirmationData.Attribute("InResponseTo")),
+                (DateTime)subjectConfirmationData.Attribute("NotOnOrAfter")
+            );
         }
 
         static string? GetNullableAttribute(XElement assertion, string key)
