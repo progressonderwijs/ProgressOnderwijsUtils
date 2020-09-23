@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void WhereJaggyStructureSurvives()
         {
             var tree = Tree.Node("1", Tree.Node("2", Tree.Node("x", Tree.Node("deeper"))), Tree.Node("3"), Tree.Node("y", Tree.Node("4")));
-            var whereTrue = tree.Where(n => true);
+            var whereTrue = tree.WhereNodeValue(n => true);
             PAssert.That(() => tree.Equals(whereTrue));
         }
 
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var tree = Tree.Node("1", Tree.Node("2", Tree.Node("x")), Tree.Node("3"), Tree.Node("y", Tree.Node("4")));
             var preorder = tree.PreorderTraversal().Select(n => n.NodeValue).ToArray();
-            var expectedOrder = "4x23y1".Select(c => c.ToString());
+            var expectedOrder = "123y4x".Select(c => c.ToString());
             var orderOfWhereTrueCalls = new List<string>();
             var orderOfWhereFalseCalls = new List<string>();
 
@@ -52,9 +52,9 @@ namespace ProgressOnderwijsUtils.Tests
                 return false;
             });
 
-            PAssert.That(() => preorder.SetEqual(orderOfWhereFalseCalls));
+            PAssert.That(() => preorder.Take(1).SetEqual(orderOfWhereFalseCalls));
             PAssert.That(() => preorder.SetEqual(orderOfWhereTrueCalls));
-            PAssert.That(() => expectedOrder.SequenceEqual(orderOfWhereFalseCalls));
+            PAssert.That(() => expectedOrder.Take(1).SequenceEqual(orderOfWhereFalseCalls));
             PAssert.That(() => expectedOrder.SequenceEqual(orderOfWhereTrueCalls));
         }
     }

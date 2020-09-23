@@ -5,25 +5,26 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    static class CachedTreeBuilder<T>
+    static class CachedTreeBuilder<TInput, TNodeValue>
     {
         sealed class TreeNodeBuilder
         {
-            public readonly T value;
+            public readonly TInput value;
             public TreeNodeBuilder? parent;
             public int idxInParent;
-            public Tree<T>[]? kids;
-            public TreeNodeBuilder(T value)
+            public Tree<TNodeValue>[]? kids;
+
+            public TreeNodeBuilder(TInput value)
                 => this.value = value;
         }
 
         [Pure]
-        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>?> kidLookup)
+        public static Tree<TNodeValue> Resolve(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>?> kidLookup, Func<TInput, Tree<TNodeValue>[], Tree<TNodeValue>> map)
         {
             var needsKids = new Stack<TreeNodeBuilder>();
 
             var generatedNodes = 0;
-            var rootBuilder = new TreeNodeBuilder (rootNodeValue);
+            var rootBuilder = new TreeNodeBuilder(rootNodeValue);
             generatedNodes++;
 
             needsKids.Push(rootBuilder);
@@ -43,14 +44,14 @@ namespace ProgressOnderwijsUtils.Collections
                         needsKids.Push(builderForKid);
                     }
                     if (kidIdx > 0) {
-                        nodeBuilderThatWantsKids.kids = new Tree<T>[kidIdx];
+                        nodeBuilderThatWantsKids.kids = new Tree<TNodeValue>[kidIdx];
                         continue;
                     }
                 }
 
                 var toGenerate = nodeBuilderThatWantsKids;
                 while (true) {
-                    var finishedNode = Tree.Node(toGenerate.value, toGenerate.kids);
+                    var finishedNode = map(toGenerate.value, toGenerate.kids ?? EmptyKids());
                     if (toGenerate.idxInParent == 0) {
                         if (toGenerate.parent == null) {
                             return finishedNode;
@@ -66,5 +67,8 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
         }
+
+        static Tree<TNodeValue>[] EmptyKids()
+            => Array.Empty<Tree<TNodeValue>>();
     }
 }

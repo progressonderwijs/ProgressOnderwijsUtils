@@ -5,10 +5,23 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
+    public interface IHasNodeValue<out T>
+    {
+        T NodeValue { get; }
+    }
+
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
+        TTree TypedThis { get; }
+
         IReadOnlyList<TTree> Children { get; }
+    }
+
+    public interface IRecursiveStructure<out TTree, T> : IRecursiveStructure<TTree>, IHasNodeValue<T>
+        where TTree : IRecursiveStructure<TTree>
+    {
+        Tree<T> UnrootedSubTree();
     }
 
     public static class Tree
@@ -30,139 +43,20 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>?> kidLookup)
-            => CachedTreeBuilder<T>.Resolve(root, kidLookup);
+            => CachedTreeBuilder<T, T>.Resolve(root, kidLookup, Node);
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
             where T : notnull
-            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable());
+            => CachedTreeBuilder<T, T>.Resolve(root, arg => kidLookup.GetOrDefaultR(arg)?.AsEnumerable(), Node);
 
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
 
-        /// <summary>
-        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
-        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
-        /// </summary>
-        [Pure]
-        public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
-        {
-            var todo = new Stack<Tree<T>>(16);
-            var reconstruct = new Stack<Tree<T>>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-
-            var output = new Stack<Tree<TR>>(16);
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var mappedChildren = new Tree<TR>[next.Children.Count];
-                for (var i = 0; i < mappedChildren.Length; i++) {
-                    mappedChildren[i] = output.Pop();
-                }
-                output.Push(Node(mapper(next.NodeValue), mappedChildren));
-            }
-            return output.Pop();
-        }
-
-        /// <summary>
-        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
-        /// mapValue and mapStructure are called exactly once for each node in the tree.
-        /// mapValue is passed the old node and should return its new value.
-        /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
-        ///
-        /// mapValue and mapStructure are called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
-        /// For a given node, mapValue is called first (and its return value passed to mapStructure).
-        /// </summary>
-        [Pure]
-        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, TR> mapValue, Func<Tree<T>, TR, IReadOnlyList<Tree<TR>>, IEnumerable<Tree<TR>?>?> mapStructure)
-        {
-            var todo = new Stack<Tree<T>>(16);
-            var reconstruct = new Stack<Tree<T>>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-
-            var output = new List<Tree<TR>[]>(16);
-            var childBuilder = new List<Tree<TR>>(16);
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var oldChildren = next.Children;
-                childBuilder.Clear();
-                for (var i = 0; i < oldChildren.Count; i++) {
-                    childBuilder.AddRange(output[^(1 + i)]);
-                }
-                output.RemoveRange(output.Count - oldChildren.Count, oldChildren.Count);
-                var newNodes = mapStructure(next, mapValue(next), childBuilder);
-                var newNodesArray = newNodes as Tree<TR>[] ?? newNodes?.ToArray() ?? Array.Empty<Tree<TR>>();
-                var writeIdx = 0;
-                for (var i = 0; i < newNodesArray.Length; i++) {
-                    if (newNodesArray[i] != null) {
-                        newNodesArray[writeIdx++] = newNodesArray[i];
-                    }
-                }
-                if (writeIdx != newNodesArray.Length) {
-                    if (writeIdx == 0) {
-                        newNodesArray = Array.Empty<Tree<TR>>();
-                    } else {
-                        Array.Resize(ref newNodesArray, writeIdx);
-                    }
-                }
-                output.Add(newNodesArray!);
-            }
-            return output[0];
-        }
-
-        /// <summary>
-        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
-        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
-        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
-        /// </summary>
-        [Pure]
-        public static Tree<T>? Where<T>(this Tree<T> tree, Func<Tree<T>, bool> retainSubTree)
-        {
-            var reconstruct = new Stack<Tree<T>>(16);
-            var todo = new Stack<Tree<T>>(16);
-            todo.Push(tree);
-            while (todo.Count > 0) {
-                var next = todo.Pop();
-                reconstruct.Push(next);
-                var children = next.Children;
-                for (var i = children.Count - 1; i >= 0; i--) {
-                    todo.Push(children[i]);
-                }
-            }
-            var tmp = new List<Tree<T>>();
-            while (reconstruct.Count > 0) {
-                var next = reconstruct.Pop();
-                var kidCount = next.Children.Count;
-                for (var i = 0; i < kidCount; i++) {
-                    var maybeKid = todo.Pop();
-                    if (retainSubTree(maybeKid)) {
-                        tmp.Add(maybeKid);
-                    }
-                }
-                todo.Push(Node(next.NodeValue, tmp.ToArray()));
-                tmp.Clear();
-            }
-            return todo.Pop() is var finalTree && retainSubTree(finalTree) ? finalTree : null;
-        }
     }
 
-    public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
+    public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
     {
         readonly T nodeValue;
         readonly Tree<T>[] kidArray;
@@ -236,8 +130,8 @@ namespace ProgressOnderwijsUtils.Collections
             bool ShallowEquals(NodePair pair)
                 // ReSharper disable RedundantCast
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
-                => ReferenceEquals(pair.A, pair.B) ||
-                    pair.A.Children.Count == pair.B.Children.Count
+                => ReferenceEquals(pair.A, pair.B)
+                    || pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
             // ReSharper restore RedundantCast
 
@@ -283,11 +177,19 @@ namespace ProgressOnderwijsUtils.Collections
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";
             }
-            return indent + (nodeValue?.ToString() ?? "<NULL>").Replace("\n", "\n" + indent) + " "
+            return indent
+                + (nodeValue?.ToString() ?? "<NULL>").Replace("\n", "\n" + indent)
+                + " "
                 + (Children.Count == 0
                     ? "."
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
                 );
         }
+
+        Tree<T> IRecursiveStructure<Tree<T>>.TypedThis
+            => this;
+
+        Tree<T> IRecursiveStructure<Tree<T>, T>.UnrootedSubTree()
+            => this;
     }
 }

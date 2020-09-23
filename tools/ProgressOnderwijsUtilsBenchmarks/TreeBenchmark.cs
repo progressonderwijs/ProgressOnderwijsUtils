@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtilsBenchmarks
@@ -11,75 +10,84 @@ namespace ProgressOnderwijsUtilsBenchmarks
     [MemoryDiagnoser]
     public class TreeBenchmark
     {
-        [Params(3, 21, 1000, 10_000)]
+        [Params(3, 33, 400)]
         public int MaxSize;
 
-        [Params(3)]
-        public int Threads;
-
         public int iters;
+        Tree<int> tree = null!;
 
         [GlobalSetup]
         public void Setup()
         {
-            iters = 10_000 / MaxSize + 3;
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
+            iters = 1200 / MaxSize;
+            var used = new HashSet<int>();
+            tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(n => 0 <= n && n < MaxSize && used.Add(n)));
+        }
+
+        [Benchmark]
+        public int Rebuild()
+        {
+            var x = 0;
+            for (var iter = 0; iter < iters; iter++) {
+                var b = tree.Rebuild(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
+                    val % 2 == 0
+                        ? kids
+                        : val % 3 == 0
+                            ? null
+                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
+                );
+
+                x += b.Sum(o => o.PreorderTraversal().Select(n => n.NodeValue).Sum());
+            }
+            return x;
         }
 
         [Benchmark]
         public void BuildRecursivelyA()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                var used = new HashSet<int>();
-                Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
-                for (var iter = 0; iter < iters; iter++) {
-                    var tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 1, i - 50, i / 2, i - 100 }.Where(predicate));
-                    used.Clear();
-                    GC.KeepAlive(tree);
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
+            var used = new HashSet<int>();
+            Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
+            for (var iter = 0; iter < iters; iter++) {
+                var tree2 = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(predicate));
+                used.Clear();
+                GC.KeepAlive(tree2);
+            }
         }
 
         [Benchmark]
-        public void BuildRecursivelyB()
+        public int Where()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                var used = new HashSet<int>();
-                Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
-                for (var iter = 0; iter < iters; iter++) {
-                    var tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(predicate));
-                    used.Clear();
-                GC.KeepAlive(tree);
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
+            var x = 0;
+            Func<Tree<int>, bool> predicate = node => node.NodeValue is var n && n % 3 != 0 && n < MaxSize * 2 / 3;
+            for (var iter = 0; iter < iters; iter++) {
+                var output = tree.Where(predicate);
+                x += output?.NodeValue ?? 0;
+            }
+            return x;
         }
 
         [Benchmark]
-        public void BuildRecursivelyC()
+        public int Select()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                var used = new HashSet<int>();
-                Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
-                for (var iter = 0; iter < iters; iter++) {
-                    var tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 1, }.Where(predicate));
-                    used.Clear();
-                    GC.KeepAlive(tree);
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
+            var x = 0;
+            Func<Tree<int>, bool> predicate = node => node.NodeValue is var n && n % 3 != 0 && n < MaxSize * 2 / 3;
+            for (var iter = 0; iter < iters; iter++) {
+                var output = tree.Select(predicate);
+                x += output.NodeValue ? 1 : 0;
+            }
+            return x;
         }
 
         [Benchmark]
-        public void BuildRecursivelyD()
+        public int SelectB()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                var used = new HashSet<int>();
-                Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
-                for (var iter = 0; iter < iters; iter++) {
-                    var tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 1, i * 3 / 4 }.Where(predicate));
-                    used.Clear();
-                    GC.KeepAlive(tree);
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
+            var x = 0;
+            Func<int, bool> predicate = node => node is var n && n % 3 != 0 && n < MaxSize * 2 / 3;
+            for (var iter = 0; iter < iters; iter++) {
+                var output = tree.SelectNodeValue(predicate);
+                x += output.NodeValue ? 1 : 0;
+            }
+            return x;
         }
     }
 }

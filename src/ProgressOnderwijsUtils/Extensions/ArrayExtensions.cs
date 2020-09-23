@@ -91,5 +91,27 @@ namespace ProgressOnderwijsUtils
             Array.Copy(end, 0, newChildNodes, beginning.Length, end.Length);
             return newChildNodes;
         }
+
+        public static TO[] SelectMany<TI,TO>(this TI[] list, Func<TI, TO[]> map)
+            => list.ArraySelect(map).ConcatArrays();
+
+        public static T[] ConcatArrays<T>(this T[][] arrays)
+        {
+            var len = 0;
+            foreach (var kid in arrays) {
+                len += kid.Length;
+            }
+            var arr = Array.Empty<T>();
+            if (len != 0) {
+                arr = new T[len];
+                var writeCursor = arr.AsSpan();
+                foreach (var kid in arrays) {
+                    var replacements = kid.AsSpan();
+                    replacements.CopyTo(writeCursor);
+                    writeCursor = writeCursor.Slice(replacements.Length);
+                }
+            }
+            return arr;
+        }
     }
 }

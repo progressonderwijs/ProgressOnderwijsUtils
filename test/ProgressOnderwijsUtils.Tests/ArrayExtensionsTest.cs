@@ -29,11 +29,32 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void AppendingingArraysIsEquivalentToConcat2()
+        {
+            var arrA = new[] { "paper", "scissors", "stone" };
+            var arrB = new[] { "lizard", "spock" };
+            PAssert.That(() => new[] { arrA, arrB }.ConcatArrays().SequenceEqual(new[] { "paper", "scissors", "stone", "lizard", "spock" }));
+            PAssert.That(() => new[] { arrB, arrA }.ConcatArrays().SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone" }));
+        }
+
+        [Fact]
         public void AppendingingEmptyWorks()
         {
             var arr = new[] { "foo", "baar" };
             PAssert.That(() => new string[0].ConcatArray(arr).SequenceEqual(arr));
             PAssert.That(() => arr.ConcatArray(new string[0]).SequenceEqual(arr));
+            PAssert.That(() => new string[0].ConcatArray(arr) == arr);
+            PAssert.That(() => arr.ConcatArray(new string[0]) == arr);
+        }
+
+        [Fact]
+        public void SelectManyFollowsLinqSemantics()
+        {
+            var arr = new[] { "foo", "baar" };
+            var viaLinq = arr.AsEnumerable().SelectMany(a => a.ToCharArray());
+            var viaArrays = arr.SelectMany(a=>a.ToCharArray());
+
+            PAssert.That(() => viaLinq.SequenceEqual(viaArrays));
         }
     }
 }

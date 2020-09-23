@@ -203,7 +203,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void TreeRebuildCanBeEmptyEvenWhenThereAreDescendants()
         {
             var input = Tree.Node(1u, Tree.Node(2u));
-            var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) }.Where(_ => oldNode.NodeValue != 1));
+            var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) }.Where(_ => oldNode.NodeValue != 1).ToArray());
             var expected = new Tree<long>[] { };
             PAssert.That(() => output.SequenceEqual(expected));
         }
@@ -233,16 +233,6 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => output.SequenceEqual(expected));
         }
 
-        [Fact]
-        public void TreeRebuildSupportsSequencesContainingNull()
-        {
-            var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(5u)));
-            var output = input.Rebuild(node => (long)node.NodeValue, (oldNode, value, newKids) => Tree.Node(value, newKids).AsSingletonArray().Select(n => n.NodeValue == 2 ? null : n));
-            var expected = new[] {
-                Tree.Node(1L, Tree.Node(3L, Tree.Node(5L)))
-            };
-            PAssert.That(() => output.SequenceEqual(expected));
-        }
 
         [Fact]
         public void TreeRebuildSupportsMessyGunkMixingNullsAndEmpty()
@@ -250,12 +240,22 @@ namespace ProgressOnderwijsUtils.Tests
             var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
             var output = input.Rebuild(
                 node => (long)node.NodeValue,
-                (oldNode, value, newKids) => value switch {
-                    2 => null,
-                    6 => new[] { default(Tree<long>) },
-                    4 => Array.Empty<Tree<long>?>(),
-                    _ => Enumerable.Repeat(Tree.Node(value, newKids).PretendNullable(), 2).Append(null)
-                }
+                (oldNode, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
+            );
+            var n5 = Tree.Node(5L);
+            var n3 = Tree.Node(3L, n5, n5);
+            var n1 = Tree.Node(1L, n3, n3);
+            var expected = new[] { n1, n1 };
+            PAssert.That(() => output.SequenceEqual(expected));
+        }
+
+        [Fact]
+        public void TreeRebuildSupportsEnumerableOverloadToo()
+        {
+            var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
+            var output = input.Rebuild(
+                node => (long)node.NodeValue,
+                (oldNode, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2)
             );
             var n5 = Tree.Node(5L);
             var n3 = Tree.Node(3L, n5, n5);
@@ -269,49 +269,33 @@ namespace ProgressOnderwijsUtils.Tests
             => AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(
                     1u,
-                    Tree.Node(
-                        6u
-                    ),
+                    Tree.Node(6u),
                     Tree.Node(
                         2u,
-                        Tree.Node(
-                            4u
-                        ),
-                        Tree.Node(
-                            7u
-                        )
+                        Tree.Node(4u),
+                        Tree.Node(7u)
                     ),
                     Tree.Node(
                         3u,
                         Tree.Node(
                             5u,
-                            Tree.Node(
-                                8u
-                            )
+                            Tree.Node(8u)
                         )
                     )
                 ),
                 Tree.Node(
                     1L,
-                    Tree.Node(
-                        6L
-                    ),
+                    Tree.Node(6L),
                     Tree.Node(
                         2L,
-                        Tree.Node(
-                            4L
-                        ),
-                        Tree.Node(
-                            7L
-                        )
+                        Tree.Node(4L),
+                        Tree.Node(7L)
                     ),
                     Tree.Node(
                         3L,
                         Tree.Node(
                             5L,
-                            Tree.Node(
-                                8L
-                            )
+                            Tree.Node(8L)
                         )
                     )
                 )
@@ -339,7 +323,7 @@ namespace ProgressOnderwijsUtils.Tests
             const int targetHeight = 1000_000;
             var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : new uint[0]);
             var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : new long[0]);
-            var mappedInput = input.Select(i => (long)i);
+            var mappedInput = input.SelectNodeValue(i => (long)i);
             var areEqual = mappedInput.Equals(output);
             PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");
             PAssert.That(() => input.Height() == targetHeight);
@@ -359,7 +343,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         static void AssertTreeSelectMapsInputAsExpected(Tree<uint> input, Tree<long> expected)
         {
-            var output = input.Select(i => (long)i);
+            var output = input.SelectNodeValue(i => (long)i);
             PAssert.That(() => output.Equals(expected));
         }
 
