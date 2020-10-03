@@ -333,6 +333,91 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
+            [UsefulToKeep("This might be a nice thing to stick in an OSS library")]
+            public static class ReadByConstructorImpl<T>
+            {
+                // ReSharper disable UnusedMember.Local
+                public static T[] VerifyShapeAndLoadRows([NotNull] SqlDataReader reader)
+                    // ReSharper restore UnusedMember.Local
+                {
+                    DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
+                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out _);
+                }
+
+                public static readonly TRowArrayReader<T> LoadRows;
+
+                [NotNull]
+                static Type type
+                    => typeof(T);
+
+                static string FriendlyName
+                    => type.ToCSharpFriendlyTypeName();
+
+                static readonly ConstructorInfo constructor;
+
+                [NotNull]
+                static ParameterInfo[] ConstructorParameters
+                    => constructor.GetParameters();
+
+                static ReadByConstructorImpl()
+                {
+                    constructor = VerifyTypeValidityAndGetConstructor();
+                    LoadRows = CreateLoadRowsMethod<T>(
+                        (readerParamExpr, lastReadExpr) => Expression.New(
+                            constructor,
+                            ConstructorParameters.Select(
+                                (ci, i) =>
+                                    Expression.Block(Expression.Assign(lastReadExpr, Expression.Constant(i)), GetColValueExpr(readerParamExpr, i, ci.ParameterType)))));
+                }
+
+                [NotNull]
+                static ConstructorInfo VerifyTypeValidityAndGetConstructor()
+                {
+                    if (!type.IsSealed || !type.IsPublic) {
+                        throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must be a public, sealed type.");
+                    }
+
+                    var constructors = type.GetConstructors().Where(ci => ci.GetParameters().Any()).ToArray();
+                    if (constructors.Length != 1) {
+                        throw new ArgumentException(
+                            FriendlyName + " : ILoadFromDbByConstructor must have a single public constructor (not counting a structs implicit constructor), not "
+                            + constructors.Length);
+                    }
+                    var retval = constructors.Single();
+
+                    if (!retval.GetParameters().All(pi => IsSupportedBasicType(pi.ParameterType))) {
+                        throw new ArgumentException(
+                            FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
+                            + retval.GetParameters()
+                                .Where(pi => !IsSupportedBasicType(pi.ParameterType))
+                                .Select(pi => pi.ParameterType.ToCSharpFriendlyTypeName() + " " + pi.Name)
+                                .JoinStrings(", "));
+                    }
+                    return retval;
+                }
+
+                public static void VerifyDataReaderShape([NotNull] TReader reader)
+                {
+                    if (reader.FieldCount != ConstructorParameters.Length) {
+                        throw new InvalidOperationException(
+                            "Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; constructr parameter count = "
+                            + ConstructorParameters.Length);
+                    }
+                    if (!Enumerable.Range(0, reader.FieldCount).Select(reader.GetName)
+                            .SequenceEqual(ConstructorParameters.Select(ci => ci.Name), StringComparer.OrdinalIgnoreCase)
+                        ||
+                        !Enumerable.Range(0, reader.FieldCount).Select(reader.GetFieldType)
+                            .SequenceEqual(ConstructorParameters.Select(ci => ci.ParameterType.GetNonNullableUnderlyingType()))) {
+                        throw new InvalidOperationException(
+                            "Cannot unpack DbDataReader:\n"
+                            + Enumerable.Range(0, reader.FieldCount)
+                                .Select(i => reader.GetName(i) + " : " + reader.GetFieldType(i).ToCSharpFriendlyTypeName())
+                                .JoinStrings(", ") + "\n\t into type " + FriendlyName + ":\n"
+                            + ConstructorParameters.Select(ci => ci.Name + " : " + ci.ParameterType.ToCSharpFriendlyTypeName()).JoinStrings(", "));
+                    }
+                }
+            }
+
             public static class PlainImpl<T>
             {
                 static string FriendlyName
