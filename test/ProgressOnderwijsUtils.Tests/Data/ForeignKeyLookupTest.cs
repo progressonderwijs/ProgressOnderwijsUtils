@@ -5,7 +5,7 @@ using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class ForeignKeyLookupTest : TransactedLocalConnection
     {

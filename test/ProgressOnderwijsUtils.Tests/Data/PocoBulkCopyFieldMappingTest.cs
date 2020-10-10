@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
+using Microsoft.Data.SqlClient;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
     {

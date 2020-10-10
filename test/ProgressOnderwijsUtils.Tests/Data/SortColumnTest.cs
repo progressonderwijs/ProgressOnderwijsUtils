@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class SortColumnTest
     {
