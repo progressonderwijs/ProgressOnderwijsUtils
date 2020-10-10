@@ -45,12 +45,60 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
-        public void Read0()
+        public void ReadWithJustSetters()
         {
             // ReSharper disable once UnusedVariable
             var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSetters>().Execute(Connection);
             PAssert.That(() => bla.Length == 512);
             PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        }
+
+        public sealed class ExampleWithJustSettersWithExtraProperties : IWrittenImplicitly
+        {
+            public int ExtraExtra { get; set; }
+            public int SalesOrderId { get; set; }
+            public string AccountNumber { get; set; } = null!;
+            public string? Comment { get; set; }
+            public DateTime DueDate { get; set; }
+            public bool OnlineOrderFlag { get; set; }
+            public Guid Rowguid { get; set; }
+            public int? SalesPersonId { get; set; }
+            public DateTime? ShipDate { get; set; }
+            public byte Status { get; set; }
+            public decimal TotalDue { get; set; }
+            public byte[] SomeBlob { get; set; } = null!;
+            public byte[]? SomeNullableBlob { get; set; }
+        }
+
+        [Fact]
+        public void ReadWithMissingMappingsDoesNotIgnoreExtraProperties()
+        {
+            // ReSharper disable once UnusedVariable
+            var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSettersWithMissingProperties>();
+            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            Assert.ThrowsAny<Exception>(() => query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection));
+            var retval = SQL($"select AccountNumber, SalesOrderId from ({query.Sql}) x").ReadPocos<ExampleWithJustSettersWithMissingProperties>(Connection); //implicitly assert does not throw
+
+            PAssert.That(() => retval.Length == 512);
+            PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        }
+
+        public sealed class ExampleWithJustSettersWithMissingProperties : IWrittenImplicitly
+        {
+            public string AccountNumber { get; set; } = null!;
+            public int SalesOrderId { get; set; }
+        }
+
+        [Fact]
+        public void ReadWithExtraMappings()
+        {
+            // ReSharper disable once UnusedVariable
+            var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSettersWithExtraProperties>();
+            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
+
+            PAssert.That(() => retval.Length == 512);
+            PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
         }
 
         public sealed class ExampleWithConstructor : IWrittenImplicitly
@@ -76,7 +124,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
-        public void Read1()
+        public void ReadWithSomeConstructorArgs()
         {
             // ReSharper disable once UnusedVariable
             var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithConstructor>().Execute(Connection);
@@ -86,6 +134,13 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
         public sealed class ExampleWithMoreConstructor : IWrittenImplicitly
         {
+            public ExampleWithMoreConstructor(string accountNumber, byte[] someBlob)
+            {
+                AccountNumber = accountNumber;
+                SomeBlob = someBlob;
+                throw new Exception("This constructor should never be selected, the poco orm should choose the longest constructor");
+            }
+
             public ExampleWithMoreConstructor(int salesOrderId, string accountNumber, DateTime dueDate, bool onlineOrderFlag, byte status, decimal totalDue, byte[] someBlob)
             {
                 SalesOrderId = salesOrderId;
@@ -95,6 +150,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 Status = status;
                 TotalDue = totalDue;
                 SomeBlob = someBlob;
+            }
+            // ReSharper disable UnusedParameter.Local
+#pragma warning disable IDE0060 // Remove unused parameter
+            public ExampleWithMoreConstructor(int salesOrderId, string accountNumber, DateTime dueDate, bool onlineOrderFlag, byte status, decimal totalDue, byte[] someBlob, int unmatchable)
+#pragma warning restore IDE0060 // Remove unused parameter
+                // ReSharper restore UnusedParameter.Local
+            {
+                throw new Exception("This constructor should never be selected, the poco orm should not choose a constructor with an unmatchable arg");
             }
 
             public int SalesOrderId { get; }
@@ -112,12 +175,50 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
-        public void Read2()
+        public void ReadWithManyConstructorArgs()
         {
             // ReSharper disable once UnusedVariable
             var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithMoreConstructor>().Execute(Connection);
             PAssert.That(() => bla.Length == 512);
             PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+            PAssert.That(() => bla.Select(o => o.Status).Distinct().SetEqual(new byte[] { 1, 10 }));
+            PAssert.That(() => bla.None(o => o.SomeBlob.PretendNullable() == null));
+            PAssert.That(() => bla.Any(o => o.SomeNullableBlob == null) && bla.Any(o => o.SomeNullableBlob != null));
+        }
+
+        public sealed class ExampleWithConstructorWithExtraProperties : IWrittenImplicitly
+        {
+            public ExampleWithConstructorWithExtraProperties(string accountNumber, byte[] someBlob)
+            {
+                AccountNumber = accountNumber;
+                SomeBlob = someBlob;
+            }
+
+            public int ExtraExtra { get; set; }
+            public int SalesOrderId { get; set; }
+            public string AccountNumber { get; }
+            public string? Comment { get; set; }
+            public DateTime DueDate { get; set; }
+            public bool OnlineOrderFlag { get; set; }
+            public Guid Rowguid { get; set; }
+            public int? SalesPersonId { get; set; }
+            public DateTime? ShipDate { get; set; }
+            public byte Status { get; set; }
+            public decimal TotalDue { get; set; }
+            public byte[] SomeBlob { get; }
+            public byte[]? SomeNullableBlob { get; set; }
+        }
+
+        [Fact]
+        public void ReadByConstructorWithExtraMappings()
+        {
+            // ReSharper disable once UnusedVariable
+            var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithConstructorWithExtraProperties>();
+            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
+
+            PAssert.That(() => retval.Length == 512);
+            PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
         }
     }
 }
