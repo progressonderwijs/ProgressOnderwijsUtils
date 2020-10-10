@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
     public class TransactedLocalConnection : IDisposable
     {

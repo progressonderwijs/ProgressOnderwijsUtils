@@ -5,6 +5,7 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using Xunit;
 using System.Data;
+using ProgressOnderwijsUtils.Tests.Data;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
