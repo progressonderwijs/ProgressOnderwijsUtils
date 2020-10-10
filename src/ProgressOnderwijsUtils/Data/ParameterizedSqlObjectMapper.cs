@@ -232,13 +232,7 @@ namespace ProgressOnderwijsUtils
                 where T : IWrittenImplicitly
             {
                 static readonly object constructionSync = new object();
-                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering;
-                static readonly PocoProperties<T> pocoProperties = PocoProperties<T>.Instance;
-
-                static ByPocoImpl()
-                {
-                    rowToPocoByColumnOrdering = new ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)>();
-                }
+                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)>();
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                 {
@@ -261,7 +255,7 @@ namespace ProgressOnderwijsUtils
                 }
 
                 static readonly Func<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
-                    var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering, typeof(TRowReader<T>), pocoProperties);
+                    var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering, typeof(TRowReader<T>), PocoProperties<T>.Instance);
                     return (rowToPoco: (TRowReader<T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
                 };
             }
