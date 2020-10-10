@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopysWithConcurrentQueriesCrash()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-            var evilEnumerable = BulkInsertTestSampleRow.SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
+            var evilEnumerable = Enumerable.Repeat(BulkInsertTestSampleRow.SampleData, 4).SelectMany(x => x).Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
             Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
 
