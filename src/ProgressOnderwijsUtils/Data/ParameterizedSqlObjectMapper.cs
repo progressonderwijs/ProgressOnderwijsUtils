@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
             => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static PocosSqlCommand<T> OfPocos<T>(this ParameterizedSql sql)
-            where T : IWrittenImplicitly, new()
+            where T : IWrittenImplicitly
             => new PocosSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [return: MaybeNull]
@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils
             => q.OfPocos<T>().Execute(sqlConn);
 
         internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
-            where T : IWrittenImplicitly, new()
+            where T : IWrittenImplicitly
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
                 return "";
