@@ -193,7 +193,8 @@ namespace ProgressOnderwijsUtils
 
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
-                typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
+                typeof(TReader).GetInterfaceMap(typeof(IDataReader))
+            );
 
             // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
@@ -271,23 +272,24 @@ namespace ProgressOnderwijsUtils
             {
                 readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
-                    readonly ulong cachedHash;
+                    readonly int cachedHash;
                     public readonly string[] Cols;
 
-                    ColumnOrdering(ulong _cachedHash, string[] _cols)
+                    ColumnOrdering(int _cachedHash, string[] _cols)
                         => (cachedHash, Cols) = (_cachedHash, _cols);
 
-                    public static ColumnOrdering FromReader(TReader reader)
+                    public static ColumnOrdering FromReader(IDataReader reader)
                     {
-                        var primeArr = ColHashPrimes;
                         var cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
-                        var cachedHash = 0uL;
+                        var hashCode = new HashCode();
                         for (var i = 0; i < cols.Length; i++) {
                             var name = reader.GetName(i);
                             cols[i] = name;
-                            cachedHash += primeArr[i] * CaseInsensitiveHash(name);
+                            var caseInsensitiveHash = CaseInsensitiveHash(name);
+                            hashCode.Add((int)caseInsensitiveHash);
+                            hashCode.Add((int)(caseInsensitiveHash >> 32));
                         }
-                        return new ColumnOrdering(cachedHash, cols);
+                        return new ColumnOrdering(hashCode.ToHashCode(), cols);
                     }
 
                     public bool Equals(ColumnOrdering other)
@@ -305,7 +307,7 @@ namespace ProgressOnderwijsUtils
                     }
 
                     public override int GetHashCode()
-                        => (int)(uint)((cachedHash >> 32) + cachedHash);
+                        => cachedHash;
 
                     public override bool Equals(object? obj)
                         => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
@@ -320,22 +322,17 @@ namespace ProgressOnderwijsUtils
                 static string FriendlyName
                     => type.ToCSharpFriendlyTypeName();
 
-                static readonly uint[] ColHashPrimes;
                 static readonly PocoProperties<T> pocoProperties = PocoProperties<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
+                static readonly int WritablePropCount;
 
                 static ByPocoImpl()
                 {
-                    var writablePropCount = 0;
+                    WritablePropCount = 0;
                     foreach (var pocoProperty in pocoProperties) { //perf:no LINQ
                         if (pocoProperty.CanWrite && IsSupportedType(pocoProperty.DataType)) {
-                            writablePropCount++;
+                            WritablePropCount++;
                         }
-                    }
-                    ColHashPrimes = new uint[writablePropCount];
-                    PrimeGenerator.TryComputeAtLeast(writablePropCount, out var primes);
-                    for (var i = 0; i < ColHashPrimes.Length; i++) {
-                        ColHashPrimes[i] = (uint)primes.Span[i];
                     }
                     hasUnsupportedColumns = false;
                     foreach (var pocoProperty in pocoProperties) { //perf:no LINQ
@@ -364,20 +361,21 @@ namespace ProgressOnderwijsUtils
 
                 static void AssertColumnsCanBeMappedToObject(TReader reader, FieldMappingMode fieldMappingMode)
                 {
-                    if (reader.FieldCount > ColHashPrimes.Length
-                        || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
+                    if (reader.FieldCount > WritablePropCount
+                        || (reader.FieldCount < WritablePropCount || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
                         var publicWritableProperties = pocoProperties.Where(pocoProperty => IsSupportedType(pocoProperty.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
-                            $"Cannot unpack DbDataReader ({reader.FieldCount} columns) into type {FriendlyName} ({ColHashPrimes.Length} properties with public setters)\n" +
+                            $"Cannot unpack DbDataReader ({reader.FieldCount} columns) into type {FriendlyName} ({WritablePropCount} properties with public setters)\n" +
                             $"Query columns without corresponding property: {columnsThatCannotBeMapped.JoinStrings(", ")}\n" +
                             $".net properties without corresponding query column: {propertiesWithoutColumns.JoinStrings(", ")}\n" +
                             $"All columns: {columnNames.Select(n => "\n\t- " + n).JoinStrings()}\n" +
-                            $"{FriendlyName} properties: {publicWritableProperties.Select(n => "\n\t- " + n).JoinStrings()}\n");
+                            $"{FriendlyName} properties: {publicWritableProperties.Select(n => "\n\t- " + n).JoinStrings()}\n"
+                        );
                     }
-                    if (ColHashPrimes.Length == 0) {
+                    if (WritablePropCount == 0) {
                         throw new InvalidOperationException("Poco " + FriendlyName + " has no writable columns with a supported type!");
                     }
                 }
@@ -443,7 +441,8 @@ namespace ProgressOnderwijsUtils
                     if (!IsSupportedType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                            + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
+                            + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!"
+                        );
                     }
                 }
 
@@ -459,7 +458,8 @@ namespace ProgressOnderwijsUtils
                             "Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
                             + Enumerable.Range(0, reader.FieldCount)
                                 .Select(i => reader.GetName(i) + " : " + reader.GetFieldType(i).ToCSharpFriendlyTypeName())
-                                .JoinStrings(", "));
+                                .JoinStrings(", ")
+                        );
                     }
                 }
             }
