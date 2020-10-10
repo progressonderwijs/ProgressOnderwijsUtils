@@ -96,13 +96,8 @@ namespace ProgressOnderwijsUtils
 
         static BulkInsertFieldMapping[] CreateMapping(DbDataReader objectReader, string tableName, ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, string sourceName)
         {
-            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
-
-            var validatedMapping = new FieldMappingValidation {
-                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
-                AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
-                OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            }.ValidateAndFilter(unfilteredMapping);
+            var sourceFields = ColumnDefinition.GetFromReader(objectReader);
+            var validatedMapping = CreateValidatedMapping(sourceFields, tableColumns, mode, options);
 
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
@@ -110,5 +105,12 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException($"Failed to map source {sourceName} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
             }
         }
+
+        public static Maybe<BulkInsertFieldMapping[], string> CreateValidatedMapping(ColumnDefinition[] sourceFields, ColumnDefinition[] destinationColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+            => new FieldMappingValidation {
+                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
+                AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, destinationColumns));
     }
 }
