@@ -9,13 +9,20 @@ using ExpressionToCodeLib;
 namespace ProgressOnderwijsUtils
 {
     public interface IPocoProperties<out T> : IReadOnlyList<T>
-        where T : IPocoProperty { }
+        where T : IPocoProperty
+    {
+        IReadOnlyDictionary<string, int> IndexByName { get; }
+        public Type PocoType { get; }
+    }
 
     public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
         where T : IPoco
     {
         readonly IPocoProperty<T>[] Properties;
         readonly IReadOnlyDictionary<string, int> indexByName;
+
+        public Type PocoType
+            => typeof(T);
 
         public IReadOnlyDictionary<string, int> IndexByName
             => indexByName;
@@ -68,7 +75,8 @@ namespace ProgressOnderwijsUtils
 
             throw new ArgumentException(
                 "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-                "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property");
+                "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property"
+            );
         }
 
         public IEnumerator<IPocoProperty<T>> GetEnumerator()
