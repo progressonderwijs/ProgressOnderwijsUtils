@@ -261,16 +261,22 @@ namespace ProgressOnderwijsUtils
                 }
 
                 static readonly Func<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
+                    var (rowToPoco, unmappedProperties) = ConstructTRowReader(columnOrdering, typeof(TRowReader<T>), pocoProperties);
+                    return (rowToPoco: (TRowReader<T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
+                };
+
+                public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructTRowReader(ColumnOrdering columnOrdering, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
+                {
                     var cols = columnOrdering.Cols;
                     var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                     var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                    var (constructRowExpr, unmappedProperties) = ReadAllFields(dataReaderParamExpr, cols, lastColumnReadParamExpr);
+                    var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
                     var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                    var rowToPocoLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "RowToPoco", rowToPocoParamExprs);
+                    var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
                     return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
-                };
+                }
 
-                static (BlockExpression constructRowExpr, IPocoProperty<T>[] unmappedProperties) ReadAllFields(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr)
+                public static (BlockExpression constructRowExpr, IPocoProperty[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, IPocoProperties<IPocoProperty> pocoProperties)
                 {
                     string FriendlyName()
                         => pocoProperties.PocoType.ToCSharpFriendlyTypeName();
@@ -363,11 +369,11 @@ namespace ProgressOnderwijsUtils
                         ctorArguments[ctorIdx] = variablesByPropIdx[propIdx];
                     }
 
-                    var rowVar = Expression.Variable(typeof(T));
+                    var rowVar = Expression.Variable(pocoProperties.PocoType);
                     allVariables.Add(rowVar);
                     statements.Add(Expression.Assign(rowVar, bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType)));
 
-                    var unmappedProperties = new List<IPocoProperty<T>>();
+                    var unmappedProperties = new List<IPocoProperty>();
                     foreach (var prop in pocoProperties) {
                         if (!propertyFlags[prop.Index].coveredByReaderColumn && prop.CanWrite) {
                             unmappedProperties.Add(prop);
