@@ -332,7 +332,7 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
-
+            /*
             [UsefulToKeep("This might be a nice thing to stick in an OSS library")]
             public static class ReadByConstructorImpl<T>
             {
@@ -417,7 +417,7 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
-
+            */
             public static class PlainImpl<T>
             {
                 static string FriendlyName
