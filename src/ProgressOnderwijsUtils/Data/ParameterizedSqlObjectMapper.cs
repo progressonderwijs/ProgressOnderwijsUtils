@@ -333,11 +333,9 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     ColHashPrimes = new uint[writablePropCount];
-
-                    using (var pGen = Utils.Primes().GetEnumerator()) {
-                        for (var i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++) {
-                            ColHashPrimes[i] = (uint)pGen.Current;
-                        }
+                    PrimeGenerator.TryComputeAtLeast(writablePropCount, out var primes);
+                    for (var i = 0; i < ColHashPrimes.Length; i++) {
+                        ColHashPrimes[i] = (uint)primes.Span[i];
                     }
                     hasUnsupportedColumns = false;
                     foreach (var pocoProperty in pocoProperties) { //perf:no LINQ

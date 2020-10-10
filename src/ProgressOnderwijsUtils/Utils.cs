@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -8,10 +10,56 @@ using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
+    sealed class PrimeGenerator
+    {
+        ulong[] cachedPrimes = new ulong[16];
+        int primeCount = 0;
+        ulong nextNumber = 2;
+        PrimeGenerator() { }
+
+        /// <summary>
+        /// Uses the sieve of erasthenos
+        /// </summary>
+        /// <returns>all 64-bit representable primes</returns>
+        bool TryComputeUpto(int targetPrimeCount)
+        {
+            while (primeCount < targetPrimeCount && nextNumber != 0) {
+                var hasDivisor = false;
+                foreach (var p in cachedPrimes) {
+                    if (nextNumber % p == 0) {
+                        hasDivisor = true;
+                        break;
+                    }
+                }
+                if (!hasDivisor) {
+                    if (cachedPrimes.Length <= primeCount) {
+                        Array.Resize(ref cachedPrimes, primeCount + 16);
+                    }
+                    cachedPrimes[primeCount] = nextNumber;
+                    primeCount++;
+                }
+                nextNumber++;
+            }
+            return targetPrimeCount <= primeCount;
+        }
+
+        static readonly PrimeGenerator Singleton = new PrimeGenerator();
+
+        public static bool TryComputeAtLeast(int numberOfPrimesToCompute, out ReadOnlyMemory<ulong> primes)
+        {
+            lock (Singleton) {
+                var success = Singleton.TryComputeUpto(numberOfPrimesToCompute);
+                primes = Singleton.cachedPrimes.AsMemory(0, Singleton.primeCount);
+                return success;
+            }
+        }
+    }
+
     public static class Utils
     {
         /// <summary>
@@ -29,21 +77,6 @@ namespace ProgressOnderwijsUtils
 
         public static Lazy<T> Lazy<T>(Func<T> factory)
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
-
-        /// <summary>
-        /// Uses the sieve of erasthenos
-        /// </summary>
-        /// <returns>all 64-bit representable primes</returns>
-        public static IEnumerable<ulong> Primes()
-        {
-            var primes = new List<ulong>();
-            for (ulong i = 2; i != 0; i++) {
-                if (primes.All(p => i % p != 0)) {
-                    primes.Add(i);
-                    yield return i;
-                }
-            }
-        }
 
         /// <summary>
         /// Swap two objects.
