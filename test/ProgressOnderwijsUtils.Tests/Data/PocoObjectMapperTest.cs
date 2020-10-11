@@ -101,16 +101,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
         }
 
-        public sealed class ExampleWithConstructor : IWrittenImplicitly
+        public sealed record ExampleWithConstructor(string AccountNumber, byte[] SomeBlob) : IWrittenImplicitly
         {
-            public ExampleWithConstructor(string accountNumber, byte[] someBlob)
-            {
-                AccountNumber = accountNumber;
-                SomeBlob = someBlob;
-            }
-
             public int SalesOrderId { get; set; }
-            public string AccountNumber { get; }
             public string? Comment { get; set; }
             public DateTime DueDate { get; set; }
             public bool OnlineOrderFlag { get; set; }
@@ -119,7 +112,6 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public DateTime? ShipDate { get; set; }
             public byte Status { get; set; }
             public decimal TotalDue { get; set; }
-            public byte[] SomeBlob { get; }
             public byte[]? SomeNullableBlob { get; set; }
         }
 
