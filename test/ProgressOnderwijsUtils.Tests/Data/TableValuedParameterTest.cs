@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
+using Microsoft.Data.SqlClient;
 using ProgressOnderwijsUtils.Internal;
-using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class TableValuedParameterTest : TransactedLocalConnection
     {

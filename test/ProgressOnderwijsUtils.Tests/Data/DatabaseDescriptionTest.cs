@@ -1,13 +1,12 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests.Data
 {
-    public sealed class ForeignKeyLookupTest : TransactedLocalConnection
+    public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     {
         [Fact]
         public void AllDependantTables_works_recursively()
@@ -20,6 +19,8 @@ namespace ProgressOnderwijsUtils.Tests
                 create table dbo.ForeignKeyLookupLevel (
                     IdLevel int not null primary key
                     , IdRoot int not null foreign key references dbo.ForeignKeyLookupRoot(IdRoot)
+                    , SomeDataWithDefault nvarchar(max) not null default('test')
+                    , SomeDataWithoutDefault nvarchar(max) not null
                 );
 
                 create table dbo.ForeignKeyLookupLeaf (
@@ -29,9 +30,11 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Connection);
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
-            var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
+            var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithDefault").ColumnMetaData;
+            var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithoutDefault").ColumnMetaData;
 
-            PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf" }, StringComparer.OrdinalIgnoreCase));
+            PAssert.That(() => SomeDataWithDefault_metadata.HasDefaultValue);
+            PAssert.That(() => !SomeDataWithoutDefault_metadata.HasDefaultValue);
         }
     }
 }
