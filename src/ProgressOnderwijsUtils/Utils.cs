@@ -31,21 +31,6 @@ namespace ProgressOnderwijsUtils
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
 
         /// <summary>
-        /// Uses the sieve of erasthenos
-        /// </summary>
-        /// <returns>all 64-bit representable primes</returns>
-        public static IEnumerable<ulong> Primes()
-        {
-            var primes = new List<ulong>();
-            for (ulong i = 2; i != 0; i++) {
-                if (primes.All(p => i % p != 0)) {
-                    primes.Add(i);
-                    yield return i;
-                }
-            }
-        }
-
-        /// <summary>
         /// Swap two objects.
         /// </summary>
         public static void Swap<T>(ref T one, ref T other)

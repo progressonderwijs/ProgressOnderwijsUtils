@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             => Insecure(GetNaiveHashCode(System.IO.Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
         static int GetNaiveHashCode(string str)
-            => (int)ParameterizedSqlObjectMapper.CaseInsensitiveHash(str);
+            => (int)ColumnOrdering.CaseInsensitiveHash(str);
 
         readonly Action<byte[]> fillWithRandomBytes;
 
