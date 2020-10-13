@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>66.0.0</Version>
-    <PackageReleaseNotes>Allow RootedTree in more algorithms; some renames to avoid overload ambiguities.</PackageReleaseNotes>
+    <Version>67.0.0</Version>
+    <PackageReleaseNotes>PocosSqlCommand: support initializing properties via a constructor. Remove prime number generator.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
