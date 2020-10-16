@@ -97,6 +97,21 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
+        public void BulkInsertAndReadRoundTrips_ManyRows()
+        {
+            var manyRows = BulkInsertTestSampleRow.SampleRows(400);
+            for (var index = 0; index < manyRows.Length; index++) {
+                manyRows[index].VagueNumber = index / 16.0; //make sure all rows are distinct for this test.
+            }
+            var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
+            manyRows.BulkCopyToSqlServer(Connection, target);
+            var fromDb = SQL($"select * from #test").ReadPocos<BulkInsertTestSampleRow>(Connection);
+            AssertCollectionsEquivalent(manyRows, fromDb);
+            var suspciousObjectsThatRoundTrippedFromDbAndAreReferenceEqualsToSource = manyRows.Intersect(fromDb, new ReferenceEqualityComparer<BulkInsertTestSampleRow>()).ToArray();
+            PAssert.That(() => suspciousObjectsThatRoundTrippedFromDbAndAreReferenceEqualsToSource.None(), "just to make sure bulk insert actually isn't somehow staying in memory");
+        }
+
+        [Fact]
         public void CanInsertDatatable()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
