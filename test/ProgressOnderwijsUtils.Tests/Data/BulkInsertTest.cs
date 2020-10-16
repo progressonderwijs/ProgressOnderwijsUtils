@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText());
         }
 
-        public static readonly BulkInsertTestSampleRow[] SampleData = {
+        static readonly BulkInsertTestSampleRow[] FourSampleRows = {
             new BulkInsertTestSampleRow {
                 ADateTime = new DateTime(2003, 4, 5).AddHours(17.345),
                 AnEnum = DayOfWeek.Saturday,
@@ -72,6 +72,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 CustomBlaThanCanBeNull = TrivialConvertibleValue.Create("noot"),
             }
         };
+
+        public static BulkInsertTestSampleRow[] SampleRows(int n)
+            => Enumerable.Range(0, (n + 3) / 4).SelectMany(i => FourSampleRows).ToArray();
     }
 
     public sealed class BulkInsertTest : TransactedLocalConnection
@@ -80,7 +83,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopysWithConcurrentQueriesCrash()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-            var evilEnumerable = Enumerable.Repeat(BulkInsertTestSampleRow.SampleData, 4).SelectMany(x => x).Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
+            var evilEnumerable = BulkInsertTestSampleRow.SampleRows(16).Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
             Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
 
@@ -88,9 +91,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkInsertAndReadRoundTrips()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-            BulkInsertTestSampleRow.SampleData.BulkCopyToSqlServer(Connection, target);
+            BulkInsertTestSampleRow.SampleRows(4).BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadPocos<BulkInsertTestSampleRow>(Connection);
-            AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleData, fromDb);
+            AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(4), fromDb);
         }
 
         [Fact]
@@ -98,13 +101,13 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
             var target2 = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test2"));
-            target.BulkInsert(Connection, BulkInsertTestSampleRow.SampleData);
+            target.BulkInsert(Connection, BulkInsertTestSampleRow.SampleRows(4));
 
             var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
             target2.BulkInsert(Connection, dataTable);
 
             var fromDb = SQL($"select * from #test2").ReadPocos<BulkInsertTestSampleRow>(Connection);
-            AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleData, fromDb);
+            AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(4), fromDb);
         }
 
         sealed class SampleRow2 : ValueBase<SampleRow2>, IWrittenImplicitly, IReadImplicitly
@@ -171,7 +174,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void EmptyBulkInsertAndReadRoundTrips()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-            BulkInsertTestSampleRow.SampleData.Take(0).BulkCopyToSqlServer(Connection, target);
+            BulkInsertTestSampleRow.SampleRows(4).Take(0).BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadPocos<BulkInsertTestSampleRow>(Connection);
             PAssert.That(() => fromDb.None());
         }

@@ -41,9 +41,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Dispose()
             => sqlConn.Dispose();
 
-        static BulkInsertTestSampleRow[] SampleData(int n)
-            => Enumerable.Range(0, (n + 3) / 4).SelectMany(i => BulkInsertTestSampleRow.SampleData).ToArray();
-
         public SmallBatchInsertBench()
         {
             sqlConn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB");
@@ -62,41 +59,41 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void BulkCopyToSqlServer_cachedTarget_0()
-            => SampleData(0).BulkCopyToSqlServer(sqlConn, cachedTarget);
+            => BulkInsertTestSampleRow.SampleRows(0).BulkCopyToSqlServer(sqlConn, cachedTarget);
 
         [Benchmark]
         public void BulkCopyToSqlServer_cachedTarget_1()
-            => SampleData(1).BulkCopyToSqlServer(sqlConn, cachedTarget);
+            => BulkInsertTestSampleRow.SampleRows(1).BulkCopyToSqlServer(sqlConn, cachedTarget);
 
         [Benchmark]
         public void BulkCopyToSqlServer_cachedTarget_9()
-            => SampleData(9).BulkCopyToSqlServer(sqlConn, cachedTarget);
+            => BulkInsertTestSampleRow.SampleRows(9).BulkCopyToSqlServer(sqlConn, cachedTarget);
 
         [Benchmark]
         public void BulkCopyToSqlServer_cachedTarget_81()
-            => SampleData(81).BulkCopyToSqlServer(sqlConn, cachedTarget);
+            => BulkInsertTestSampleRow.SampleRows(81).BulkCopyToSqlServer(sqlConn, cachedTarget);
 
         [Benchmark]
         public void BulkCopyToSqlServer_cachedTarget_729()
-            => SampleData(729).BulkCopyToSqlServer(sqlConn, cachedTarget);
+            => BulkInsertTestSampleRow.SampleRows(729).BulkCopyToSqlServer(sqlConn, cachedTarget);
 
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_0()
-            => SampleData(0).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+            => BulkInsertTestSampleRow.SampleRows(0).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
 
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_1()
-            => SampleData(1).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+            => BulkInsertTestSampleRow.SampleRows(1).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
 
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_9()
-            => SampleData(9).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+            => BulkInsertTestSampleRow.SampleRows(9).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_81()
-            => SampleData(81).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+            => BulkInsertTestSampleRow.SampleRows(81).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
 
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_729()
-            => SampleData(729).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+            => BulkInsertTestSampleRow.SampleRows(729).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
     }
 }
