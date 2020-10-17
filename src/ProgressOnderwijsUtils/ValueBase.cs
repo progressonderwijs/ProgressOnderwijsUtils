@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using FastExpressionCompiler;
 using JetBrains.Annotations;
 using ValueUtils;
 
@@ -125,7 +126,7 @@ namespace ProgressOnderwijsUtils
                         .ToArray()
                 );
 
-            return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
+            return Expression.Lambda<Func<T, string>>(toStringExpr, parA).CompileFast(true).AssertNotNull();
         }
 
         static string FriendlyMemberName(MemberInfo fi)

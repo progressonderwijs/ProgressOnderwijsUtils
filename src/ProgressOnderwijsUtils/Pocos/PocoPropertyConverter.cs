@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
+using FastExpressionCompiler;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -25,8 +26,8 @@ namespace ProgressOnderwijsUtils
 
             ConvertToDb = converter.ConvertToProvider;
             ConvertFromDb = converter.ConvertFromProvider;
-            CompiledConverterToDb = converter.ConvertToProviderExpression.Compile();
-            CompiledConverterFromDb = converter.ConvertFromProviderExpression.Compile();
+            CompiledConverterToDb = converter.ConvertToProviderExpression.CompileFast(true).AssertNotNull();
+            CompiledConverterFromDb = converter.ConvertFromProviderExpression.CompileFast(true).AssertNotNull();
         }
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
