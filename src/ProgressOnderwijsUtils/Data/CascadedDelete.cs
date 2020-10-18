@@ -88,7 +88,6 @@ namespace ProgressOnderwijsUtils
         /// 
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
-        [UsefulToKeep("Library function")]
         public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, string[] pkColumns, ParameterizedSql pksTVParameter)
         {
             void log(string message)
@@ -108,8 +107,6 @@ namespace ProgressOnderwijsUtils
             }
 
             var outputClause = outputAllDeletedRows ? SQL($"output deleted.*") : default;
-
-            var databaseDescription = initialTableAsEntered.db;
 
           var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
@@ -142,9 +139,9 @@ namespace ProgressOnderwijsUtils
             var perflog = new List<DeletionReport>();
             long totalDeletes = 0;
 
-            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> logStack, int depth)
+            void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, SList<string> logStack, int depth)
             {
-                if (StopCascading(tableName)) {
+                if (StopCascading(table.QualifiedNameSql)) {
                     return;
                 }
 
@@ -152,23 +149,23 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
                 }
 
-                var pkeysOfCurrentTable = databaseDescription.GetTableByName(tableName.CommandText()).PrimaryKey.ToArray();
+                var pkeysOfCurrentTable = table.PrimaryKey.ToArray();
                 if (pkeysOfCurrentTable.None()) {
-                    throw new InvalidOperationException($"Table {tableName.CommandText()} is missing a primary key");
+                    throw new InvalidOperationException($"Table {table.QualifiedName} is missing a primary key");
                 }
                 var ttJoin = pkeysOfCurrentTable.Select(col => SQL($"pk.{col.SqlColumnName()}=tt.{col.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
 
                 deletionStack.Push(
                     () => {
                         var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
-                        log($"Delete {nrRowsToDelete} from {tableName.CommandText()}...");
+                        log($"Delete {nrRowsToDelete} from {table.QualifiedName}...");
                         var sw = Stopwatch.StartNew();
                         var deletedRows = ExecuteDeletion(
                             SQL(
                                 $@"
                         delete pk
                         {outputClause}
-                        from {tableName} pk
+                        from {table.QualifiedNameSql} pk
                         join {tempTableName} tt on {ttJoin};
                     
                         drop table {tempTableName};
@@ -177,59 +174,57 @@ namespace ProgressOnderwijsUtils
                         );
                         sw.Stop();
                         log($"...took {sw.Elapsed}");
-                        perflog.Add(new DeletionReport { Table = tableName.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                        perflog.Add(new DeletionReport { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                     }
                 );
 
-                var fks = databaseDescription.GetTableByName(tableName.CommandText()).KeysFromReferencingChildren;
-
-                foreach (var fk in fks) {
-                    var pkeysOfReferencingTable = fk.ReferencingChildTable.PrimaryKey.ToArray();
+                foreach (var fk in table.KeysFromReferencingChildren) {
+                    var childTable = fk.ReferencingChildTable;
                     var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                     var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
-                    if (pkeysOfReferencingTable.None()) {
-                        log($"Warning: table {fk.ReferencingChildTable.QualifiedName}->{logStack.JoinStrings("->")} is missing a primary key");
+                    if (childTable.PrimaryKey.None()) {
+                        log($"Warning: table {childTable.QualifiedName}->{logStack.JoinStrings("->")} is missing a primary key");
                         deletionStack.Push(
                             () => {
                                 var nrRowsToDelete = SQL(
                                     $@"
                                 select count(*)
-                                from {fk.ReferencingChildTable.QualifiedNameSql} fk
-                                join {tableName} as pk on {pkJoin}
+                                from {childTable.QualifiedNameSql} fk
+                                join {table.QualifiedNameSql} as pk on {pkJoin}
                                 join {tempTableName} as tt on {ttJoin}
                             "
                                 ).ReadScalar<int>(conn);
-                                log($"Delete {nrRowsToDelete} from {fk.ReferencingChildTable.QualifiedName}...");
+                                log($"Delete {nrRowsToDelete} from {childTable.QualifiedName}...");
                                 var sw = Stopwatch.StartNew();
                                 var deletedRows = ExecuteDeletion(
                                     SQL(
                                         $@"
                                 delete fk
                                 {outputClause}
-                                from {fk.ReferencingChildTable.QualifiedNameSql} fk
-                                join {tableName} as pk on {pkJoin}
+                                from {childTable.QualifiedNameSql} fk
+                                join {table.QualifiedNameSql} as pk on {pkJoin}
                                 join {tempTableName} as tt on {ttJoin}
                             "
                                     )
                                 );
                                 sw.Stop();
                                 log($"...took {sw.Elapsed}");
-                                perflog.Add(new DeletionReport { Table = fk.ReferencingChildTable.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                                perflog.Add(new DeletionReport { Table = childTable.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                             }
                         );
                         continue;
                     }
 
-                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.ReferencingChildTable.QualifiedName)
+                    var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
                         ? SQL($"where 1=1")
                         : SQL($"where {pkeysOfCurrentTable.Select(col => SQL($"pk.{col.SqlColumnName()}<>fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($" or "))}");
-                    var referencingPkCols = pkeysOfReferencingTable.Select(col => SQL($"fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($", "));
+                    var referencingPkCols = childTable.PrimaryKey.Select(col => SQL($"fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($", "));
                     var statement = SQL(
                         $@"
                         select {referencingPkCols} 
                         into {newDelTable}
-                        from {fk.ReferencingChildTable.QualifiedNameSql} as fk
-                        join {tableName} as pk on {pkJoin}
+                        from {childTable.QualifiedNameSql} as fk
+                        join {table.QualifiedNameSql} as pk on {pkJoin}
                         join {tempTableName} as tt on {ttJoin}
                         {whereClause}
                         ;
@@ -242,18 +237,18 @@ namespace ProgressOnderwijsUtils
 
                     totalDeletes += kidRowsCount;
 
-                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.ReferencingChildTable.QualifiedName}->{logStack.JoinStrings("->")}");
+                    log($"{delBatch,6}: Found {kidRowsCount} in {childTable.QualifiedName}->{logStack.JoinStrings("->")}");
 
                     if (kidRowsCount == 0) {
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fk.ReferencingChildTable.QualifiedNameSql, newDelTable, logStack.Prepend(fk.ReferencingChildTable.QualifiedName), depth + 1);
+                        DeleteKids(childTable, newDelTable, logStack.Prepend(childTable.QualifiedName), depth + 1);
                     }
                 }
             }
 
-            DeleteKids(initialTableAsEntered.QualifiedNameSql, delTable, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
+            DeleteKids(initialTableAsEntered, delTable, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
