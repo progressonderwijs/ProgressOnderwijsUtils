@@ -108,7 +108,7 @@ namespace ProgressOnderwijsUtils
 
             var outputClause = outputAllDeletedRows ? SQL($"output deleted.*") : default;
 
-          var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
+            var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
             var delTable = SQL($"#del_init");
 
@@ -139,7 +139,7 @@ namespace ProgressOnderwijsUtils
             var perflog = new List<DeletionReport>();
             long totalDeletes = 0;
 
-            void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, SList<string> logStack, int depth)
+            void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] keyColumns, SList<string> logStack, int depth)
             {
                 if (StopCascading(table.QualifiedNameSql)) {
                     return;
@@ -149,11 +149,10 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
                 }
 
-                var pkeysOfCurrentTable = table.PrimaryKey.ToArray();
-                if (pkeysOfCurrentTable.None()) {
-                    throw new InvalidOperationException($"Table {table.QualifiedName} is missing a primary key");
+                if (keyColumns.None()) {
+                    throw new InvalidOperationException($"Table {table.QualifiedName} is missing a key");
                 }
-                var ttJoin = pkeysOfCurrentTable.Select(col => SQL($"pk.{col.SqlColumnName()}=tt.{col.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
+                var ttJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
                 deletionStack.Push(
                     () => {
@@ -182,46 +181,14 @@ namespace ProgressOnderwijsUtils
                     var childTable = fk.ReferencingChildTable;
                     var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                     var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
-                    if (childTable.PrimaryKey.None()) {
-                        log($"Warning: table {childTable.QualifiedName}->{logStack.JoinStrings("->")} is missing a primary key");
-                        deletionStack.Push(
-                            () => {
-                                var nrRowsToDelete = SQL(
-                                    $@"
-                                select count(*)
-                                from {childTable.QualifiedNameSql} fk
-                                join {table.QualifiedNameSql} as pk on {pkJoin}
-                                join {tempTableName} as tt on {ttJoin}
-                            "
-                                ).ReadScalar<int>(conn);
-                                log($"Delete {nrRowsToDelete} from {childTable.QualifiedName}...");
-                                var sw = Stopwatch.StartNew();
-                                var deletedRows = ExecuteDeletion(
-                                    SQL(
-                                        $@"
-                                delete fk
-                                {outputClause}
-                                from {childTable.QualifiedNameSql} fk
-                                join {table.QualifiedNameSql} as pk on {pkJoin}
-                                join {tempTableName} as tt on {ttJoin}
-                            "
-                                    )
-                                );
-                                sw.Stop();
-                                log($"...took {sw.Elapsed}");
-                                perflog.Add(new DeletionReport { Table = childTable.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
-                            }
-                        );
-                        continue;
-                    }
-
                     var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
                         ? SQL($"where 1=1")
-                        : SQL($"where {pkeysOfCurrentTable.Select(col => SQL($"pk.{col.SqlColumnName()}<>fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($" or "))}");
-                    var referencingPkCols = childTable.PrimaryKey.Select(col => SQL($"fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($", "));
+                        : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "))}");
+                    var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
+                    var selectClause = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var statement = SQL(
                         $@"
-                        select {referencingPkCols} 
+                        select {selectClause} 
                         into {newDelTable}
                         from {childTable.QualifiedNameSql} as fk
                         join {table.QualifiedNameSql} as pk on {pkJoin}
@@ -243,12 +210,12 @@ namespace ProgressOnderwijsUtils
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(childTable, newDelTable, logStack.Prepend(childTable.QualifiedName), depth + 1);
+                        DeleteKids(childTable, newDelTable, referencingCols, logStack.Prepend(childTable.QualifiedName), depth + 1);
                     }
                 }
             }
 
-            DeleteKids(initialTableAsEntered, delTable, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
+            DeleteKids(initialTableAsEntered, delTable, initialKeyColumns, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
