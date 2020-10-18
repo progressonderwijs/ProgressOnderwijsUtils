@@ -84,7 +84,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-            Assert.ThrowsAny<Exception>(()=> CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
+            var ex =Assert.ThrowsAny<Exception>(()=> CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
+            PAssert.That(() => ex.Message.Contains("dbo.T2->dbo.T1->dbo.T2->dbo.T1"));
         }
 
         [Fact]

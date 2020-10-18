@@ -134,24 +134,36 @@ namespace ProgressOnderwijsUtils
             log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
 
             var delBatch = 0;
+            var stackOfEnqueuedDeletions = new Dictionary<(DbObjectId objectId, ParameterizedSql keyList), Stack<ParameterizedSql>>();
 
             var deletionStack = new Stack<Action>();
             var perflog = new List<DeletionReport>();
             long totalDeletes = 0;
 
-            void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] keyColumns, SList<string> logStack, int depth)
+            DeleteKids(initialTableAsEntered, delTable, initialKeyColumns, SList.SingleElement(initialTableAsEntered.QualifiedName));
+            while (deletionStack.Count > 0) {
+                deletionStack.Pop()();
+            }
+
+            log($"{totalDeletes} rows Deleted");
+            return perflog.ToArray();
+
+            void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] keyColumns, SList<string> logStack)
             {
                 if (StopCascading(table.QualifiedNameSql)) {
                     return;
                 }
+                var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new Stack<ParameterizedSql>());
+                if (onStackDeletionTables.Any()) {
+                    var unionOfProblems = onStackDeletionTables.Select(onStackTmpTable => SQL($"(select * from {onStackTmpTable} intersect select * from {tempTableName})")).ConcatenateSql(SQL($" union all "));
+                    var cycleDetected = SQL($"select iif(exists({unionOfProblems}), {true}, {false})").ReadScalar<bool>(conn);
 
-                if (depth > 500) {
-                    throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
+                    if (cycleDetected) { 
+                        throw new InvalidOperationException($"A cycle was detected in the current dependency chain: {logStack.JoinStrings("->")}");
+                    }
                 }
+                onStackDeletionTables.Push(tempTableName);
 
-                if (keyColumns.None()) {
-                    throw new InvalidOperationException($"Table {table.QualifiedName} is missing a key");
-                }
                 var ttJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
                 deletionStack.Push(
@@ -204,24 +216,18 @@ namespace ProgressOnderwijsUtils
 
                     totalDeletes += kidRowsCount;
 
-                    log($"{delBatch,6}: Found {kidRowsCount} in {childTable.QualifiedName}->{logStack.JoinStrings("->")}");
+                    var newChain = logStack.Prepend(childTable.QualifiedName);
+                    log($"{delBatch,6}: Found {kidRowsCount} in {newChain.JoinStrings("->")}");
 
                     if (kidRowsCount == 0) {
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(childTable, newDelTable, referencingCols, logStack.Prepend(childTable.QualifiedName), depth + 1);
+                        DeleteKids(childTable, newDelTable, referencingCols, newChain);
                     }
                 }
+                onStackDeletionTables.Pop();
             }
-
-            DeleteKids(initialTableAsEntered, delTable, initialKeyColumns, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
-            while (deletionStack.Count > 0) {
-                deletionStack.Pop()();
-            }
-
-            log($"{totalDeletes} rows Deleted");
-            return perflog.ToArray();
         }
 
         public struct DeletionReport
