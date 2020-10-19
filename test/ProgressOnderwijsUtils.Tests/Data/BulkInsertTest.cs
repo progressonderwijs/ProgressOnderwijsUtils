@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -213,6 +214,22 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 };
 
             AssertCollectionsEquivalent(expected, fromDb);
+        }
+
+        [Fact]
+        public void SmallBatchInsertImplementationPrefixSanityCheck()
+        {
+            CheckPostConditions(Enumerable.Range(1, 4), 2);
+            CheckPostConditions(Enumerable.Range(1, 4), 5);
+            CheckPostConditions(Enumerable.Range(1, 4).ToArray(), 5); //there's a special case for collections such as IReadOnlyList
+            CheckPostConditions(Enumerable.Range(1, 4).ToArray(), 2);
+
+            void CheckPostConditions(IEnumerable<int> enumerable, int count)
+            {
+                var output = SmallBatchInsertImplementation.PeekAtPrefix(enumerable, count);
+                PAssert.That(() => output.head.SequenceEqual(enumerable.Take(count)));
+                PAssert.That(() => output.fullSequence.SequenceEqual(enumerable));
+            }
         }
 
         [Fact]
