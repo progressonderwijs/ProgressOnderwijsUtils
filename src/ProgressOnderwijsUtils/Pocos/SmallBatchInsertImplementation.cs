@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
 
         public static IEnumerable<T>? TrySmallBatchInsertOptimization(SqlConnection sqlConn, BulkInsertTarget bulkInsertTarget, IEnumerable<T> pocos, CommandTimeout timeout)
         {
-            if (bulkInsertTarget.Options != BulkInsertTarget.defaultBulkCopyOptions) {
+            if ((bulkInsertTarget.Options | SqlBulkCopyOptions.KeepNulls) != (BulkInsertTarget.defaultBulkCopyOptions | SqlBulkCopyOptions.KeepNulls)) {
                 return pocos;
             }
             var (head, all) = PeekAtPrefix(pocos, ThresholdForUsingSqlBulkCopy);
@@ -40,10 +40,17 @@ namespace ProgressOnderwijsUtils
             }
             var mapping = maybeMapping.AssertOk();
             foreach (var row in rows) {
+                var destinationColumns = mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name));
+                var sourceValues = mapping.Select(
+                    o => {
+                        var fieldVal = PocoProperties<T>.Instance[o.Src.Index].Getter.AssertNotNull()(row);
+                        return fieldVal == null && !target.Options.HasFlag(SqlBulkCopyOptions.KeepNulls) ? SQL($"default") : ParameterizedSql.Param(fieldVal);
+                    }
+                );
                 SQL(
                     $@"
-                    insert into {ParameterizedSql.CreateDynamic(target.TableName)} ({mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name)).ConcatenateSql(SQL($","))})
-                    values ({mapping.Select(o => ParameterizedSql.Param(PocoProperties<T>.Instance[o.Src.Index].Getter.AssertNotNull()(row))).ConcatenateSql(SQL($", "))});
+                    insert into {ParameterizedSql.CreateDynamic(target.TableName)} ({destinationColumns.ConcatenateSql(SQL($","))})
+                    values ({sourceValues.ConcatenateSql(SQL($", "))});
                 "
                 ).OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
             }

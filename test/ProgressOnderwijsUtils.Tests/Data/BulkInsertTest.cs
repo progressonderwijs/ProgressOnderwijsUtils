@@ -186,6 +186,36 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
+        public void BulkInsertSmallBatchesRespectsKeepNul()
+        {
+            SQL(
+                $@"
+                    create table #tmp (
+                        intNonNull int not null
+                        , intNull int null default 37 
+                        , stringNull nvarchar(max) null
+                        , stringNonNull nvarchar(max) not null
+                    )
+                "
+            ).ExecuteNonQuery(Connection);
+            var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
+            new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test" }, }
+                .BulkCopyToSqlServer(Connection, target);
+            new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test" }, }
+                .BulkCopyToSqlServer(Connection, target.With(target.Options ^ SqlBulkCopyOptions.KeepNulls));
+
+            var fromDb = SQL($"select * from #tmp").ReadPocos<SampleRow2>(Connection);
+
+            var expected =
+                new[] {
+                    new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test" },
+                    new SampleRow2 { intNonNull = 2, intNull = 37, stringNull = "test", stringNonNull = "test" },
+                };
+
+            AssertCollectionsEquivalent(expected, fromDb);
+        }
+
+        [Fact]
         public void EmptyBulkInsertAndReadRoundTrips()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
