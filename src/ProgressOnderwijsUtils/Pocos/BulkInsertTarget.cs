@@ -14,14 +14,14 @@ namespace ProgressOnderwijsUtils
 {
     public sealed class BulkInsertTarget
     {
-        public const SqlBulkCopyOptions defaultBulkCopyOptions = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
+        public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
         public readonly string TableName;
         public readonly ColumnDefinition[] Columns;
         public readonly BulkCopyFieldMappingMode Mode;
         public readonly SqlBulkCopyOptions Options;
 
         public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, defaultBulkCopyOptions) { }
+            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }
 
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);

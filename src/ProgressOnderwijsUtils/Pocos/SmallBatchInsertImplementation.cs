@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumerable<T>? TrySmallBatchInsertOptimization<T>(SqlConnection sqlConn, BulkInsertTarget bulkInsertTarget, IEnumerable<T> pocos, CommandTimeout timeout)
             where T : IReadImplicitly
         {
-            if ((bulkInsertTarget.Options | SqlBulkCopyOptions.KeepNulls) != (BulkInsertTarget.defaultBulkCopyOptions | SqlBulkCopyOptions.KeepNulls)) {
+            if ((bulkInsertTarget.Options | SqlBulkCopyOptions.KeepNulls) != (BulkInsertTarget.DefaultOptionsCorrespondingToInsertIntoBehavior | SqlBulkCopyOptions.KeepNulls)) {
                 return pocos;
             }
             var (head, all) = PeekAtPrefix(pocos, ThresholdForUsingSqlBulkCopy);
