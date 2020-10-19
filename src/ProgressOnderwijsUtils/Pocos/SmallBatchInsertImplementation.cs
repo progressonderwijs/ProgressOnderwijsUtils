@@ -9,12 +9,12 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    static class SmallBatchInsertImplementation<T>
-        where T : IReadImplicitly
+    public static class SmallBatchInsertImplementation
     {
         internal const int ThresholdForUsingSqlBulkCopy = 6;
 
-        public static IEnumerable<T>? TrySmallBatchInsertOptimization(SqlConnection sqlConn, BulkInsertTarget bulkInsertTarget, IEnumerable<T> pocos, CommandTimeout timeout)
+        public static IEnumerable<T>? TrySmallBatchInsertOptimization<T>(SqlConnection sqlConn, BulkInsertTarget bulkInsertTarget, IEnumerable<T> pocos, CommandTimeout timeout)
+            where T : IReadImplicitly
         {
             if ((bulkInsertTarget.Options | SqlBulkCopyOptions.KeepNulls) != (BulkInsertTarget.defaultBulkCopyOptions | SqlBulkCopyOptions.KeepNulls)) {
                 return pocos;
@@ -27,7 +27,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static void SmallBatchInsert(SqlConnection sqlConn, BulkInsertTarget target, T[] rows, CommandTimeout timeout)
+        static void SmallBatchInsert<T>(SqlConnection sqlConn, BulkInsertTarget target, T[] rows, CommandTimeout timeout)
+            where T : IReadImplicitly
         {
             if (rows.None()) {
                 return;
@@ -57,7 +58,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix(IEnumerable<T> enumerable, int firstN)
+        public static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix<T>(IEnumerable<T> enumerable, int firstN)
         {
             //Waarom bestaat deze method?  Zodat wij een mogelijke lazy enumerable gedeeltelijks kunnen evalueren, zonder *meermaals* te hoeven evalueren.
 

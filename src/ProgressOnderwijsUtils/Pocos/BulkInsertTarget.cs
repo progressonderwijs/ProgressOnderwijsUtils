@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils
             T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IReadImplicitly
         {
-            if (SmallBatchInsertImplementation<T>.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is {} toInsertViaSqlBulkCopy) {
+            if (SmallBatchInsertImplementation.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is {} toInsertViaSqlBulkCopy) {
                 using var dbDataReader = new PocoDataReader<T>(toInsertViaSqlBulkCopy, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
                 BulkInsert(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout);
             }
