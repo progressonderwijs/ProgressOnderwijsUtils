@@ -77,6 +77,14 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
             => (a.impl == null || b.impl == null ? a.impl ?? b.impl : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
+        [Obsolete]
+        public static string operator +(string a, ParameterizedSql b)
+            => a + (object)b;
+
+        [Obsolete]
+        public static string operator +(ParameterizedSql a, string b)
+            => (object)a + b;
+
         public static ParameterizedSql CreateDynamic(string rawSqlString)
         {
             if (rawSqlString == null) {
