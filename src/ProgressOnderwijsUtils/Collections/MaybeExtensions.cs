@@ -45,6 +45,9 @@ namespace ProgressOnderwijsUtils.Collections
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state)
             => state.TryGet(out var okValue, out var error) ? okValue : throw new Exception("Assertion that Maybe is Ok failed; error state: " + error);
 
+        public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state, Func<TError, Exception?> exceptionWhenError)
+            => state.TryGet(out var okValue, out var error) ? okValue : throw exceptionWhenError(error) ?? new Exception("Assertion that Maybe is Ok failed; error state: " + error);
+
         public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
             => state.TryGet(out var okValue, out var error) ? throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue) : error;
 

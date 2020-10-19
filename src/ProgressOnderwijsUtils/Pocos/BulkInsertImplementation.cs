@@ -99,11 +99,7 @@ namespace ProgressOnderwijsUtils
             var sourceFields = ColumnDefinition.GetFromReader(source);
             var validatedMapping = target.CreateValidatedMapping(sourceFields);
 
-            if (validatedMapping.IsOk) {
-                return validatedMapping.AssertOk();
-            } else {
-                throw new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
-            }
+            return validatedMapping.AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{error}"));
         }
     }
 }
