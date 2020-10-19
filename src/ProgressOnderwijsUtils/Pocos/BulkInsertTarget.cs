@@ -50,6 +50,8 @@ namespace ProgressOnderwijsUtils
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix<T>(IEnumerable<T> enumerable, int firstN)
         {
+            //Waarom bestaat deze method?  Zodat wij een mogelijke lazy enumerable gedeeltelijks kunnen evalueren, zonder *meermaals* te hoeven evalueren.
+
             var enumerator = enumerable.GetEnumerator();
             var buffer = new List<T>();
             for (var i = 0; i < firstN; i++) {
