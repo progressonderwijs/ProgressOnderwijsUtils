@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
@@ -18,6 +17,7 @@ namespace ProgressOnderwijsUtils
     public sealed class BulkInsertTarget
     {
         const SqlBulkCopyOptions defaultBulkCopyOptions = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
+        const int thresholdForUsingSqlBulkCopy = 6;
         readonly string TableName;
         readonly ColumnDefinition[] Columns;
         readonly BulkCopyFieldMappingMode Mode;
@@ -46,6 +46,39 @@ namespace ProgressOnderwijsUtils
 
         public BulkInsertTarget With(SqlBulkCopyOptions options)
             => new BulkInsertTarget(TableName, Columns, Mode, options);
+
+        public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+            T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
+            where T : IReadImplicitly
+        {
+            if (TrySmallBatchInsertOptimization(sqlConn, pocos, timeout) is {} toInsertViaSqlBulkCopy) {
+                using var dbDataReader = new PocoDataReader<T>(toInsertViaSqlBulkCopy, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
+                BulkInsert(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout);
+            }
+        }
+
+        IEnumerable<T>? TrySmallBatchInsertOptimization<T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout)
+            where T : IReadImplicitly
+        {
+            if (Options != defaultBulkCopyOptions) {
+                return pocos;
+            }
+            var (head, all) = PeekAtPrefix(pocos, thresholdForUsingSqlBulkCopy);
+            if (head.Length >= thresholdForUsingSqlBulkCopy) {
+                return all;
+            }
+            SmallBatchInsert(sqlConn, head, timeout);
+            return null;
+        }
+
+        public void BulkInsert(SqlConnection sqlConn, DataTable dataTable, CommandTimeout timeout = default)
+        {
+            using var dbDataReader = dataTable.CreateDataReader();
+            BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);
+        }
+
+        public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = default)
+            => BulkInsertImplementation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, dbDataReader, sourceNameForTracing);
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix<T>(IEnumerable<T> enumerable, int firstN)
@@ -88,32 +121,6 @@ namespace ProgressOnderwijsUtils
 
             return (completeHead, FullSequence());
         }
-
-        public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
-            where T : IReadImplicitly
-        {
-            if (Options == defaultBulkCopyOptions) {
-                var (head, all) = PeekAtPrefix(pocos, 10);
-                pocos = all;
-                if (head.Length < 10) {
-                    SmallBatchInsert(sqlConn, head, timeout);
-                    return;
-                }
-            }
-
-            using var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
-            BulkInsert(sqlConn, dbDataReader, pocos.GetType().ToCSharpFriendlyTypeName(), timeout);
-        }
-
-        public void BulkInsert(SqlConnection sqlConn, DataTable dataTable, CommandTimeout timeout = default)
-        {
-            using var dbDataReader = dataTable.CreateDataReader();
-            BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);
-        }
-
-        public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = default)
-            => BulkInsertImplementation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, dbDataReader, sourceNameForTracing);
 
         void SmallBatchInsert<T>(SqlConnection sqlConn, T[] rows, CommandTimeout timeout)
             where T : IReadImplicitly
