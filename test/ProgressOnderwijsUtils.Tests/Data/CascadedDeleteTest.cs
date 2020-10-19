@@ -1,4 +1,4 @@
-using System.Data;
+﻿using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
@@ -21,6 +21,29 @@ namespace ProgressOnderwijsUtils.Tests.Data
             SQL($@"
                 create table T1 ( A int primary key, B int);
                 create table T2 ( C int primary key, A int references T1 (A) );
+
+                insert into T1 values (1,11), (2,22), (3, 33);
+                insert into T2 values (111,1), (333,3);
+            ").ExecuteNonQuery(Connection);
+
+            var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
+
+            PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
+
+            var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
+            PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
+        }
+
+        [Fact]
+        public void CascadedDeleteFollowsAUniqueConstraintBasedForeignKey()
+        {
+            SQL($@"
+                create table T1 ( A int not null unique, B int);
+                create table T2 ( C int not null, A int references T1 (A) );
 
                 insert into T1 values (1,11), (2,22), (3, 33);
                 insert into T2 values (111,1), (333,3);
