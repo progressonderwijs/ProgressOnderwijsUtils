@@ -95,11 +95,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
-        {
-            var sourceFields = ColumnDefinition.GetFromReader(source);
-            var validatedMapping = target.CreateValidatedMapping(sourceFields);
-
-            return validatedMapping.AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{error}"));
-        }
+            => target.CreateValidatedMapping(ColumnDefinition.GetFromReader(source))
+                .AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{error}"));
     }
 }
