@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             }
 
             var srcFields = PocoProperties<T>.Instance.Where(o => o.CanRead).Select(o => new ColumnDefinition(PocoPropertyConverter.GetOrNull(o.DataType)?.DbType ?? o.DataType, o.Name, o.Index, ColumnAccessibility.Readonly)).ToArray();
-            var maybeMapping = BulkInsertImplementation.CreateValidatedMapping(srcFields, target);
+            var maybeMapping = target.CreateValidatedMapping(srcFields);
             if (maybeMapping.IsError) {
                 throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{maybeMapping.AssertError()}");
             }

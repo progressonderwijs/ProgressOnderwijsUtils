@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 using System.Linq;
 using System;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -61,5 +62,12 @@ namespace ProgressOnderwijsUtils
 
         public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = default)
             => BulkInsertImplementation.Execute(sqlConn, dbDataReader, this, sourceNameForTracing, timeout);
+
+        public Maybe<BulkInsertFieldMapping[], string> CreateValidatedMapping(ColumnDefinition[] sourceFields)
+            => new FieldMappingValidation {
+                AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
+                AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
     }
 }

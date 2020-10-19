@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
         static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
         {
             var sourceFields = ColumnDefinition.GetFromReader(source);
-            var validatedMapping = CreateValidatedMapping(sourceFields, target);
+            var validatedMapping = target.CreateValidatedMapping(sourceFields);
 
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
@@ -105,12 +105,5 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
             }
         }
-
-        internal static Maybe<BulkInsertFieldMapping[], string> CreateValidatedMapping(ColumnDefinition[] sourceFields, BulkInsertTarget target)
-            => new FieldMappingValidation {
-                AllowExtraSourceColumns = target.Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
-                AllowExtraTargetColumns = target.Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
-                OverwriteAutoIncrement = target.Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, target.Columns));
     }
 }
