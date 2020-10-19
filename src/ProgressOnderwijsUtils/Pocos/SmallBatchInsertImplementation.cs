@@ -17,6 +17,7 @@ namespace ProgressOnderwijsUtils
             where T : IReadImplicitly
         {
             if ((bulkInsertTarget.Options | SqlBulkCopyOptions.KeepNulls) != (BulkInsertTarget.DefaultOptionsCorrespondingToInsertIntoBehavior | SqlBulkCopyOptions.KeepNulls)) {
+                // alleen heel specifieke options gedragen zich hetzelfde als "insert into", dus als iemand afwijkende options heeft gekozen: abort.
                 return pocos;
             }
             var (head, all) = PeekAtPrefix(pocos, ThresholdForUsingSqlBulkCopy);
