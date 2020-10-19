@@ -27,22 +27,22 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static void SmallBatchInsert(SqlConnection sqlConn, BulkInsertTarget bulkInsertTarget, T[] rows, CommandTimeout timeout)
+        static void SmallBatchInsert(SqlConnection sqlConn, BulkInsertTarget target, T[] rows, CommandTimeout timeout)
         {
             if (rows.None()) {
                 return;
             }
 
             var srcFields = PocoProperties<T>.Instance.Where(o => o.CanRead).Select(o => new ColumnDefinition(PocoPropertyConverter.GetOrNull(o.DataType)?.DbType ?? o.DataType, o.Name, o.Index, ColumnAccessibility.Readonly)).ToArray();
-            var maybeMapping = BulkInsertImplementation.CreateValidatedMapping(srcFields, bulkInsertTarget.Columns, bulkInsertTarget.Mode, bulkInsertTarget.Options);
+            var maybeMapping = BulkInsertImplementation.CreateValidatedMapping(srcFields, target);
             if (maybeMapping.IsError) {
-                throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {bulkInsertTarget.TableName}. Errors:\r\n{maybeMapping.AssertError()}");
+                throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{maybeMapping.AssertError()}");
             }
             var mapping = maybeMapping.AssertOk();
             foreach (var row in rows) {
                 SQL(
                     $@"
-                    insert into {ParameterizedSql.CreateDynamic(bulkInsertTarget.TableName)} ({mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name)).ConcatenateSql(SQL($","))})
+                    insert into {ParameterizedSql.CreateDynamic(target.TableName)} ({mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name)).ConcatenateSql(SQL($","))})
                     values ({mapping.Select(o => ParameterizedSql.Param(PocoProperties<T>.Instance[o.Src.Index].Getter.AssertNotNull()(row))).ConcatenateSql(SQL($", "))});
                 "
                 ).OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
