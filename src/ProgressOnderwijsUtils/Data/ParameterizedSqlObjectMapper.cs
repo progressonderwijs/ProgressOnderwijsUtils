@@ -279,7 +279,7 @@ namespace ProgressOnderwijsUtils
                     VerifyTypeValidity();
                     var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                     var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
-                    ReadValue = loadRowsLambda.CompileFast(true).AssertNotNull();
+                    ReadValue = loadRowsLambda.CompileFast();
                 }
 
                 static void VerifyTypeValidity()
@@ -318,7 +318,7 @@ namespace ProgressOnderwijsUtils
                 var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
                 var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                 var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
-                return (rowToPoco: rowToPocoLambda.CompileFast(true).AssertNotNull(), unmappedProperties);
+                return (rowToPoco: rowToPocoLambda.CompileFast(), unmappedProperties);
             }
 
             public static (BlockExpression constructRowExpr, IPocoProperty[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, IPocoProperties<IPocoProperty> pocoProperties)

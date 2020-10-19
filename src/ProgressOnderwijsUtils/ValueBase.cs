@@ -126,7 +126,7 @@ namespace ProgressOnderwijsUtils
                         .ToArray()
                 );
 
-            return Expression.Lambda<Func<T, string>>(toStringExpr, parA).CompileFast(true).AssertNotNull();
+            return Expression.Lambda<Func<T, string>>(toStringExpr, parA).CompileFast();
         }
 
         static string FriendlyMemberName(MemberInfo fi)
