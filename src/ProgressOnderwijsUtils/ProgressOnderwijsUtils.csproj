@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>67.1.0</Version>
-    <PackageReleaseNotes>Optimizations to CascadedDelete (for small deletions) and BulkInsert (for few rows).</PackageReleaseNotes>
+    <Version>67.1.1</Version>
+    <PackageReleaseNotes>Perform the actual approval when approving an array of strings.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
