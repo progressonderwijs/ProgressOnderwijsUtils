@@ -26,7 +26,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void NodesWithoutDependenciesAreNotSorted()
         {
             var example = new[] { "a", "b", "d", "c" };
-            PAssert.That(() => example.OrderByTopology(s => new string[0]).SequenceEqual(example));
+            var (cycleDetected, ordered) = example.OrderByTopology(s => new string[0]);
+            PAssert.That(() => cycleDetected == false && ordered.SequenceEqual(example));
         }
 
         [Fact]
@@ -38,11 +39,12 @@ namespace ProgressOnderwijsUtils.Tests
                 new DagNode("c"),
             };
             var lookup = nodes.ToDictionary(s => s.Name);
-            PAssert.That(() => nodes.OrderByTopology(node => node.Children(lookup)).Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
+            var (cycleDetected, ordered) = nodes.OrderByTopology(node => node.Children(lookup));
+            PAssert.That(() => cycleDetected == false && ordered.Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
         }
 
         [Fact]
-        public void DoesNotDetectCircularDependencies()
+        public void DoesDetectCircularDependencies()
         {
             var nodes = new[] {
                 new DagNode("a", "b"),
@@ -50,7 +52,8 @@ namespace ProgressOnderwijsUtils.Tests
                 new DagNode("c", "a"),
             };
             var lookup = nodes.ToDictionary(s => s.Name);
-            PAssert.That(() => nodes.OrderByTopology(node => node.Children(lookup)).Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
+            var (cycleDetected, ordered) = nodes.OrderByTopology(node => node.Children(lookup));
+            PAssert.That(() => cycleDetected && ordered.Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
         }
 
         [Fact]
@@ -66,7 +69,8 @@ namespace ProgressOnderwijsUtils.Tests
             };
             var lookup = nodes.ToDictionary(s => s.Name);
             var expected = new[] { "a", "b", "c", "x", "y", "z" };
-            PAssert.That(() => nodes.OrderByTopology(node => node.Children(lookup)).Select(s => s.Name).SequenceEqual(expected));
+            var (cycleDetected, ordered) = nodes.OrderByTopology(node => node.Children(lookup));
+            PAssert.That(() => cycleDetected == false && ordered.Select(s => s.Name).SequenceEqual(expected));
         }
     }
 }
