@@ -36,17 +36,7 @@ namespace ProgressOnderwijsUtils
                         dt.Columns.Cast<DataColumn>().Select(
                             dc => {
                                 var columnDefinition = ColumnDefinition.Create(dc);
-                                var isKey = dt.PrimaryKey.Contains(dc);
-                                var verplicht = !dc.AllowDBNull && !isKey && columnDefinition.DataType.CanBeNull();
-                                var attrs = new[] {
-                                    isKey ? "Key" : null,
-                                    verplicht ? "MpVerplicht" : null,
-                                    dc.ReadOnly ? "MpReadonly" : null,
-                                    dc.MaxLength >= 0 && dc.MaxLength < int.MaxValue ? "MpMaxLength(" + dc.MaxLength + ")" : null,
-                                }.Where(a => a != null).ToArray();
-                                return (attrs.Any() ? "[" + attrs.JoinStrings(", ") + "]\n" : "")
-                                    + GetColumnProperty(columnDefinition, colNameOverride)
-                                    ;
+                                return GetColumnProperty(columnDefinition, colNameOverride);
                             }).JoinStrings())
                     + "}\n"
                 ).Replace("\n", "\r\n");
