@@ -15,7 +15,7 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
-    <PackageReference Include="System.Reactive" Version="4.4.1" />
+    <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="3.3.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
