@@ -10,8 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     static class ErrorMessageHelpers
     {
-        public static ReusableCommand ReusableCommand<T>(this T dbCommand, SqlConnection conn)
-            where T : INestableSql
+        public static ReusableCommand ReusableCommand(this INestableSql dbCommand, SqlConnection conn)
             => dbCommand.Sql.CreateSqlCommand(conn, dbCommand.CommandTimeout);
     }
 

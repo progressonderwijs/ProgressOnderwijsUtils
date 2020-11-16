@@ -8,9 +8,9 @@ namespace ProgressOnderwijsUtils
 {
     public static class TreeExtensions
     {
-        public static TTree[] AsSingletonArray<TTree>(this TTree tree)
+        public static TTree[] AsSingletonArray<TTree>(this IRecursiveStructure<TTree> tree)
             where TTree : IRecursiveStructure<TTree> //to avoid namepsace pollution
-            => new[] { tree };
+            => new[] { tree.TypedThis };
 
         [Pure]
         public static int Height<TTree, T>(this IRecursiveStructure<TTree, T> tree)
@@ -37,10 +37,10 @@ namespace ProgressOnderwijsUtils
             => RootedTree<T>.RootTree(tree);
 
         [Pure]
-        public static IEnumerable<T> PreorderTraversal<T>(this T tree)
+        public static IEnumerable<T> PreorderTraversal<T>(this IRecursiveStructure<T> tree)
             where T : IRecursiveStructure<T>
         {
-            yield return tree;
+            yield return tree.TypedThis;
 
             var todo = new Stack<IEnumerator<T>>(16);
 
@@ -81,9 +81,9 @@ namespace ProgressOnderwijsUtils
         /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
-        public static Tree<TR> Select<TTree, TR>(this TTree tree, Func<TTree, TR> mapper)
+        public static Tree<TR> Select<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapper)
             where TTree : IRecursiveStructure<TTree>
-            => CachedTreeBuilder<TTree, TR>.Resolve(tree, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
+            => CachedTreeBuilder<TTree, TR>.Resolve(tree.TypedThis, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
 
         /// <summary>
         /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
@@ -92,11 +92,11 @@ namespace ProgressOnderwijsUtils
         /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
         /// </summary>
         [Pure]
-        public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
+        public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
             where TTree : IRecursiveStructure<TTree>
         {
             var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
-            return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
+            return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
         }
 
         /// <summary>
@@ -106,11 +106,11 @@ namespace ProgressOnderwijsUtils
         /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
         /// </summary>
         [Pure]
-        public static Tree<TR>[] Rebuild<TTree, TR>(this TTree tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], IEnumerable<Tree<TR>>?> mapStructure)
+        public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], IEnumerable<Tree<TR>>?> mapStructure)
             where TTree : IRecursiveStructure<TTree>
         {
             var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
-            return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
+            return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
         }
 
         /// <summary>
