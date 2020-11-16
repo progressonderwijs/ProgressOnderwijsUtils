@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 
-            proc.Exited += (sender, e) => {
+            proc.Exited += (_, _) => {
                 try {
                     exitCodeCompletion.TrySetResult(proc.ExitCode);
                 } catch (Exception ex) {
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
 
             var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    proc.OutputDataReceived += (sender, e) => {
+                    proc.OutputDataReceived += (_, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
                             MarkOnePartClosed();
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
                 });
             var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    proc.ErrorDataReceived += (sender, e) => {
+                    proc.ErrorDataReceived += (_, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
                             MarkOnePartClosed();
