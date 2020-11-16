@@ -63,9 +63,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         }
 
         public void BenchSQLite(string name, Func<SQLiteConnection, int, int> action)
-        {
-            Bench(name, CreateSqliteConnection, action);
-        }
+            => Bench(name, CreateSqliteConnection, action);
 
         public static SqlConnection CreateSqlConnection()
         {
@@ -152,7 +150,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
                 latencyDistribution = latencyDistribution.Add(innerLatencyDistribution);
 #else
-                var tasks = Enumerable.Range(0, Environment.ProcessorCount).Select(tI => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
+                var tasks = Enumerable.Range(0, Environment.ProcessorCount).Select(_ => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
                 Task.WaitAll(tasks);
                 elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
                 foreach (var task in tasks) {

@@ -12,9 +12,9 @@
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>library</OutputType>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
-    <NoWarn>CS1591, IDE1006</NoWarn>
+    <NoWarn>CS1591, IDE1006, IDE0039</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>

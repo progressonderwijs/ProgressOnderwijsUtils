@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils
                     var unionOfProblems = onStackDeletionTables.Select(onStackTmpTable => SQL($"(select * from {onStackTmpTable} intersect select * from {tempTableName})")).ConcatenateSql(SQL($" union all "));
                     var cycleDetected = SQL($"select iif(exists({unionOfProblems}), {true}, {false})").ReadScalar<bool>(conn);
 
-                    if (cycleDetected) { 
+                    if (cycleDetected) {
                         throw new InvalidOperationException($"A cycle was detected in the current dependency chain: {logStack.JoinStrings("->")}");
                     }
                 }

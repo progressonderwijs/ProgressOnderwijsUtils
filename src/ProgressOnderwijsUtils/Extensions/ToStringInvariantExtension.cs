@@ -31,13 +31,13 @@ namespace ProgressOnderwijsUtils
         [return: NotNullIfNotNull("val")]
         public static string? ToStringInvariantOrNull<T>(this T? val)
             where T : struct, IConvertible
-            => val == null ? null : val.Value.ToString(CultureInfo.InvariantCulture);
+            => val?.ToString(CultureInfo.InvariantCulture);
 
         [Pure]
         [UsefulToKeep("Library function, other overloads used")]
         [return: NotNullIfNotNull("val")]
         public static string? ToStringInvariantOrNull<T>(this T? val, string format)
             where T : struct, IFormattable
-            => val == null ? null : val.Value.ToString(format, CultureInfo.InvariantCulture);
+            => val?.ToString(format, CultureInfo.InvariantCulture);
     }
 }

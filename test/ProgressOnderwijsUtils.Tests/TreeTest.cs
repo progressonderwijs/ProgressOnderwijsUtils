@@ -167,7 +167,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void TreeRebuildSingleNode()
         {
-            var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (oldNode, value, newKids) => Tree.Node(value, newKids).AsSingletonArray());
+            var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => Tree.Node(value, newKids).AsSingletonArray());
             var expected = Tree.Node(1L).AsSingletonArray();
             PAssert.That(() => output.SequenceEqual(expected));
         }
@@ -175,7 +175,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void TreeRebuildSingleNodeToTwo()
         {
-            var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value, newKids) });
+            var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value, newKids) });
             var expected = Enumerable.Repeat(Tree.Node(1L), 2);
             PAssert.That(() => output.SequenceEqual(expected));
         }
@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void TreeRebuildOneChildDoubleEverything()
         {
             var input = Tree.Node(1u, Tree.Node(2u));
-            var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) });
+            var output = input.Rebuild(node => 2 * (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) });
             var expected = new[] {
                 Tree.Node(2L, Tree.Node(4L), Tree.Node(5L)),
                 Tree.Node(3L, Tree.Node(4L), Tree.Node(5L))
@@ -226,7 +226,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void TreeRebuildSupportsNullSequences()
         {
             var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(5u)));
-            var output = input.Rebuild(node => (long)node.NodeValue, (oldNode, value, newKids) => value == 2 ? null : Tree.Node(value, newKids).AsSingletonArray());
+            var output = input.Rebuild(node => (long)node.NodeValue, (_, value, newKids) => value == 2 ? null : Tree.Node(value, newKids).AsSingletonArray());
             var expected = new[] {
                 Tree.Node(1L, Tree.Node(3L, Tree.Node(5L)))
             };
@@ -240,7 +240,7 @@ namespace ProgressOnderwijsUtils.Tests
             var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
             var output = input.Rebuild(
                 node => (long)node.NodeValue,
-                (oldNode, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
+                (_, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
             );
             var n5 = Tree.Node(5L);
             var n3 = Tree.Node(3L, n5, n5);
@@ -255,7 +255,7 @@ namespace ProgressOnderwijsUtils.Tests
             var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
             var output = input.Rebuild(
                 node => (long)node.NodeValue,
-                (oldNode, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2)
+                (_, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2)
             );
             var n5 = Tree.Node(5L);
             var n3 = Tree.Node(3L, n5, n5);

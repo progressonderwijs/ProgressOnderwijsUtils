@@ -8,6 +8,8 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Html
 {
+#pragma warning disable IDE0057 // Use range operator; slower
+
     public struct HtmlAttribute : IEquatable<HtmlAttribute>
     {
         public string Name, Value;

@@ -54,19 +54,17 @@ namespace ProgressOnderwijsUtils
             var stopwatch = new Stopwatch();
             var closedParts = 0;
 
-#pragma warning disable IDE0039 // Use local function
             // ReSharper disable once ConvertToLocalFunction - workaround apparent roslyn bug that considers proc to be nullable otherwise.
             Action MarkOnePartClosed = () => {
                 if (Interlocked.Increment(ref closedParts) == 3) {
                     proc.Dispose();
                 }
             };
-#pragma warning restore IDE0039 // Use local function
 
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 
-            proc.Exited += (sender, e) => {
+            proc.Exited += (_, _) => {
                 try {
                     exitCodeCompletion.TrySetResult(proc.ExitCode);
                 } catch (Exception ex) {
@@ -77,7 +75,7 @@ namespace ProgressOnderwijsUtils
 
             var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    proc.OutputDataReceived += (sender, e) => {
+                    proc.OutputDataReceived += (_, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
                             MarkOnePartClosed();
@@ -89,7 +87,7 @@ namespace ProgressOnderwijsUtils
                 });
             var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    proc.ErrorDataReceived += (sender, e) => {
+                    proc.ErrorDataReceived += (_, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
                             MarkOnePartClosed();

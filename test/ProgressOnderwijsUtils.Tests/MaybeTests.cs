@@ -15,9 +15,11 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().Contains("hello world!") == false);
             // ReSharper disable once RedundantCast
             PAssert.That(() => Maybe.Ok((string?)"42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
+#pragma warning disable IDE0079 // Remove unnecessary suppression
 #pragma warning disable 8620 //R# bug?
             PAssert.That(() => Maybe.Ok(default(string)).AsMaybeWithoutError<Unit>().Contains(default(string)));
 #pragma warning restore 8620
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         }
 
         [Fact]
@@ -412,14 +414,14 @@ namespace ProgressOnderwijsUtils.Tests
         public void Default_Maybe_throws()
         {
             Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).TryGet(out _, out _));
-            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(ok => 0, err => 0));
+            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(_ => 0, _ => 0));
         }
 
         [Fact]
         [Obsolete]
         public void WhenOk_with_nested_maybe_state_gives_compiler_error()
             => Maybe.Ok().AsMaybeWithoutError<string>()
-                .WhenOk(m => Maybe.Error("err").AsMaybeWithoutValue<Unit>())
+                .WhenOk(_ => Maybe.Error("err").AsMaybeWithoutValue<Unit>())
                 .AssertOk();
     }
 }

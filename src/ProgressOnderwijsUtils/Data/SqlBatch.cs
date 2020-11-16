@@ -10,22 +10,18 @@ namespace ProgressOnderwijsUtils
 {
     static class ErrorMessageHelpers
     {
-        public static ReusableCommand ReusableCommand<T>(this T dbCommand, SqlConnection conn)
-            where T : INestableSql, IDefinesCommandTimeout
+        public static ReusableCommand ReusableCommand(this INestableSql dbCommand, SqlConnection conn)
             => dbCommand.Sql.CreateSqlCommand(conn, dbCommand.CommandTimeout);
     }
 
     public interface INestableSql
     {
         ParameterizedSql Sql { get; }
-    }
-
-    public interface IDefinesCommandTimeout
-    {
         CommandTimeout CommandTimeout { get; }
     }
 
-    public interface IWithTimeout<out TSelf> : IDefinesCommandTimeout
+
+    public interface IWithTimeout<out TSelf> : INestableSql
         where TSelf : IWithTimeout<TSelf>
     {
         TSelf WithTimeout(CommandTimeout timeout);
@@ -39,7 +35,7 @@ namespace ProgressOnderwijsUtils
         TQueryReturnValue Execute(SqlConnection conn);
     }
 
-    public readonly struct NonQuerySqlCommand : INestableSql, IWithTimeout<NonQuerySqlCommand>
+    public readonly struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -67,7 +63,7 @@ namespace ProgressOnderwijsUtils
     /// <summary>
     /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
     /// </summary>
-    public readonly struct DataTableSqlCommand : INestableSql, ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
+    public readonly struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -99,7 +95,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct ScalarSqlCommand<T> : INestableSql, ITypedSqlCommand<T>, IWithTimeout<ScalarSqlCommand<T>>
+    public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T>, IWithTimeout<ScalarSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -125,7 +121,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BuiltinsSqlCommand<T> : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+    public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T[]>, IWithTimeout<BuiltinsSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -150,7 +146,7 @@ namespace ProgressOnderwijsUtils
     public readonly struct PocosSqlCommand<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
+    > : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
         where T : IWrittenImplicitly
     {
         public ParameterizedSql Sql { get; }
@@ -192,7 +188,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct EnumeratedObjectsSqlCommand<T> : INestableSql, ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
+    public readonly struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
         where T : IWrittenImplicitly
     {
         public ParameterizedSql Sql { get; }

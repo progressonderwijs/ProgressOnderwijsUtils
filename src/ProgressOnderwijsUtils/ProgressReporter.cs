@@ -27,15 +27,15 @@ namespace ProgressOnderwijsUtils
         readonly DateTime start;
         readonly int TotalSteps;
         readonly long ReportEveryFractionOfTotal;
-        readonly Action<ProgressReport> report;
+        readonly Action<ProgressReport> onReport;
         readonly long reportEveryTicks;
         int stepsDone;
         long nextReportDueAt;
 
-        public ProgressReporter(int TotalSteps, Action<ProgressReport> report, int? reportEveryFractionOfTotal = null, TimeSpan? reportEveryTimeSpan = null)
+        public ProgressReporter(int TotalSteps, Action<ProgressReport> onReport, int? reportEveryFractionOfTotal = null, TimeSpan? reportEveryTimeSpan = null)
         {
             this.TotalSteps = TotalSteps;
-            this.report = report;
+            this.onReport = onReport;
             ReportEveryFractionOfTotal = reportEveryFractionOfTotal ?? 20; //default 1/20 i.e. every five percent
             start = DateTime.Now;
             sw = Stopwatch.StartNew();
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
                 var now = start + elapsed;
                 var eta = start + scaled;
                 nextReportDueAt = elapsed.Ticks + reportEveryTicks;
-                report(new ProgressReport(start, now, eta, newProgressVal, percentProgress, leftOver));
+                onReport(new ProgressReport(start, now, eta, newProgressVal, percentProgress, leftOver));
             }
         }
 
