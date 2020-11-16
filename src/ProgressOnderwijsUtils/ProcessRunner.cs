@@ -54,14 +54,12 @@ namespace ProgressOnderwijsUtils
             var stopwatch = new Stopwatch();
             var closedParts = 0;
 
-#pragma warning disable IDE0039 // Use local function
             // ReSharper disable once ConvertToLocalFunction - workaround apparent roslyn bug that considers proc to be nullable otherwise.
             Action MarkOnePartClosed = () => {
                 if (Interlocked.Increment(ref closedParts) == 3) {
                     proc.Dispose();
                 }
             };
-#pragma warning restore IDE0039 // Use local function
 
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
