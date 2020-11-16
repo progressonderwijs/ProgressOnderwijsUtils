@@ -63,9 +63,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         }
 
         public void BenchSQLite(string name, Func<SQLiteConnection, int, int> action)
-        {
-            Bench(name, CreateSqliteConnection, action);
-        }
+            => Bench(name, CreateSqliteConnection, action);
 
         public static SqlConnection CreateSqlConnection()
         {
