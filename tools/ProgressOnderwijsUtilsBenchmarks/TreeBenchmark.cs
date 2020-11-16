@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             var x = 0;
             for (var iter = 0; iter < iters; iter++) {
-                var b = tree.Rebuild(node => node.Children.Count + node.NodeValue * 13, (n, val, kids) =>
+                var b = tree.Rebuild(node => node.Children.Count + node.NodeValue * 13, (_, val, kids) =>
                     val % 2 == 0
                         ? kids
                         : val % 3 == 0

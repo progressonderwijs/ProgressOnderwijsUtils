@@ -2,7 +2,7 @@
 branches:
   only:
   - master
-image: Visual Studio 2019 Preview
+image: Visual Studio 2019
 environment:
   CONNECTION_STRING: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
 services: mssql2017

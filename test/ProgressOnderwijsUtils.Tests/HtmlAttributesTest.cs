@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils.Tests
                 .Select(i =>
                     Enumerable.Range(0, i % (maxInitAttrListLength + 1))
                         .Aggregate(HtmlAttributes.Empty,
-                            (attrs, k) => attrs.Add("X", "value")
+                            (attrs, _) => attrs.Add("X", "value")
                         )
                 )
                 .ToArray();

@@ -83,9 +83,6 @@ namespace ProgressOnderwijsUtils.Html
             var hasRenderedAttribute = false;
 
             foreach (var attr in htmlAttributes) {
-                if (attr.Value == null) {
-                    continue;
-                }
                 if (hasRenderedAttribute) {
                     AppendNewline(ref stringBuilder);
                     AppendIndent(ref stringBuilder, indent + 4);
