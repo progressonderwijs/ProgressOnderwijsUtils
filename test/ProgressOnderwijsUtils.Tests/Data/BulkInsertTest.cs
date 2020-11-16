@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         };
 
         public static BulkInsertTestSampleRow[] SampleRows(int n)
-            => Enumerable.Range(0, (n + 3) / 4).SelectMany(i => FourSampleRows).ToArray();
+            => Enumerable.Range(0, (n + 3) / 4).SelectMany(_ => FourSampleRows).ToArray();
     }
 
     public sealed class BulkInsertTest : TransactedLocalConnection
@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopysWithConcurrentQueriesCrash()
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-            var evilEnumerable = BulkInsertTestSampleRow.SampleRows(16).Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
+            var evilEnumerable = BulkInsertTestSampleRow.SampleRows(16).Where(_ => SQL($"select 1").ReadScalar<int>(Connection) == 1);
             Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
 

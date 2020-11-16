@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Setup()
         {
             Sizes = GetSizes(Config.Count, Config.MaxSize);
-            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(_ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
         }
 
         static int[] GetSizes(int count, int maxSize)
@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void List()
             => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(
-                __ => Task.Factory.StartNew(
+                _ => Task.Factory.StartNew(
                     () => {
                         foreach (var size in Sizes.AssertNotNull()) {
                             var builder = new List<T>();
@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void ArrayBuilder()
-            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(
+            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(_ => Task.Factory.StartNew(
                 () => {
                     foreach (var size in Sizes.AssertNotNull()) {
                         var builder = new ArrayBuilder<T>();
@@ -160,7 +160,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void WithoutInlineValues()
             => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
+                    _ => Task.Factory.StartNew(
                         () => {
                             foreach (var size in Sizes.AssertNotNull()) {
                                 var builder = AlternativeArrayBuilders.WithoutInlineValues<T>.Allocate();
@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void WithSegmentsAsArray()
             => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
+                    _ => Task.Factory.StartNew(
                         () => {
                             foreach (var size in Sizes.AssertNotNull()) {
                                 var builder = AlternativeArrayBuilders.WithSegmentsAsArray<T>.Create();
@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Inline63ValuesAndSegments()
             => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
+                    _ => Task.Factory.StartNew(
                         () => {
                             foreach (var size in Sizes.AssertNotNull()) {
                                 var builder = new AlternativeArrayBuilders.Inline63ValuesAndSegments<T>();
@@ -208,7 +208,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Inline16ValuesAndSegments()
             => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
+                    _ => Task.Factory.StartNew(
                         () => {
                             foreach (var size in Sizes.AssertNotNull()) {
                                 var builder = new AlternativeArrayBuilders.Inline16ValuesAndSegments<T>();
@@ -224,7 +224,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Inline32ValuesAndSegments()
             => Task.WaitAll(
                 Enumerable.Range(0, Config.Threads).Select(
-                    __ => Task.Factory.StartNew(
+                    _ => Task.Factory.StartNew(
                         () => {
                             foreach (var size in Sizes.AssertNotNull()) {
                                 var builder = new AlternativeArrayBuilders.Inline32ValuesAndSegments<T>();
