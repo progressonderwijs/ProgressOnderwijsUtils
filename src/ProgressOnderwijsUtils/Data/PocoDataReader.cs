@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using ExpressionToCodeLib;
+using FastExpressionCompiler;
 
 namespace ProgressOnderwijsUtils
 {
@@ -145,11 +146,11 @@ namespace ProgressOnderwijsUtils
                     } else {
                         var propertyIsNotNull = IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Condition(propertyIsNotNull, columnBoxedAsObject, Expression.Constant(DBNull.Value, typeof(object)));
-                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).Compile();
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).CompileFast();
                     }
 
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, pocoParameter).Compile();
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, pocoParameter).CompileFast();
                 } else {
                     ColumnType = propertyType.GetNonNullableUnderlyingType();
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);
@@ -162,10 +163,10 @@ namespace ProgressOnderwijsUtils
                     } else {
                         var propertyIsNotNull = IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Coalesce(columnValueAsNonNullable, Expression.Constant(DBNull.Value, typeof(object)));
-                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).Compile();
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).CompileFast();
                     }
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, pocoParameter).Compile();
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, pocoParameter).CompileFast();
                 }
             }
 

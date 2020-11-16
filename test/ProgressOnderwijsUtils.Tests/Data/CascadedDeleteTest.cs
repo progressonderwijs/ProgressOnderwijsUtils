@@ -1,3 +1,4 @@
+﻿using System;
 using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -36,6 +37,55 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
+        }
+
+        [Fact]
+        public void CascadedDeleteFollowsAUniqueConstraintBasedForeignKey()
+        {
+            SQL($@"
+                create table T1 ( A int not null unique, B int);
+                create table T2 ( C int not null, A int references T1 (A) );
+
+                insert into T1 values (1,11), (2,22), (3, 33);
+                insert into T2 values (111,1), (333,3);
+            ").ExecuteNonQuery(Connection);
+
+            var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
+
+            PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
+
+            var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
+            PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
+        }
+
+
+        [Fact]
+        public void CascadedDeleteDetectsCycles()
+        {
+            SQL($@"
+                create table T1 ( A int not null unique, B int);
+                create table T2 ( B int not null unique, A int references T1 (A) );
+                alter table T1 add constraint T1FK foreign key (B) references T2(B);
+
+                insert into T1 values (1,null), (2,null), (3, null);
+                insert into T2 values (111,1), (333,3);
+                
+                update T1 set B = 111 where A = 1;
+                update T1 set B = 333 where A = 3;
+
+            ").ExecuteNonQuery(Connection);
+
+            var initialDependentValues = SQL($"select B from T2").ReadPlain<int>(Connection);
+
+            PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var ex =Assert.ThrowsAny<Exception>(()=> CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
+            PAssert.That(() => ex.Message.Contains("dbo.T2->dbo.T1->dbo.T2->dbo.T1"));
         }
 
         [Fact]

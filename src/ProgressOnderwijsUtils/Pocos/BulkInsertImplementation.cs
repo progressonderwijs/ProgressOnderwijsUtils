@@ -12,31 +12,31 @@ namespace ProgressOnderwijsUtils
 {
     static class BulkInsertImplementation
     {
-        public static void Execute(SqlConnection sqlConn, string tableName, ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, CommandTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
+        public static void Execute(SqlConnection sqlConn, DbDataReader source, BulkInsertTarget target, string sourceNameForTracing, CommandTimeout timeout)
         {
-            if (dbDataReader == null) {
-                throw new ArgumentNullException(nameof(dbDataReader));
+            if (source == null) {
+                throw new ArgumentNullException(nameof(source));
             }
             if (sqlConn == null) {
                 throw new ArgumentNullException(nameof(sqlConn));
             }
             if (sqlConn.State != ConnectionState.Open) {
-                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlConn.State}.");
+                throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
             }
 
-            using var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null) { BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn), DestinationTableName = tableName };
-            var mapping = CreateMapping(dbDataReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options, sourceNameForTracing);
+            using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null) { BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn), DestinationTableName = target.TableName };
+            var mapping = CreateMapping(source, target, sourceNameForTracing);
 
             BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
             var sw = Stopwatch.StartNew();
             try {
-                sqlBulkCopy.WriteToServer(dbDataReader);
+                sqlBulkCopy.WriteToServer(source);
                 //so why no async?
                 //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
             } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
                 throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
             } finally {
-                TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, sqlBulkCopy, sourceNameForTracing);
+                TraceBulkInsertDuration(sqlConn.Tracer(), target.TableName, sw, sqlBulkCopy, sourceNameForTracing);
             }
         }
 
@@ -94,21 +94,8 @@ namespace ProgressOnderwijsUtils
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        static BulkInsertFieldMapping[] CreateMapping(DbDataReader objectReader, string tableName, ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, string sourceName)
-        {
-            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
-
-            var validatedMapping = new FieldMappingValidation {
-                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
-                AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
-                OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            }.ValidateAndFilter(unfilteredMapping);
-
-            if (validatedMapping.IsOk) {
-                return validatedMapping.AssertOk();
-            } else {
-                throw new InvalidOperationException($"Failed to map source {sourceName} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
-            }
-        }
+        static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
+            => target.CreateValidatedMapping(ColumnDefinition.GetFromReader(source))
+                .AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{error}"));
     }
 }

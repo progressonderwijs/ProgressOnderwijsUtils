@@ -6,18 +6,22 @@ using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
+using System.Linq;
+using System;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
     public sealed class BulkInsertTarget
     {
-        readonly string TableName;
-        readonly ColumnDefinition[] Columns;
-        readonly BulkCopyFieldMappingMode Mode;
-        readonly SqlBulkCopyOptions Options;
+        public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
+        public readonly string TableName;
+        public readonly ColumnDefinition[] Columns;
+        public readonly BulkCopyFieldMappingMode Mode;
+        public readonly SqlBulkCopyOptions Options;
 
         public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers) { }
+            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }
 
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
@@ -44,8 +48,10 @@ namespace ProgressOnderwijsUtils
             T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IReadImplicitly
         {
-            using var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
-            BulkInsert(sqlConn, dbDataReader, pocos.GetType().ToCSharpFriendlyTypeName(), timeout);
+            if (SmallBatchInsertImplementation.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is {} toInsertViaSqlBulkCopy) {
+                using var dbDataReader = new PocoDataReader<T>(toInsertViaSqlBulkCopy, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
+                BulkInsert(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout);
+            }
         }
 
         public void BulkInsert(SqlConnection sqlConn, DataTable dataTable, CommandTimeout timeout = default)
@@ -55,6 +61,13 @@ namespace ProgressOnderwijsUtils
         }
 
         public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = default)
-            => BulkInsertImplementation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, dbDataReader, sourceNameForTracing);
+            => BulkInsertImplementation.Execute(sqlConn, dbDataReader, this, sourceNameForTracing, timeout);
+
+        public Maybe<BulkInsertFieldMapping[], string> CreateValidatedMapping(ColumnDefinition[] sourceFields)
+            => new FieldMappingValidation {
+                AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
+                AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
     }
 }

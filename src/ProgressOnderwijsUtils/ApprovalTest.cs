@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
             => new ApprovalTest(path);
 
         public void AssertUnchangedAndSave(string[] lines)
-            => lines.Select(line => line + "\r\n").JoinStrings();
+            => AssertUnchangedAndSave(lines.Select(line => line + "\r\n").JoinStrings());
 
         public void AssertUnchangedAndSave(string text)
         {
