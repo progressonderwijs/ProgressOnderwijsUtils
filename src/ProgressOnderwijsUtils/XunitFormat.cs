@@ -7,10 +7,10 @@ namespace ProgressOnderwijsUtils
     public static class XunitFormat
     {
         [UsefulToKeep("library attribute")]
-        public static XunitResultReport LoadFromXmlReport(string xUnitXmlReportUri)
+        public static XunitResultReport? LoadFromXmlReport(string xUnitXmlReportUri)
             => LoadFromXmlReport(XmlReader.Create(xUnitXmlReportUri));
 
-        public static XunitResultReport LoadFromXmlReport(XmlReader reader)
+        public static XunitResultReport? LoadFromXmlReport(XmlReader reader)
             => reader.Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
 
         /// <summary>

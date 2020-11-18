@@ -6,12 +6,14 @@ namespace ProgressOnderwijsUtils
 {
     public abstract class DbDataReaderBase : DbDataReader
     {
-        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
+        public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length)
         {
             long read = 0;
             var data = (byte[])GetValue(ordinal);
             while (read < length && read + dataOffset < data.Length) {
-                buffer[bufferOffset + read] = data[dataOffset + read];
+                if (buffer != null) {
+                    buffer[bufferOffset + read] = data[dataOffset + read];
+                }
                 ++read;
             }
             return read;
