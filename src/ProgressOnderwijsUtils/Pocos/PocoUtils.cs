@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException(
                     "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
                     "Actual input: " + ExpressionToCode.ToCode(property) + "\n" +
-                    "(The type of " + ExpressionToCode.ToCode(membExpr.Expression) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)");
+                    "(The type of " + ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull()) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)");
             }
 
             if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
