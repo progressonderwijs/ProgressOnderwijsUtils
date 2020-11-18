@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string[] email;
         public string[] roles;
         public string? InResponseTo;
-        public string AuthnContextClassRef;
+        public string? AuthnContextClassRef;
 
         public override string ToString()
             => $"uid='{uid}'; domain='{domain}'; emails='{StringUtils.ToFlatDebugString(email)}'; roles='{StringUtils.ToFlatDebugString(roles)}'";
