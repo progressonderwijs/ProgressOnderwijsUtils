@@ -10,7 +10,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <OutputType>library</OutputType>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
