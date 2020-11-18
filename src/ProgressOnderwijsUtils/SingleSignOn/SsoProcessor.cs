@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     email = GetAttributes(assertion, MAIL),
                     roles = GetAttributes(assertion, ROLE),
                     InResponseTo = inresponseTo,
-                    AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
+                    AuthnContextClassRef = (string?)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext")?.Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
                 });
         }
 
@@ -113,11 +113,14 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             var subjectConfirmationData = assertion
                     .Element(SamlNamespaces.SAML_NS + "Subject")
+                    .AssertNotNull()
                     .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
-                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData");
+                    .AssertNotNull()
+                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
+                    .AssertNotNull();
             return (
                 XmlConvert.DecodeName((string?)subjectConfirmationData.Attribute("InResponseTo")),
-                (DateTime)subjectConfirmationData.Attribute("NotOnOrAfter")
+                (DateTime)subjectConfirmationData.Attribute("NotOnOrAfter").AssertNotNull()
             );
         }
 
@@ -125,7 +128,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             => (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
-                where attribute.Parent.Attribute("Name").Value == key
+                where attribute.Parent?.Attribute("Name")?.Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
             ).SingleOrNull();
@@ -133,7 +136,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static string[] GetAttributes(XElement assertion, string key)
             => (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
-                where attribute.Parent.Attribute("Name").Value == key
+                where attribute.Parent?.Attribute("Name")?.Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value).ToArray();
 
@@ -151,7 +154,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 if (resName.EndsWith(".xsd", StringComparison.Ordinal) || resName.EndsWith(".xsd.intellisensehack", StringComparison.Ordinal)) {
                     using var stream = schemaResources.GetResource(resName);
                     using var reader = XmlReader.Create(stream, settings);
-                    schemaSet.Add(XmlSchema.Read(reader, null));
+                    schemaSet.Add(XmlSchema.Read(reader, null).AssertNotNull());
                 }
             }
         }

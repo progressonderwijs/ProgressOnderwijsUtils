@@ -8,7 +8,13 @@ namespace ProgressOnderwijsUtils
         //called via reflection from DataReaderSpecialization
         public static byte[] GetBytes(this IDataRecord row, int colIndex)
         {
-            var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
+            var byteCount = row.GetBytes(
+                colIndex,
+                0L,
+                null!, // Incorrect annotation? https://github.com/dotnet/runtime/blob/35e535e6fa50b8284a44428d6b03b0180bc9b499/src/libraries/System.Data.Common/src/System/Data/Common/DataRecordInternal.cs#L123
+                0,
+                0
+            );
             if (byteCount > int.MaxValue) {
                 throw new NotSupportedException("Array too large!");
             }
@@ -23,7 +29,13 @@ namespace ProgressOnderwijsUtils
         //called via reflection from DataReaderSpecialization
         public static char[] GetChars(this IDataRecord row, int colIndex)
         {
-            var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
+            var charCount = row.GetChars(
+                colIndex,
+                0L,
+                null!, // Incorrect annotation? https://github.com/dotnet/runtime/blob/35e535e6fa50b8284a44428d6b03b0180bc9b499/src/libraries/System.Data.Common/src/System/Data/Common/DataRecordInternal.cs#L194
+                0,
+                0
+            );
             if (charCount > int.MaxValue) {
                 throw new NotSupportedException("Array too large!");
             }

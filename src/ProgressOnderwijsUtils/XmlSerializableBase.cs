@@ -9,10 +9,10 @@ namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>(string xml)
+        public static T? Deserialize<T>(string xml)
             => XmlSerializerHelper<T>.Deserialize(xml);
 
-        public static T Deserialize<T>(XDocument xml)
+        public static T? Deserialize<T>(XDocument xml)
             => XmlSerializerHelper<T>.Deserialize(xml);
 
         public static string SerializeToString(object o)
@@ -56,19 +56,19 @@ namespace ProgressOnderwijsUtils
     {
         public static readonly XmlSerializer serializer = new XmlSerializer(typeof(T));
 
-        public static T Deserialize(XDocument from)
+        public static T? Deserialize(XDocument from)
         {
             using var reader = from.CreateReader();
             return Deserialize(reader);
         }
 
-        public static T Deserialize(XmlReader from)
-            => (T)serializer.Deserialize(from);
+        public static T? Deserialize(XmlReader from)
+            => (T?)serializer.Deserialize(from);
 
-        public static T Deserialize(string from)
+        public static T? Deserialize(string from)
         {
             using var reader = new StringReader(from);
-            return (T)serializer.Deserialize(reader);
+            return (T?)serializer.Deserialize(reader);
         }
 
         public static string Serialize(T val)

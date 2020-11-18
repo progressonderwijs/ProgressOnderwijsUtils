@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             signedXml.KeyInfo = keyInfo;
             signedXml.ComputeSignature();
             var xmlDigitalSignature = signedXml.GetXml();
-            doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+            doc.DocumentElement.AssertNotNull().AppendChild(doc.ImportNode(xmlDigitalSignature, true));
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.InnerXml));
         }
 
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"),
                 new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity),
                 AuthnContextClassRef == null
-                    ? null
+                    ? Array.Empty<XElement>()
                     : new XElement(
                         SamlNamespaces.SAMLP_NS + "RequestedAuthnContext",
                         new XElement(SamlNamespaces.SAML_NS + "AuthnContextClassRef", AuthnContextClassRef)
