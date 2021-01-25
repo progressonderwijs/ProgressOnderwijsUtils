@@ -97,6 +97,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public SqlXType UserTypeId { get; set; }
         public short MaxLength { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
+
+        public bool IsString()
+            => UserTypeId == SqlXType.VarChar || UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar || UserTypeId == SqlXType.Char;
+
         public byte Precision { get; set; }
         public byte Scale { get; set; }
         EightFlags columnFlags;
