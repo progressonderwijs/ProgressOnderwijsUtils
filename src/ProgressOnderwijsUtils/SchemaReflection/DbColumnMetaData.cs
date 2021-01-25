@@ -101,6 +101,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public bool IsString()
             => UserTypeId == SqlXType.VarChar || UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar || UserTypeId == SqlXType.Char;
 
+        public bool IsUnicode()
+            => UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar;
+
         public byte Precision { get; set; }
         public byte Scale { get; set; }
         EightFlags columnFlags;
