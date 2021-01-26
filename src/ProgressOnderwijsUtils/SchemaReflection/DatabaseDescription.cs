@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 ").ReadPocos<DbNamedObjectId>(conn);
     }
 
-    public sealed partial class DatabaseDescription
+    public sealed class DatabaseDescription
     {
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
