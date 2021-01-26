@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var allConstraints = db.AllCheckConstraints;
 
             var constraint = allConstraints.Single(c => c.Name == "ck_TestConstraint");
-            var table = db.TryGetTableById(constraint.tableId).AssertNotNull();
+            var table = db.TryGetTableById(constraint.TableObjectId).AssertNotNull();
 
             PAssert.That(() => table.UnqualifiedName == "CheckConstraintTest");
             PAssert.That(() => constraint.Definition == "([Test]<>(0))");
