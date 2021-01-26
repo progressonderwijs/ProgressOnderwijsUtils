@@ -30,19 +30,20 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 ").ReadPocos<DbNamedObjectId>(conn);
     }
 
-    public sealed class DatabaseDescription
+    public sealed partial class DatabaseDescription
     {
-
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
+        readonly IReadOnlyDictionary<DbObjectId, CheckConstraint> checkConstraintById;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
 
-        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys)
+        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys, CheckConstraintEntry[] checkConstraints)
         {
             foreignKeyLookup = foreignKeys;
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
+            checkConstraintById = checkConstraints.ToDictionary(o => o.CheckConstraintObjectId, o => new CheckConstraint(o, this));
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -51,7 +52,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn));
+            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn), CheckConstraint.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
@@ -59,6 +60,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public IEnumerable<View> AllViews
             => viewById.Values;
+
+        public IEnumerable<CheckConstraint> AllCheckConstraints
+            => checkConstraintById.Values;
 
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
