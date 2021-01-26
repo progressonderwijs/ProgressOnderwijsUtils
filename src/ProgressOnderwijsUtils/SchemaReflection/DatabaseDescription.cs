@@ -148,6 +148,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public ParameterizedSql SqlColumnName()
                 => ColumnMetaData.SqlColumnName();
+
+            public bool Is_String
+                => ColumnMetaData.IsString;
+            public bool Is_Unicode
+                => ColumnMetaData.IsUnicode;
         }
 
         public sealed class Table
