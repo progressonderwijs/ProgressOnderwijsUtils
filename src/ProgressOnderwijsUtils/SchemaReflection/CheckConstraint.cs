@@ -17,14 +17,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public readonly DbObjectId CheckConstraintObjectId;
         public readonly string Name;
         public readonly string Definition;
-        public readonly DbObjectId tableId;
+        public readonly DbObjectId TableObjectId;
 
         public CheckConstraint(CheckConstraintEntry entry)
         {
             CheckConstraintObjectId = entry.CheckConstraintObjectId;
             Name = entry.Name;
             Definition = entry.Definition;
-            tableId = entry.TableObjectId;
+            TableObjectId = entry.TableObjectId;
         }
 
         public static CheckConstraintEntry[] LoadAll(SqlConnection conn)
