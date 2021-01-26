@@ -36,5 +36,28 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => SomeDataWithDefault_metadata.HasDefaultValue);
             PAssert.That(() => !SomeDataWithoutDefault_metadata.HasDefaultValue);
         }
+
+        [Fact]
+        public void CheckConstraintWithTable_works()
+        {
+            SQL($@"
+                create table dbo.CheckConstraintTest (
+                    IdRoot int not null primary key,
+                    Test int not null
+                );
+
+                alter table dbo.CheckConstraintTest add constraint ck_TestConstraint check (Test <> 0);
+            ").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            var allConstraints = db.AllCheckConstraints;
+
+            var constraint = allConstraints.Single(c => c.Name == "ck_TestConstraint");
+
+            PAssert.That(() => constraint.Table.UnqualifiedName == "CheckConstraintTest");
+            PAssert.That(() => constraint.Definition == "([Test]<>(0))");
+            PAssert.That(() => constraint.Name == "ck_TestConstraint");
+        }
     }
 }
