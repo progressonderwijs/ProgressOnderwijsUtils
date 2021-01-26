@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => SQL($@"
                 select 
                     CheckConstraintObjectId = cc.object_id
-                    , Name = chk.name
+                    , Name = cc.name
                     , Definition = cc.definition
                     , TableObjectId = cc.parent_object_id
                 from sys.check_constraints cc
