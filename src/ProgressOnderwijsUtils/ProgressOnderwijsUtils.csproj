@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>71.0.0</Version>
+    <Version>70.1.0</Version>
     <PackageReleaseNotes>IsString and IsUnicode added to TableColumn. Added CheckConstraints to DatabaseDescription</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
