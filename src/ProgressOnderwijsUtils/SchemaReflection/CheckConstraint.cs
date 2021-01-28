@@ -4,13 +4,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public struct CheckConstraintEntry : IWrittenImplicitly
-    {
-        public DbObjectId CheckConstraintObjectId { get; set; }
-        public string Name { get; set; }
-        public string Definition { get; set; }
-        public DbObjectId TableObjectId { get; set; }
-    }
+    public sealed record CheckConstraintEntry(DbObjectId CheckConstraintObjectId, string Name, string Definition, DbObjectId TableObjectId) : IWrittenImplicitly;
 
     public sealed record CheckConstraint(CheckConstraintEntry CheckConstraintEntry, DatabaseDescription.Table Table) {
     {
