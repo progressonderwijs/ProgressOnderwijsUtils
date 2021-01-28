@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn), CheckConstraint.LoadAll(conn));
+            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn), CheckConstraintEntry.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
