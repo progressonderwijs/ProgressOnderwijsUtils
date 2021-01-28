@@ -12,16 +12,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DbObjectId TableObjectId { get; set; }
     }
 
-    public sealed class CheckConstraint
+    public sealed record CheckConstraint(CheckConstraintEntry CheckConstraintEntry, DatabaseDescription.Table Table) {
     {
-        readonly CheckConstraintEntry checkConstraintEntry;
-        readonly DatabaseDescription.Table table;
-
-        public CheckConstraint(CheckConstraintEntry entry, DatabaseDescription.Table table)
-        {
-            checkConstraintEntry = entry;
-            this.table = table;
-        }
 
         public DbObjectId CheckConstraintObjectId
             => checkConstraintEntry.CheckConstraintObjectId;
