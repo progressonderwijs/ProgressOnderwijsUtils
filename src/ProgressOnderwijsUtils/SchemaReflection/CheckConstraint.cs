@@ -14,18 +14,26 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public sealed class CheckConstraint
     {
-        public readonly DbObjectId CheckConstraintObjectId;
-        public readonly string Name;
-        public readonly string Definition;
-        public readonly DbObjectId TableObjectId;
+        readonly CheckConstraintEntry checkConstraintEntry;
+        readonly DatabaseDescription.Table table;
 
-        public CheckConstraint(CheckConstraintEntry entry)
+        public CheckConstraint(CheckConstraintEntry entry, DatabaseDescription.Table table)
         {
-            CheckConstraintObjectId = entry.CheckConstraintObjectId;
-            Name = entry.Name;
-            Definition = entry.Definition;
-            TableObjectId = entry.TableObjectId;
+            checkConstraintEntry = entry;
+            this.table = table;
         }
+
+        public DbObjectId CheckConstraintObjectId
+            => checkConstraintEntry.CheckConstraintObjectId;
+
+        public string Name
+            => checkConstraintEntry.Name;
+
+        public string Definition
+            => checkConstraintEntry.Definition;
+
+        public DatabaseDescription.Table Table
+            => table;
 
         public static CheckConstraintEntry[] LoadAll(SqlConnection conn)
             => SQL($@"

@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             foreignKeyLookup = foreignKeys;
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
-            checkConstraintById = checkConstraints.ToDictionary(o => o.CheckConstraintObjectId, o => new CheckConstraint(o));
+            checkConstraintById = checkConstraints.ToDictionary(o => o.CheckConstraintObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
