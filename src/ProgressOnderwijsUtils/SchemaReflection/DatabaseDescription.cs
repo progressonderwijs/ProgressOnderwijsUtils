@@ -196,6 +196,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public IEnumerable<ForeignKey> KeysFromReferencingChildren
                 => db.foreignKeyLookup.KeysByReferencedParentTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
 
+            public IEnumerable<CheckConstraint> CheckConstraints
+                => db.AllCheckConstraints.Where(c => c.Table.ObjectId == this.ObjectId);
+
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren
                     .SelectMany(fk =>
