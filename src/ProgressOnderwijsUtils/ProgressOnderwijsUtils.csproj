@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>70.1.0</Version>
-    <PackageReleaseNotes>IsString and IsUnicode added to TableColumn. Added CheckConstraints to DatabaseDescription</PackageReleaseNotes>
+    <PackageReleaseNotes>IsString and IsUnicode added to TableColumn. Added CheckConstraints to DatabaseDescription. Added also CheckConstraints to Table</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
