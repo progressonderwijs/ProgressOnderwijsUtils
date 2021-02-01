@@ -36,5 +36,66 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => SomeDataWithDefault_metadata.HasDefaultValue);
             PAssert.That(() => !SomeDataWithoutDefault_metadata.HasDefaultValue);
         }
+
+        [Fact]
+        public void CheckConstraintWithTable_works()
+        {
+            SQL($@"
+                create table dbo.CheckConstraintTest (
+                    IdRoot int not null primary key,
+                    Test int not null
+                );
+
+                alter table dbo.CheckConstraintTest add constraint ck_TestConstraint check (Test <> 0);
+            ").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            var allConstraints = db.AllCheckConstraints;
+
+            var constraint = allConstraints.Single(c => c.Name == "ck_TestConstraint");
+
+            PAssert.That(() => constraint.Table.UnqualifiedName == "CheckConstraintTest");
+            PAssert.That(() => constraint.Definition == "([Test]<>(0))");
+            PAssert.That(() => constraint.Name == "ck_TestConstraint");
+
+            var table = db.AllTables.Single(t => t.QualifiedName == "dbo.CheckConstraintTest");
+            var constraint2 = table.CheckConstraints.Single(c => c.Name == "ck_TestConstraint");
+
+            PAssert.That(() => constraint2.Definition == "([Test]<>(0))");
+        }
+
+        [Fact]
+        public void CheckIsStringAndIsUnicode_works()
+        {
+            SQL($@"
+                create table dbo.CheckIsString (
+                    IdRoot int not null primary key,
+                    Testint int not null,
+                    Testchar char(10) not null,
+                    Testvarchar varchar(10) not null,
+                    Testnchar nchar(10) not null,
+                    Testnvarchar nvarchar(10) not null,
+                    Testxml xml not null
+                );
+            ").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            var table = db.TryGetTableByName("dbo.CheckIsString").AssertNotNull();
+
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").Is_String);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testchar").Is_String);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testvarchar").Is_String);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").Is_String);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").Is_String);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testxml").Is_String);
+
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").Is_Unicode);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testchar").Is_Unicode);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testvarchar").Is_Unicode);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").Is_Unicode);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").Is_Unicode);
+        }
     }
 }

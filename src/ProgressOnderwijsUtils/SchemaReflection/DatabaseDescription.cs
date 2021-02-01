@@ -32,17 +32,18 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public sealed class DatabaseDescription
     {
-
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
+        readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
 
-        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys)
+        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys, CheckConstraintEntry[] checkConstraints)
         {
             foreignKeyLookup = foreignKeys;
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
+            checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -51,7 +52,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn));
+            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn), CheckConstraintEntry.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
@@ -59,6 +60,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public IEnumerable<View> AllViews
             => viewById.Values;
+
+        public IEnumerable<CheckConstraint> AllCheckConstraints
+            => checkConstraintsByTableId.SelectMany(c => c);
 
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
@@ -144,6 +148,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public ParameterizedSql SqlColumnName()
                 => ColumnMetaData.SqlColumnName();
+
+            public bool Is_String
+                => ColumnMetaData.IsString;
+            public bool Is_Unicode
+                => ColumnMetaData.IsUnicode;
         }
 
         public sealed class Table
@@ -186,6 +195,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public IEnumerable<ForeignKey> KeysFromReferencingChildren
                 => db.foreignKeyLookup.KeysByReferencedParentTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
+
+            public IEnumerable<CheckConstraint> CheckConstraints
+                => db.checkConstraintsByTableId[ObjectId];
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren

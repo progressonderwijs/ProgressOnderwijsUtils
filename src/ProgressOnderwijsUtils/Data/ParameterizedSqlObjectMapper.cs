@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
+        /// Type T can be of type record, struct class
         /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
         /// The number of fields+properties must be the same as the number of columns
         /// </summary>
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, SqlConnection sqlConn)
-            where T : IWrittenImplicitly, new()
+            where T : IWrittenImplicitly
             => q.OfPocos<T>().Execute(sqlConn);
 
         internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
