@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     {
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
-        readonly IReadOnlyDictionary<DbObjectId, CheckConstraint> checkConstraintById;
+        readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
 
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             foreignKeyLookup = foreignKeys;
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
-            checkConstraintById = checkConstraints.ToDictionary(o => o.CheckConstraintObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
+            checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => viewById.Values;
 
         public IEnumerable<CheckConstraint> AllCheckConstraints
-            => checkConstraintById.Values;
+            => checkConstraintsByTableId.SelectMany(c => c);
 
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
@@ -197,7 +197,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => db.foreignKeyLookup.KeysByReferencedParentTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
 
             public IEnumerable<CheckConstraint> CheckConstraints
-                => db.AllCheckConstraints.Where(c => c.Table.ObjectId == this.ObjectId);
+                => db.checkConstraintsByTableId[ObjectId];
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren
