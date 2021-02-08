@@ -28,14 +28,6 @@ namespace ProgressOnderwijsUtils.AspNetCore
                 context.Response.Headers["X-Content-Type-Options"] = options.XContentTypeOptions;
             }
 
-            if (options.XFrameOptions != null) {
-                context.Response.Headers["X-Frame-Options"] = options.XFrameOptions;
-            }
-
-            if (options.XXssProtection != null) {
-                context.Response.Headers["X-XSS-Protection"] = options.XXssProtection;
-            }
-
             return next(context);
         }
     }
