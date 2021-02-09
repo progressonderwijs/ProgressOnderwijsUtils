@@ -130,7 +130,8 @@ namespace ProgressOnderwijsUtils.Html
                 collector.AddKid(child);
             }
             Debug.Assert(collector.IsFull());
-            return new HtmlFragment(collector.retval);
+
+            return collector.retval.Length == 1 ? collector.retval[0] : new HtmlFragment(collector.retval);
         }
 
         struct KidCounter
