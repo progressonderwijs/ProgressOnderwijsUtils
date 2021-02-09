@@ -122,16 +122,15 @@ namespace ProgressOnderwijsUtils.Html
             }
             if (kidCounter.TotalKids == 0) {
                 return Empty;
-            } else if (kidCounter.FlattenRelevant) {
-                var collector = new KidCollector(kidCounter.TotalKids);
-                foreach (var child in htmlEls) {
-                    collector.AddKid(child);
-                }
-                Debug.Assert(collector.IsFull());
-                return new HtmlFragment(collector.retval);
+            } else if (!kidCounter.FlattenRelevant) {
+                return new HtmlFragment(htmlEls);
             }
-
-            return new HtmlFragment(htmlEls);
+            var collector = new KidCollector(kidCounter.TotalKids);
+            foreach (var child in htmlEls) {
+                collector.AddKid(child);
+            }
+            Debug.Assert(collector.IsFull());
+            return new HtmlFragment(collector.retval);
         }
 
         struct KidCounter
