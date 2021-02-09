@@ -125,8 +125,12 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void SetOfEmptyHtmlFragmentsIsEmpty()
         {
-            var fragment = HtmlFragment.Fragment(HtmlFragment.Empty, HtmlFragment.Empty);
-            PAssert.That(() => fragment.IsEmpty);
+            PAssert.That(() => HtmlFragment.Fragment(HtmlFragment.Empty, HtmlFragment.Empty).IsEmpty, "special case two-arg overload");
+            PAssert.That(() => HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty }).IsEmpty, "params case");
+            PAssert.That(() => HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty, "" }).IsEmpty, "params case including empty via empty string");
+            PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[]{}).IsEmpty, "params case empty array");
+            PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[]{ "" }).IsEmpty, "params case with singleton array of empty string");
+            PAssert.That(() => Enumerable.Repeat(HtmlFragment.Empty, 1000).ToArray().AsFragment().IsEmpty, "params case with lots of content");
         }
     }
 }
