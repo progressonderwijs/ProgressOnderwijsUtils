@@ -121,5 +121,15 @@ namespace ProgressOnderwijsUtils.Tests
             var typeReflectionHack = new { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o };
             PAssert.That(() => typeReflectionHack.GetType().GetProperties().Select(fi => fi.PropertyType).Distinct().SequenceEqual(new[] { typeof(HtmlFragment) }));
         }
+
+        [Fact]
+        public void SetOfEmptyHtmlFragmentsIsEmpty()
+        {
+            var fragment = HtmlFragment.Fragment(HtmlFragment.Empty, HtmlFragment.Empty);
+            PAssert.That(() => fragment.IsEmpty);
+
+            var fragmentWithArray = HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty });
+            PAssert.That(() => fragmentWithArray.IsEmpty);
+        }
     }
 }

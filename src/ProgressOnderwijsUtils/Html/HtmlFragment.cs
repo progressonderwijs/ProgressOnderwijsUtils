@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[]? htmlEls)
         {
-            if (htmlEls == null || htmlEls.Length == 0) {
+            if (htmlEls == null || htmlEls.Length == 0 || htmlEls.All(element => element.IsEmpty)) {
                 return Empty;
             }
             if (htmlEls.Length == 1) {
