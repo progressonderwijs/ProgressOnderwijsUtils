@@ -121,5 +121,16 @@ namespace ProgressOnderwijsUtils.Tests
             var typeReflectionHack = new { a, b, c, d, e, f, g, h, i, j, k, l, m, n, o };
             PAssert.That(() => typeReflectionHack.GetType().GetProperties().Select(fi => fi.PropertyType).Distinct().SequenceEqual(new[] { typeof(HtmlFragment) }));
         }
+
+        [Fact]
+        public void SetOfEmptyHtmlFragmentsIsEmpty()
+        {
+            PAssert.That(() => HtmlFragment.Fragment(HtmlFragment.Empty, HtmlFragment.Empty).IsEmpty, "special case two-arg overload");
+            PAssert.That(() => HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty }).IsEmpty, "params case");
+            PAssert.That(() => HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty, "" }).IsEmpty, "params case including empty via empty string");
+            PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[]{}).IsEmpty, "params case empty array");
+            PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[]{ "" }).IsEmpty, "params case with singleton array of empty string");
+            PAssert.That(() => Enumerable.Repeat(HtmlFragment.Empty, 1000).ToArray().AsFragment().IsEmpty, "params case with lots of content");
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.1.0</Version>
-    <PackageReleaseNotes>IsString and IsUnicode added to TableColumn. Added CheckConstraints to DatabaseDescription. Added also CheckConstraints to Table</PackageReleaseNotes>
+    <Version>70.2.0</Version>
+    <PackageReleaseNotes>Fixed a bug where IsEmpty on a HtmlFragment would return an incorrect value with more then 2 empty HtmlFragment's as it's content.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
