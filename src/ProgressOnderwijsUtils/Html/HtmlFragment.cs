@@ -92,7 +92,9 @@ namespace ProgressOnderwijsUtils.Html
             var kidCounter = new KidCounter();
             kidCounter.CountForKid(a);
             kidCounter.CountForKid(b);
-            if (!kidCounter.FlattenRelevant) {
+            if (kidCounter.TotalKids == 0) {
+                return Empty;
+            } else if (!kidCounter.FlattenRelevant) {
                 return new HtmlFragment(new[] { a, b });
             }
             var collector = new KidCollector(kidCounter.TotalKids);
