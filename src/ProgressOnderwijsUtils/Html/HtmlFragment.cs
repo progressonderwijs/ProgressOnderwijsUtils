@@ -105,17 +105,28 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[]? htmlEls)
         {
-            if (htmlEls == null || htmlEls.Length == 0 || htmlEls.All(element => element.IsEmpty)) {
+            if (htmlEls == null || htmlEls.Length == 0) {
                 return Empty;
             }
             if (htmlEls.Length == 1) {
                 return htmlEls[0];
             }
+
             if (htmlEls.Length < 16) {
+                var allEmpty = true;
                 var kidCounter = new KidCounter();
+
                 foreach (var child in htmlEls) {
                     kidCounter.CountForKid(child);
+                    if (!child.IsEmpty) {
+                        allEmpty = false;
+                    }
                 }
+
+                if (allEmpty) {
+                    return Empty;
+                }
+
                 if (kidCounter.ShouldUseCollector()) {
                     var collector = kidCounter.MakeCollector();
                     foreach (var child in htmlEls) {
