@@ -127,9 +127,6 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var fragment = HtmlFragment.Fragment(HtmlFragment.Empty, HtmlFragment.Empty);
             PAssert.That(() => fragment.IsEmpty);
-
-            var fragmentWithArray = HtmlFragment.Fragment(new[]{ HtmlFragment.Empty, HtmlFragment.Empty });
-            PAssert.That(() => fragmentWithArray.IsEmpty);
         }
     }
 }

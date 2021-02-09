@@ -83,26 +83,6 @@ namespace ProgressOnderwijsUtils.Html
             => htmlEl;
 
         [Pure]
-        public static HtmlFragment Fragment(HtmlFragment a, HtmlFragment b)
-        {
-            if (a.IsEmpty) {
-                //optimize very common case, when appending to empty.
-                return b;
-            }
-            var kidCounter = new KidCounter();
-            kidCounter.CountForKid(a);
-            kidCounter.CountForKid(b);
-            if (!kidCounter.ShouldUseCollector()) {
-                return new HtmlFragment(new[] { a, b });
-            }
-            var collector = kidCounter.MakeCollector();
-            collector.AddKid(a);
-            collector.AddKid(b);
-            Debug.Assert(collector.IsFull());
-            return new HtmlFragment(collector.retval);
-        }
-
-        [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[]? htmlEls)
         {
             if (htmlEls == null || htmlEls.Length == 0) {
@@ -110,6 +90,13 @@ namespace ProgressOnderwijsUtils.Html
             }
             if (htmlEls.Length == 1) {
                 return htmlEls[0];
+            }
+
+            if (htmlEls.Length == 2) {
+                if (htmlEls[0].IsEmpty) {
+                    //optimize very common case, when appending to empty.
+                    return htmlEls[1];
+                }
             }
 
             if (htmlEls.Length < 16) {
