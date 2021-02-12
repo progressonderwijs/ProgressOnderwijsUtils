@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.2.0</Version>
-    <PackageReleaseNotes>Fixed a bug where IsEmpty on a HtmlFragment would return an incorrect value with more then 2 empty HtmlFragment's as it's content.</PackageReleaseNotes>
+    <Version>70.3.0</Version>
+    <PackageReleaseNotes>Bump dependencies.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -25,6 +25,6 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.4.0" />
+    <PackageReference Include="ZlibWithDictionary" version="2.5.0" />
   </ItemGroup>
 </Project>
