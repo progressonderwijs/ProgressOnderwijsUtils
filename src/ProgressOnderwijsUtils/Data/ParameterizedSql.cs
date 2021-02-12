@@ -77,11 +77,11 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
             => (a.impl == null || b.impl == null ? a.impl ?? b.impl : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
-        [Obsolete]
+        [Obsolete("Avoid implicitly converting ParameterizedSql to string; this does not result in valid SQL")]
         public static string operator +(string a, ParameterizedSql b)
             => a + (object)b;
 
-        [Obsolete]
+        [Obsolete("Avoid implicitly converting ParameterizedSql to string; this does not result in valid SQL")]
         public static string operator +(ParameterizedSql a, string b)
             => (object)a + b;
 
@@ -150,10 +150,9 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IReadImplicitly, new()
-            => (objects.Length == 1
-                    ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
-                    : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
-                ).BuildableToQuery();
+            => objects.Length == 1
+                ? new SingletonQueryTableValuedParameterComponent<T>(objects[0]).BuildableToQuery()
+                : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr).BuildableToQuery();
 
         public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes
             => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
@@ -277,7 +276,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             if (interpolatedQuery == null) {
-                throw new ArgumentNullException(nameof(interpolatedQuery));
+                throw new InvalidOperationException(nameof(interpolatedQuery) + " is null");
             }
 
             var str = interpolatedQuery.Format;

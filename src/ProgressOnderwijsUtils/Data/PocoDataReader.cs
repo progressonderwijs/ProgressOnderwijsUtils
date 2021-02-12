@@ -173,7 +173,7 @@ namespace ProgressOnderwijsUtils
             static Expression IsExpressionNonNull(Expression propertyValue)
                 => propertyValue.Type.IsNullableValueType() ? Expression.Property(propertyValue, nameof(Nullable<int>.HasValue))
                     : propertyValue.Type.IsValueType ? Expression.Constant(false)
-                    : (Expression)Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
+                    : Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
         }
 
         static readonly ColumnInfo[] columnInfos;

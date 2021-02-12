@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils.Tests
             Func<double, double, bool> approxEqual = (a, b) => Math.Abs(a - b) / (Math.Abs(a) + Math.Abs(b)) < 1e-14;
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            PAssert.That(() => double.Parse(Utils.ToFixedPointString(edgeCase, NL, 0), NumberStyles.AllowDecimalPoint, NL) == (double)edgeCase);
+            PAssert.That(() => double.Parse(Utils.ToFixedPointString(edgeCase, NL, 0), NumberStyles.AllowDecimalPoint, NL) == edgeCase);
             PAssert.That(
                 () => approxEqual(double.Parse(Utils.ToFixedPointString(edgeCase + 1, NL, 0), NumberStyles.AllowDecimalPoint, NL), edgeCase + 1));
             PAssert.That(
