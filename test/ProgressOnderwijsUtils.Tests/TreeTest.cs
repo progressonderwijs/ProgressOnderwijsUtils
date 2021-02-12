@@ -204,7 +204,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var input = Tree.Node(1u, Tree.Node(2u));
             var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) }.Where(_ => oldNode.NodeValue != 1).ToArray());
-            var expected = new Tree<long>[] { };
+            var expected = Array.Empty<Tree<long>>();
             PAssert.That(() => output.SequenceEqual(expected));
         }
 
@@ -321,8 +321,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void CanWorkWithDeepTreesWithoutStackoverflow()
         {
             const int targetHeight = 1000_000;
-            var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : new uint[0]);
-            var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : new long[0]);
+            var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : Array.Empty<uint>());
+            var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : Array.Empty<long>());
             var mappedInput = input.SelectNodeValue(i => (long)i);
             var areEqual = mappedInput.Equals(output);
             PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");

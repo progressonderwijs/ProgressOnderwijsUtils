@@ -417,11 +417,12 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(_ => 0, _ => 0));
         }
 
+#pragma warning disable 618 //obsoletion is kind of the point.
         [Fact]
-        [Obsolete]
         public void WhenOk_with_nested_maybe_state_gives_compiler_error()
             => Maybe.Ok().AsMaybeWithoutError<string>()
                 .WhenOk(_ => Maybe.Error("err").AsMaybeWithoutValue<Unit>())
                 .AssertOk();
+#pragma warning restore 618
     }
 }

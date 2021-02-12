@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void NodesWithoutDependenciesAreNotSorted()
         {
             var example = new[] { "a", "b", "d", "c" };
-            var (cycleDetected, ordered) = example.OrderByTopology(_ => new string[0]);
+            var (cycleDetected, ordered) = example.OrderByTopology(_ => System.Array.Empty<string>());
             PAssert.That(() => cycleDetected == false && ordered.SequenceEqual(example));
         }
 
