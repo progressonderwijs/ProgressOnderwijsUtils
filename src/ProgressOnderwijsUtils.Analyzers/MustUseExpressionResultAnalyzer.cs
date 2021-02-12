@@ -10,7 +10,9 @@ namespace ProgressOnderwijsUtils.Analyzers
     public sealed class MustUseExpressionResultAnalyzer : DiagnosticAnalyzer
     {
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+#pragma warning disable RS2008 // Enable analyzer release tracking - why would we care?
             "POU1001",
+#pragma warning restore RS2008 // Enable analyzer release tracking
             "Result must be used",
             "The result of the expression may not be ignored.",
             "Functional",
