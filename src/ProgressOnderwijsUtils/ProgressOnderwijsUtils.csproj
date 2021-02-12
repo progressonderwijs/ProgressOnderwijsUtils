@@ -25,6 +25,6 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.4.0" />
+    <PackageReference Include="ZlibWithDictionary" version="2.5.0" />
   </ItemGroup>
 </Project>
