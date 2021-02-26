@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.2.0</Version>
-    <PackageReleaseNotes>Fixed a bug where IsEmpty on a HtmlFragment would return an incorrect value with more then 2 empty HtmlFragment's as it's content.</PackageReleaseNotes>
-
+    <Version>70.3.0</Version>
+    <PackageReleaseNotes>HtmlFragment.ToCSharp(): Generate + operators instead of relying on params array arguments.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
