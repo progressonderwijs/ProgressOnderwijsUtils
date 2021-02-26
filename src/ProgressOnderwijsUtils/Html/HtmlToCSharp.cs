@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Html
                 if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
                 } else {
-                    stringBuilder.AppendText("new HtmlElement(");
+                    stringBuilder.AppendText("new CustomHtmlElement(");
                     stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName).AssertNotNull());
                     stringBuilder.AppendText(")");
                 }
