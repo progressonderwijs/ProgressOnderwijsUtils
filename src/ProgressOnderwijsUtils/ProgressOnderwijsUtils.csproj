@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.3.0</Version>
+    <Version>70.4.0</Version>
     <PackageReleaseNotes>HtmlFragment.ToCSharp(): Generate + operators instead of relying on params array arguments.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -16,7 +16,7 @@
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="3.3.0" />
+    <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.1" />

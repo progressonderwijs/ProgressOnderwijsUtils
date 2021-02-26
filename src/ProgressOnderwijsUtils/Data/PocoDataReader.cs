@@ -104,12 +104,11 @@ namespace ProgressOnderwijsUtils
         }
 
         public override TColumn GetFieldValue<TColumn>(int ordinal)
-        {
-            if (!(columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter)) {
-                throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
-            }
-            return getter(current.GetValue());
-        }
+            => columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter
+                ? getter(current.GetValue())
+                : throw new InvalidOperationException(
+                    $"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}."
+                    );
 
         readonly struct ColumnInfo
         {
@@ -173,7 +172,7 @@ namespace ProgressOnderwijsUtils
             static Expression IsExpressionNonNull(Expression propertyValue)
                 => propertyValue.Type.IsNullableValueType() ? Expression.Property(propertyValue, nameof(Nullable<int>.HasValue))
                     : propertyValue.Type.IsValueType ? Expression.Constant(false)
-                    : (Expression)Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
+                    : Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
         }
 
         static readonly ColumnInfo[] columnInfos;
