@@ -3,8 +3,8 @@
         _title.Content(
             "Hello world: a < b & \"b\" > 'c'; "
         )
-    ),
-    _body.Content(
+    )
+    + _body.Content(
         _textarea.Content(
             "Hello world: a < b & \"b\" > 'c'; "
         )

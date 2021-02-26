@@ -2,32 +2,32 @@
     _head.Content(
         _title.Content(
             "Hello world!"
-        ),
-        _meta._hidden("hmm"),
-        _link._rel("bla"),
-        _base._href("nowhere")
-    ),
-    _body.Content(
-        _area,
-        "\r\n",
-        _br,
-        "\r\n",
-        _col,
-        "\r\n",
-        _embed,
-        "\r\n",
-        _hr,
-        "\r\n",
-        _img,
-        "\r\n",
-        _input,
-        "\r\n",
-        _param,
-        "\r\n",
-        _source,
-        "\r\n",
-        _track,
-        "\r\n",
-        _wbr
+        )
+        + _meta._hidden("hmm")
+        + _link._rel("bla")
+        + _base._href("nowhere")
+    )
+    + _body.Content(
+        _area
+        + "\r\n"
+        + _br
+        + "\r\n"
+        + _col
+        + "\r\n"
+        + _embed
+        + "\r\n"
+        + _hr
+        + "\r\n"
+        + _img
+        + "\r\n"
+        + _input
+        + "\r\n"
+        + _param
+        + "\r\n"
+        + _source
+        + "\r\n"
+        + _track
+        + "\r\n"
+        + _wbr
     )
 )
