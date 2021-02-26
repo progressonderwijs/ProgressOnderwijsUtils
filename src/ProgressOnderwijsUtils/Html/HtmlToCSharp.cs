@@ -33,13 +33,13 @@ namespace ProgressOnderwijsUtils.Html
                         AppendIndent(ref stringBuilder, indent + 4);
                     }
                     stringBuilder.AppendText(".Content(");
-                    AppendCommaSeparatedFragments(ref stringBuilder, withContent.GetContent(), subIndent);
+                    AppendPlusSeparatedFragments(ref stringBuilder, withContent.GetContent(), subIndent);
                     AppendIndent(ref stringBuilder, indent);
                     stringBuilder.AppendText(")");
                 }
             } else if (fragment.Implementation is HtmlFragment[] fragments) {
-                stringBuilder.AppendText("HtmlFragment.Fragment(");
-                AppendCommaSeparatedFragments(ref stringBuilder, fragments, indent + 4);
+                stringBuilder.AppendText("(");
+                AppendPlusSeparatedFragments(ref stringBuilder, fragments, indent + 4);
                 AppendIndent(ref stringBuilder, indent);
                 stringBuilder.AppendText(")");
             } else {
@@ -47,16 +47,16 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
+        static void AppendPlusSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
         {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 var isSubsequent = false;
                 foreach (var fragment in fragments) {
-                    if (isSubsequent) {
-                        stringBuilder.AppendText(",");
-                    }
                     AppendNewline(ref stringBuilder);
                     AppendIndent(ref stringBuilder, subIndent);
+                    if (isSubsequent) {
+                        stringBuilder.AppendText("+ ");
+                    }
                     AppendCSharpTo(ref stringBuilder, fragment, subIndent);
 
                     isSubsequent = true;

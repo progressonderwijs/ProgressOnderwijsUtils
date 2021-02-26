@@ -3,8 +3,8 @@
         _title.Content(
             "Hello world!"
         )
-    ),
-    _body._class("aClass")
+    )
+    + _body._class("aClass")
         ._class("bClass")
         .Content(
             _p.Content(

@@ -3,8 +3,8 @@
         _title.Content(
             "Hello world!"
         )
-    ),
-    _body.Content(
+    )
+    + _body.Content(
         _p.Content(
             "Hello world: a < b & \"b\" > 'c'; "
         )
