@@ -7,15 +7,19 @@ namespace ProgressOnderwijsUtils.Win32
     {
         public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
         {
-            PInvoke.AmsiInitialize(sessionName, out var context).AssertResultOk();
+            var context = default(nint);
 
             try {
+                PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk();
+
                 fixed (void* bufferPtr = buffer) {
                     PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result).AssertResultOk();
                     return ResultIsMalware(result);
                 }
             } finally {
-                PInvoke.AmsiUninitialize(context);
+                if (context != default) {
+                    PInvoke.AmsiUninitialize(context);
+                }
             }
         }
 
