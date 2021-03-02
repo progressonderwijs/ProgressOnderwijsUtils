@@ -17,12 +17,11 @@ namespace ProgressOnderwijsUtils.Win32
 
         public static unsafe bool IsMalware(byte[] buffer, string contentName)
         {
-            var sizet = Marshal.SizeOf(typeof(byte)) * buffer.Length;
-            var bufferPtr = Marshal.AllocHGlobal(sizet).ToPointer();
-
-            using var scanSession = new VirusScanSessie("Progress.Net");
-            PInvoke.AmsiScanBuffer(scanSession.Context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
-            return ResultIsMalware(result);
+            fixed (void* bufferPtr = buffer) {
+                using var scanSession = new VirusScanSessie("Progress.Net");
+                PInvoke.AmsiScanBuffer(scanSession.Context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
+                return ResultIsMalware(result);
+            }
         }
 
         static bool ResultIsMalware(AMSI_RESULT result)
