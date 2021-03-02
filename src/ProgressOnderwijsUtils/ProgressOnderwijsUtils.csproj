@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.4.0</Version>
-    <PackageReleaseNotes>HtmlFragment.ToCSharp(): Generate + operators instead of relying on params array arguments.</PackageReleaseNotes>
+    <Version>70.5.0</Version>
+    <PackageReleaseNotes>Use CsWin32 for win32 apicalls and add bitlocker check and virusscan</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
