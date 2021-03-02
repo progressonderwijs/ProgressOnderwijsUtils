@@ -7,10 +7,15 @@ namespace ProgressOnderwijsUtils.Win32
     {
         public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
         {
-            fixed (void* bufferPtr = buffer) {
-                using var scanSession = new VirusScanSessie(sessionName);
-                PInvoke.AmsiScanBuffer(scanSession.Context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
-                return ResultIsMalware(result);
+            PInvoke.AmsiInitialize(sessionName, out var context);
+
+            try {
+                fixed (void* bufferPtr = buffer) {
+                    PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
+                    return ResultIsMalware(result);
+                }
+            } finally {
+                PInvoke.AmsiUninitialize(context);
             }
         }
 
@@ -26,16 +31,5 @@ namespace ProgressOnderwijsUtils.Win32
             }
             return true;
         }
-    }
-
-    public sealed class VirusScanSessie : IDisposable
-    {
-        public readonly IntPtr Context;
-
-        public VirusScanSessie(string appName)
-            => PInvoke.AmsiInitialize(appName, out Context);
-
-        public void Dispose()
-            => PInvoke.AmsiUninitialize(Context);
     }
 }
