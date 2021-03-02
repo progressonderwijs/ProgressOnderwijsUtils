@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.Win32
                     return ResultIsMalware(result);
                 }
             } finally {
-                if (context != default) {
+                if (context != default(nint)) {
                     PInvoke.AmsiUninitialize(context);
                 }
             }
