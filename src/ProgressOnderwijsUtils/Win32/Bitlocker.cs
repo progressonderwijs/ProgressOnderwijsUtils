@@ -9,20 +9,28 @@ namespace ProgressOnderwijsUtils.Win32
     {
         public static unsafe int BitlockerStatusOfDriveLetter(char driveLetter)
         {
-            PInvoke.SHCreateItemFromParsingName(
-                $"{driveLetter}:",
-                null,
-                Guid.Parse(typeof(IShellItem2).GetCustomAttribute<GuidAttribute>().AssertNotNull().Value),
-                out var ppv
-            ).AssertResultOk();
+            void* ppv = null;
 
-            PInvoke.PSGetPropertyKeyFromName("System.Volume.BitLockerProtection", out var key).AssertResultOk();
+            try {
+                PInvoke.SHCreateItemFromParsingName(
+                    $"{driveLetter}:",
+                    null,
+                    Guid.Parse(typeof(IShellItem2).GetCustomAttribute<GuidAttribute>().AssertNotNull().Value),
+                    out ppv
+                ).AssertResultOk();
 
-            ((IShellItem2*)ppv)->GetProperty(key, out var val).AssertResultOk();
+                PInvoke.PSGetPropertyKeyFromName("System.Volume.BitLockerProtection", out var key).AssertResultOk();
 
-            PInvoke.PropVariantToInt32(val, out var bitLockerStatus).AssertResultOk();
+                ((IShellItem2*)ppv)->GetProperty(key, out var val).AssertResultOk();
 
-            return bitLockerStatus;
+                PInvoke.PropVariantToInt32(val, out var bitLockerStatus).AssertResultOk();
+
+                return bitLockerStatus;
+            } finally {
+                if (ppv != null) {
+                    ((IShellItem2*)ppv)->Release();
+                }
+            }
         }
     }
 }
