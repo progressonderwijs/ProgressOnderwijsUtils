@@ -15,9 +15,7 @@ namespace ProgressOnderwijsUtils.Win32
             return ResultIsMalware(result);
         }
 
-        public static bool IsMalware(byte[] buffer, string contentName) => IsMalwareUnsafe(buffer, contentName);
-
-        static unsafe bool IsMalwareUnsafe(byte[] buffer, string contentName)
+        public static unsafe bool IsMalware(byte[] buffer, string contentName)
         {
             var sizet = Marshal.SizeOf(typeof(byte)) * buffer.Length;
             var bufferPtr = Marshal.AllocHGlobal(sizet).ToPointer();
