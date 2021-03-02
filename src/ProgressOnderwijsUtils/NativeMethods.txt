@@ -4,5 +4,4 @@ IShellItem2
 PropVariantToInt32
 AmsiInitialize
 AmsiUninitialize
-AmsiScanString
 AmsiScanBuffer

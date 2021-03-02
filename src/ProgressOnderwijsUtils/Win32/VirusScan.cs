@@ -8,13 +8,6 @@ namespace ProgressOnderwijsUtils.Win32
 {
     public static class VirusScan
     {
-        public static bool IsMalware(string content, string contentName, string sessionName)
-        {
-            using var scanSession = new VirusScanSessie(sessionName);
-            PInvoke.AmsiScanString(scanSession.Context, content, contentName, IntPtr.Zero, out var result);
-            return ResultIsMalware(result);
-        }
-
         public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
         {
             fixed (void* bufferPtr = buffer) {

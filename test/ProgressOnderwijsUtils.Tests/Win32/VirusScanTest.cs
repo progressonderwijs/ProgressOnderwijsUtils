@@ -13,16 +13,8 @@ namespace ProgressOnderwijsUtils.Tests.Win32
         const string schoneString = "Dit is geen virus";
 
         [Fact]
-        public void VirusAlsString_wordt_herkend()
-            => PAssert.That(() => VirusScan.IsMalware(virusString, "EICAR", "Utils test"));
-
-        [Fact]
         public void VirusAlsByte_wordt_herkend()
             => PAssert.That(() => VirusScan.IsMalware(Encoding.ASCII.GetBytes(virusString), "EICAR", "Utils test"));
-
-        [Fact]
-        public void SchoneString_wordt_niet_als_virus_herkend()
-            => PAssert.That(() => !VirusScan.IsMalware(schoneString, "Progress.Net", "Utils test"));
 
         [Fact]
         public void SchoneString_als_byte_wordt_niet_als_virus_herkend()
