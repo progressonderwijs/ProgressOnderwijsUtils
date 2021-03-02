@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using Microsoft.Windows.Sdk;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Win32
 {
