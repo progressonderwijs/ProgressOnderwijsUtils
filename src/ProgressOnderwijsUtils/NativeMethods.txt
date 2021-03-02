@@ -1,0 +1,7 @@
+﻿PSGetPropertyKeyFromName
+SHCreateItemFromParsingName
+IShellItem2
+PropVariantToInt32
+AmsiInitialize
+AmsiUninitialize
+AmsiScanBuffer

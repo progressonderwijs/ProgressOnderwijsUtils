@@ -1,13 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>70.4.0</Version>
-    <PackageReleaseNotes>HtmlFragment.ToCSharp(): Generate + operators instead of relying on params array arguments.</PackageReleaseNotes>
+    <Version>70.5.0</Version>
+    <PackageReleaseNotes>Use CsWin32 for win32 apicalls and add bitlocker check and virusscan</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.1.378-beta">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="AngleSharp" Version="0.14.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
