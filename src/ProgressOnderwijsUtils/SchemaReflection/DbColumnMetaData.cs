@@ -9,138 +9,67 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public sealed record DbColumnMetaData
+    public sealed record DbColumnMetaData(
+        string ColumnName,
+        SqlXType UserTypeId,
+        short MaxLength,
+        byte Precision,
+        byte Scale
+    )
     {
-        struct CompressedSysColumnsValue : IWrittenImplicitly
+        public DbObjectId DbObjectId { get; init; }
+        public DbColumnId ColumnId { get; init; }
+        EightFlags columnFlags;
+
+        public bool IsNullable
         {
-            public string ColumnName { get; init; }
-            public DbObjectId DbObjectId { get; init; }
-            public DbColumnId ColumnId { get; init; }
-            public SqlXType User_Type_Id { get; init; }
-            public short Max_Length { get; init; }
-            public byte Precision { get; init; }
-            public byte Scale { get; init; }
-            public byte ColumnFlags { get; init; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
-
-            public static ParameterizedSql BaseQuery(bool fromTempDb)
-                => SQL($@"
-                with pks (object_id, column_id) as (
-                    select i.object_id, ic.column_id
-                    from sys.index_columns ic 
-                    join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
-                )
-                select
-                    ColumnName = c.name
-                    , DbObjectId = c.object_id
-                    , ColumnId = c.column_id
-                    , c.user_type_id
-                    , c.max_length
-                    , c.precision
-                    , c.scale
-                    , ColumnFlags = convert(tinyint, 0
-                        + 1*c.is_nullable 
-                        + 2*c.is_computed
-                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                        + 8*c.is_identity
-                        + 16*iif(c.default_object_id <> 0, convert(bit, 1), convert(bit, 0))
-                        )
-                from {fromTempDb && SQL($"tempdb.")}sys.columns c
-                left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
-                where 1=1
-            ");
-
-                public static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
-                => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+            get => columnFlags[0];
+            set => columnFlags[0] = value;
         }
 
-        DbColumnMetaData(CompressedSysColumnsValue fromDb)
+        public bool IsComputed
         {
-            ColumnId = fromDb.ColumnId;
-            ColumnName = fromDb.ColumnName;
-            DbObjectId = fromDb.DbObjectId;
-            columnFlags = new EightFlags(fromDb.ColumnFlags);
-            MaxLength = fromDb.Max_Length;
-            Precision = fromDb.Precision;
-            Scale = fromDb.Scale;
-            UserTypeId = fromDb.User_Type_Id;
+            get => columnFlags[1];
+            set => columnFlags[1] = value;
         }
 
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
-        public DbColumnMetaData() { }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+        public bool IsPrimaryKey
+        {
+            get => columnFlags[2];
+            set => columnFlags[2] = value;
+        }
+
+        public bool HasAutoIncrementIdentity
+        {
+            get => columnFlags[3];
+            set => columnFlags[3] = value;
+        }
+
+        public bool HasDefaultValue
+        {
+            get => columnFlags[4];
+            set => columnFlags[4] = value;
+        }
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
-            var metaData = new DbColumnMetaData {
-                ColumnName = name,
-                UserTypeId = SqlXTypeExtensions.NetTypeToSqlXType(dataType),
+            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
+
+            // ReSharper disable RedundantCast
+            return new(name, SqlXTypeExtensions.NetTypeToSqlXType(dataType), maxLengthForSqlServer, (byte)(hasDecimalStyleScale ? 38 : 0), (byte)(hasDecimalStyleScale ? 2 : 0)) {
                 IsNullable = dataType.CanBeNull(),
                 IsPrimaryKey = isKey,
-                MaxLength = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER),
-                Precision = (byte)(hasDecimalStyleScale ? 38 : 0),
-                Scale = (byte)(hasDecimalStyleScale ? 2 : 0),
             };
-            return metaData;
+            // ReSharper restore RedundantCast
         }
-
-        public DbObjectId DbObjectId { get; init; }
-        public string ColumnName { get; init; }
-        public DbColumnId ColumnId { get; init; }
-
-        public SqlXType UserTypeId { get; init; }
-        public short MaxLength { get; init; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
 
         public bool IsString
             => UserTypeId.SqlUnderlyingTypeInfo().ClrType == typeof(string);
 
         public bool IsUnicode
             => UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar;
-
-        public byte Precision { get; init; }
-        public byte Scale { get; init; }
-        EightFlags columnFlags;
-
-        public bool IsNullable
-        {
-            get
-                => columnFlags[0];
-            set
-                => columnFlags[0] = value;
-        }
-
-        public bool IsComputed
-        {
-            get
-                => columnFlags[1];
-            set
-                => columnFlags[1] = value;
-        }
-
-        public bool IsPrimaryKey
-        {
-            get
-                => columnFlags[2];
-            set
-                => columnFlags[2] = value;
-        }
-
-        public bool HasAutoIncrementIdentity
-        {
-            get
-                => columnFlags[3];
-            set
-                => columnFlags[3] = value;
-        }
-
-        public bool HasDefaultValue
-        {
-            get
-                => columnFlags[4];
-            set
-                => columnFlags[4] = value;
-        }
 
         public bool IsRowVersion
             => UserTypeId == SqlXType.RowVersion;
@@ -156,6 +85,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public DataColumn ToDataColumn()
             => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
+
+        [Pure]
+        public ParameterizedSql SqlColumnName()
+            => ParameterizedSql.CreateDynamic(isSafeForSql.IsMatch(ColumnName) ? ColumnName : throw new NotSupportedException("this isn't safe!"));
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
@@ -181,11 +114,58 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         static readonly Comparison<DbColumnMetaData> byColumnId = (a, b) => ((int)a.ColumnId).CompareTo((int)b.ColumnId);
-        static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
+        static readonly Regex isSafeForSql = new("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
-        [Pure]
-        public ParameterizedSql SqlColumnName()
-            => ParameterizedSql.CreateDynamic(isSafeForSql.IsMatch(ColumnName) ? ColumnName : throw new NotSupportedException("this isn't safe!"));
+        struct CompressedSysColumnsValue : IWrittenImplicitly
+        {
+            public string ColumnName { get; set; }
+            public DbObjectId DbObjectId { get; set; }
+            public DbColumnId ColumnId { get; set; }
+            public SqlXType User_Type_Id { get; set; }
+            public short Max_Length { get; set; }
+            public byte Precision { get; set; }
+            public byte Scale { get; set; }
+            public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
+
+            public static ParameterizedSql BaseQuery(bool fromTempDb)
+                => SQL(
+                    $@"
+                with pks (object_id, column_id) as (
+                    select i.object_id, ic.column_id
+                    from sys.index_columns ic 
+                    join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
+                )
+                select
+                    ColumnName = c.name
+                    , DbObjectId = c.object_id
+                    , ColumnId = c.column_id
+                    , c.user_type_id
+                    , c.max_length
+                    , c.precision
+                    , c.scale
+                    , ColumnFlags = convert(tinyint, 0
+                        + 1*c.is_nullable 
+                        + 2*c.is_computed
+                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
+                        + 8*c.is_identity
+                        + 16*iif(c.default_object_id <> 0, convert(bit, 1), convert(bit, 0))
+                        )
+                from {fromTempDb && SQL($"tempdb.")}sys.columns c
+                left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
+                where 1=1
+            "
+                );
+
+            public static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
+                => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+        }
+
+        DbColumnMetaData(CompressedSysColumnsValue fromDb) : this(fromDb.ColumnName, fromDb.User_Type_Id, fromDb.Max_Length, fromDb.Precision, fromDb.Scale)
+        {
+            ColumnId = fromDb.ColumnId;
+            DbObjectId = fromDb.DbObjectId;
+            columnFlags = new EightFlags(fromDb.ColumnFlags);
+        }
     }
 
     public static class DbColumnMetaDataExtensions
@@ -199,9 +179,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 .ToArray();
             // in een contained db mag er geen named PK worden gedefinieerd voor een temp. table
             // zolang er dus geen pk's over meerdere kolommen worden gedefinieerd gaat onderstaande ook goed voor temp. tables in een contained db
-            var columnDefinitionSql = ParameterizedSql.CreateDynamic(columns
-                .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
-                .JoinStrings("\r\n    , ")
+            var columnDefinitionSql = ParameterizedSql.CreateDynamic(
+                columns
+                    .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
+                    .JoinStrings("\r\n    , ")
             );
             var primaryKeyDefinitionSql = keyColumns.Length > 1
                 ? SQL($"\r\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
