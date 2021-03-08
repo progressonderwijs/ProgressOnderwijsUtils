@@ -92,6 +92,7 @@ namespace ProgressOnderwijsUtils
                 }
 
                 while (enumerator.MoveNext()) {
+                    // ReSharper disable once AssignNullToNotNullAttribute //https://youtrack.jetbrains.com/issue/RSRP-483519
                     yield return enumerator.Current;
                 }
                 enumerator.Dispose();

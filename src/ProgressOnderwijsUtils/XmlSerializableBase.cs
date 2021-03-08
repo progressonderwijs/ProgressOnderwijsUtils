@@ -63,12 +63,16 @@ namespace ProgressOnderwijsUtils
         }
 
         public static T? Deserialize(XmlReader from)
+#pragma warning disable 8605 // workaround https://youtrack.jetbrains.com/issue/RSRP-483518
             => (T?)serializer.Deserialize(from);
+#pragma warning restore 8605
 
         public static T? Deserialize(string from)
         {
             using var reader = new StringReader(from);
+#pragma warning disable 8605 // workaround https://youtrack.jetbrains.com/issue/RSRP-483518
             return (T?)serializer.Deserialize(reader);
+#pragma warning restore 8605
         }
 
         public static string Serialize(T val)
