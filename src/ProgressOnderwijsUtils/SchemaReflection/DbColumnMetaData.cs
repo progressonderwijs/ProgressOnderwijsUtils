@@ -87,10 +87,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public DbObjectId DbObjectId { get; init; }
         public string ColumnName { get; init; }
-
-        /// <summary>
-        /// This id is 1-based and may contain gaps due to dropping of columns.
-        /// </summary>
         public DbColumnId ColumnId { get; init; }
 
         public SqlXType UserTypeId { get; init; }

@@ -12,6 +12,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbObjectId { }
 
+    /// <summary>
+    /// This id is 1-based and may contain gaps due to dropping of columns.
+    /// </summary>
     [DbIdEnum]
     public enum DbColumnId { }
 
