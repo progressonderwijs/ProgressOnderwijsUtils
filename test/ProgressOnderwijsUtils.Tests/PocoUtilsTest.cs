@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Tests
     }
 
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
-    public sealed class SimpleObject : ValueBase<SimpleObject>, IWrittenImplicitly, ISimpleInterface
+    public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
     {
 #pragma warning disable 169
 #pragma warning disable 649

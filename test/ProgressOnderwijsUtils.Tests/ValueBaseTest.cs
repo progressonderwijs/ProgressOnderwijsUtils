@@ -5,7 +5,7 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     [UsedImplicitly(ImplicitUseTargetFlags.Members)] // to test valuebase.ToString
-    public sealed class ExampleValue : ValueBase<ExampleValue>
+    public sealed record ExampleValue
     {
         public int MyInt;
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -23,13 +23,15 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ToString_ReturnsCleanLookingOutput()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(new ExampleValue {
-                NullableField = null,
-                AnEnum = ConsoleKey.BrowserBack,
-                MyString = "Hello World!",
-                Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
-                SomeValueType = default,
-                MyInt = 42,
-            }.ToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(
+                new ExampleValue {
+                    NullableField = null,
+                    AnEnum = ConsoleKey.BrowserBack,
+                    MyString = "Hello World!",
+                    Nested = new() { AnEnum = ConsoleKey.BrowserRefresh },
+                    SomeValueType = new(),
+                    MyInt = 42,
+                }.ToString()
+            );
     }
 }

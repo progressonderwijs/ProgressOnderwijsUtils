@@ -9,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
-    public sealed class BulkInsertTestSampleRow : ValueBase<BulkInsertTestSampleRow>, IWrittenImplicitly, IReadImplicitly
+    public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicitly
     {
         public DayOfWeek AnEnum { get; set; }
         public DateTime? ADateTime { get; set; }
@@ -126,7 +126,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(4), fromDb);
         }
 
-        sealed class SampleRow2 : ValueBase<SampleRow2>, IWrittenImplicitly, IReadImplicitly
+        sealed record SampleRow2 : IWrittenImplicitly, IReadImplicitly
         {
             public int intNonNull { get; set; }
             public int? intNull { get; set; }

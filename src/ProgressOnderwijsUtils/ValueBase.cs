@@ -1,68 +1,12 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using FastExpressionCompiler;
-using JetBrains.Annotations;
-using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
-    /// <summary>
-    /// Helper base class to automatically implement Equals, GetHashCode, ToString()
-    /// uses all public+private fields of the object for comparisons
-    /// uses public fields and properties for ToString()
-    /// Instantiated types must be sealed and pass themselves as the type parameter T.
-    /// </summary>
-    /// <typeparam name="T">The derived type; must be sealed</typeparam>
-    [Serializable]
-    public abstract class ValueBase<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-        T> : IEquatable<T>
-        where T : ValueBase<T>
-    {
-        protected ValueBase()
-        {
-            if (!(this is T)) {
-                throw new InvalidOperationException("Only T can subclass ValueBase<T>.");
-            }
-        }
-
-        static ValueBase()
-        {
-            try {
-                if (!typeof(T).IsSealed) {
-                    throw new InvalidOperationException("Value Classes must be sealed.");
-                }
-            } catch (Exception e) {
-                throw new Exception("Failed to create ValueBase for " + typeof(T).ToCSharpFriendlyTypeName(), e);
-            }
-        }
-
-        public bool Equals([AllowNull] T other)
-            => other != null && FieldwiseEquality<T>.Instance((T)this, other);
-
-        public override bool Equals(object? obj)
-            => obj is T typed && Equals(typed);
-
-        public override int GetHashCode()
-            => FieldwiseHasher<T>.Instance((T)this);
-
-        public T Copy()
-            => (T)MemberwiseClone();
-
-        public T CopyWith(Action<T> action)
-        {
-            var copied = Copy();
-            action(copied);
-            return copied;
-        }
-
-        public override string ToString()
-            => ToStringByMembers<T>.Func((T)this);
-    }
-
     public static class ToStringByMembers
     {
         public static string ToStringByPublicMembers<T>(T obj)

@@ -9,18 +9,18 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public sealed class DbColumnMetaData : ValueBase<DbColumnMetaData>
+    public sealed record DbColumnMetaData
     {
         struct CompressedSysColumnsValue : IWrittenImplicitly
         {
-            public string ColumnName { get; set; }
-            public DbObjectId DbObjectId { get; set; }
-            public DbColumnId ColumnId { get; set; }
-            public SqlXType User_Type_Id { get; set; }
-            public short Max_Length { get; set; }
-            public byte Precision { get; set; }
-            public byte Scale { get; set; }
-            public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
+            public string ColumnName { get; init; }
+            public DbObjectId DbObjectId { get; init; }
+            public DbColumnId ColumnId { get; init; }
+            public SqlXType User_Type_Id { get; init; }
+            public short Max_Length { get; init; }
+            public byte Precision { get; init; }
+            public byte Scale { get; init; }
+            public byte ColumnFlags { get; init; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
 
             public static ParameterizedSql BaseQuery(bool fromTempDb)
                 => SQL($@"
@@ -71,32 +71,30 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
+            var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
+
             var metaData = new DbColumnMetaData {
                 ColumnName = name,
                 UserTypeId = SqlXTypeExtensions.NetTypeToSqlXType(dataType),
                 IsNullable = dataType.CanBeNull(),
                 IsPrimaryKey = isKey,
+                MaxLength = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER),
+                Precision = (byte)(hasDecimalStyleScale ? 38 : 0),
+                Scale = (byte)(hasDecimalStyleScale ? 2 : 0),
             };
-            if (dataType == typeof(string)) {
-                metaData.MaxLength = (short)(maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
-            }
-            if (dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?)) {
-                metaData.Precision = 38;
-                metaData.Scale = 2;
-            }
             return metaData;
         }
 
-        public DbObjectId DbObjectId { get; set; }
-        public string ColumnName { get; set; }
+        public DbObjectId DbObjectId { get; init; }
+        public string ColumnName { get; init; }
 
         /// <summary>
         /// This id is 1-based and may contain gaps due to dropping of columns.
         /// </summary>
-        public DbColumnId ColumnId { get; set; }
+        public DbColumnId ColumnId { get; init; }
 
-        public SqlXType UserTypeId { get; set; }
-        public short MaxLength { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
+        public SqlXType UserTypeId { get; init; }
+        public short MaxLength { get; init; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
 
         public bool IsString
             => UserTypeId.SqlUnderlyingTypeInfo().ClrType == typeof(string);
@@ -104,8 +102,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public bool IsUnicode
             => UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar;
 
-        public byte Precision { get; set; }
-        public byte Scale { get; set; }
+        public byte Precision { get; init; }
+        public byte Scale { get; init; }
         EightFlags columnFlags;
 
         public bool IsNullable
@@ -155,13 +153,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => ToStringByMembers.ToStringByPublicMembers(this);
 
         public SqlTypeInfo SqlTypeInfo()
-            => new SqlTypeInfo(UserTypeId, MaxLength, Precision, Scale, IsNullable);
+            => new(UserTypeId, MaxLength, Precision, Scale, IsNullable);
 
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
 
         public DataColumn ToDataColumn()
-            => new DataColumn(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
+            => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
@@ -177,7 +175,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlConnection conn)
-            => CompressedSysColumnsValue.RunQuery(conn, false, default)
+            => CompressedSysColumnsValue.RunQuery(conn, false, new())
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 
         static DbColumnMetaData[] Sort(DbColumnMetaData[] toArray)

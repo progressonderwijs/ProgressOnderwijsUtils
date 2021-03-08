@@ -10,14 +10,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
     public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
-            new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
-            new BlaOk { Bla = "bla", Bla2 = "bla2", Id = 0 },
-            new BlaOk { Bla = "dfg", Bla2 = "bla342", Id = 1 },
-            new BlaOk { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2 },
-            new BlaOk { Bla2 = "", Id = 3 },
+            new() { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
+            new() { Bla = "bla", Bla2 = "bla2", Id = 0 },
+            new() { Bla = "dfg", Bla2 = "bla342", Id = 1 },
+            new() { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2 },
+            new() { Bla2 = "", Id = 3 },
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -26,12 +26,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string? Bla { get; set; }
         }
 
-        public struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
+        public readonly struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
         {
             public struct Source : IConverterSource<CustomBla, string>
             {
                 public ValueConverter<CustomBla, string> GetValueConverter()
-                    => this.DefineConverter(o => o.AsString, s => new CustomBla(s));
+                    => this.DefineConverter(o => o.AsString, s => new(s));
             }
 
             public CustomBla(string value)
@@ -40,19 +40,19 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string AsString { get; }
         }
 
-        public sealed class BlaOk3 : ValueBase<BlaOk3>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk3 : IWrittenImplicitly, IReadImplicitly
         {
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk4 : ValueBase<BlaOk4>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk4 : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string? Bla { get; set; }
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk5 : ValueBase<BlaOk5>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk5 : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string? Bla { get; set; }
@@ -60,14 +60,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public CustomBla? Bla3 { get; }
         }
 
-        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk_with_struct_property : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string? Bla { get; set; }
             public TrivialValue<string> Bla2 { get; set; }
         }
 
-        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk_with_nullable_struct_property : IWrittenImplicitly, IReadImplicitly
         {
             public TrivialValue<int> Id { get; set; }
             public TrivialValue<string>? Bla { get; set; }
@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_nullable_struct_property>(Connection);
-            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default, Bla2 = x.Bla2.Value })));
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : null, Bla2 = x.Bla2.Value })));
         }
 
         [Fact]

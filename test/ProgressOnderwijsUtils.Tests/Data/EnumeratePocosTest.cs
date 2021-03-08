@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 select content=null, id= 1337
                 ");
 
-        public sealed class ExampleRow : ValueBase<ExampleRow>, IWrittenImplicitly
+        public sealed record ExampleRow : IWrittenImplicitly
         {
             public int Id { get; set; }
             public string? Content { get; set; }
