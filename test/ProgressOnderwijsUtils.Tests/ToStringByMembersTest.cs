@@ -5,21 +5,18 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     [UsedImplicitly(ImplicitUseTargetFlags.Members)] // to test valuebase.ToString
-    public sealed record ExampleValue
+    public sealed class ExampleValue
     {
         public int MyInt;
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
-        public string MyString { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+        public string? MyString { get; set; }
         public DateTime SomeValueType { get; set; }
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
-        public ExampleValue Nested;
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+        public ExampleValue? Nested;
         public double? NullableField;
         public ConsoleKey? AnEnum;
+        public override string ToString() =>  ToStringByMembers.ToStringByPublicMembers(this); 
     }
 
-    public sealed class ValueBaseTest
+    public sealed class ToStringByMembersTest
     {
         [Fact]
         public void ToString_ReturnsCleanLookingOutput()
