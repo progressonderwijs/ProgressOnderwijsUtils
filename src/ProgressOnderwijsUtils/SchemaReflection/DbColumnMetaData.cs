@@ -118,14 +118,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         struct CompressedSysColumnsValue : IWrittenImplicitly
         {
-            public string ColumnName { get; set; }
-            public DbObjectId DbObjectId { get; set; }
-            public DbColumnId ColumnId { get; set; }
-            public SqlXType User_Type_Id { get; set; }
-            public short Max_Length { get; set; }
-            public byte Precision { get; set; }
-            public byte Scale { get; set; }
-            public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
+            public string ColumnName { get; init; }
+            public DbObjectId DbObjectId { get; init; }
+            public DbColumnId ColumnId { get; init; }
+            public SqlXType User_Type_Id { get; init; }
+            public short Max_Length { get; init; }
+            public byte Precision { get; init; }
+            public byte Scale { get; init; }
+            public byte ColumnFlags { get; init; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
 
             public static ParameterizedSql BaseQuery(bool fromTempDb)
                 => SQL(
