@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             new BlaOk { Bla2 = "", Id = 3 }
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string? Bla { get; set; }
         }
 
-        public sealed class BlaOk2 : ValueBase<BlaOk2>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaOk2 : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string? Bla { get; set; }
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaWithMispelledColumns : IWrittenImplicitly, IReadImplicitly
         {
             public int Idd { get; set; }
             public string? Bla { get; set; }
@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaWithMistypedColumns : IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public int Id { get; set; }
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaWithMistypedColumns2 : IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaWithExtraClrFields : IWrittenImplicitly, IReadImplicitly
         {
             public string? ExtraBla { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IWrittenImplicitly, IReadImplicitly
+        public sealed record BlaWithMissingClrFields : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
@@ -94,7 +94,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 
-        sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IWrittenImplicitly, IReadImplicitly
+        sealed record ComputedColumnExample : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public bool Computed { internal get; set; }
@@ -173,7 +173,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => fromDb.Computed);
         }
 
-        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
+        sealed record IncludingIdentityColumn : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int AnIdentity { get; set; }
@@ -182,7 +182,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
+        sealed record ExcludingIdentityColumn : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.

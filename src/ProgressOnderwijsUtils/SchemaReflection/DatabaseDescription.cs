@@ -12,6 +12,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbObjectId { }
 
+    /// <summary>
+    /// This id is 1-based and may contain gaps due to dropping of columns.
+    /// </summary>
     [DbIdEnum]
     public enum DbColumnId { }
 
@@ -204,10 +207,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     .SelectMany(fk =>
                         fk.Columns
                             .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
-                            .Select(fkCol => new ForeignKeyInfo {
-                                TableName = fk.ReferencingChildTable.QualifiedName,
-                                ColumnName = fkCol.ReferencingChildColumn.ColumnName
-                            })
+                            .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName,fkCol.ReferencingChildColumn.ColumnName))
                     ).ToArray();
 
             public TableColumn GetByColumnIndex(DbColumnId columnId)
