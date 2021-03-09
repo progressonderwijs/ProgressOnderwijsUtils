@@ -413,9 +413,8 @@ namespace ProgressOnderwijsUtils
                     ctorArguments[ctorIdx] = variablesByPropIdx[propIdx];
                 }
 
-                var rowVar = Expression.Variable(pocoProperties.PocoType);
-                allVariables.Add(rowVar);
-                statements.Add(Expression.Assign(rowVar, bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType)));
+                var newExpression = bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType);
+                var memberInits = new List<MemberAssignment>();
 
                 var unmappedProperties = new List<IPocoProperty>();
                 foreach (var prop in pocoProperties) {
@@ -423,13 +422,10 @@ namespace ProgressOnderwijsUtils
                         unmappedProperties.Add(prop);
                     }
                     if (propertyFlags[prop.Index].coveredByReaderColumn && !propertyFlags[prop.Index].viaConstructor) {
-                        var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(prop.PropertyInfo) ?? (MemberInfo)prop.PropertyInfo;
-                        var propertyAccess = Expression.MakeMemberAccess(rowVar, memberInfo);
-                        statements.Add(Expression.Assign(propertyAccess, variablesByPropIdx[prop.Index]));
+                        memberInits.Add(Expression.Bind(prop.PropertyInfo, variablesByPropIdx[prop.Index]));
                     }
                 }
-
-                statements.Add(rowVar);
+                statements.Add(Expression.MemberInit(newExpression, memberInits));
                 var constructRowExpr = Expression.Block(pocoProperties.PocoType, allVariables, statements);
 
                 return (constructRowExpr, unmappedProperties.ToArray());
