@@ -15,29 +15,25 @@ using FastExpressionCompiler;
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
-    public enum FieldMappingMode
-    {
-        RequireExactColumnMatches,
-        IgnoreExtraPocoProperties,
-    }
+    public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
 
     public static class ParameterizedSqlObjectMapper
     {
         public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
-            => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql)
-            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
+            => new(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
 
         public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
-            => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
-            => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static PocosSqlCommand<T> OfPocos<T>(this ParameterizedSql sql)
             where T : IWrittenImplicitly
-            => new PocosSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+            => new(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [return: MaybeNull]
         [MustUseReturnValue]
@@ -77,7 +73,7 @@ namespace ProgressOnderwijsUtils
             var pocoProperty = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new Exception("Missing field type for field " + lastColumnRead + " named " + sqlColName);
+            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new("Missing field type for field " + lastColumnRead + " named " + sqlColName);
 
             bool? isValueNull = null;
             try {
@@ -123,7 +119,7 @@ namespace ProgressOnderwijsUtils
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
-            new Dictionary<Type, MethodInfo> {
+            new() {
                 { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static)! },
                 { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static)! },
                 { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
@@ -232,8 +228,8 @@ namespace ProgressOnderwijsUtils
             public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly
             {
-                static readonly object constructionSync = new object();
-                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)>();
+                static readonly object constructionSync = new();
+                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                 {
@@ -246,7 +242,8 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     if (fieldMappingMode == FieldMappingMode.RequireExactColumnMatches && match.unmappedProperties.Length > 0) {
-                        throw new Exception("Some properties were unmapped: "
+                        throw new(
+                            "Some properties were unmapped: "
                             + match.unmappedProperties
                                 .Select(prop => $"{prop.DataType.ToCSharpFriendlyTypeName()} {prop.Name}")
                                 .JoinStrings("; ")
@@ -318,7 +315,7 @@ namespace ProgressOnderwijsUtils
                 var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
                 var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                 var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
-                return (rowToPoco: rowToPocoLambda.CompileFast(), unmappedProperties);
+                return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
             }
 
             public static (BlockExpression constructRowExpr, IPocoProperty[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, IPocoProperties<IPocoProperty> pocoProperties)
@@ -329,26 +326,25 @@ namespace ProgressOnderwijsUtils
 
                 var propertyFlags = new (bool coveredByReaderColumn, bool viaConstructor)[pocoProperties.Count];
                 var variablesByPropIdx = new ParameterExpression[pocoProperties.Count];
-                var allVariables = new List<ParameterExpression>(cols.Length + 1);
                 var errors = new List<string>();
                 var minimalViaConstructorCount = 0;
                 for (var columnIndex = 0; columnIndex < cols.Length; columnIndex++) {
                     if (!(
                         pocoProperties.IndexByName.TryGetValue(cols[columnIndex], out var propertyIndex)
-                        && pocoProperties[propertyIndex] is {} member
+                        && pocoProperties[propertyIndex] is { } member
                     )) {
                         errors.Add("Cannot resolve IDataReader column " + cols[columnIndex] + " in type " + FriendlyName());
                     } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
                         errors.Add("The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " has already been mapped; are there two identically names columns?");
                     } else if (!IsSupportedType(member.DataType)) {
-                        errors.Add("The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
+                        errors.Add(
+                            "The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
                             + " which has no supported conversion from a DbDataReaderColumn."
                         );
                     } else {
                         propertyFlags[propertyIndex].coveredByReaderColumn = true;
                         var variable = Expression.Variable(member.DataType, member.Name);
                         variablesByPropIdx[propertyIndex] = variable;
-                        allVariables.Add(variable);
                         statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(columnIndex)));
                         statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, columnIndex, member.DataType)));
                         if (!member.CanWrite) {
@@ -374,9 +370,9 @@ namespace ProgressOnderwijsUtils
                     var possibleMatch = true;
                     var propsWithoutSetterWithoutConstructorArg = minimalViaConstructorCount;
                     foreach (var parameter in ctorParameters) {
-                        if (parameter.Name is {} paramName
+                        if (parameter.Name is { } paramName
                             && pocoProperties.IndexByName.TryGetValue(paramName, out var propIdx)
-                            && pocoProperties[propIdx] is {} property
+                            && pocoProperties[propIdx] is { } property
                             && property.DataType == parameter.ParameterType
                             && IsSupportedType(parameter.ParameterType)
                         ) {
@@ -401,7 +397,8 @@ namespace ProgressOnderwijsUtils
                 }
 
                 if (bestCtorParameters == null) {
-                    throw new Exception($"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
+                    throw new(
+                        $"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
                         + "No applicable constructor found. The type must have at least one public contructor for which all parameters have an identically named and typed public property.\n"
                         + "Since they have no setter, the constructor must at least have parameters covering " + pocoProperties.Select((prop, idx) => (prop, propertyFlags[idx].viaConstructor)).Where(o => o.viaConstructor).Select(o => o.prop.Name).JoinStrings(", ")
                     );
@@ -414,9 +411,8 @@ namespace ProgressOnderwijsUtils
                     ctorArguments[ctorIdx] = variablesByPropIdx[propIdx];
                 }
 
-                var rowVar = Expression.Variable(pocoProperties.PocoType);
-                allVariables.Add(rowVar);
-                statements.Add(Expression.Assign(rowVar, bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType)));
+                var newExpression = bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType);
+                var memberInits = new List<MemberAssignment>();
 
                 var unmappedProperties = new List<IPocoProperty>();
                 foreach (var prop in pocoProperties) {
@@ -424,14 +420,11 @@ namespace ProgressOnderwijsUtils
                         unmappedProperties.Add(prop);
                     }
                     if (propertyFlags[prop.Index].coveredByReaderColumn && !propertyFlags[prop.Index].viaConstructor) {
-                        var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(prop.PropertyInfo) ?? (MemberInfo)prop.PropertyInfo;
-                        var propertyAccess = Expression.MakeMemberAccess(rowVar, memberInfo);
-                        statements.Add(Expression.Assign(propertyAccess, variablesByPropIdx[prop.Index]));
+                        memberInits.Add(Expression.Bind(prop.PropertyInfo, variablesByPropIdx[prop.Index]));
                     }
                 }
-
-                statements.Add(rowVar);
-                var constructRowExpr = Expression.Block(pocoProperties.PocoType, allVariables, statements);
+                statements.Add(Expression.MemberInit(newExpression, memberInits));
+                var constructRowExpr = Expression.Block(pocoProperties.PocoType, variablesByPropIdx.WhereNotNull(), statements);
 
                 return (constructRowExpr, unmappedProperties.ToArray());
             }

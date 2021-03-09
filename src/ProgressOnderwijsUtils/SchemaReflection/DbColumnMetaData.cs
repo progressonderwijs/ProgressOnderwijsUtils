@@ -15,10 +15,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         short MaxLength,
         byte Precision,
         byte Scale
-    )
+    ) : IWrittenImplicitly
     {
         public DbObjectId DbObjectId { get; init; }
         public DbColumnId ColumnId { get; init; }
+        public byte ColumnFlags { get => columnFlags.PackedValues; init => columnFlags.PackedValues = value; }
         EightFlags columnFlags;
 
         public bool IsNullable
@@ -98,14 +99,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, string qualifiedObjectName)
         {
             var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
-                ? CompressedSysColumnsValue.RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
-                : CompressedSysColumnsValue.RunQuery(conn, false, SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
+                ? RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
+                : RunQuery(conn, false, SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
             return Sort(dbColumnMetaDatas);
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlConnection conn)
-            => CompressedSysColumnsValue.RunQuery(conn, false, new())
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
+            => RunQuery(conn, false, new()).ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 
         static DbColumnMetaData[] Sort(DbColumnMetaData[] toArray)
         {
@@ -116,20 +116,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         static readonly Comparison<DbColumnMetaData> byColumnId = (a, b) => ((int)a.ColumnId).CompareTo((int)b.ColumnId);
         static readonly Regex isSafeForSql = new("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
-        struct CompressedSysColumnsValue : IWrittenImplicitly
-        {
-            public string ColumnName { get; set; }
-            public DbObjectId DbObjectId { get; set; }
-            public DbColumnId ColumnId { get; set; }
-            public SqlXType User_Type_Id { get; set; }
-            public short Max_Length { get; set; }
-            public byte Precision { get; set; }
-            public byte Scale { get; set; }
-            public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
-
-            public static ParameterizedSql BaseQuery(bool fromTempDb)
-                => SQL(
-                    $@"
+        public static ParameterizedSql BaseQuery(bool fromTempDb)
+            => SQL(
+                $@"
                 with pks (object_id, column_id) as (
                     select i.object_id, ic.column_id
                     from sys.index_columns ic 
@@ -139,10 +128,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     ColumnName = c.name
                     , DbObjectId = c.object_id
                     , ColumnId = c.column_id
-                    , c.user_type_id
-                    , c.max_length
-                    , c.precision
-                    , c.scale
+                    , UserTypeId = c.user_type_id
+                    , MaxLength = c.max_length
+                    , c.Precision
+                    , c.Scale
                     , ColumnFlags = convert(tinyint, 0
                         + 1*c.is_nullable 
                         + 2*c.is_computed
@@ -154,18 +143,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
             "
-                );
+            );
 
-            public static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
-                => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
-        }
-
-        DbColumnMetaData(CompressedSysColumnsValue fromDb) : this(fromDb.ColumnName, fromDb.User_Type_Id, fromDb.Max_Length, fromDb.Precision, fromDb.Scale)
-        {
-            ColumnId = fromDb.ColumnId;
-            DbObjectId = fromDb.DbObjectId;
-            columnFlags = new EightFlags(fromDb.ColumnFlags);
-        }
+        static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
+            => BaseQuery(fromTempDb).Append(filter).OfPocos<DbColumnMetaData>().WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(conn);
     }
 
     public static class DbColumnMetaDataExtensions
