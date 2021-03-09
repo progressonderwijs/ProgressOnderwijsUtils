@@ -326,7 +326,6 @@ namespace ProgressOnderwijsUtils
 
                 var propertyFlags = new (bool coveredByReaderColumn, bool viaConstructor)[pocoProperties.Count];
                 var variablesByPropIdx = new ParameterExpression[pocoProperties.Count];
-                var allVariables = new List<ParameterExpression>(cols.Length + 1);
                 var errors = new List<string>();
                 var minimalViaConstructorCount = 0;
                 for (var columnIndex = 0; columnIndex < cols.Length; columnIndex++) {
@@ -346,7 +345,6 @@ namespace ProgressOnderwijsUtils
                         propertyFlags[propertyIndex].coveredByReaderColumn = true;
                         var variable = Expression.Variable(member.DataType, member.Name);
                         variablesByPropIdx[propertyIndex] = variable;
-                        allVariables.Add(variable);
                         statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(columnIndex)));
                         statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, columnIndex, member.DataType)));
                         if (!member.CanWrite) {
@@ -426,7 +424,7 @@ namespace ProgressOnderwijsUtils
                     }
                 }
                 statements.Add(Expression.MemberInit(newExpression, memberInits));
-                var constructRowExpr = Expression.Block(pocoProperties.PocoType, allVariables, statements);
+                var constructRowExpr = Expression.Block(pocoProperties.PocoType, variablesByPropIdx.WhereNotNull(), statements);
 
                 return (constructRowExpr, unmappedProperties.ToArray());
             }
