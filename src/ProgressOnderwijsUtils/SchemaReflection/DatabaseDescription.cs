@@ -20,8 +20,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public struct DbNamedObjectId : IWrittenImplicitly
     {
-        public DbObjectId ObjectId { get; set; }
-        public string QualifiedName { get; set; }
+        public DbObjectId ObjectId { get; init; }
+        public string QualifiedName { get; init; }
 
         public static DbNamedObjectId[] LoadAllObjectsOfType(SqlConnection conn, string type)
             => SQL($@"

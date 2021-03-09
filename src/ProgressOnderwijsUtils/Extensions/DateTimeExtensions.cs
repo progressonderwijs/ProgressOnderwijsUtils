@@ -20,13 +20,6 @@ namespace ProgressOnderwijsUtils
         public static bool Overlapt(this Periode periode1, Periode periode2)
             => periode1.DatumVan < periode2.DatumTot && periode1.DatumTot > periode2.DatumVan;
 
-        public struct Periode
-        {
-            public DateTime DatumVan { get; set; }
-            public DateTime DatumTot { get; set; }
-
-            public static Periode Create(DateTime datumVan, DateTime datumTot)
-                => new Periode { DatumVan = datumVan, DatumTot = datumTot };
-        }
+        public sealed record Periode(DateTime DatumVan, DateTime DatumTot);
     }
 }

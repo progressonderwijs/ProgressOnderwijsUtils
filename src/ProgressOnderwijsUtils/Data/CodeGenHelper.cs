@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         {
             var friendlyTypeName = colNameOverride ?? (x => x.DataType.ToCSharpFriendlyTypeName());
 
-            return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; set; }\n";
+            return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; init; }\n";
         }
 
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);

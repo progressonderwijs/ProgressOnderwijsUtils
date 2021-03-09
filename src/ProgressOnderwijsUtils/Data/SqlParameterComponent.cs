@@ -13,8 +13,8 @@ namespace ProgressOnderwijsUtils
 {
     static class SqlParameterComponent
     {
-        static readonly Dictionary<long, string> empty = new Dictionary<long, string>();
-        static readonly ConcurrentDictionary<Type, Dictionary<long, string>> enumStringRepresentations = new ConcurrentDictionary<Type, Dictionary<long, string>>();
+        static readonly Dictionary<long, string> empty = new();
+        static readonly ConcurrentDictionary<Type, Dictionary<long, string>> enumStringRepresentations = new();
 
         static readonly Func<Type, Dictionary<long, string>> enumStringRepresentationValueFactory =
             type => {
@@ -44,7 +44,11 @@ namespace ProgressOnderwijsUtils
                     .GetOrDefault(((IConvertible)val).ToInt64(null));
 
         static string? GetBooleanStringRepresentationOrNull(bool? val)
-            => val == null ? null : val.Value ? "cast(1 as bit)" : "cast(0 as bit)";
+            => val == null
+                ? null
+                : val.Value
+                    ? "cast(1 as bit)"
+                    : "cast(0 as bit)";
 
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object? o)
             where TCommandFactory : struct, ICommandFactory
@@ -83,7 +87,7 @@ namespace ProgressOnderwijsUtils
                 ? new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
                 : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
-        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory?> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory?>();
+        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory?> tableValuedParameterFactoryCache = new();
 
         static ITableValuedParameterFactory? CreateTableValuedParameterFactory(Type enumerableType)
         {
@@ -100,7 +104,7 @@ namespace ProgressOnderwijsUtils
             return (ITableValuedParameterFactory?)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
-        internal struct CustomTableType
+        internal readonly struct CustomTableType
         {
             public readonly Type Type;
             public readonly string SqlTypeName;
@@ -113,25 +117,26 @@ namespace ProgressOnderwijsUtils
                 TableDeclaration = tableDeclaration;
             }
 
-            public static readonly CustomTableType[] All = new[] {
-                new CustomTableType(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
-                new CustomTableType(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
-                new CustomTableType(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
-                new CustomTableType(typeof(decimal), "TVar_Decimal", "querytablevalue decimal(18, 0) not null"),
-                new CustomTableType(typeof(double), "TVar_Float", "querytablevalue float not null"),
-                new CustomTableType(typeof(int), "TVar_Int", "querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off)"),
-                new CustomTableType(typeof(char), "TVar_NChar1", "querytablevalue nchar(1) not null"),
-                new CustomTableType(typeof(string), "TVar_NVarcharMax", "querytablevalue nvarchar(max) not null"),
-                new CustomTableType(typeof(short), "TVar_Smallint", "querytablevalue smallint not null"),
-                new CustomTableType(typeof(TimeSpan), "TVar_Time", "querytablevalue time(7) not null"),
-                new CustomTableType(typeof(byte), "TVar_Tinyint", "querytablevalue tinyint not null"),
-                new CustomTableType(typeof(byte[]), "TVar_VarBinaryMax", "querytablevalue varbinary(max) not null"),
+            public static readonly CustomTableType[] All = {
+                new(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
+                new(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
+                new(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
+                new(typeof(decimal), "TVar_Decimal", "querytablevalue decimal(18, 0) not null"),
+                new(typeof(double), "TVar_Float", "querytablevalue float not null"),
+                new(typeof(int), "TVar_Int", "querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off)"),
+                new(typeof(char), "TVar_NChar1", "querytablevalue nchar(1) not null"),
+                new(typeof(string), "TVar_NVarcharMax", "querytablevalue nvarchar(max) not null"),
+                new(typeof(short), "TVar_Smallint", "querytablevalue smallint not null"),
+                new(typeof(TimeSpan), "TVar_Time", "querytablevalue time(7) not null"),
+                new(typeof(byte), "TVar_Tinyint", "querytablevalue tinyint not null"),
+                new(typeof(byte[]), "TVar_VarBinaryMax", "querytablevalue varbinary(max) not null"),
             };
 
             public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
 
             public static ParameterizedSql DefinitionScripts
-                => SQL($@"
+                => SQL(
+                    $@"
                     begin tran;
                     {All
                         .Select(o => SQL($@"
@@ -142,7 +147,8 @@ namespace ProgressOnderwijsUtils
                         .ConcatenateSql()
                     }
                     commit;
-                ");
+                "
+                );
         }
 
         interface ITableValuedParameterFactory
@@ -160,7 +166,7 @@ namespace ProgressOnderwijsUtils
             public TableValuedParameterFactory(string sqlTableTypeName)
                 => this.sqlTableTypeName = sqlTableTypeName;
 
-                public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
+            public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
                 => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInSinglePropertyPoco);
         }
 
@@ -200,7 +206,7 @@ namespace ProgressOnderwijsUtils
         public struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObjectProjectionForDebugging, IReadImplicitly
         {
             [Key]
-            public T QueryTableValue { get; set; }
+            public T QueryTableValue { get; init; }
 
             public override string? ToString()
                 => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
@@ -215,12 +221,12 @@ namespace ProgressOnderwijsUtils
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
-                public static TableValuedParameterWrapper<T>[] WrapPlainValueInSinglePropertyPoco<T>(IEnumerable<T> typedEnumerable)
+            public static TableValuedParameterWrapper<T>[] WrapPlainValueInSinglePropertyPoco<T>(IEnumerable<T> typedEnumerable)
             {
                 if (typedEnumerable is T[] typedArray) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];
                     for (var i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].QueryTableValue = typedArray[i];
+                        projectedArray[i] = new() { QueryTableValue = typedArray[i] };
                     }
                     return projectedArray;
                 }
@@ -228,14 +234,14 @@ namespace ProgressOnderwijsUtils
                 if (typedEnumerable is IReadOnlyList<T> typedList) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedList.Count];
                     for (var i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].QueryTableValue = typedList[i];
+                        projectedArray[i] = new() { QueryTableValue = typedList[i] };
                     }
                     return projectedArray;
                 }
 
                 var arrayBuilder = new ArrayBuilder<TableValuedParameterWrapper<T>>();
                 foreach (var item in typedEnumerable) {
-                    arrayBuilder.Add(new TableValuedParameterWrapper<T> { QueryTableValue = item });
+                    arrayBuilder.Add(new() { QueryTableValue = item });
                 }
                 return arrayBuilder.ToArray();
             }
