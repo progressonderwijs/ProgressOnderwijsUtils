@@ -121,8 +121,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public string ColumnName { get; init; }
             public DbObjectId DbObjectId { get; init; }
             public DbColumnId ColumnId { get; init; }
-            public SqlXType User_Type_Id { get; init; }
-            public short Max_Length { get; init; }
+            public SqlXType UserTypeId { get; init; }
+            public short MaxLength { get; init; }
             public byte Precision { get; init; }
             public byte Scale { get; init; }
             public byte ColumnFlags { get; init; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
@@ -139,10 +139,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     ColumnName = c.name
                     , DbObjectId = c.object_id
                     , ColumnId = c.column_id
-                    , c.user_type_id
-                    , c.max_length
-                    , c.precision
-                    , c.scale
+                    , UserTypeId = c.user_type_id
+                    , MaxLength = c.max_length
+                    , c.Precision
+                    , c.Scale
                     , ColumnFlags = convert(tinyint, 0
                         + 1*c.is_nullable 
                         + 2*c.is_computed
@@ -160,7 +160,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
-        DbColumnMetaData(CompressedSysColumnsValue fromDb) : this(fromDb.ColumnName, fromDb.User_Type_Id, fromDb.Max_Length, fromDb.Precision, fromDb.Scale)
+        DbColumnMetaData(CompressedSysColumnsValue fromDb) : this(fromDb.ColumnName, fromDb.UserTypeId, fromDb.MaxLength, fromDb.Precision, fromDb.Scale)
         {
             ColumnId = fromDb.ColumnId;
             DbObjectId = fromDb.DbObjectId;
