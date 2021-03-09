@@ -22,8 +22,8 @@ namespace ProgressOnderwijsUtils
 
         public struct Periode
         {
-            public DateTime DatumVan { get; set; }
-            public DateTime DatumTot { get; set; }
+            public DateTime DatumVan { get; init; }
+            public DateTime DatumTot { get; init; }
 
             public static Periode Create(DateTime datumVan, DateTime datumTot)
                 => new Periode { DatumVan = datumVan, DatumTot = datumTot };

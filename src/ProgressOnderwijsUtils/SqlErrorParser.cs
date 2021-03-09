@@ -8,34 +8,34 @@ namespace ProgressOnderwijsUtils
 
     public struct KeyConstraintViolation : ISqlErrorParseResult
     {
-        public string ConstraintType { get; set; }
-        public string ConstraintName { get; set; }
-        public string ObjectName { get; set; }
-        public string[] DuplicateKeyValue { get; set; }
+        public string ConstraintType { get; init; }
+        public string ConstraintName { get; init; }
+        public string ObjectName { get; init; }
+        public string[] DuplicateKeyValue { get; init; }
     }
 
     public struct DuplicateKeyUniqueIndex : ISqlErrorParseResult
     {
-        public string IndexName { get; set; }
-        public string ObjectName { get; set; }
-        public string[] DuplicateKeyValue { get; set; }
+        public string IndexName { get; init; }
+        public string ObjectName { get; init; }
+        public string[] DuplicateKeyValue { get; init; }
     }
 
     public struct CannotInsertNull : ISqlErrorParseResult
     {
-        public string TableName { get; set; }
-        public string ColumnName { get; set; }
-        public string StatementType { get; set; }
+        public string TableName { get; init; }
+        public string ColumnName { get; init; }
+        public string StatementType { get; init; }
     }
 
     public struct GenericConstraintViolation : ISqlErrorParseResult
     {
-        public string StatementType { get; set; }
-        public string ConstraintType { get; set; }
-        public string ConstraintName { get; set; }
-        public string? DatabaseName { get; set; }
-        public string? TableName { get; set; }
-        public string? ColumnName { get; set; }
+        public string StatementType { get; init; }
+        public string ConstraintType { get; init; }
+        public string ConstraintName { get; init; }
+        public string? DatabaseName { get; init; }
+        public string? TableName { get; init; }
+        public string? ColumnName { get; init; }
     }
 
     public static class SqlErrorParser
