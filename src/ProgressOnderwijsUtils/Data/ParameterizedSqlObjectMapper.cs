@@ -20,20 +20,20 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlObjectMapper
     {
         public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
-            => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql)
-            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
+            => new(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
 
         public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
-            => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
-            => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+            => new(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static PocosSqlCommand<T> OfPocos<T>(this ParameterizedSql sql)
             where T : IWrittenImplicitly
-            => new PocosSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+            => new(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [return: MaybeNull]
         [MustUseReturnValue]
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
             var pocoProperty = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new Exception("Missing field type for field " + lastColumnRead + " named " + sqlColName);
+            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new("Missing field type for field " + lastColumnRead + " named " + sqlColName);
 
             bool? isValueNull = null;
             try {
@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtils
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
-            new Dictionary<Type, MethodInfo> {
+            new() {
                 { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static)! },
                 { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static)! },
                 { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
@@ -228,8 +228,8 @@ namespace ProgressOnderwijsUtils
             public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly
             {
-                static readonly object constructionSync = new object();
-                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)>();
+                static readonly object constructionSync = new();
+                static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                 {
@@ -242,7 +242,7 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     if (fieldMappingMode == FieldMappingMode.RequireExactColumnMatches && match.unmappedProperties.Length > 0) {
-                        throw new Exception(
+                        throw new(
                             "Some properties were unmapped: "
                             + match.unmappedProperties
                                 .Select(prop => $"{prop.DataType.ToCSharpFriendlyTypeName()} {prop.Name}")
@@ -397,7 +397,7 @@ namespace ProgressOnderwijsUtils
                 }
 
                 if (bestCtorParameters == null) {
-                    throw new Exception(
+                    throw new(
                         $"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
                         + "No applicable constructor found. The type must have at least one public contructor for which all parameters have an identically named and typed public property.\n"
                         + "Since they have no setter, the constructor must at least have parameters covering " + pocoProperties.Select((prop, idx) => (prop, propertyFlags[idx].viaConstructor)).Where(o => o.viaConstructor).Select(o => o.prop.Name).JoinStrings(", ")
