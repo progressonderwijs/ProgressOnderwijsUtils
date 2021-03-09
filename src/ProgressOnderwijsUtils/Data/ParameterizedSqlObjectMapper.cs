@@ -15,11 +15,7 @@ using FastExpressionCompiler;
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
-    public enum FieldMappingMode
-    {
-        RequireExactColumnMatches,
-        IgnoreExtraPocoProperties,
-    }
+    public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
 
     public static class ParameterizedSqlObjectMapper
     {
@@ -246,7 +242,8 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     if (fieldMappingMode == FieldMappingMode.RequireExactColumnMatches && match.unmappedProperties.Length > 0) {
-                        throw new Exception("Some properties were unmapped: "
+                        throw new Exception(
+                            "Some properties were unmapped: "
                             + match.unmappedProperties
                                 .Select(prop => $"{prop.DataType.ToCSharpFriendlyTypeName()} {prop.Name}")
                                 .JoinStrings("; ")
@@ -335,13 +332,14 @@ namespace ProgressOnderwijsUtils
                 for (var columnIndex = 0; columnIndex < cols.Length; columnIndex++) {
                     if (!(
                         pocoProperties.IndexByName.TryGetValue(cols[columnIndex], out var propertyIndex)
-                        && pocoProperties[propertyIndex] is {} member
+                        && pocoProperties[propertyIndex] is { } member
                     )) {
                         errors.Add("Cannot resolve IDataReader column " + cols[columnIndex] + " in type " + FriendlyName());
                     } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
                         errors.Add("The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " has already been mapped; are there two identically names columns?");
                     } else if (!IsSupportedType(member.DataType)) {
-                        errors.Add("The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
+                        errors.Add(
+                            "The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
                             + " which has no supported conversion from a DbDataReaderColumn."
                         );
                     } else {
@@ -374,9 +372,9 @@ namespace ProgressOnderwijsUtils
                     var possibleMatch = true;
                     var propsWithoutSetterWithoutConstructorArg = minimalViaConstructorCount;
                     foreach (var parameter in ctorParameters) {
-                        if (parameter.Name is {} paramName
+                        if (parameter.Name is { } paramName
                             && pocoProperties.IndexByName.TryGetValue(paramName, out var propIdx)
-                            && pocoProperties[propIdx] is {} property
+                            && pocoProperties[propIdx] is { } property
                             && property.DataType == parameter.ParameterType
                             && IsSupportedType(parameter.ParameterType)
                         ) {
@@ -401,7 +399,8 @@ namespace ProgressOnderwijsUtils
                 }
 
                 if (bestCtorParameters == null) {
-                    throw new Exception($"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
+                    throw new Exception(
+                        $"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
                         + "No applicable constructor found. The type must have at least one public contructor for which all parameters have an identically named and typed public property.\n"
                         + "Since they have no setter, the constructor must at least have parameters covering " + pocoProperties.Select((prop, idx) => (prop, propertyFlags[idx].viaConstructor)).Where(o => o.viaConstructor).Select(o => o.prop.Name).JoinStrings(", ")
                     );
