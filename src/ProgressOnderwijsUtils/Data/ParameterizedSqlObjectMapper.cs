@@ -315,7 +315,7 @@ namespace ProgressOnderwijsUtils
                 var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
                 var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                 var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
-                return (rowToPoco: rowToPocoLambda.CompileFast(), unmappedProperties);
+                return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
             }
 
             public static (BlockExpression constructRowExpr, IPocoProperty[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, IPocoProperties<IPocoProperty> pocoProperties)
