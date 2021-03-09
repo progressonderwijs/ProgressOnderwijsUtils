@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using System.Threading;
-using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
@@ -23,7 +22,7 @@ namespace ProgressOnderwijsUtils
             => new CommandTimeoutDefaults(commandTimeout.ComputeAbsoluteTimeout(this), TimeoutScalingFactor);
     }
 
-    public struct CommandTimeout : IEquatable<CommandTimeout>
+    public readonly struct CommandTimeout : IEquatable<CommandTimeout>
     {
         readonly ushort backingTimeout;
         public readonly TimeoutKind Kind;
@@ -119,7 +118,7 @@ namespace ProgressOnderwijsUtils
             => obj is CommandTimeout other && this == other;
 
         public static bool operator ==(CommandTimeout a, CommandTimeout b)
-            => FieldwiseEquality.AreEqual(a, b);
+            => a.backingTimeout == b.backingTimeout && a.Kind == b.Kind;
 
         public static bool operator !=(CommandTimeout a, CommandTimeout b)
             => !(a == b);
@@ -128,6 +127,6 @@ namespace ProgressOnderwijsUtils
             => ScaledSeconds(scaledSeconds);
 
         public override int GetHashCode()
-            => FieldwiseHasher.Hash(this);
+            => (backingTimeout, Kind).GetHashCode();
     }
 }
