@@ -86,13 +86,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     struct ForeignKeyColumnEntry : IWrittenImplicitly
     {
-        public DbObjectId ForeignKeyObjectId { get; set; }
-        public FkReferentialAction DeleteReferentialAction { get; set; }
-        public FkReferentialAction UpdateReferentialAction { get; set; }
-        public DbObjectId ReferencingChildTable { get; set; }
-        public DbObjectId ReferencedParentTable { get; set; }
-        public DbColumnId ReferencedParentColumn { get; set; }
-        public DbColumnId ReferencingChildColumn { get; set; }
-        public string Name { get; set; }
+        public DbObjectId ForeignKeyObjectId { get; init; }
+        public FkReferentialAction DeleteReferentialAction { get; init; }
+        public FkReferentialAction UpdateReferentialAction { get; init; }
+        public DbObjectId ReferencingChildTable { get; init; }
+        public DbObjectId ReferencedParentTable { get; init; }
+        public DbColumnId ReferencedParentColumn { get; init; }
+        public DbColumnId ReferencingChildColumn { get; init; }
+        public string Name { get; init; }
     }
 }
