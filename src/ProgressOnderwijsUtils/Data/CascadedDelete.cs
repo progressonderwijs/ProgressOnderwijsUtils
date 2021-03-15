@@ -195,7 +195,7 @@ namespace ProgressOnderwijsUtils
                     var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
                     var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
                         ? SQL($"where 1=1")
-                        : SQL($"where {childTable.PrimaryKey.Select(col => SQL($"pk.{col.SqlColumnName()}<>fk.{col.SqlColumnName()}")).ConcatenateSql(SQL($" or "))}");
+                        : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))}");
                     var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                     var selectClause = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var statement = SQL(
