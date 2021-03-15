@@ -194,5 +194,24 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T2", "dbo.T1" }));
         }
+
+        [Fact]
+        public void CascadeDeleteAllowsSameTableCyclesWhenThoseAreSimultaneouslyDeletable()
+        {
+            SQL($@"
+                create table T1 (A int primary key);
+                create table T2 (B int primary key, A int references T1, C int references T2);
+
+                insert into T1 values (1);
+                insert into T2 values (2, 1, null);
+                insert into T2 values (3, 1, 2);
+                update T2 set C=3 where B=2
+            ").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
+
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
+        }
     }
 }
