@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>71.0.0</Version>
-    <PackageReleaseNotes>Converted various DTOs to records; use init-only properties where appropriate; support init-only properties in object-mapper</PackageReleaseNotes>
+    <Version>71.0.1</Version>
+    <PackageReleaseNotes>Fix corner case crash CascadeDelete involving same table reference constraints</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
