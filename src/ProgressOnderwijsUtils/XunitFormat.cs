@@ -29,12 +29,14 @@ namespace ProgressOnderwijsUtils
                 output.Append(message, doneUpto, nextSlash - doneUpto);
                 var nextChar = message[nextSlash + 1];
                 output.Append(
-                    nextChar == 'n' ? '\n' :
-                    nextChar == 'r' ? '\r' :
-                    nextChar == '\\' ? '\\' :
-                    nextChar == 't' ? '\t' :
-                    nextChar == '"' ? '"' :
-                    nextChar
+                    nextChar switch {
+                        'n' => '\n',
+                        'r' => '\r',
+                        '\\' => '\\',
+                        't' => '\t',
+                        '"' => '"',
+                        var c => c,
+                    }
                 );
                 doneUpto = nextSlash + 2;
                 nextSlash = message.IndexOf('\\', doneUpto);
