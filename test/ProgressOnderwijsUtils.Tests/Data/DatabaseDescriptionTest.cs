@@ -57,6 +57,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => fk2.ReferencedParentTable.QualifiedName == "dbo.ForeignKeyLookupLevel");
             PAssert.That(() => fk2.Columns.Single().ReferencedParentColumn.ColumnName == "IdLevel");
             PAssert.That(() => fk2.Columns.Single().ReferencingChildColumn.ColumnName == "IdLevel");
+            PAssert.That(() => fk2.QualifiedName == "dbo.LeafToLevel");
         }
 
         [Fact]
