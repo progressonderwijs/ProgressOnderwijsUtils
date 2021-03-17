@@ -49,20 +49,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
-            var fkObjects = foreignKeys.ArraySelect(
-                o => {
-                    var parentTable = tableById[o.ReferencedParentTable];
-                    var childTable = tableById[o.ReferencingChildTable];
-                    return new ForeignKey(
-                        parentTable,
-                        childTable,
-                        o.Columns.ArraySelect(pair => (parentTable.GetByColumnIndex(pair.ReferencedParentColumn), childTable.GetByColumnIndex(pair.ReferencingChildColumn))),
-                        o.ConstraintName,
-                        o.DeleteReferentialAction,
-                        o.UpdateReferentialAction
-                    );
-                }
-            );
+            var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
             fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
             fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
             checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
@@ -96,14 +83,27 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
-        public sealed record ForeignKey(
-            Table ReferencedParentTable,
-            Table ReferencingChildTable,
-            (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn)[] Columns,
-            string UnqualifiedName,
-            FkReferentialAction DeleteReferentialAction,
-            FkReferentialAction UpdateReferentialAction)
+        public sealed record ForeignKeyColumn (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
+
+        public sealed class ForeignKey
         {
+            public readonly Table ReferencedParentTable;
+            public readonly Table ReferencingChildTable;
+            public readonly IReadOnlyList<ForeignKeyColumn> Columns;
+            public readonly string UnqualifiedName;
+            public readonly FkReferentialAction DeleteReferentialAction;
+            public readonly FkReferentialAction UpdateReferentialAction;
+
+            internal ForeignKey(DbForeignKey o, IReadOnlyDictionary<DbObjectId, Table> tablesById)
+            {
+                ReferencedParentTable = tablesById[o.ReferencedParentTable];
+                ReferencingChildTable = tablesById[o.ReferencingChildTable];
+                Columns = o.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
+                UnqualifiedName = o.ConstraintName;
+                DeleteReferentialAction = o.DeleteReferentialAction;
+                UpdateReferentialAction = o.UpdateReferentialAction;
+            }
+
             public string QualifiedName
                 => ReferencingChildTable.SchemaName + "." + UnqualifiedName;
 
