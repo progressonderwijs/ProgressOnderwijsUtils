@@ -59,18 +59,19 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => fk2.Columns.Single().ReferencingChildColumn.ColumnName == "IdLevel");
         }
 
-
         [Fact]
         public void CheckConstraintWithTable_works()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table dbo.CheckConstraintTest (
                     IdRoot int not null primary key,
                     Test int not null
                 );
 
                 alter table dbo.CheckConstraintTest add constraint ck_TestConstraint check (Test <> 0);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
@@ -91,7 +92,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CheckIsStringAndIsUnicode_works()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table dbo.CheckIsString (
                     IdRoot int not null primary key,
                     Testint int not null,
@@ -101,7 +103,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     Testnvarchar nvarchar(10) not null,
                     Testxml xml not null
                 );
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
