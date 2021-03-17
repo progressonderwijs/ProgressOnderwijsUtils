@@ -18,15 +18,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public static class FkReferentialAction_AsSql
     {
         public static ParameterizedSql AsSql(this FkReferentialAction action)
-            => action == FkReferentialAction.NoAction
-                ? SQL($"no action")
-                : action == FkReferentialAction.Cascade
-                    ? SQL($"cascade")
-                    : action == FkReferentialAction.SetNull
-                        ? SQL($"set null")
-                        : action == FkReferentialAction.SetDefault
-                            ? SQL($"set default")
-                            : throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized");
+            => action switch {
+                FkReferentialAction.NoAction => SQL($"no action"),
+                FkReferentialAction.Cascade => SQL($"cascade"),
+                FkReferentialAction.SetNull => SQL($"set null"),
+                FkReferentialAction.SetDefault => SQL($"set default"),
+                _ => throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized")
+            };
     }
 
     public struct DbForeignKey
