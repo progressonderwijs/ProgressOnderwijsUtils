@@ -111,18 +111,18 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             var table = db.TryGetTableByName("dbo.CheckIsString").AssertNotNull();
 
-            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").Is_String);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testchar").Is_String);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testvarchar").Is_String);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").Is_String);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").Is_String);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testxml").Is_String);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").IsString);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testchar").IsString);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testvarchar").IsString);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").IsString);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").IsString);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testxml").IsString);
 
-            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").Is_Unicode);
-            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testchar").Is_Unicode);
-            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testvarchar").Is_Unicode);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").Is_Unicode);
-            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").Is_Unicode);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testint").IsUnicode);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testchar").IsUnicode);
+            PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testvarchar").IsUnicode);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").IsUnicode);
+            PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").IsUnicode);
         }
     }
 }

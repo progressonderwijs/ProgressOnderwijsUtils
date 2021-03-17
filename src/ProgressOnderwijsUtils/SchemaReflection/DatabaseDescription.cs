@@ -141,28 +141,28 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public string ColumnName
                 => ColumnMetaData.ColumnName;
 
-            public bool Is_Primary_Key
+            public bool IsPrimaryKey
                 => ColumnMetaData.IsPrimaryKey;
 
-            public bool Is_RowVersion
+            public bool IsRowVersion
                 => ColumnMetaData.IsRowVersion;
 
-            public bool Is_Computed
+            public bool IsComputed
                 => ColumnMetaData.IsComputed;
 
-            public bool Is_Nullable
+            public bool IsNullable
                 => ColumnMetaData.IsNullable;
 
-            public SqlXType User_Type_Id
+            public SqlXType UserTypeId
                 => ColumnMetaData.UserTypeId;
 
             public ParameterizedSql SqlColumnName()
                 => ColumnMetaData.SqlColumnName();
 
-            public bool Is_String
+            public bool IsString
                 => ColumnMetaData.IsString;
 
-            public bool Is_Unicode
+            public bool IsUnicode
                 => ColumnMetaData.IsUnicode;
         }
 
@@ -196,7 +196,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => ParameterizedSql.CreateDynamic(QualifiedName);
 
             public IEnumerable<TableColumn> PrimaryKey
-                => Columns.Where(c => c.Is_Primary_Key);
+                => Columns.Where(c => c.IsPrimaryKey);
 
             public IEnumerable<Table> AllDependantTables
                 => Utils.TransitiveClosure(
