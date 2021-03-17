@@ -40,9 +40,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
         readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
-        readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
-        //readonly Lazy<ILookup<string, ForeignKey>> fkByUnqualifiedName;
-        //readonly Lazy<Dictionary<string, ForeignKey>> fkByQualifiedName;
+        readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
+        public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
@@ -67,9 +66,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
             fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
             checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
-            tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
-            //fkByUnqualifiedName = Utils.Lazy(() => fkById.Values.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase));
-            //fkByQualifiedName = Utils.Lazy(() => fkById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
+            tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
+            ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
         }
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
@@ -93,7 +91,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 
         public Table? TryGetTableByName(string qualifiedName)
-            => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
+            => tableByQualifiedName.TryGetValue(qualifiedName, out var id) ? id : null;
 
         public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
