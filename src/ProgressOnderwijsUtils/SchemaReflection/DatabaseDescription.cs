@@ -24,13 +24,15 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public string QualifiedName { get; init; }
 
         public static DbNamedObjectId[] LoadAllObjectsOfType(SqlConnection conn, string type)
-            => SQL($@"
+            => SQL(
+                $@"
                     select
                         ObjectId = o.object_id
                         , QualifiedName = schema_name(o.schema_id)+'.'+o.name
                     from sys.objects o
                     where o.type = {type}
-                ").ReadPocos<DbNamedObjectId>(conn);
+                "
+            ).ReadPocos<DbNamedObjectId>(conn);
     }
 
     public sealed class DatabaseDescription
@@ -103,7 +105,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             }
 
             public ParameterizedSql ScriptToAddConstraint()
-                => SQL($@"
+                => SQL(
+                    $@"
                     alter table {ReferencingChildTable.QualifiedNameSql}
                     add constraint {ParameterizedSql.CreateDynamic(ForeignKeyConstraintName)}
                         foreign key ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
@@ -111,7 +114,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                             ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
                         on delete {DeleteReferentialAction.AsSql()}
                         on update {UpdateReferentialAction.AsSql()};
-                    ");
+                    "
+                );
 
             public ParameterizedSql ScriptToDropConstraint()
                 => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(ForeignKeyConstraintName)};\r\n");
@@ -154,6 +158,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public bool Is_String
                 => ColumnMetaData.IsString;
+
             public bool Is_Unicode
                 => ColumnMetaData.IsUnicode;
         }
@@ -204,10 +209,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren
-                    .SelectMany(fk =>
-                        fk.Columns
-                            .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
-                            .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName,fkCol.ReferencingChildColumn.ColumnName))
+                    .SelectMany(
+                        fk =>
+                            fk.Columns
+                                .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
+                                .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                     ).ToArray();
 
             public TableColumn GetByColumnIndex(DbColumnId columnId)
