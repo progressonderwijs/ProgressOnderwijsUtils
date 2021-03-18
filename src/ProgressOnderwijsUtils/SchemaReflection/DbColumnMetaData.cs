@@ -87,6 +87,18 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DataColumn ToDataColumn()
             => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
+        public DbColumnMetaData AsStaticRowVersion()
+        {
+            if (IsRowVersion) {
+                return this with {
+                    UserTypeId = SqlXType.Binary,
+                    Precision = 8,
+                };
+            } else {
+                return this;
+            }
+        }
+
         [Pure]
         public ParameterizedSql SqlColumnName()
             => ParameterizedSql.CreateDynamic(isSafeForSql.IsMatch(ColumnName) ? ColumnName : throw new NotSupportedException("this isn't safe!"));
