@@ -233,7 +233,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void CascadeDelete_also_reports_on_tables_with_triggers_and_rowversion_column()
         {
             SQL($"create table T1 (A int primary key, V rowversion);").ExecuteNonQuery(Connection);
-            SQL($"create trigger T1t on T1 for insert as begin do_nothing: end;").ExecuteNonQuery(Connection);
+            SQL($"create trigger T1t on T1 after delete as insert into T1 (A) values (2);").ExecuteNonQuery(Connection);
             SQL($"insert into T1 (A) values (1);").ExecuteNonQuery(Connection);
 
             var version = SQL($"select t.V from T1 t").ReadScalar<byte[]>(Connection).AssertNotNull();
