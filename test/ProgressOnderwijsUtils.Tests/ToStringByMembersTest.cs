@@ -13,7 +13,9 @@ namespace ProgressOnderwijsUtils.Tests
         public ExampleValue? Nested;
         public double? NullableField;
         public ConsoleKey? AnEnum;
-        public override string ToString() =>  ToStringByMembers.ToStringByPublicMembers(this); 
+
+        public override string ToString()
+            => ToStringByMembers.ToStringByPublicMembers(this);
     }
 
     public sealed class ToStringByMembersTest
