@@ -170,7 +170,17 @@ namespace ProgressOnderwijsUtils
                         DataTable? DeletionExecution()
                         {
                             if (outputAllDeletedRows) {
-                                return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
+                                if (table.Triggers.Any()) {
+                                    return SQL($@"
+                                        declare @output_deleted table(
+                                            {table.Columns.Select(col => col.ColumnMetaData.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
+                                        );
+                                        {DeletionQuery(SQL($"output {table.Columns.Select(col => SQL($"deleted.{col.SqlColumnName()}")).ConcatenateSql(SQL($", "))} into @output_deleted"))}
+                                        select * from @output_deleted;
+                                    ").OfDataTable().Execute(conn);
+                                } else {
+                                    return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
+                                }
                             } else {
                                 DeletionQuery(default).ExecuteNonQuery(conn);
                                 return null;
