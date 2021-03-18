@@ -178,11 +178,10 @@ namespace ProgressOnderwijsUtils
                         {outputClause}
                         from {table.QualifiedNameSql} pk
                         join {tempTableName} tt on {ttJoin};
-                    
-                        drop table {tempTableName};
                     "
                             )
                         );
+                        SQL($"drop table {tempTableName};").ExecuteNonQuery(conn);
                         sw.Stop();
                         log($"...took {sw.Elapsed}");
                         perflog.Add(new DeletionReport { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
