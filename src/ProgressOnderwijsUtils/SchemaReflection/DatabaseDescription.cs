@@ -24,13 +24,15 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public string QualifiedName { get; init; }
 
         public static DbNamedObjectId[] LoadAllObjectsOfType(SqlConnection conn, string type)
-            => SQL($@"
+            => SQL(
+                $@"
                     select
                         ObjectId = o.object_id
                         , QualifiedName = schema_name(o.schema_id)+'.'+o.name
                     from sys.objects o
                     where o.type = {type}
-                ").ReadPocos<DbNamedObjectId>(conn);
+                "
+            ).ReadPocos<DbNamedObjectId>(conn);
     }
 
     public sealed class DatabaseDescription
@@ -38,16 +40,21 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
         readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
-        readonly ForeignKeyLookup foreignKeyLookup;
-        readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
+        readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
+        public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
+        readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
+        readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys, CheckConstraintEntry[] checkConstraints)
+        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, DbForeignKey[] foreignKeys, CheckConstraintEntry[] checkConstraints)
         {
-            foreignKeyLookup = foreignKeys;
-            tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
-            viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
+            tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
+            viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
+            var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
+            fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
+            fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
             checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
-            tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
+            tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
+            ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
         }
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
@@ -55,7 +62,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn), CheckConstraintEntry.LoadAll(conn));
+            return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintEntry.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
@@ -71,50 +78,50 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 
         public Table? TryGetTableByName(string qualifiedName)
-            => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
+            => tableByQualifiedName.TryGetValue(qualifiedName, out var id) ? id : null;
 
         public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
+        public sealed record ForeignKeyColumn (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
+
         public sealed class ForeignKey
         {
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
-            public FkReferentialAction DeleteReferentialAction;
-            public FkReferentialAction UpdateReferentialAction;
-            public Table ReferencedParentTable { get; set; }
-            public Table ReferencingChildTable { get; set; }
-            public (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn)[] Columns { get; set; }
-            public string ForeignKeyConstraintName { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+            public readonly Table ReferencedParentTable;
+            public readonly Table ReferencingChildTable;
+            public readonly IReadOnlyList<ForeignKeyColumn> Columns;
+            public readonly string UnqualifiedName;
+            public readonly FkReferentialAction DeleteReferentialAction;
+            public readonly FkReferentialAction UpdateReferentialAction;
 
-            public static ForeignKey Create(DatabaseDescription db, DbForeignKey fk)
+            internal ForeignKey(DbForeignKey o, IReadOnlyDictionary<DbObjectId, Table> tablesById)
             {
-                // Let's trust callers not to make up object ids
-                var parentTable = db.TryGetTableById(fk.ReferencedParentTable)!;
-                var childTable = db.TryGetTableById(fk.ReferencingChildTable)!;
-                return new ForeignKey {
-                    ReferencedParentTable = parentTable,
-                    ReferencingChildTable = childTable,
-                    Columns = fk.Columns.ArraySelect(pair => (parentTable.GetByColumnIndex(pair.ReferencedParentColumn), childTable.GetByColumnIndex(pair.ReferencingChildColumn))),
-                    ForeignKeyConstraintName = fk.ConstraintName,
-                    DeleteReferentialAction = fk.DeleteReferentialAction,
-                    UpdateReferentialAction = fk.UpdateReferentialAction,
-                };
+                ReferencedParentTable = tablesById[o.ReferencedParentTable];
+                ReferencingChildTable = tablesById[o.ReferencingChildTable];
+                Columns = o.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
+                UnqualifiedName = o.ConstraintName;
+                DeleteReferentialAction = o.DeleteReferentialAction;
+                UpdateReferentialAction = o.UpdateReferentialAction;
             }
 
+            public string QualifiedName
+                => ReferencingChildTable.SchemaName + "." + UnqualifiedName;
+
             public ParameterizedSql ScriptToAddConstraint()
-                => SQL($@"
+                => SQL(
+                    $@"
                     alter table {ReferencingChildTable.QualifiedNameSql}
-                    add constraint {ParameterizedSql.CreateDynamic(ForeignKeyConstraintName)}
+                    add constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)}
                         foreign key ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
                         references {ReferencedParentTable.QualifiedNameSql}
                             ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
                         on delete {DeleteReferentialAction.AsSql()}
                         on update {UpdateReferentialAction.AsSql()};
-                    ");
+                    "
+                );
 
             public ParameterizedSql ScriptToDropConstraint()
-                => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(ForeignKeyConstraintName)};\r\n");
+                => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\r\n");
         }
 
         public sealed class TableColumn
@@ -134,27 +141,28 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public string ColumnName
                 => ColumnMetaData.ColumnName;
 
-            public bool Is_Primary_Key
+            public bool IsPrimaryKey
                 => ColumnMetaData.IsPrimaryKey;
 
-            public bool Is_RowVersion
+            public bool IsRowVersion
                 => ColumnMetaData.IsRowVersion;
 
-            public bool Is_Computed
+            public bool IsComputed
                 => ColumnMetaData.IsComputed;
 
-            public bool Is_Nullable
+            public bool IsNullable
                 => ColumnMetaData.IsNullable;
 
-            public SqlXType User_Type_Id
+            public SqlXType UserTypeId
                 => ColumnMetaData.UserTypeId;
 
             public ParameterizedSql SqlColumnName()
                 => ColumnMetaData.SqlColumnName();
 
-            public bool Is_String
+            public bool IsString
                 => ColumnMetaData.IsString;
-            public bool Is_Unicode
+
+            public bool IsUnicode
                 => ColumnMetaData.IsUnicode;
         }
 
@@ -163,7 +171,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public readonly DatabaseDescription db;
             readonly DbNamedObjectId NamedTableId;
 
-            public Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns)
+            internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns)
             {
                 this.db = db;
                 NamedTableId = namedTableId;
@@ -188,26 +196,30 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => ParameterizedSql.CreateDynamic(QualifiedName);
 
             public IEnumerable<TableColumn> PrimaryKey
-                => Columns.Where(c => c.Is_Primary_Key);
+                => Columns.Where(c => c.IsPrimaryKey);
 
             public IEnumerable<Table> AllDependantTables
-                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id)!);
+                => Utils.TransitiveClosure(
+                    new[] { ObjectId },
+                    reachable => db.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
+                ).Select(id => db.tableById[id]);
 
             public IEnumerable<ForeignKey> KeysToReferencedParents
-                => db.foreignKeyLookup.KeysByReferencingChildTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
+                => db.fksByReferencingChildObjectId[ObjectId];
 
             public IEnumerable<ForeignKey> KeysFromReferencingChildren
-                => db.foreignKeyLookup.KeysByReferencedParentTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
+                => db.fksByReferencedParentObjectId[ObjectId];
 
             public IEnumerable<CheckConstraint> CheckConstraints
                 => db.checkConstraintsByTableId[ObjectId];
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren
-                    .SelectMany(fk =>
-                        fk.Columns
-                            .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
-                            .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName,fkCol.ReferencingChildColumn.ColumnName))
+                    .SelectMany(
+                        fk =>
+                            fk.Columns
+                                .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
+                                .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                     ).ToArray();
 
             public TableColumn GetByColumnIndex(DbColumnId columnId)

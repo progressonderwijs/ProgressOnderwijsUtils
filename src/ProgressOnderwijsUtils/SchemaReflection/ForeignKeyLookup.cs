@@ -18,27 +18,40 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public static class FkReferentialAction_AsSql
     {
         public static ParameterizedSql AsSql(this FkReferentialAction action)
-            => action == FkReferentialAction.NoAction ? SQL($"no action")
-                : action == FkReferentialAction.Cascade ? SQL($"cascade")
-                : action == FkReferentialAction.SetNull ? SQL($"set null")
-                : action == FkReferentialAction.SetDefault ? SQL($"set default")
-                : throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized");
+            => action switch {
+                FkReferentialAction.NoAction => SQL($"no action"),
+                FkReferentialAction.Cascade => SQL($"cascade"),
+                FkReferentialAction.SetNull => SQL($"set null"),
+                FkReferentialAction.SetDefault => SQL($"set default"),
+                _ => throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized")
+            };
     }
 
     public struct DbForeignKey
     {
         public string ConstraintName;
         public FkReferentialAction DeleteReferentialAction, UpdateReferentialAction;
+        public DbObjectId ForeignKeyObjectId;
         public DbObjectId ReferencedParentTable;
         public DbObjectId ReferencingChildTable;
         public (DbColumnId ReferencedParentColumn, DbColumnId ReferencingChildColumn)[] Columns;
     }
 
-    public sealed class ForeignKeyLookup
+    struct ForeignKeyColumnEntry : IWrittenImplicitly
     {
-        public static ForeignKeyLookup LoadAll(SqlConnection conn)
+        public DbObjectId ForeignKeyObjectId { get; init; }
+        public FkReferentialAction DeleteReferentialAction { get; init; }
+        public FkReferentialAction UpdateReferentialAction { get; init; }
+        public DbObjectId ReferencingChildTable { get; init; }
+        public DbObjectId ReferencedParentTable { get; init; }
+        public DbColumnId ReferencedParentColumn { get; init; }
+        public DbColumnId ReferencingChildColumn { get; init; }
+        public string Name { get; init; }
+
+        public static DbForeignKey[] LoadAll(SqlConnection conn)
         {
-            var foreignKeys = SQL($@"
+            var foreignKeys = SQL(
+                    $@"
                 select 
                     ForeignKeyObjectId = fk.object_id
                     , DeleteReferentialAction = fk.delete_referential_action
@@ -53,46 +66,26 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id
-            ").ReadPocos<ForeignKeyColumnEntry>(conn)
+            "
+                ).ReadPocos<ForeignKeyColumnEntry>(conn)
                 .GroupBy(fkCol => fkCol.ForeignKeyObjectId)
-                .Select(fk => {
-                    var fkColEntry = fk.First();
-                    return new DbForeignKey {
-                        ConstraintName = fkColEntry.Name,
-                        DeleteReferentialAction = fkColEntry.DeleteReferentialAction,
-                        UpdateReferentialAction = fkColEntry.UpdateReferentialAction,
-                        ReferencingChildTable = fkColEntry.ReferencingChildTable,
-                        ReferencedParentTable = fkColEntry.ReferencedParentTable,
-                        Columns = fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)).ToArray()
-                    };
-                })
+                .Select(
+                    fk => {
+                        var fkColEntry = fk.First();
+                        return new DbForeignKey {
+                            ForeignKeyObjectId = fk.Key,
+                            ConstraintName = fkColEntry.Name,
+                            DeleteReferentialAction = fkColEntry.DeleteReferentialAction,
+                            UpdateReferentialAction = fkColEntry.UpdateReferentialAction,
+                            ReferencingChildTable = fkColEntry.ReferencingChildTable,
+                            ReferencedParentTable = fkColEntry.ReferencedParentTable,
+                            Columns = fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)).ToArray()
+                        };
+                    }
+                )
                 .ToArray();
 
-            return new ForeignKeyLookup(foreignKeys);
+            return foreignKeys;
         }
-
-        public readonly ILookup<DbObjectId, DbForeignKey> KeysByReferencedParentTable;
-        public readonly ILookup<DbObjectId, DbForeignKey> KeysByReferencingChildTable;
-
-        public ForeignKeyLookup(DbForeignKey[] foreignKeys)
-        {
-            KeysByReferencedParentTable = foreignKeys.EmptyIfNull().ToLookup(fk => fk.ReferencedParentTable);
-            KeysByReferencingChildTable = foreignKeys.EmptyIfNull().ToLookup(fk => fk.ReferencingChildTable);
-        }
-
-        public HashSet<DbObjectId> AllDependantTables(DbObjectId table)
-            => Utils.TransitiveClosure(new[] { table }, reachable => KeysByReferencedParentTable[reachable].Select(fk => fk.ReferencingChildTable));
-    }
-
-    struct ForeignKeyColumnEntry : IWrittenImplicitly
-    {
-        public DbObjectId ForeignKeyObjectId { get; init; }
-        public FkReferentialAction DeleteReferentialAction { get; init; }
-        public FkReferentialAction UpdateReferentialAction { get; init; }
-        public DbObjectId ReferencingChildTable { get; init; }
-        public DbObjectId ReferencedParentTable { get; init; }
-        public DbColumnId ReferencedParentColumn { get; init; }
-        public DbColumnId ReferencingChildColumn { get; init; }
-        public string Name { get; init; }
     }
 }
