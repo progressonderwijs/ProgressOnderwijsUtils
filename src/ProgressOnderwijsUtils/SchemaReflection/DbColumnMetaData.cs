@@ -84,6 +84,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
 
+        public ParameterizedSql ToSqlColumnDefinitionSql()
+            => ParameterizedSql.CreateDynamic($"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}");
+
         public DataColumn ToDataColumn()
             => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
