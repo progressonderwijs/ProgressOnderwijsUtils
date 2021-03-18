@@ -1,0 +1,20 @@
+﻿using Microsoft.Data.SqlClient;
+using static ProgressOnderwijsUtils.SafeSql;
+
+namespace ProgressOnderwijsUtils.SchemaReflection
+{
+    public sealed record DmlTableTrigger(DbObjectId ObjectId, string Name, DbObjectId TableObjectId) : IWrittenImplicitly
+    {
+        public static DmlTableTrigger[] LoadAll(SqlConnection conn)
+            => SQL($@"
+                    select
+                        ObjectId = tr.object_id
+                        , tr.name
+                        , TableObjectId = t.object_id
+                    from sys.triggers tr
+                    join sys.tables t on t.object_id = tr.parent_id
+                    where 1=1
+                        and tr.parent_class = 1
+                ").ReadPocos<DmlTableTrigger>(conn);
+    }
+}
