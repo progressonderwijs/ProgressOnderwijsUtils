@@ -182,7 +182,7 @@ namespace ProgressOnderwijsUtils
                                 declare @output_deleted table(
                                     {table.Columns.Select(col => col.ColumnMetaData.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
                                 );
-                                {DeletionQuery(SQL($"output {table.Columns.Select(col => SQL($"deleted.{col.SqlColumnName()}")).ConcatenateSql(SQL($", "))} into @output_deleted"))}
+                                {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
                                 select * from @output_deleted;
                             ").OfDataTable().Execute(conn);
                         }
