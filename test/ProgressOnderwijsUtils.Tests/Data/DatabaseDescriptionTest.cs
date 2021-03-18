@@ -91,6 +91,20 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
+        public void CheckTableTriggers_works()
+        {
+            SQL($"create table dbo.TableTriggerTest (Iets int null)").ExecuteNonQuery(Connection);
+            SQL($"create trigger dbo.EenTrigger on dbo.TableTriggerTest for insert as begin do_nothing: end;").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var table = db.GetTableByName("dbo.TableTriggerTest");
+            var trigger = table.Triggers.Single();
+
+            PAssert.That(() => trigger.Name == "EenTrigger");
+            PAssert.That(() => trigger.TableObjectId == table.ObjectId);
+        }
+
+        [Fact]
         public void CheckIsStringAndIsUnicode_works()
         {
             SQL(

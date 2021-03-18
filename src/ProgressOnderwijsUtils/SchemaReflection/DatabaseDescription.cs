@@ -40,12 +40,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
         readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
+        readonly ILookup<DbObjectId, DmlTableTrigger> triggersByTableId;
         readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
         public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, DbForeignKey[] foreignKeys, CheckConstraintEntry[] checkConstraints)
+        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, DbForeignKey[] foreignKeys, CheckConstraintEntry[] checkConstraints, DmlTableTrigger[] dmlTableTriggers)
         {
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
@@ -53,6 +54,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
             fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
             checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
+            triggersByTableId = dmlTableTriggers.ToLookup(o => o.TableObjectId);
             tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
             ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
         }
@@ -62,7 +64,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintEntry.LoadAll(conn));
+            return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintEntry.LoadAll(conn), DmlTableTrigger.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
@@ -212,6 +214,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public IEnumerable<CheckConstraint> CheckConstraints
                 => db.checkConstraintsByTableId[ObjectId];
+
+            public IEnumerable<DmlTableTrigger> Triggers
+                => db.triggersByTableId[ObjectId];
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren

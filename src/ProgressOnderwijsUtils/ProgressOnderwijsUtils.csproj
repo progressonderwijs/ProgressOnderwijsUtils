@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>72.0.0</Version>
-    <PackageReleaseNotes>DatabaseDescription: cleanup api slightly, and expose FK by unqualified name lookup</PackageReleaseNotes>
+    <Version>72.1.0</Version>
+    <PackageReleaseNotes>DML Table triggers are added to the DatabaseDescription</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
