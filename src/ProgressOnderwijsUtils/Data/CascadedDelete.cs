@@ -96,18 +96,6 @@ namespace ProgressOnderwijsUtils
             bool StopCascading(ParameterizedSql tableName)
                 => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
-            DataTable? ExecuteDeletion(ParameterizedSql deletionCommand)
-            {
-                if (outputAllDeletedRows) {
-                    return deletionCommand.OfDataTable().Execute(conn);
-                } else {
-                    deletionCommand.ExecuteNonQuery(conn);
-                    return null;
-                }
-            }
-
-            var outputClause = outputAllDeletedRows ? SQL($"output deleted.*") : default;
-
             var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
             var delTable = SQL($"#del_init");
@@ -170,19 +158,38 @@ namespace ProgressOnderwijsUtils
                     () => {
                         var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
                         log($"Delete {nrRowsToDelete} from {table.QualifiedName}...");
+
+                        ParameterizedSql DeletionQuery(ParameterizedSql outputClause)
+                            => SQL($@"
+                                delete pk
+                                {outputClause}
+                                from {table.QualifiedNameSql} pk
+                                join {tempTableName} tt on {ttJoin};
+                            ");
+
+                        DataTable? DeletionExecution()
+                        {
+                            if (!outputAllDeletedRows) {
+                                DeletionQuery(default).ExecuteNonQuery(conn);
+                                return null;
+                            }
+
+                            if (table.Triggers.None()) {
+                                return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
+                            }
+
+                            return SQL($@"
+                                declare @output_deleted table(
+                                    {table.Columns.Select(col => col.ColumnMetaData.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
+                                );
+                                {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
+                                select * from @output_deleted;
+                            ").OfDataTable().Execute(conn);
+                        }
+
                         var sw = Stopwatch.StartNew();
-                        var deletedRows = ExecuteDeletion(
-                            SQL(
-                                $@"
-                        delete pk
-                        {outputClause}
-                        from {table.QualifiedNameSql} pk
-                        join {tempTableName} tt on {ttJoin};
-                    
-                        drop table {tempTableName};
-                    "
-                            )
-                        );
+                        var deletedRows = DeletionExecution();
+                        SQL($"drop table {tempTableName};").ExecuteNonQuery(conn);
                         sw.Stop();
                         log($"...took {sw.Elapsed}");
                         perflog.Add(new DeletionReport { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });

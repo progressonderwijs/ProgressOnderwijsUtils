@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>72.1.0</Version>
-    <PackageReleaseNotes>DML Table triggers are added to the DatabaseDescription</PackageReleaseNotes>
+    <Version>72.2.0</Version>
+    <PackageReleaseNotes>Made CascadedDelete robust for deletions on tables with triggers.
+Including extra helper functions ToSqlColumnDefinitionSql and AsStaticRowVersion that where needed.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

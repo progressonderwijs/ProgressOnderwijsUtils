@@ -62,7 +62,6 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
         }
 
-
         [Fact]
         public void CascadedDeleteDetectsCycles()
         {
@@ -84,7 +83,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-            var ex =Assert.ThrowsAny<Exception>(()=> CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
+            var ex = Assert.ThrowsAny<Exception>(() => CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
             PAssert.That(() => ex.Message.Contains("dbo.T2->dbo.T1->dbo.T2->dbo.T1"));
         }
 
@@ -212,6 +211,39 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
+        }
+
+        [Fact]
+        public void CascadeDelete_also_reports_on_tables_with_rowversion_column()
+        {
+            SQL($"create table T1 (A int primary key, V rowversion);").ExecuteNonQuery(Connection);
+            SQL($"insert into T1 (A) values (1);").ExecuteNonQuery(Connection);
+
+            var version = SQL($"select t.V from T1 t").ReadScalar<byte[]>(Connection).AssertNotNull();
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One).Single();
+            var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
+
+            PAssert.That(() => deletionReport.Table == "dbo.T1");
+            PAssert.That(() => ((byte[])deletedRow["V"]).SequenceEqual(version));
+        }
+
+        [Fact]
+        public void CascadeDelete_also_reports_on_tables_with_triggers_and_rowversion_column()
+        {
+            SQL($"create table T1 (A int primary key, V rowversion);").ExecuteNonQuery(Connection);
+            SQL($"create trigger T1t on T1 after delete as insert into T1 (A) values (2);").ExecuteNonQuery(Connection);
+            SQL($"insert into T1 (A) values (1);").ExecuteNonQuery(Connection);
+
+            var version = SQL($"select t.V from T1 t").ReadScalar<byte[]>(Connection).AssertNotNull();
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One).Single();
+            var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
+
+            PAssert.That(() => deletionReport.Table == "dbo.T1");
+            PAssert.That(() => ((byte[])deletedRow["V"]).SequenceEqual(version));
         }
     }
 }
