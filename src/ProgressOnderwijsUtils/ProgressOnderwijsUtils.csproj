@@ -23,7 +23,7 @@ Including extra helper functions ToSqlColumnDefinitionSql and AsStaticRowVersion
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
     <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
