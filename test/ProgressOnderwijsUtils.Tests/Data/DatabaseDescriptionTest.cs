@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
@@ -94,7 +95,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void CheckTableTriggers_works()
         {
             SQL($"create table dbo.TableTriggerTest (Iets int null)").ExecuteNonQuery(Connection);
-            SQL($"create trigger dbo.EenTrigger on dbo.TableTriggerTest for insert as begin do_nothing: end;").ExecuteNonQuery(Connection);
+            var definition = @"create trigger dbo.EenTrigger on dbo.TableTriggerTest for insert as
+begin
+    do_nothing:
+end;";
+            SQL($"{ParameterizedSql.CreateDynamic(definition)}").ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var table = db.GetTableByName("dbo.TableTriggerTest");
@@ -102,6 +107,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => trigger.Name == "EenTrigger");
             PAssert.That(() => trigger.TableObjectId == table.ObjectId);
+            PAssert.That(() => trigger.Definition == definition);
         }
 
         [Fact]
