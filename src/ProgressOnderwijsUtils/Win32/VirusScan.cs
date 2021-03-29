@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Win32
                 PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk();
 
                 fixed (void* bufferPtr = buffer) {
-                    PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result).AssertResultOk();
+                    PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
                     return ResultIsMalware(result);
                 }
             } finally {
