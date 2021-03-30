@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Win32
                 PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk();
 
                 fixed (void* bufferPtr = buffer) {
-                    PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result).AssertResultOk();
+                    PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
                     return ResultIsMalware(result);
                 }
             } finally {
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Win32
             } else if (result == AMSI_RESULT.AMSI_RESULT_NOT_DETECTED) {
                 return false;
             } else if (result >= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_START && result <= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END) {
-                throw new("Scannen is geblokkeerd");
+                throw new($"Scannen is geblokkeerd: AMSI_RESULT is: {result}");
             }
             return true;
         }
