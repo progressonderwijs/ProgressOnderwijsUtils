@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Win32
         internal static void AssertResultOk(this HRESULT result)
         {
             if (result.Value != 0) {
-                throw new Exception("HRESULT!=0");
+                throw new Exception($"HRESULT not 0. Value = {result.Value}");
             }
         }
     }
