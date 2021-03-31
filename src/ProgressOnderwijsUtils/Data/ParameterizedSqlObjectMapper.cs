@@ -15,7 +15,11 @@ using FastExpressionCompiler;
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
-    public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
+    public enum FieldMappingMode
+    {
+        RequireExactColumnMatches,
+        IgnoreExtraPocoProperties,
+    }
 
     public static class ParameterizedSqlObjectMapper
     {
