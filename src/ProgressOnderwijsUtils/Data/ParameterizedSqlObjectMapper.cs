@@ -211,11 +211,8 @@ namespace ProgressOnderwijsUtils
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var iConstant = Expression.Constant(i);
                 MethodCallExpression callExpr;
-                if (underlyingType == typeof(byte[])) {
-                    callExpr = Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant);
-                } else {
-                    callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
-                }
+                var getterForType = GetterForType(underlyingType);
+                callExpr = getterForType.IsStatic ? Expression.Call(getterForType, readerParamExpr, iConstant) : Expression.Call(readerParamExpr, getterForType, iConstant);
                 Expression colValueExpr;
                 if (canBeNull) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
