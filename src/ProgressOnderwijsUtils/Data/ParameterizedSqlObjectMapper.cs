@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +11,7 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using FastExpressionCompiler;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -145,8 +147,46 @@ namespace ProgressOnderwijsUtils
                 .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
                 .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
+        static readonly ArrayPool<byte> pool = ArrayPool<byte>.Create(16, Environment.ProcessorCount * 2);
+
+        static ulong ReadUInt64(IDataRecord reader, int i)
+        {
+            var arr = pool.Rent(12);
+            var bytesRead = reader.GetBytes(i, 0, arr, 0, 12);
+            if (bytesRead > 8) {
+                pool.Return(arr);
+                throw new("Tried to read a ulong, but result too much data");
+            }
+            var uint64val = BitConverter.ToUInt64(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
+            //https://stackoverflow.com/questions/19560436/bitwise-endian-swap-for-various-types
+            uint64val = uint64val >> 32 | uint64val << 32;
+            uint64val = (uint64val & 0xFFFF0000FFFF0000U) >> 16 | (uint64val & 0x0000FFFF0000FFFFU) << 16;
+            uint64val = (uint64val & 0xFF00FF00FF00FF00U) >> 8 | (uint64val & 0x00FF00FF00FF00FFU) << 8;
+            arr.AsSpan(0,8).Clear();
+            pool.Return(arr);
+            return uint64val;
+        }
+
+        static uint ReadUInt32(IDataRecord reader, int i)
+        {
+            var arr = pool.Rent(12);
+            var bytesRead = reader.GetBytes(i, 0, arr, 0, 12);
+            if (bytesRead > 4) {
+                pool.Return(arr);
+                throw new("Tried to read a ulong, but result had too much data");
+            }
+            var uint64val = BitConverter.ToUInt32(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
+            uint64val = (uint64val & 0xFFFF0000U) >> 16 | (uint64val & 0x0000FFFFU) << 16;
+            uint64val = (uint64val & 0xFF00FF00U) >> 8 | (uint64val & 0x00FF00FFU) << 8;
+            arr.AsSpan(0,8).Clear();
+            pool.Return(arr);
+            return uint64val;
+        }
+
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
+        static readonly MethodInfo getUInt64 = ((Func<IDataRecord, int, ulong>)ReadUInt64).Method;
+        static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
 
         internal static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
@@ -170,6 +210,7 @@ namespace ProgressOnderwijsUtils
 
                 return getterMethodsByType.ContainsKey(underlyingType)
                     || isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset))
+                    || underlyingType == typeof(ulong) || underlyingType == typeof(uint)
                     ;
             }
 
@@ -178,7 +219,11 @@ namespace ProgressOnderwijsUtils
 
             static MethodInfo GetterForType(Type underlyingType)
             {
-                if (isSqlDataReader && underlyingType == typeof(TimeSpan)) {
+                if (underlyingType == typeof(ulong)) {
+                    return getUInt64;
+                } else if (underlyingType == typeof(uint)) {
+                    return getUInt32;
+                } else if (isSqlDataReader && underlyingType == typeof(TimeSpan)) {
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
