@@ -202,12 +202,12 @@ namespace ProgressOnderwijsUtils
                 pool.Return(arr);
                 throw new("Tried to read a ulong, but result had too much data");
             }
-            var uint64val = BitConverter.ToUInt32(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
-            uint64val = (uint64val & 0xFFFF0000U) >> 16 | (uint64val & 0x0000FFFFU) << 16;
-            uint64val = (uint64val & 0xFF00FF00U) >> 8 | (uint64val & 0x00FF00FFU) << 8;
+            var uint32val = BitConverter.ToUInt32(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
+            uint32val = (uint32val & 0xFFFF0000U) >> 16 | (uint32val & 0x0000FFFFU) << 16;
+            uint32val = (uint32val & 0xFF00FF00U) >> 8 | (uint32val & 0x00FF00FFU) << 8;
             arr.AsSpan(0, 8).Clear();
             pool.Return(arr);
-            return uint64val;
+            return uint32val;
         }
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
