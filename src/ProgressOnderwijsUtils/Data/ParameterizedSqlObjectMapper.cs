@@ -345,16 +345,6 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount != 1) {
                         throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + " != 1");
                     }
-                    if (!Enumerable.Range(0, reader.FieldCount)
-                        .Select(reader.GetFieldType)
-                        .SequenceEqual(new[] { UnderlyingType })) {
-                        throw new InvalidOperationException(
-                            "Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
-                            + Enumerable.Range(0, reader.FieldCount)
-                                .Select(i => reader.GetName(i) + " : " + reader.GetFieldType(i).ToCSharpFriendlyTypeName())
-                                .JoinStrings(", ")
-                        );
-                    }
                 }
             }
 
