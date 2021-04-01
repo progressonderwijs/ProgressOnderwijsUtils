@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
+using Microsoft.Data.SqlClient;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -221,13 +222,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public uint? AshorterVersion { get; init; }
             public Enum64Bit AFinalVersion { get; init; }
             public int Counter { get; init; }
-        }
 
-        [Fact]
-        public void SupportsRowVersionULong()
-        {
-            var tableName = SQL($"#rowversions");
-            SQL($@"
+            public static ParameterizedSql CreateTableWithSampleData(SqlConnection sqlConnection)
+            {
+                var tableName = SQL($"#rowversions");
+                SQL($@"
                 create table {tableName} (
                     AShorterVersion binary(4)
                     , AnotherVersion binary(8) not null
@@ -235,15 +234,23 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , AFinalVersion varbinary(max)
                     , Counter int identity not null
                 );
-            ").ExecuteNonQuery(Connection);
+            ").ExecuteNonQuery(sqlConnection);
 
-            SQL($@"
+                SQL($@"
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1 as int), cast(2 as bigint), cast(3 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100 as int), cast(20000 as bigint), cast(30000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(10000 as int), cast(200000000 as bigint), cast(300000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1000000 as int), cast(2000000000000 as bigint), cast(3000000000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100000000 as int), cast(20000000000000000 as bigint), cast(30000000000000000 as bigint));
-            ").ExecuteNonQuery(Connection);
+            ").ExecuteNonQuery(sqlConnection);
+                return tableName;
+            }
+        }
+
+        [Fact]
+        public void CanReadULong()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
 
             var pocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
 
