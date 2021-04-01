@@ -184,13 +184,19 @@ namespace ProgressOnderwijsUtils
                 pool.Return(arr);
                 throw new("Tried to read a ulong, but result too much data");
             }
+            var uint64val = SqlBinaryToUInt64(arr);
+            arr.AsSpan(0, 8).Clear();
+            pool.Return(arr);
+            return uint64val;
+        }
+
+        internal static ulong SqlBinaryToUInt64(byte[] arr)
+        {
             var uint64val = BitConverter.ToUInt64(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
             //https://stackoverflow.com/questions/19560436/bitwise-endian-swap-for-various-types
             uint64val = uint64val >> 32 | uint64val << 32;
             uint64val = (uint64val & 0xFFFF0000FFFF0000U) >> 16 | (uint64val & 0x0000FFFF0000FFFFU) << 16;
             uint64val = (uint64val & 0xFF00FF00FF00FF00U) >> 8 | (uint64val & 0x00FF00FF00FF00FFU) << 8;
-            arr.AsSpan(0, 8).Clear();
-            pool.Return(arr);
             return uint64val;
         }
 
@@ -202,11 +208,17 @@ namespace ProgressOnderwijsUtils
                 pool.Return(arr);
                 throw new("Tried to read a ulong, but result had too much data");
             }
+            var uint32val = SqlBinaryToUInt32(arr);
+            arr.AsSpan(0, 8).Clear();
+            pool.Return(arr);
+            return uint32val;
+        }
+
+        internal static uint SqlBinaryToUInt32(byte[] arr)
+        {
             var uint32val = BitConverter.ToUInt32(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
             uint32val = (uint32val & 0xFFFF0000U) >> 16 | (uint32val & 0x0000FFFFU) << 16;
             uint32val = (uint32val & 0xFF00FF00U) >> 8 | (uint32val & 0x00FF00FFU) << 8;
-            arr.AsSpan(0, 8).Clear();
-            pool.Return(arr);
             return uint32val;
         }
 
