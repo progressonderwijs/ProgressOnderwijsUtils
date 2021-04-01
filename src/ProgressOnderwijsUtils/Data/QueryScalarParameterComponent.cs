@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
                 : EquatableValue is uint uint32val ? UInt32ToSqlBinary(uint32val)
                 : EquatableValue;
 
-        static byte[] UInt64ToSqlBinary(ulong uint64val)
+        public static byte[] UInt64ToSqlBinary(ulong uint64val)
         {
             //https://stackoverflow.com/questions/19560436/bitwise-endian-swap-for-various-types
             uint64val = uint64val >> 32 | uint64val << 32;
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
             return BitConverter.GetBytes(uint64val);
         }
 
-        static byte[] UInt32ToSqlBinary(uint uint32val)
+        public  static byte[] UInt32ToSqlBinary(uint uint32val)
         {
             uint32val = (uint32val & 0xFFFF0000U) >> 16 | (uint32val & 0x0000FFFFU) << 16;
             uint32val = (uint32val & 0xFF00FF00U) >> 8 | (uint32val & 0x00FF00FFU) << 8;

@@ -279,9 +279,21 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var pocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
 
             var middle = pocos[2];
-            var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} order by Version").ReadPlain<uint>(Connection);
+            var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} and AnotherVersion >= {pocos[3].AnotherVersion} order by Version").ReadPlain<uint>(Connection);
             PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u }));
         }
+
+        [Fact]
+        public void UInt32_round_trips()
+        {
+            for (var val = uint.MaxValue; val > 0; val = val / 4 + val / 3) {
+                var fromDb = SQL($"select {val}").ReadPlain<uint>(Connection).Single();
+                PAssert.That(() => fromDb == val);
+                var scalarFromDb = SQL($"select {val}").ReadScalar<uint>(Connection);
+                PAssert.That(() => scalarFromDb == val);
+            }
+        }
+
         //TODO: test parameters
         //TODO: test bullk copy
         //TODO: ulong backed PocoPropertyConverter

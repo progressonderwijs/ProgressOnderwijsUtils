@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using FastExpressionCompiler;
 using JetBrains.Annotations;
@@ -17,18 +18,20 @@ namespace ProgressOnderwijsUtils
         public readonly Func<object?, object?> ConvertToDb;
         public readonly Func<object?, object?> ConvertFromDb;
 
-        public PocoPropertyConverter(Type converterDefinition)
+        public PocoPropertyConverter(ValueConverter converter)
         {
-            ModelType = converterDefinition.GenericTypeArguments[0];
-            DbType = converterDefinition.GenericTypeArguments[1];
-            var converterType = converterDefinition.GenericTypeArguments[2];
-            var converter = ((Func<ValueConverter>)CreateValueConverter_OpenGenericMethod.MakeGenericMethod(ModelType, DbType, converterType).CreateDelegate(typeof(Func<ValueConverter>)))();
-
+            ModelType = converter.ModelClrType;
+            DbType = converter.ProviderClrType;
             ConvertToDb = converter.ConvertToProvider;
             ConvertFromDb = converter.ConvertFromProvider;
             CompiledConverterToDb = converter.ConvertToProviderExpression.CompileFast();
             CompiledConverterFromDb = converter.ConvertFromProviderExpression.CompileFast();
         }
+
+        static PocoPropertyConverter Define<TModel, TProvider>(
+            Expression<Func<TModel, TProvider>> convertToProviderExpression,
+            Expression<Func<TProvider, TModel>> convertFromProviderExpression)
+            => new(new ValueConverter<TModel, TProvider>(convertToProviderExpression, convertFromProviderExpression));
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
             where TConverterSource : struct, IConverterSource<TModel, TProvider>
@@ -45,14 +48,26 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        static readonly ConcurrentDictionary<Type, PocoPropertyConverter?> propertyConverterCache = new ConcurrentDictionary<Type, PocoPropertyConverter?>();
+        static readonly ConcurrentDictionary<Type, PocoPropertyConverter?> propertyConverterCache = new();
 
-        static readonly Func<Type, PocoPropertyConverter?> cachedFactoryDelegate = type =>
-            type.GetNonNullableUnderlyingType()
+        static readonly Func<Type, PocoPropertyConverter?> cachedFactoryDelegate = type => {
+            if (type == typeof(ulong)) {
+                return Define<ulong, byte[]>(codeVal => QueryScalarParameterComponent.UInt64ToSqlBinary(codeVal), dbVal => ParameterizedSqlObjectMapper.SqlBinaryToUInt64(dbVal));
+            } else if (type == typeof(uint)) {
+                return Define<uint, byte[]>(codeVal => QueryScalarParameterComponent.UInt32ToSqlBinary(codeVal), dbVal => ParameterizedSqlObjectMapper.SqlBinaryToUInt32(dbVal));
+            }
+
+            return type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
-                .Select(i => new PocoPropertyConverter(i))
+                .Select(interfaceType => {
+                    var typeArgs = interfaceType.GenericTypeArguments;
+                    var valueConverterFactoryMethodInfo = CreateValueConverter_OpenGenericMethod.MakeGenericMethod(typeArgs[0], typeArgs[1], typeArgs[2]);
+                    var valueConverterFactory = valueConverterFactoryMethodInfo.CreateDelegate<Func<ValueConverter>>();
+                    return new PocoPropertyConverter(valueConverterFactory());
+                })
                 .SingleOrNull();
+        };
 
         public static PocoPropertyConverter? GetOrNull(Type propertyType)
             => propertyConverterCache.GetOrAdd(propertyType, cachedFactoryDelegate);
