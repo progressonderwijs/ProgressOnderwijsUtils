@@ -242,7 +242,7 @@ namespace ProgressOnderwijsUtils
                 => GetterForType(type) is not null;
 
             static MethodInfo? GetterForType(Type type)
-                => GetBuiltInMethod(PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter ? converter.DbType : type.GetNonNullableUnderlyingType());
+                => GetBuiltInMethod(ConverterForUnsupportedType(type) is PocoPropertyConverter converter ? converter.DbType : type.GetNonNullableUnderlyingType());
 
             static MethodInfo? GetBuiltInMethod(Type underlyingType)
                 => underlyingType switch {
@@ -259,8 +259,7 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var converter = PocoPropertyConverter.GetOrNull(underlyingType);
-
+                var converter = ConverterForUnsupportedType(underlyingType);
                 var needsCast = underlyingType != type.GetNonNullableType();
 
                 if (converter != null) {
@@ -271,6 +270,9 @@ namespace ProgressOnderwijsUtils
                     return callExpression;
                 }
             }
+
+            static PocoPropertyConverter? ConverterForUnsupportedType(Type underlyingType)
+                => underlyingType != typeof(ulong) && underlyingType != typeof(uint) ? PocoPropertyConverter.GetOrNull(underlyingType) : null;
 
             static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
             {
