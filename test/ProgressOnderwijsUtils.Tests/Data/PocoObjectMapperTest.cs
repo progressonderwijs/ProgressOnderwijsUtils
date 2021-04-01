@@ -271,6 +271,17 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.AnotherVersion)));
         }
 
+        [Fact]
+        public void CanParameterizeULong()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+
+            var pocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+
+            var middle = pocos[2];
+            var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} order by Version").ReadPlain<uint>(Connection);
+            PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u }));
+        }
         //TODO: test parameters
         //TODO: test bullk copy
         //TODO: ulong backed PocoPropertyConverter
