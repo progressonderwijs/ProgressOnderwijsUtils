@@ -18,6 +18,6 @@ namespace ProgressOnderwijsUtils
             Expression<Func<TModel, TProvider>> convertToProviderExpression,
             Expression<Func<TProvider, TModel>> convertFromProviderExpression
         )
-            => new ValueConverter<TModel, TProvider>(convertToProviderExpression, convertFromProviderExpression);
+            => new(convertToProviderExpression, convertFromProviderExpression);
     }
 }
