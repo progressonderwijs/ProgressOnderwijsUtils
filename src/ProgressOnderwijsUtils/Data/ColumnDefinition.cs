@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils
         Normal,
         NormalWithDefaultValue,
         AutoIncrement,
+        RowVersion,
         Readonly,
     }
 
@@ -63,7 +64,8 @@ namespace ProgressOnderwijsUtils
 
         static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
             => col.HasAutoIncrementIdentity ? ColumnAccessibility.AutoIncrement
-                : col.IsComputed || col.IsRowVersion ? ColumnAccessibility.Readonly
+                : col.IsRowVersion ? ColumnAccessibility.RowVersion
+                : col.IsComputed ? ColumnAccessibility.Readonly
                 : col.HasDefaultValue ? ColumnAccessibility.NormalWithDefaultValue
                 : ColumnAccessibility.Normal;
     }
