@@ -300,11 +300,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
             var initialPocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
             PAssert.That(() => initialPocos.Length == 5);
-
             SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
             var rowsAfterDelete = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
             PAssert.That(() => rowsAfterDelete.None());
+
             initialPocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+
             var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
 
             var expected = Enumerable.Range(0, initialPocos.Length)
