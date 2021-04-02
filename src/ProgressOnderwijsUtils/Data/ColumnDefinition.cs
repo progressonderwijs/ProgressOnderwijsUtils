@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtils
 
         static ColumnAccessibility DataColumnAccessibility(DataColumn col)
             => col switch {
-                { AutoIncrement: true } => ColumnAccessibility.AutoIncrement,
-                { ReadOnly: true } => ColumnAccessibility.Readonly,
-                { DefaultValue : DBNull } => ColumnAccessibility.Normal,
-                _ => ColumnAccessibility.NormalWithDefaultValue
+                { AutoIncrement: true, } => ColumnAccessibility.AutoIncrement,
+                { ReadOnly: true, } => ColumnAccessibility.Readonly,
+                { DefaultValue : DBNull, } => ColumnAccessibility.Normal,
+                _ => ColumnAccessibility.NormalWithDefaultValue,
             };
 
         static Type DataColumnType(DataColumn col)
@@ -50,10 +50,10 @@ namespace ProgressOnderwijsUtils
 
         static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
             => col switch {
-                { HasAutoIncrementIdentity : true } => ColumnAccessibility.AutoIncrement,
-                { IsRowVersion : true } => ColumnAccessibility.RowVersion,
-                { IsComputed : true } => ColumnAccessibility.Readonly,
-                { HasDefaultValue : true } => ColumnAccessibility.NormalWithDefaultValue,
+                { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrement,
+                { IsRowVersion : true, } => ColumnAccessibility.RowVersion,
+                { IsComputed : true, } => ColumnAccessibility.Readonly,
+                { HasDefaultValue : true, } => ColumnAccessibility.NormalWithDefaultValue,
                 _ => ColumnAccessibility.Normal,
             };
     }
