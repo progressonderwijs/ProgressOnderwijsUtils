@@ -216,7 +216,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
         public enum Enum64Bit : ulong { }
 
-        public sealed record PocoWithRowVersions(ulong Version) : IWrittenImplicitly
+        public sealed record PocoWithRowVersions(ulong Version) : IWrittenImplicitly, IReadImplicitly
         {
             public ulong AnotherVersion { get; init; }
             public uint? AshorterVersion { get; init; }
@@ -294,8 +294,31 @@ namespace ProgressOnderwijsUtils.Tests.Data
             }
         }
 
-        //TODO: test parameters
-        //TODO: test bullk copy
-        //TODO: ulong backed PocoPropertyConverter
+        [Fact]
+        public void ULongPoco_BulkCopyRoundTrips()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+            var initialPocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            PAssert.That(() => initialPocos.Length == 5);
+
+            SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
+            var rowsAfterDelete = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            PAssert.That(() => rowsAfterDelete.None());
+            initialPocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+            var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+
+            var expected = Enumerable.Range(0, initialPocos.Length)
+                .Select(power => new PocoWithRowVersions(0) {
+                    Counter = power + 1 + initialPocos.Length,
+                    AshorterVersion = 1 * (uint)Math.Pow(100, power),
+                    AnotherVersion = 2 * (ulong)Math.Pow(10000, power),
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power))
+                })
+                .ToArray();
+
+            var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+
+            PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
+        }
     }
 }
