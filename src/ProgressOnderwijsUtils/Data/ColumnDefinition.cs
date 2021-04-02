@@ -45,13 +45,10 @@ namespace ProgressOnderwijsUtils
         {
             var retval = new ColumnDefinition[reader.FieldCount];
             for (var index = 0; index < retval.Length; index++) {
-                retval[index] = new ColumnDefinition(reader.GetFieldType(index), reader.GetName(index), index, ColumnAccessibility.Readonly);
+                retval[index] = new(reader.GetFieldType(index), reader.GetName(index), index, ColumnAccessibility.Readonly);
             }
             return retval;
         }
-
-        public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType)
-            => FromSqlXType(columnOrdinal, columnName, sqlXType, ColumnAccessibility.Normal);
 
         public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType, ColumnAccessibility columnAccessibility)
             => new(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
