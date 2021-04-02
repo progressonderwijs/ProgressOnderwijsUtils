@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static ColumnDefinition Create(DataColumn col)
-            => new ColumnDefinition(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
+            => new(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
 
         static ColumnAccessibility DataColumnAccessibility(DataColumn col)
             => col.AutoIncrement ? ColumnAccessibility.AutoIncrement
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
             => FromSqlXType(columnOrdinal, columnName, sqlXType, ColumnAccessibility.Normal);
 
         public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType, ColumnAccessibility columnAccessibility)
-            => new ColumnDefinition(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
+            => new(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
 
         public override string ToString()
             => DataType.ToCSharpFriendlyTypeName() + " " + Name;
