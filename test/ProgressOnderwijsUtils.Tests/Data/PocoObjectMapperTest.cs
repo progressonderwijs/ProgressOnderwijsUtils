@@ -319,6 +319,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
 
             PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
+            PAssert.That(() => !rowsAfterBulkInsert.SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
         }
     }
 }
