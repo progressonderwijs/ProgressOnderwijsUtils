@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
         /// - it treats DBNull.Value as if it were null
         /// - it ignores explicit and implicit cast operators
         /// - it supports casting from boxed int to nullable enum.
-        /// - it supports casting fromDb when the target type is <see cref="IPocoConvertibleProperty"/>
+        /// - it supports casting fromDb when the target type is <see cref="IHasValueConverter"/>
         /// </summary>
         [Pure]
         [return: MaybeNull]
@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
         /// This method works just like a normal C# cast, with the following changed:
         /// - it ignores explicit and implicit cast operators
         /// - it supports casting from boxed int to nullable enum.
-        /// - it supports casting ToDb when the passed value is <see cref="IPocoConvertibleProperty"/>.
+        /// - it supports casting ToDb when the passed value is <see cref="IHasValueConverter"/>.
         /// </summary>
         [Pure]
         [return: NotNullIfNotNull("valueFromCode")]
@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils
 
             static Func<object?, T> MakeConverter(Type type)
             {
-                var converter = PocoPropertyConverter.GetOrNull(type);
+                var converter = AutomaticValueConverters.GetOrNull(type);
                 if (converter != null) {
                     return ForConvertible(type, converter);
                 }
@@ -92,13 +92,13 @@ namespace ProgressOnderwijsUtils
             static Func<object?, T> MakeConverter(Type type)
             {
                 if (!type.IsValueType) {
-                    return obj => obj == null ? default! : obj is IPocoConvertibleProperty<T> && PocoPropertyConverter.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                    return obj => obj == null ? default! : obj is IHasValueConverter<T> && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
-                    return obj => obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                    return obj => obj is IHasValueConverter && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
                 }
-                return obj => obj == null ? default! : obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                return obj => obj == null ? default! : obj is IHasValueConverter && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
             }
         }
 
@@ -121,9 +121,9 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidCastException("Cannot cast (db)null to " + type.ToCSharpFriendlyTypeName());
                 }
                 return null;
-            } else if (PocoPropertyConverter.GetOrNull(type) is {} targetConvertible) {
+            } else if (AutomaticValueConverters.GetOrNull(type) is {} targetConvertible) {
                 return targetConvertible.ConvertFromProvider(val);
-            } else if (PocoPropertyConverter.GetOrNull(val.GetType()) is {} sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
+            } else if (AutomaticValueConverters.GetOrNull(val.GetType()) is {} sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
                 return sourceConvertible.ConvertToProvider(val);
             } else {
                 return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });

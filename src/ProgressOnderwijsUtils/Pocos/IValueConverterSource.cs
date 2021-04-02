@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
-    public interface IConverterSource<TModel, TProvider>
+    public interface IValueConverterSource<TModel, TProvider>
     {
         ValueConverter<TModel, TProvider> GetValueConverter();
     }
@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
     {
         public static ValueConverter<TModel, TProvider> DefineConverter<TModel, TProvider>(
             // ReSharper disable once UnusedParameter.Global
-            this IConverterSource<TModel, TProvider> _,
+            this IValueConverterSource<TModel, TProvider> _,
             Expression<Func<TModel, TProvider>> convertToProviderExpression,
             Expression<Func<TProvider, TModel>> convertFromProviderExpression
         )

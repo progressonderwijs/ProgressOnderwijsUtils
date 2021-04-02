@@ -124,13 +124,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             var converterType = underlyingType
                 .GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasValueConverter<,,>))
                 .Select(i => i.GetGenericArguments()[2])
                 .SingleOrNull();
             if (converterType == null) {
                 return default;
             }
-            var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IConverterSource<,>));
+            var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValueConverterSource<,>));
             var coversionReturnType = conversionProviderType.GetGenericArguments()[1];
             return NetTypeToSqlXType(coversionReturnType);
         }

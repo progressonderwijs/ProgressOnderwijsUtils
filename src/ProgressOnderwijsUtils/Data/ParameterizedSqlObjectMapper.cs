@@ -239,7 +239,7 @@ namespace ProgressOnderwijsUtils
 
             static bool IsSupportedType(Type type)
                 => GetBuiltInMethod(type.GetNonNullableUnderlyingType()) is not null
-                    || PocoPropertyConverter.GetOrNull(type.GetNonNullableType()) is { } converter && GetBuiltInMethod(converter.ProviderClrType) is not null;
+                    || AutomaticValueConverters.GetOrNull(type.GetNonNullableType()) is { } converter && GetBuiltInMethod(converter.ProviderClrType) is not null;
 
             static MethodInfo? GetBuiltInMethod(Type underlyingType)
                 => underlyingType switch {
@@ -273,7 +273,7 @@ namespace ProgressOnderwijsUtils
                 if (GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, nonNullableUnderlyingType) is { } builtin) {
                     return nonNullableUnderlyingType != nonNullableType ? Expression.Convert(builtin, nonNullableType) : builtin;
                 } else {
-                    var converter = PocoPropertyConverter.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.FriendlyName()} is not  built-in and has no PocoPropertyConverter");
+                    var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.FriendlyName()} is not  built-in and has no PocoPropertyConverter");
                     var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.ProviderClrType) ?? throw new($"The converter for {type.FriendlyName()} produces {converter.ProviderClrType.FriendlyName()} which is not db-mappable");
                     return ReplacingExpressionVisitor.Replace(converter.ConvertFromProviderExpression.Parameters.Single(), callExpr, converter.ConvertFromProviderExpression.Body);
                 }

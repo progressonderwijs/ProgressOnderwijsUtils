@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class PocoPropertyConverter
+    public static class AutomaticValueConverters
     {
         static ValueConverter<TModel, TProvider> Define<TModel, TProvider>(
             Expression<Func<TModel, TProvider>> convertToProviderExpression,
@@ -17,8 +17,8 @@ namespace ProgressOnderwijsUtils
             => new(convertToProviderExpression, convertFromProviderExpression);
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
-            where TConverterSource : struct, IConverterSource<TModel, TProvider>
-            where TModel : struct, IPocoConvertibleProperty<TModel, TProvider, TConverterSource>
+            where TConverterSource : struct, IValueConverterSource<TModel, TProvider>
+            where TModel : struct, IHasValueConverter<TModel, TProvider, TConverterSource>
             => new TConverterSource().GetValueConverter();
 
         internal static readonly MethodInfo CreateValueConverter_OpenGenericMethod = ((Func<ValueConverter>)CreateValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2>).Method.GetGenericMethodDefinition();
@@ -35,9 +35,9 @@ namespace ProgressOnderwijsUtils
 
         internal static readonly MethodInfo LiftToEnum_OpenGenericMethod = ((Func<ValueConverter<int, int>, ValueConverter<int, int>>)LiftToEnum<int, int, int>).Method.GetGenericMethodDefinition();
 
-        struct UnusedTypeTemplate1 : IPocoConvertibleProperty<UnusedTypeTemplate1, int, UnusedTypeTemplate2> { }
+        struct UnusedTypeTemplate1 : IHasValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2> { }
 
-        struct UnusedTypeTemplate2 : IConverterSource<UnusedTypeTemplate1, int>
+        struct UnusedTypeTemplate2 : IValueConverterSource<UnusedTypeTemplate1, int>
         {
             public ValueConverter<UnusedTypeTemplate1, int> GetValueConverter()
                 => throw new NotImplementedException();
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
 
             return type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
-                .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
+                .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IHasValueConverter<,,>))
                 .Select(
                     interfaceType => {
                         var typeArgs = interfaceType.GenericTypeArguments;

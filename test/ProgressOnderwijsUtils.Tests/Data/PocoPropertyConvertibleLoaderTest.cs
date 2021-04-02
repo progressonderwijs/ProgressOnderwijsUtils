@@ -26,9 +26,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string? Bla { get; set; }
         }
 
-        public readonly struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
+        public readonly struct CustomBla : IHasValueConverter<CustomBla, string, CustomBla.Source>
         {
-            public struct Source : IConverterSource<CustomBla, string>
+            public struct Source : IValueConverterSource<CustomBla, string>
             {
                 public ValueConverter<CustomBla, string> GetValueConverter()
                     => this.DefineConverter(o => o.AsString, s => new(s));

@@ -5,16 +5,16 @@ namespace ProgressOnderwijsUtils
     /// <summary>
     /// Marker interface to easily allow the detection of convertible types.  Never implement this type specifically; use the fully-specified IPocoConvertibleProperty with TModel, TProvider, and TConverterSource
     /// </summary>
-    public interface IPocoConvertibleProperty { }
+    public interface IHasValueConverter { }
 
     /// <summary>
     /// Marker interface to easily allow the detection of convertible types.  Never implement this type specifically; use the fully-specified IPocoConvertibleProperty with TModel, TProvider, and TConverterSource
     /// </summary>
     /// <typeparam name="TProvider"></typeparam>
     // ReSharper disable once UnusedTypeParameter
-    public interface IPocoConvertibleProperty<TProvider> : IPocoConvertibleProperty { }
+    public interface IHasValueConverter<TProvider> : IHasValueConverter { }
 
-    public interface IPocoConvertibleProperty<TModel, TProvider, [UsedImplicitly] TConverterSource> : IPocoConvertibleProperty<TProvider>
-        where TConverterSource : struct, IConverterSource<TModel, TProvider>
-        where TModel : struct, IPocoConvertibleProperty<TModel, TProvider, TConverterSource> { }
+    public interface IHasValueConverter<TModel, TProvider, [UsedImplicitly] TValueConverterSource> : IHasValueConverter<TProvider>
+        where TValueConverterSource : struct, IValueConverterSource<TModel, TProvider>
+        where TModel : struct, IHasValueConverter<TModel, TProvider, TValueConverterSource> { }
 }
