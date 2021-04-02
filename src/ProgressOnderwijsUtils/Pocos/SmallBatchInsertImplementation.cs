@@ -35,7 +35,9 @@ namespace ProgressOnderwijsUtils
                 return;
             }
 
-            var srcFields = PocoProperties<T>.Instance.Where(o => o.CanRead).Select(o => new ColumnDefinition(PocoPropertyConverter.GetOrNull(o.DataType)?.DbType ?? o.DataType, o.Name, o.Index, ColumnAccessibility.Readonly)).ToArray();
+            var srcFields = PocoProperties<T>.Instance.Where(o => o.CanRead)
+                .Select(o => new ColumnDefinition(TypeThatWillBeActuallyInserted(o.DataType), o.Name, o.Index, ColumnAccessibility.Readonly))
+                .ToArray();
             var maybeMapping = target.CreateValidatedMapping(srcFields);
             if (maybeMapping.IsError) {
                 throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{maybeMapping.AssertError()}");
@@ -57,6 +59,14 @@ namespace ProgressOnderwijsUtils
                 ).OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
             }
         }
+
+        static Type TypeThatWillBeActuallyInserted(Type srcType)
+            => PocoPropertyConverter.GetOrNull(srcType.GetNonNullableType())?.DbType
+                switch {
+                    null => srcType,
+                    var forNullable when srcType.IsNullableValueType() => forNullable.MakeNullableType() ?? forNullable,
+                    var forRefOrNonNullable => forRefOrNonNullable,
+                };
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix<T>(IEnumerable<T> enumerable, int firstN)
