@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         {
             var mapper = mappings.GetOrAdd(val.GetType(), type =>
                 type == typeof(CurrentTimeToken) ? _ => DateTime.Now
-                : PocoPropertyConverter.GetOrNull(type) is { } pocoConvertible ? o => pocoConvertible.ConvertToDb(o)
+                : PocoPropertyConverter.GetOrNull(type) is { } pocoConvertible ? o => pocoConvertible.ConvertToProvider(o)
                 : null
             );
 

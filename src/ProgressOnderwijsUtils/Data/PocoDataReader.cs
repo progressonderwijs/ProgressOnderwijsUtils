@@ -135,9 +135,9 @@ namespace ProgressOnderwijsUtils
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {
-                    ColumnType = propertyConverter.DbType;
-                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
-                    var columnValueAsNonNullable = ReplacingExpressionVisitor.Replace(propertyConverter.Converter.ConvertToProviderExpression.Parameters.Single(), propertyValueAsNoNullable, propertyConverter.Converter.ConvertToProviderExpression.Body);
+                    ColumnType = propertyConverter.ProviderClrType;
+                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelClrType);
+                    var columnValueAsNonNullable = ReplacingExpressionVisitor.Replace(propertyConverter.ConvertToProviderExpression.Parameters.Single(), propertyValueAsNoNullable, propertyConverter.ConvertToProviderExpression.Body);
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
                     Expression columnBoxedAsColumnType;
                     if (isNonNullable) {
@@ -150,7 +150,7 @@ namespace ProgressOnderwijsUtils
                     }
 
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, pocoParameter).CompileFast();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.ProviderClrType), columnValueAsNonNullable, pocoParameter).CompileFast();
                 } else {
                     ColumnType = propertyType.GetNonNullableUnderlyingType();
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);

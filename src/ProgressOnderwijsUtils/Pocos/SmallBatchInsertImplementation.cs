@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static Type TypeThatWillBeActuallyInserted(Type srcType)
-            => PocoPropertyConverter.GetOrNull(srcType.GetNonNullableType())?.DbType
+            => PocoPropertyConverter.GetOrNull(srcType.GetNonNullableType())?.ProviderClrType
                 switch {
                     null => srcType,
                     var forNullable when srcType.IsNullableValueType() => forNullable.MakeNullableType() ?? forNullable,

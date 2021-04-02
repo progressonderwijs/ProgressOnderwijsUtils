@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtils
             } else if (argument is INestableSql nestableSql) {
                 nestableSql.Sql.AppendTo(ref factory);
             } else if (argument != null && PocoPropertyConverter.GetOrNull(argument.GetType()) is { } converter) {
-                AppendParamTo(ref factory, converter.ConvertToDb(argument));
+                AppendParamTo(ref factory, converter.ConvertToProvider(argument));
             } else {
                 AppendParamTo(ref factory, argument);
             }
