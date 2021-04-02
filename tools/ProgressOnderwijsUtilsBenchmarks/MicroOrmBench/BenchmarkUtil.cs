@@ -1,4 +1,5 @@
 ﻿//#define SINGLETHREADED
+
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
@@ -60,6 +61,15 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             }
 
             Bench(name, CreateSqlConnection, action);
+        }
+
+        public void BenchEFSqlServer(string name, Func<EntityFrameworkBench, int, int> action)
+        {
+            using (var sqlConn = CreateSqlConnection()) {
+                ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(sqlConn);
+            }
+
+            Bench(name, () => new EntityFrameworkBench(CreateSqlConnection()), action);
         }
 
         public void BenchSQLite(string name, Func<SQLiteConnection, int, int> action)

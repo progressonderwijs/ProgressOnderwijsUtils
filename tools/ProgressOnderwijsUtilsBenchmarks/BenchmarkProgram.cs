@@ -9,10 +9,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
         static void Main()
         {
             //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
-            //MicroOrmBenchmarkProgram.RunBenchmarks();
+            MicroOrmBenchmarkProgram.RunBenchmarks();
             //RunTreeBenchmarks();
             //RunArrayBuilderBenchmarks();
-            BenchmarkRunner.Run<SmallBatchInsertBench>();
+            //BenchmarkRunner.Run<SmallBatchInsertBench>();
         }
 
         [UsedImplicitly]

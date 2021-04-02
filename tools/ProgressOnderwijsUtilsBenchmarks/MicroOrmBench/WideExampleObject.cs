@@ -71,6 +71,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static readonly string RawQueryString = string.Format(formatString, "@Top");
 
         public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SQL(FormattableStringFactory.Create(formatString, rows));
+            => SQL(InterpolatedQuery(rows));
+
+        public static FormattableString InterpolatedQuery(int rows)
+            => FormattableStringFactory.Create(formatString, rows);
     }
 }
