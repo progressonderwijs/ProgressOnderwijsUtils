@@ -11,9 +11,8 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using FastExpressionCompiler;
-using ParameterizedSqlObjectMapper = ProgressOnderwijsUtils.ParameterizedSqlObjectMapper;
+using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
@@ -239,10 +238,8 @@ namespace ProgressOnderwijsUtils
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
             static bool IsSupportedType(Type type)
-                => GetterForType(type) is not null;
-
-            static MethodInfo? GetterForType(Type type)
-                => GetBuiltInMethod(ConverterForUnsupportedType(type) is PocoPropertyConverter converter ? converter.DbType : type.GetNonNullableUnderlyingType());
+                => GetBuiltInMethod(type.GetNonNullableUnderlyingType()) is not null
+                    || PocoPropertyConverter.GetOrNull(type.GetNonNullableType()) is { } converter && GetBuiltInMethod(converter.DbType) is not null;
 
             static MethodInfo? GetBuiltInMethod(Type underlyingType)
                 => underlyingType switch {
@@ -256,39 +253,36 @@ namespace ProgressOnderwijsUtils
                     _ => null
                 };
 
-            static Expression GetCastExpression(Expression callExpression, Type type)
+            static Expression GetColValueExpr(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type type)
             {
-                var underlyingType = type.GetNonNullableUnderlyingType();
-                var converter = ConverterForUnsupportedType(underlyingType);
-                var needsCast = underlyingType != type.GetNonNullableType();
-
-                if (converter != null) {
-                    return Expression.Invoke(Expression.Constant(converter.CompiledConverterFromDb), callExpression);
-                } else if (needsCast) {
-                    return Expression.Convert(callExpression, type.GetNonNullableType());
-                } else {
-                    return callExpression;
-                }
-            }
-
-            static PocoPropertyConverter? ConverterForUnsupportedType(Type underlyingType)
-                => underlyingType != typeof(ulong) && underlyingType != typeof(uint) ? PocoPropertyConverter.GetOrNull(underlyingType) : null;
-
-            static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
-            {
-                var canBeNull = type.CanBeNull();
-                var iConstant = Expression.Constant(i);
-                var getterForType = GetterForType(type) ?? throw new Exception($"Type {type.FriendlyName()} is not db-mappable");
-                var callExpr = getterForType.IsStatic ? Expression.Call(getterForType, readerParamExpr, iConstant) : Expression.Call(readerParamExpr, getterForType, iConstant);
-                if (canBeNull) {
-                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
+                var colValueExpr = GetColValueExpr_AssumeNonnull(readerParamExpr, type, fieldIdxExpr);
+                if (type.CanBeNull()) {
+                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, fieldIdxExpr);
                     var ifDbNull = Expression.Default(type);
-                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
+                    var ifNotDbNull = Expression.Convert(colValueExpr, type);
                     return Expression.Condition(test, ifDbNull, ifNotDbNull);
                 } else {
-                    return GetCastExpression(callExpr, type);
+                    return colValueExpr;
                 }
             }
+
+            static Expression GetColValueExpr_AssumeNonnull(ParameterExpression readerParamExpr, Type type, ConstantExpression fieldIdxExpr)
+            {
+                var nonNullableType = type.GetNonNullableType();
+                var nonNullableUnderlyingType = nonNullableType.GetUnderlyingType();
+                if (GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, nonNullableUnderlyingType) is { } builtin) {
+                    return nonNullableUnderlyingType != nonNullableType ? Expression.Convert(builtin, nonNullableType) : builtin;
+                } else {
+                    var converter = PocoPropertyConverter.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.FriendlyName()} is not  built-in and has no PocoPropertyConverter");
+                    var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.DbType) ?? throw new($"The converter for {type.FriendlyName()} produces {converter.DbType.FriendlyName()} which is not db-mappable");
+                    return ReplacingExpressionVisitor.Replace(converter.Converter.ConvertFromProviderExpression.Parameters.Single(), callExpr, converter.Converter.ConvertFromProviderExpression.Body);
+                }
+            }
+
+            static Expression? GetBuiltInExprOrNull(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type nonNullableUnderlyingType)
+                => GetBuiltInMethod(nonNullableUnderlyingType) is not { } builtin ? null
+                    : builtin.IsStatic ? Expression.Call(builtin, readerParamExpr, fieldIdxExpr)
+                    : Expression.Call(readerParamExpr, builtin, fieldIdxExpr);
 
             public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly
@@ -333,14 +327,11 @@ namespace ProgressOnderwijsUtils
                 static Type type
                     => typeof(T);
 
-                static Type UnderlyingType
-                    => (PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter ? converter.DbType : type).GetNonNullableUnderlyingType();
-
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
                     var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
+                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, Expression.Constant(0), type), dataReaderParamExpr);
                     ReadValue = loadRowsLambda.CompileFast();
                 }
 
@@ -400,8 +391,9 @@ namespace ProgressOnderwijsUtils
                         propertyFlags[propertyIndex].coveredByReaderColumn = true;
                         var variable = Expression.Variable(member.DataType, member.Name);
                         variablesByPropIdx[propertyIndex] = variable;
-                        statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(columnIndex)));
-                        statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, columnIndex, member.DataType)));
+                        var fieldIdxExpr = Expression.Constant(columnIndex);
+                        statements.Add(Expression.Assign(lastColumnReadParamExpr, fieldIdxExpr));
+                        statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, fieldIdxExpr, member.DataType)));
                         if (!member.CanWrite) {
                             minimalViaConstructorCount++;
                             propertyFlags[propertyIndex].viaConstructor = true;
