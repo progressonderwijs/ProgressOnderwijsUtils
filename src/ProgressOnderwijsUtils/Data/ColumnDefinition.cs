@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
         {
             var retval = new ColumnDefinition[reader.FieldCount];
             for (var index = 0; index < retval.Length; index++) {
-                retval[index] = new ColumnDefinition(reader.GetFieldType(index), reader.GetName(index), index, ColumnAccessibility.Normal);
+                retval[index] = new ColumnDefinition(reader.GetFieldType(index), reader.GetName(index), index, ColumnAccessibility.Readonly);
             }
             return retval;
         }
