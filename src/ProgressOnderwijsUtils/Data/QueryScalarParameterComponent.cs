@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
             return BitConverter.GetBytes(uint64val);
         }
 
-        public  static byte[] UInt32ToSqlBinary(uint uint32val)
+        public static byte[] UInt32ToSqlBinary(uint uint32val)
         {
             uint32val = (uint32val & 0xFFFF0000U) >> 16 | (uint32val & 0x0000FFFFU) << 16;
             uint32val = (uint32val & 0xFF00FF00U) >> 8 | (uint32val & 0x00FF00FFU) << 8;
