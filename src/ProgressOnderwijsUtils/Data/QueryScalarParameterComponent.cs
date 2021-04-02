@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 
 namespace ProgressOnderwijsUtils
 {
@@ -7,10 +8,20 @@ namespace ProgressOnderwijsUtils
         public object EquatableValue { get; private set; }
 
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
-            => paramArgs.Value = EquatableValue == CurrentTimeToken.Instance ? DateTime.Now
-                : EquatableValue is ulong uint64val ? UInt64ToSqlBinary(uint64val)
-                : EquatableValue is uint uint32val ? UInt32ToSqlBinary(uint32val)
-                : EquatableValue;
+            => paramArgs.Value = MapParameterToSqlValue(EquatableValue);
+
+        static readonly ConcurrentDictionary<Type, Func<object, object?>?> mappings = new();
+
+        static object MapParameterToSqlValue(object val)
+        {
+            var mapper = mappings.GetOrAdd(val.GetType(), type =>
+                type == typeof(CurrentTimeToken) ? _ => DateTime.Now
+                : PocoPropertyConverter.GetOrNull(type) is { } pocoConvertible ? o => pocoConvertible.ConvertToDb(o)
+                : null
+            );
+
+            return mapper?.Invoke(val) ?? val;
+        }
 
         public static byte[] UInt64ToSqlBinary(ulong uint64val)
         {
