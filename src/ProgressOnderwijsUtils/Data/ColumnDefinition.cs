@@ -14,21 +14,8 @@ namespace ProgressOnderwijsUtils
         Readonly,
     }
 
-    public sealed class ColumnDefinition
+    public sealed record ColumnDefinition(Type DataType, string Name, int Index, ColumnAccessibility ColumnAccessibility)
     {
-        public readonly Type DataType;
-        public readonly string Name;
-        public readonly int Index;
-        public readonly ColumnAccessibility ColumnAccessibility;
-
-        public ColumnDefinition(Type dataType, string name, int index, ColumnAccessibility columnAccessibility)
-        {
-            DataType = dataType;
-            Name = name;
-            Index = index;
-            ColumnAccessibility = columnAccessibility;
-        }
-
         public static ColumnDefinition Create(DataColumn col)
             => new(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
 
