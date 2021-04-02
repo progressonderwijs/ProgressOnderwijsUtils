@@ -20,10 +20,12 @@ namespace ProgressOnderwijsUtils
             => new(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
 
         static ColumnAccessibility DataColumnAccessibility(DataColumn col)
-            => col.AutoIncrement ? ColumnAccessibility.AutoIncrement
-                : col.ReadOnly ? ColumnAccessibility.Readonly
-                : col.DefaultValue != DBNull.Value ? ColumnAccessibility.NormalWithDefaultValue
-                : ColumnAccessibility.Normal;
+            => col switch {
+                { AutoIncrement: true } => ColumnAccessibility.AutoIncrement,
+                { ReadOnly: true } => ColumnAccessibility.Readonly,
+                { DefaultValue : DBNull } => ColumnAccessibility.Normal,
+                _ => ColumnAccessibility.NormalWithDefaultValue
+            };
 
         static Type DataColumnType(DataColumn col)
             => (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType;
