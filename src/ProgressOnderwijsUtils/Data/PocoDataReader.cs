@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using ExpressionToCodeLib;
 using FastExpressionCompiler;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ProgressOnderwijsUtils
 {
@@ -136,7 +137,7 @@ namespace ProgressOnderwijsUtils
                 if (propertyConverter != null) {
                     ColumnType = propertyConverter.DbType;
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
-                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverterToDb), propertyValueAsNoNullable);
+                    var columnValueAsNonNullable = ReplacingExpressionVisitor.Replace(propertyConverter.Converter.ConvertToProviderExpression.Parameters.Single(), propertyValueAsNoNullable, propertyConverter.Converter.ConvertToProviderExpression.Body);
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
                     Expression columnBoxedAsColumnType;
                     if (isNonNullable) {
