@@ -322,5 +322,26 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
             PAssert.That(() => !rowsAfterBulkInsert.SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
         }
+
+        [Fact]
+        public void ULongPoco_LargeBulkCopyRoundTrips()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+            SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
+            var srcData = Enumerable.Range(0, 1000)
+                .Select(i => new PocoWithRowVersions(0) {
+                    AshorterVersion = 1 * (uint)i,
+                    AnotherVersion = 2 * (ulong)i,
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)i)
+                })
+                .ToArray();
+
+            srcData.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+
+            var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            var expected = srcData.Select((o, i) => o with { Counter = i + 6 });
+            var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+            PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
+        }
     }
 }
