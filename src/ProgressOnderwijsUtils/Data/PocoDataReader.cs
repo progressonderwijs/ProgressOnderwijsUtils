@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils
                 var pocoParameter = Expression.Parameter(typeof(T));
                 var propertyValue = pocoProperty.PropertyAccessExpression(pocoParameter);
                 Name = pocoProperty.Name;
-                var propertyConverter = PocoPropertyConverter.GetOrNull(propertyType);
+                var propertyConverter = PocoPropertyConverter.GetOrNull(propertyType.GetNonNullableType());
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {
