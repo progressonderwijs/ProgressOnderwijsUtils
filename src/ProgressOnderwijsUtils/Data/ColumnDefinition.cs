@@ -60,10 +60,12 @@ namespace ProgressOnderwijsUtils
             => FromSqlXType(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
 
         static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
-            => col.HasAutoIncrementIdentity ? ColumnAccessibility.AutoIncrement
-                : col.IsRowVersion ? ColumnAccessibility.RowVersion
-                : col.IsComputed ? ColumnAccessibility.Readonly
-                : col.HasDefaultValue ? ColumnAccessibility.NormalWithDefaultValue
-                : ColumnAccessibility.Normal;
+            => col switch {
+                { HasAutoIncrementIdentity : true } => ColumnAccessibility.AutoIncrement,
+                { IsRowVersion : true } => ColumnAccessibility.RowVersion,
+                { IsComputed : true } => ColumnAccessibility.Readonly,
+                { HasDefaultValue : true } => ColumnAccessibility.NormalWithDefaultValue,
+                _ => ColumnAccessibility.Normal,
+            };
     }
 }
