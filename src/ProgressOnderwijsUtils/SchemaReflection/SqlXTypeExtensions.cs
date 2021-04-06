@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         // ReSharper restore UnusedMember.Global
     }
 
-    public struct SqlUnderlyingTypeInfo
+    public readonly struct SqlUnderlyingTypeInfo
     {
         public readonly Type ClrType;
         public readonly string SqlTypeName;
@@ -59,6 +59,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             (typeof(byte[]), SqlXType.Binary),
             (typeof(byte[]), SqlXType.Image),
             (typeof(byte[]), SqlXType.RowVersion),
+            (typeof(ulong), SqlXType.RowVersion),
+            (typeof(ulong), SqlXType.Binary),
+            (typeof(uint), SqlXType.Binary),
             (typeof(DateTime), SqlXType.DateTime2),
             (typeof(DateTime), SqlXType.DateTime),
             (typeof(DateTime), SqlXType.Date),
@@ -121,13 +124,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             var converterType = underlyingType
                 .GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IHasValueConverter<,,>))
                 .Select(i => i.GetGenericArguments()[2])
                 .SingleOrNull();
             if (converterType == null) {
                 return default;
             }
-            var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IConverterSource<,>));
+            var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValueConverterSource<,>));
             var coversionReturnType = conversionProviderType.GetGenericArguments()[1];
             return NetTypeToSqlXType(coversionReturnType);
         }

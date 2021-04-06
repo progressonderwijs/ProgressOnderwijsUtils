@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
         public static Suggestion[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
         {
 #pragma warning disable IDE0007 // Use implicit type
-            Dictionary<string, ColumnDefinition> dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase)!;// roslyn bug workaround?
+            Dictionary<string, ColumnDefinition> dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase)!; // roslyn bug workaround?
 #pragma warning restore IDE0007 // Use implicit type
 
             var list = new List<Suggestion>(srcColumns.Length + dstColumns.Length);
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
                         if (OverwriteAutoIncrement) {
                             errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                         }
-                    } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly) {
+                    } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly && dst.ColumnAccessibility != ColumnAccessibility.RowVersion) {
                         throw new Exception("impossible value " + dst.ColumnAccessibility);
                     }
                 } else {
@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils
                         errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                     } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                         errors.Add($"Cannot fill readonly field {dst.Name}.");
-                    } else if (dst.ColumnAccessibility != ColumnAccessibility.AutoIncrement || OverwriteAutoIncrement) {
+                    } else if (dst.ColumnAccessibility == ColumnAccessibility.Normal || dst.ColumnAccessibility == ColumnAccessibility.NormalWithDefaultValue || OverwriteAutoIncrement) {
                         mapped.Add(new BulkInsertFieldMapping(src, dst));
                     }
                 }

@@ -55,12 +55,12 @@ namespace ProgressOnderwijsUtils
         [return: MaybeNull]
         public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
             where TKey : notnull
-            => GetOrDefaultR(dict, key, default!);
+            => GetOrDefaultR(dict, key, default(TValue?)!);
 
         [return: MaybeNull]
         public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
             where TKey : notnull
-            => GetOrDefault(dict, key, default!);
+            => GetOrDefault(dict, key, default(TValue?)!);
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.

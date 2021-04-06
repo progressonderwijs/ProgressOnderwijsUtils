@@ -8,9 +8,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
             => new TrivialValue<T>(value);
     }
 
-    public struct TrivialValue<T> : IPocoConvertibleProperty<TrivialValue<T>, T, TrivialValue<T>.CustomBlaStructConverter>
+    public struct TrivialValue<T> : IHasValueConverter<TrivialValue<T>, T, TrivialValue<T>.CustomBlaStructConverter>
     {
-        public struct CustomBlaStructConverter : IConverterSource<TrivialValue<T>, T>
+        public struct CustomBlaStructConverter : IValueConverterSource<TrivialValue<T>, T>
         {
             public ValueConverter<TrivialValue<T>, T> GetValueConverter()
                 => this.DefineConverter(v => v.Value, v => new TrivialValue<T>(v));

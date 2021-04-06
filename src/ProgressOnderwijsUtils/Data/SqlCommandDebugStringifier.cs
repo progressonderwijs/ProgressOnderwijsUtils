@@ -27,13 +27,26 @@ namespace ProgressOnderwijsUtils
 
         static string DeclareParameter(SqlParameter par)
         {
-            var declareVariable = "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par);
-            if (par.SqlDbType != SqlDbType.Structured) {
+            bool isStructured;
+            string pseudoSqlType;
+
+            try {
+                isStructured = par.SqlDbType == SqlDbType.Structured;
+                pseudoSqlType = isStructured
+                    ? par.TypeName
+                    : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
+            } catch {
+                isStructured = false;
+                pseudoSqlType = $"[Unmappable; C#:{par.Value?.GetType().FriendlyName()}]";
+                //in debug scenarios, I don't want this to throw
+            }
+            var declareVariable = "DECLARE " + par.ParameterName + " AS " + pseudoSqlType;
+            if (!isStructured) {
                 return declareVariable
                     + " = " + InsecureSqlDebugString(par.Value, true) + ";\n";
             } else {
                 return declareVariable
-                    + "/*" + par.Value.GetType().ToCSharpFriendlyTypeName() + "*/;\n"
+                    + "/*" + par.Value.AssertNotNull().GetType().ToCSharpFriendlyTypeName() + "*/;\n"
                     + "insert into " + par.ParameterName + " values "
                     + ValuesClauseForTableValuedParameter((par.Value as IOptionalObjectListForDebugging)?.ContentsForDebuggingOrNull());
             }
@@ -49,11 +62,6 @@ namespace ProgressOnderwijsUtils
             var valueCountCommentIfNecessary = (tableValue.Count <= maxValuesToInsert ? "" : "\n    /* ... and more; " + tableValue.Count + " total */") + ";\n";
             return valuesString + valueCountCommentIfNecessary;
         }
-
-        static string SqlParamTypeString(SqlParameter par)
-            => par.SqlDbType == SqlDbType.Structured
-                ? par.TypeName
-                : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
         public static string InsecureSqlDebugString(object? p, bool includeReadableEnumValue)
         {

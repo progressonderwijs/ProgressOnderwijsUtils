@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using ExpressionToCodeLib;
 using FastExpressionCompiler;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ProgressOnderwijsUtils
 {
@@ -130,13 +131,13 @@ namespace ProgressOnderwijsUtils
                 var pocoParameter = Expression.Parameter(typeof(T));
                 var propertyValue = pocoProperty.PropertyAccessExpression(pocoParameter);
                 Name = pocoProperty.Name;
-                var propertyConverter = PocoPropertyConverter.GetOrNull(propertyType);
+                var propertyConverter = AutomaticValueConverters.GetOrNull(propertyType.GetNonNullableType());
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {
-                    ColumnType = propertyConverter.DbType;
-                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
-                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverterToDb), propertyValueAsNoNullable);
+                    ColumnType = propertyConverter.ProviderClrType;
+                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelClrType);
+                    var columnValueAsNonNullable = ReplacingExpressionVisitor.Replace(propertyConverter.ConvertToProviderExpression.Parameters.Single(), propertyValueAsNoNullable, propertyConverter.ConvertToProviderExpression.Body);
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
                     Expression columnBoxedAsColumnType;
                     if (isNonNullable) {
@@ -149,7 +150,7 @@ namespace ProgressOnderwijsUtils
                     }
 
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, pocoParameter).CompileFast();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.ProviderClrType), columnValueAsNonNullable, pocoParameter).CompileFast();
                 } else {
                     ColumnType = propertyType.GetNonNullableUnderlyingType();
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);

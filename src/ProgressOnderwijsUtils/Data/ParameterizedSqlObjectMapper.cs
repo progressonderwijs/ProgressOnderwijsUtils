@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -11,11 +12,16 @@ using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using System.Diagnostics.CodeAnalysis;
 using FastExpressionCompiler;
+using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
-    public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
+    public enum FieldMappingMode
+    {
+        RequireExactColumnMatches,
+        IgnoreExtraPocoProperties,
+    }
 
     public static class ParameterizedSqlObjectMapper
     {
@@ -120,8 +126,6 @@ namespace ProgressOnderwijsUtils
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new() {
-                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static)! },
-                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static)! },
                 { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
                 { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding)! },
                 { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding)! },
@@ -141,89 +145,144 @@ namespace ProgressOnderwijsUtils
                 .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
                 .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
+        static readonly ArrayPool<byte> pool = ArrayPool<byte>.Create(16, Environment.ProcessorCount * 2);
+
+        static byte[] GetBytes(this IDataRecord row, int colIndex)
+        {
+            var byteCount = row.GetBytes(colIndex, 0L, null!, 0, 0);
+            if (byteCount > int.MaxValue) {
+                throw new NotSupportedException("Array too large!");
+            }
+            var arr = new byte[byteCount];
+            long offset = 0;
+            while (offset < byteCount) {
+                offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
+            }
+            return arr;
+        }
+
+        static char[] GetChars(this IDataRecord row, int colIndex)
+        {
+            var charCount = row.GetChars(colIndex, 0L, null!, 0, 0);
+            if (charCount > int.MaxValue) {
+                throw new NotSupportedException("Array too large!");
+            }
+            var arr = new char[charCount];
+            long offset = 0;
+            while (offset < charCount) {
+                offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
+            }
+            return arr;
+        }
+
+        static ulong ReadUInt64(IDataRecord reader, int i)
+        {
+            var arr = pool.Rent(12);
+            var bytesRead = reader.GetBytes(i, 0, arr, 0, 12);
+            if (bytesRead > 8) {
+                pool.Return(arr);
+                throw new("Tried to read a ulong, but result too much data");
+            }
+            var uint64val = SqlBinaryToUInt64(arr);
+            arr.AsSpan(0, 8).Clear();
+            pool.Return(arr);
+            return uint64val;
+        }
+
+        internal static ulong SqlBinaryToUInt64(byte[] arr)
+        {
+            var uint64val = BitConverter.ToUInt64(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
+            //https://stackoverflow.com/questions/19560436/bitwise-endian-swap-for-various-types
+            uint64val = uint64val >> 32 | uint64val << 32;
+            uint64val = (uint64val & 0xFFFF0000FFFF0000U) >> 16 | (uint64val & 0x0000FFFF0000FFFFU) << 16;
+            uint64val = (uint64val & 0xFF00FF00FF00FF00U) >> 8 | (uint64val & 0x00FF00FF00FF00FFU) << 8;
+            return uint64val;
+        }
+
+        static uint ReadUInt32(IDataRecord reader, int i)
+        {
+            var arr = pool.Rent(12);
+            var bytesRead = reader.GetBytes(i, 0, arr, 0, 12);
+            if (bytesRead > 4) {
+                pool.Return(arr);
+                throw new("Tried to read a ulong, but result had too much data");
+            }
+            var uint32val = SqlBinaryToUInt32(arr);
+            arr.AsSpan(0, 8).Clear();
+            pool.Return(arr);
+            return uint32val;
+        }
+
+        internal static uint SqlBinaryToUInt32(byte[] arr)
+        {
+            var uint32val = BitConverter.ToUInt32(arr, 0); //or this: Unsafe.ReadUnaligned<ulong>(ref arr[0]);
+            uint32val = (uint32val & 0xFFFF0000U) >> 16 | (uint32val & 0x0000FFFFU) << 16;
+            uint32val = (uint32val & 0xFF00FF00U) >> 8 | (uint32val & 0x00FF00FFU) << 8;
+            return uint32val;
+        }
+
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
+        static readonly MethodInfo getUInt64 = ((Func<IDataRecord, int, ulong>)ReadUInt64).Method;
+        static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
+        static readonly MethodInfo getBytes = ((Func<IDataRecord, int, byte[]>)GetBytes).Method;
+        static readonly MethodInfo getChars = ((Func<IDataRecord, int, char[]>)GetChars).Method;
 
         internal static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
 
-            static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
-                typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
-                typeof(TReader).GetInterfaceMap(typeof(IDataReader))
-            );
-
-            // ReSharper disable AssignNullToNotNullAttribute
+            static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)));
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
-            // ReSharper restore AssignNullToNotNullAttribute
-
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
-            static bool IsSupportedBasicType(Type type)
-            {
-                var underlyingType = type.GetNonNullableUnderlyingType();
-
-                return getterMethodsByType.ContainsKey(underlyingType)
-                    || isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset))
-                    ;
-            }
-
             static bool IsSupportedType(Type type)
-                => IsSupportedBasicType(type) || PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter && IsSupportedBasicType(converter.DbType);
+                => GetBuiltInMethod(type.GetNonNullableUnderlyingType()) is not null
+                    || AutomaticValueConverters.GetOrNull(type.GetNonNullableType()) is { } converter && GetBuiltInMethod(converter.ProviderClrType) is not null;
 
-            static MethodInfo GetterForType(Type underlyingType)
+            static MethodInfo? GetBuiltInMethod(Type underlyingType)
+                => underlyingType switch {
+                    _ when underlyingType == typeof(ulong) => getUInt64,
+                    _ when underlyingType == typeof(uint) => getUInt32,
+                    _ when underlyingType == typeof(byte[]) => getBytes,
+                    _ when underlyingType == typeof(char[]) => getChars,
+                    _ when underlyingType == typeof(TimeSpan) && isSqlDataReader => getTimeSpan_SqlDataReader,
+                    _ when underlyingType == typeof(DateTimeOffset) && isSqlDataReader => getDateTimeOffset_SqlDataReader,
+                    _ when getterMethodsByType.TryGetValue(underlyingType, out var interfaceGetter) => InterfaceMap[interfaceGetter],
+                    _ => null
+                };
+
+            static Expression GetColValueExpr(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type type)
             {
-                if (isSqlDataReader && underlyingType == typeof(TimeSpan)) {
-                    return getTimeSpan_SqlDataReader;
-                } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
-                    return getDateTimeOffset_SqlDataReader;
-                } else if (PocoPropertyConverter.GetOrNull(underlyingType) is PocoPropertyConverter converter) {
-                    return InterfaceMap[getterMethodsByType[converter.DbType]];
-                } else {
-                    return InterfaceMap[getterMethodsByType[underlyingType]];
-                }
-            }
-
-            static Expression GetCastExpression(Expression callExpression, Type type)
-            {
-                var underlyingType = type.GetNonNullableUnderlyingType();
-                var converter = PocoPropertyConverter.GetOrNull(underlyingType);
-
-                var needsCast = underlyingType != type.GetNonNullableType();
-
-                if (converter != null) {
-                    return Expression.Invoke(Expression.Constant(converter.CompiledConverterFromDb), callExpression);
-                } else if (needsCast) {
-                    return Expression.Convert(callExpression, type.GetNonNullableType());
-                } else {
-                    return callExpression;
-                }
-            }
-
-            public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
-            {
-                var canBeNull = type.CanBeNull();
-                var underlyingType = type.GetNonNullableUnderlyingType();
-                var iConstant = Expression.Constant(i);
-                MethodCallExpression callExpr;
-                if (underlyingType == typeof(byte[])) {
-                    callExpr = Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant);
-                } else {
-                    callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
-                }
-                Expression colValueExpr;
-                if (canBeNull) {
-                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
+                var colValueExpr = GetColValueExpr_AssumeNonnull(readerParamExpr, type, fieldIdxExpr);
+                if (type.CanBeNull()) {
+                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, fieldIdxExpr);
                     var ifDbNull = Expression.Default(type);
-                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
-                    colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
+                    var ifNotDbNull = Expression.Convert(colValueExpr, type);
+                    return Expression.Condition(test, ifDbNull, ifNotDbNull);
                 } else {
-                    colValueExpr = GetCastExpression(callExpr, type);
+                    return colValueExpr;
                 }
-
-                return colValueExpr;
             }
+
+            static Expression GetColValueExpr_AssumeNonnull(ParameterExpression readerParamExpr, Type type, ConstantExpression fieldIdxExpr)
+            {
+                var nonNullableType = type.GetNonNullableType();
+                var nonNullableUnderlyingType = nonNullableType.GetUnderlyingType();
+                if (GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, nonNullableUnderlyingType) is { } builtin) {
+                    return nonNullableUnderlyingType != nonNullableType ? Expression.Convert(builtin, nonNullableType) : builtin;
+                } else {
+                    var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.FriendlyName()} is not  built-in and has no PocoPropertyConverter");
+                    var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.ProviderClrType) ?? throw new($"The converter for {type.FriendlyName()} produces {converter.ProviderClrType.FriendlyName()} which is not db-mappable");
+                    return ReplacingExpressionVisitor.Replace(converter.ConvertFromProviderExpression.Parameters.Single(), callExpr, converter.ConvertFromProviderExpression.Body);
+                }
+            }
+
+            static Expression? GetBuiltInExprOrNull(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type nonNullableUnderlyingType)
+                => GetBuiltInMethod(nonNullableUnderlyingType) is not { } builtin ? null
+                    : builtin.IsStatic ? Expression.Call(builtin, readerParamExpr, fieldIdxExpr)
+                    : Expression.Call(readerParamExpr, builtin, fieldIdxExpr);
 
             public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly
@@ -268,14 +327,11 @@ namespace ProgressOnderwijsUtils
                 static Type type
                     => typeof(T);
 
-                static Type UnderlyingType
-                    => (PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter ? converter.DbType : type).GetNonNullableUnderlyingType();
-
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
                     var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
+                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, Expression.Constant(0), type), dataReaderParamExpr);
                     ReadValue = loadRowsLambda.CompileFast();
                 }
 
@@ -293,16 +349,6 @@ namespace ProgressOnderwijsUtils
                 {
                     if (reader.FieldCount != 1) {
                         throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + " != 1");
-                    }
-                    if (!Enumerable.Range(0, reader.FieldCount)
-                        .Select(reader.GetFieldType)
-                        .SequenceEqual(new[] { UnderlyingType })) {
-                        throw new InvalidOperationException(
-                            "Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
-                            + Enumerable.Range(0, reader.FieldCount)
-                                .Select(i => reader.GetName(i) + " : " + reader.GetFieldType(i).ToCSharpFriendlyTypeName())
-                                .JoinStrings(", ")
-                        );
                     }
                 }
             }
@@ -345,8 +391,9 @@ namespace ProgressOnderwijsUtils
                         propertyFlags[propertyIndex].coveredByReaderColumn = true;
                         var variable = Expression.Variable(member.DataType, member.Name);
                         variablesByPropIdx[propertyIndex] = variable;
-                        statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(columnIndex)));
-                        statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, columnIndex, member.DataType)));
+                        var fieldIdxExpr = Expression.Constant(columnIndex);
+                        statements.Add(Expression.Assign(lastColumnReadParamExpr, fieldIdxExpr));
+                        statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, fieldIdxExpr, member.DataType)));
                         if (!member.CanWrite) {
                             minimalViaConstructorCount++;
                             propertyFlags[propertyIndex].viaConstructor = true;

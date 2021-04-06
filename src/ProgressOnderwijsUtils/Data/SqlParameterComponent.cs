@@ -187,13 +187,12 @@ namespace ProgressOnderwijsUtils
         public static void AppendParamOrFragment<TCommandFactory>(ref TCommandFactory factory, object? argument)
             where TCommandFactory : struct, ICommandFactory
         {
-            var converter = argument == null ? null : PocoPropertyConverter.GetOrNull(argument.GetType());
             if (argument is ParameterizedSql sql) {
                 sql.AppendTo(ref factory);
             } else if (argument is INestableSql nestableSql) {
                 nestableSql.Sql.AppendTo(ref factory);
-            } else if (converter != null) {
-                AppendParamTo(ref factory, converter.ConvertToDb(argument));
+            } else if (argument != null && AutomaticValueConverters.GetOrNull(argument.GetType()) is { } converter) {
+                AppendParamTo(ref factory, converter.ConvertToProvider(argument));
             } else {
                 AppendParamTo(ref factory, argument);
             }

@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             if (IsRowVersion) {
                 return this with {
                     UserTypeId = SqlXType.Binary,
-                    Precision = 8,
+                    MaxLength = 8,
                 };
             } else {
                 return this;

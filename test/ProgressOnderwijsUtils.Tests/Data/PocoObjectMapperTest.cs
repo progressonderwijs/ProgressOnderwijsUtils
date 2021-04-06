@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
+using Microsoft.Data.SqlClient;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -211,6 +212,136 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => retval.Length == 512);
             PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        }
+
+        public enum Enum64Bit : ulong { }
+
+        public sealed record PocoWithRowVersions(ulong Version) : IWrittenImplicitly, IReadImplicitly
+        {
+            public ulong AnotherVersion { get; init; }
+            public uint? AshorterVersion { get; init; }
+            public Enum64Bit AFinalVersion { get; init; }
+            public int Counter { get; init; }
+
+            public static ParameterizedSql CreateTableWithSampleData(SqlConnection sqlConnection)
+            {
+                var tableName = SQL($"#rowversions");
+                SQL($@"
+                create table {tableName} (
+                    AShorterVersion binary(4)
+                    , AnotherVersion binary(8) not null
+                    , Version rowversion
+                    , AFinalVersion varbinary(max)
+                    , Counter int identity not null
+                );
+            ").ExecuteNonQuery(sqlConnection);
+
+                SQL($@"
+                insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1 as int), cast(2 as bigint), cast(3 as bigint));
+                insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100 as int), cast(20000 as bigint), cast(30000 as bigint));
+                insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(10000 as int), cast(200000000 as bigint), cast(300000000 as bigint));
+                insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1000000 as int), cast(2000000000000 as bigint), cast(3000000000000 as bigint));
+                insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100000000 as int), cast(20000000000000000 as bigint), cast(30000000000000000 as bigint));
+            ").ExecuteNonQuery(sqlConnection);
+                return tableName;
+            }
+        }
+
+        [Fact]
+        public void CanReadULong()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+
+            var pocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+
+            PAssert.That(() => pocos.Length == 5);
+
+            var expected = Enumerable.Range(0, 5)
+                .Select(power => new PocoWithRowVersions(0) { Counter = power + 1, AshorterVersion = 1 * (uint)Math.Pow(100, power), AnotherVersion = 2 * (ulong)Math.Pow(10000, power), AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power)) })
+                .ToArray();
+
+            var actualWithoutRowversion = pocos.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+
+            PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
+
+            PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.Counter)));
+            PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.Version)));
+            PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.AshorterVersion)));
+            PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.AFinalVersion)));
+            PAssert.That(() => pocos.SequenceEqual(pocos.OrderBy(o => o.AnotherVersion)));
+        }
+
+        [Fact]
+        public void CanParameterizeULong()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+
+            var pocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+
+            var middle = pocos[2];
+            var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} and AnotherVersion >= {pocos[3].AnotherVersion} order by Version").ReadPlain<uint>(Connection);
+            PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u }));
+        }
+
+        [Fact]
+        public void UInt32_round_trips()
+        {
+            for (var val = uint.MaxValue; val > 0; val = val / 4 + val / 3) {
+                var fromDb = SQL($"select {val}").ReadPlain<uint>(Connection).Single();
+                PAssert.That(() => fromDb == val);
+                var scalarFromDb = SQL($"select {val}").ReadScalar<uint>(Connection);
+                PAssert.That(() => scalarFromDb == val);
+            }
+        }
+
+        [Fact]
+        public void ULongPoco_BulkCopyRoundTrips()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+            var initialPocos = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            PAssert.That(() => initialPocos.Length == 5);
+            SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
+            var rowsAfterDelete = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            PAssert.That(() => rowsAfterDelete.None());
+
+            initialPocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+
+            var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+
+            var expected = Enumerable.Range(0, initialPocos.Length)
+                .Select(power => new PocoWithRowVersions(0) {
+                    Counter = power + 1 + initialPocos.Length,
+                    AshorterVersion = 1 * (uint)Math.Pow(100, power),
+                    AnotherVersion = 2 * (ulong)Math.Pow(10000, power),
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power))
+                })
+                .ToArray();
+
+            var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+
+            PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
+            PAssert.That(() => !rowsAfterBulkInsert.SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
+        }
+
+        [Fact]
+        public void ULongPoco_LargeBulkCopyRoundTrips()
+        {
+            var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
+            SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
+            var srcData = Enumerable.Range(0, 1000)
+                .Select(i => new PocoWithRowVersions(0) {
+                    AshorterVersion = 1 * (uint)i,
+                    AnotherVersion = 2 * (ulong)i,
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)i)
+                })
+                .ToArray();
+
+            srcData.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+
+            var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
+            var expected = srcData.Select((o, i) => o with { Counter = i + 6 });
+            var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+            PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
         }
     }
 }
