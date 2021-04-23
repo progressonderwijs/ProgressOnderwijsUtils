@@ -6,11 +6,11 @@ namespace ProgressOnderwijsUtils.Collections
     public sealed class ArrayComparer<T> : IEqualityComparer<T[]?>
     {
         public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
-        readonly IEqualityComparer<T> underlying;
+        public readonly IEqualityComparer<T> UnderlyingElementComparer;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
 
         public ArrayComparer(IEqualityComparer<T> underlying)
-            => this.underlying = underlying;
+            => UnderlyingElementComparer = underlying;
 
         [Pure]
         public bool Equals(T[]? x, T[]? y)
@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils.Collections
                 return false;
             }
             for (var i = 0; i < x.Length; i++) {
-                if (!underlying.Equals(x[i], y[i])) {
+                if (!UnderlyingElementComparer.Equals(x[i], y[i])) {
                     return false;
                 }
             }
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils.Collections
             if (arr != null) {
                 buffer = start;
                 foreach (var obj in arr) {
-                    buffer = buffer * 997 + (obj is null ? 0 : (ulong)underlying.GetHashCode(obj));
+                    buffer = buffer * 997 + (obj is null ? 0 : (ulong)UnderlyingElementComparer.GetHashCode(obj));
                 }
             } else {
                 buffer = ~start;
