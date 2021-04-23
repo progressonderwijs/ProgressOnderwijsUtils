@@ -4,13 +4,13 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public sealed class ArrayComparer<T> : IEqualityComparer<T[]?>
+    public sealed class SequenceEqualityComparer<T> : IEqualityComparer<T[]?>
     {
-        public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
+        public static readonly SequenceEqualityComparer<T> Default = new(EqualityComparer<T>.Default);
         public readonly IEqualityComparer<T> UnderlyingElementComparer;
         const int NullHashCode = 0x1d45_7af3;
 
-        public ArrayComparer(IEqualityComparer<T> underlying)
+        public SequenceEqualityComparer(IEqualityComparer<T> underlying)
             => UnderlyingElementComparer = underlying;
 
         [Pure]
