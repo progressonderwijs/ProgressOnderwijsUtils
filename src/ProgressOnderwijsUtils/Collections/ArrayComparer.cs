@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -7,7 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
     {
         public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
         public readonly IEqualityComparer<T> UnderlyingElementComparer;
-        static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
+        const int NullHashCode = 0x1d45_7af3;
 
         public ArrayComparer(IEqualityComparer<T> underlying)
             => UnderlyingElementComparer = underlying;
@@ -35,16 +36,14 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public int GetHashCode(T[]? arr)
         {
-            ulong buffer;
-            if (arr != null) {
-                buffer = start;
-                foreach (var obj in arr) {
-                    buffer = buffer * 997 + (obj is null ? 0 : (ulong)UnderlyingElementComparer.GetHashCode(obj));
-                }
-            } else {
-                buffer = ~start;
+            if (arr == null) {
+                return NullHashCode;
             }
-            return (int)(buffer >> 32 ^ buffer);
+            var buffer = new HashCode();
+            foreach (var obj in arr) {
+                buffer.Add(obj, UnderlyingElementComparer);
+            }
+            return buffer.ToHashCode();
         }
     }
 }
