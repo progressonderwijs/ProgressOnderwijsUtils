@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public sealed class SequenceEqualityComparer<T> : IEqualityComparer<T[]?>
+    public sealed class SequenceEqualityComparer<T> : IEqualityComparer<T[]?>, IEqualityComparer<IEnumerable<T>?>
     {
         public static readonly SequenceEqualityComparer<T> Default = new(EqualityComparer<T>.Default);
         public readonly IEqualityComparer<T> UnderlyingElementComparer;
@@ -40,6 +40,44 @@ namespace ProgressOnderwijsUtils.Collections
             }
             var buffer = new HashCode();
             foreach (var obj in arr) {
+                buffer.Add(obj, UnderlyingElementComparer);
+            }
+            return buffer.ToHashCode();
+        }
+
+        [Pure]
+        public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
+        {
+            if (x == null) {
+                return y == null;
+            } else if (y == null) {
+                return false;
+            }
+
+            using var xs = x.GetEnumerator();
+            using var ys = y.GetEnumerator();
+
+            while (true) {
+                var hasX = xs.MoveNext();
+                var hasY = ys.MoveNext();
+                if (hasX && hasY) {
+                    if (!UnderlyingElementComparer.Equals(xs.Current, ys.Current)) {
+                        return false;
+                    }
+                } else {
+                    return !hasX && !hasY;
+                }
+            }
+        }
+
+        [Pure]
+        public int GetHashCode(IEnumerable<T>? seq)
+        {
+            if (seq == null) {
+                return NullHashCode;
+            }
+            var buffer = new HashCode();
+            foreach (var obj in seq) {
                 buffer.Add(obj, UnderlyingElementComparer);
             }
             return buffer.ToHashCode();
