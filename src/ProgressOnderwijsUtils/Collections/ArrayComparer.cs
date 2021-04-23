@@ -5,14 +5,12 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public sealed class ArrayComparer<T> : IEqualityComparer<T[]>
     {
-        public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
+        public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
         readonly IEqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
 
         public ArrayComparer(IEqualityComparer<T> underlying)
-        {
-            this.underlying = underlying;
-        }
+            => this.underlying = underlying;
 
         [Pure]
         public bool Equals(T[]? x, T[]? y)
