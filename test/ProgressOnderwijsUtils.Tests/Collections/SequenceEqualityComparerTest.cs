@@ -8,9 +8,8 @@ namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class SequenceEqualityComparerTest
     {
-        static readonly SequenceEqualityComparer<int> defaultEq=SequenceEqualityComparer<int>.Default;
-        static readonly SequenceEqualityComparer<int> nullIsEmptyEq=defaultEq with { NullCountsAsEmpty = true};
-
+        static readonly SequenceEqualityComparer<int> defaultEq = SequenceEqualityComparer<int>.Default;
+        static readonly SequenceEqualityComparer<int> nullIsEmptyEq = defaultEq with { NullCountsAsEmpty = true };
 
         static void AssertEquality(SequenceEqualityComparer<int> eq, int[]? a, int[]? b, bool shouldBeEqual)
         {
@@ -26,13 +25,13 @@ namespace ProgressOnderwijsUtils.Tests.Collections
         public void Null_vs_Empty()
         {
             AssertEquality(defaultEq, null, new int[0], false);
-            AssertEquality(defaultEq,  new int[0], null, false);
-            AssertEquality(defaultEq,  null, null, true);
+            AssertEquality(defaultEq, new int[0], null, false);
+            AssertEquality(defaultEq, null, null, true);
             AssertEquality(defaultEq, Array.Empty<int>(), new int[0], true);
 
             AssertEquality(nullIsEmptyEq, null, new int[0], true);
-            AssertEquality(nullIsEmptyEq,  new int[0], null, true);
-            AssertEquality(nullIsEmptyEq,  null, null, true);
+            AssertEquality(nullIsEmptyEq, new int[0], null, true);
+            AssertEquality(nullIsEmptyEq, null, null, true);
             AssertEquality(nullIsEmptyEq, Array.Empty<int>(), new int[0], true);
         }
 
