@@ -4,23 +4,25 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public sealed class SequenceEqualityComparer<T> : IEqualityComparer<T[]?>, IEqualityComparer<IEnumerable<T>?>
+    public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> UnderlyingElementComparer, bool NullCountsAsEmpty) : IEqualityComparer<T[]?>, IEqualityComparer<IEnumerable<T>?>
     {
-        public static readonly SequenceEqualityComparer<T> Default = new(EqualityComparer<T>.Default);
-        public readonly IEqualityComparer<T> UnderlyingElementComparer;
+        public static readonly SequenceEqualityComparer<T> Default = new(EqualityComparer<T>.Default, false);
         const int NullHashCode = 0x1d45_7af3;
-
-        public SequenceEqualityComparer(IEqualityComparer<T> underlying)
-            => UnderlyingElementComparer = underlying;
 
         [Pure]
         public bool Equals(T[]? x, T[]? y)
         {
-            if (x == null) {
-                return y == null;
-            } else if (y == null) {
-                return false;
-            } else if (x.Length != y.Length) {
+            if (NullCountsAsEmpty) {
+                x ??= Array.Empty<T>();
+                y ??= Array.Empty<T>();
+            } else {
+                if (x == null) {
+                    return y == null;
+                } else if (y == null) {
+                    return false;
+                }
+            }
+            if (x.Length != y.Length) {
                 return false;
             }
 
@@ -36,7 +38,11 @@ namespace ProgressOnderwijsUtils.Collections
         public int GetHashCode(T[]? arr)
         {
             if (arr == null) {
-                return NullHashCode;
+                if (NullCountsAsEmpty) {
+                    arr = Array.Empty<T>();
+                } else {
+                    return NullHashCode;
+                }
             }
             var buffer = new HashCode();
             foreach (var obj in arr) {
@@ -48,10 +54,15 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
         {
-            if (x == null) {
-                return y == null;
-            } else if (y == null) {
-                return false;
+            if (NullCountsAsEmpty) {
+                x ??= Array.Empty<T>();
+                y ??= Array.Empty<T>();
+            } else {
+                if (x == null) {
+                    return y == null;
+                } else if (y == null) {
+                    return false;
+                }
             }
 
             using var xs = x.GetEnumerator();
@@ -74,7 +85,11 @@ namespace ProgressOnderwijsUtils.Collections
         public int GetHashCode(IEnumerable<T>? seq)
         {
             if (seq == null) {
-                return NullHashCode;
+                if (NullCountsAsEmpty) {
+                    seq = Array.Empty<T>();
+                } else {
+                    return NullHashCode;
+                }
             }
             var buffer = new HashCode();
             foreach (var obj in seq) {
