@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public sealed class ArrayComparer<T> : IEqualityComparer<T[]>
+    public sealed class ArrayComparer<T> : IEqualityComparer<T[]?>
     {
         public static readonly ArrayComparer<T> Default = new(EqualityComparer<T>.Default);
         readonly IEqualityComparer<T> underlying;
