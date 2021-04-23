@@ -16,15 +16,14 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public bool Equals(T[]? x, T[]? y)
         {
-            if (x == null && y == null) {
-                return true;
-            }
-            if (x == null || y == null) {
+            if (x == null) {
+                return y == null;
+            } else if (y == null) {
+                return false;
+            } else if (x.Length != y.Length) {
                 return false;
             }
-            if (x.Length != y.Length) {
-                return false;
-            }
+
             for (var i = 0; i < x.Length; i++) {
                 if (!UnderlyingElementComparer.Equals(x[i], y[i])) {
                     return false;
