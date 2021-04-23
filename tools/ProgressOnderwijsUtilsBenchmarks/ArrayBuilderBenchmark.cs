@@ -247,7 +247,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 }
                 var array = builder.ToArray();
 
-                if (!ArrayComparer<T>.Default.Equals(array, Enumerable.Range(0, len).Select(default(TFactory).Init).ToArray())) {
+                if (!SequenceEqualityComparer<T>.Default.Equals(array, Enumerable.Range(0, len).Select(default(TFactory).Init).ToArray())) {
                     Console.WriteLine(len + " buggy");
                 }
             }
