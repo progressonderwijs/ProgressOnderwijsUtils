@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace ProgressOnderwijsUtils
 {
@@ -33,9 +33,9 @@ namespace ProgressOnderwijsUtils
         }
 
         public static string SignJson<TState>(X509Certificate2 certificate, TState obj)
-            => SignString(certificate, JsonConvert.SerializeObject(obj));
+            => SignString(certificate, JsonSerializer.Serialize(obj));
 
         public static TState VerifySignedJson<TState>(X509Certificate2 certificate, string signedState)
-            => JsonConvert.DeserializeObject<TState>(VerifySignedString(certificate, signedState) ?? throw new Exception("Signature verification failed"));
+            => JsonSerializer.Deserialize<TState>(VerifySignedString(certificate, signedState) ?? throw new Exception("Signature verification failed"));
     }
 }
