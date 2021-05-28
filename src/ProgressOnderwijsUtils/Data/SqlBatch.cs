@@ -4,7 +4,6 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 namespace ProgressOnderwijsUtils
 {
@@ -30,7 +29,6 @@ namespace ProgressOnderwijsUtils
     public interface ITypedSqlCommand<out TQueryReturnValue>
     {
         [UsefulToKeep("lib method")]
-        [return: MaybeNull]
         [MustUseReturnValue]
         TQueryReturnValue Execute(SqlConnection conn);
     }
@@ -41,7 +39,7 @@ namespace ProgressOnderwijsUtils
         public CommandTimeout CommandTimeout { get; }
 
         public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
-            => new NonQuerySqlCommand(Sql, timeout);
+            => new(Sql, timeout);
 
         public NonQuerySqlCommand(ParameterizedSql sql, CommandTimeout timeout)
             => (Sql, CommandTimeout) = (sql, timeout);
@@ -70,11 +68,11 @@ namespace ProgressOnderwijsUtils
         public MissingSchemaAction MissingSchemaAction { get; }
 
         public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
-            => new DataTableSqlCommand(Sql, timeout, MissingSchemaAction);
+            => new(Sql, timeout, MissingSchemaAction);
 
         [UsefulToKeep("lib method")]
         public DataTableSqlCommand WithMissingSchemaAction(MissingSchemaAction missingSchemaAction)
-            => new DataTableSqlCommand(Sql, CommandTimeout, missingSchemaAction);
+            => new(Sql, CommandTimeout, missingSchemaAction);
 
         public DataTableSqlCommand(ParameterizedSql sql, CommandTimeout timeout, MissingSchemaAction missingSchemaAction)
             => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
@@ -95,7 +93,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T>, IWithTimeout<ScalarSqlCommand<T>>
+    public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -104,11 +102,10 @@ namespace ProgressOnderwijsUtils
             => (Sql, CommandTimeout) = (sql, timeout);
 
         public ScalarSqlCommand<T> WithTimeout(CommandTimeout timeout)
-            => new ScalarSqlCommand<T>(Sql, timeout);
+            => new(Sql, timeout);
 
         [MustUseReturnValue]
-        [return: MaybeNull]
-        public T Execute(SqlConnection conn)
+        public T? Execute(SqlConnection conn)
         {
             using var cmd = this.ReusableCommand(conn);
             try {
@@ -121,7 +118,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+    public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -130,9 +127,9 @@ namespace ProgressOnderwijsUtils
             => (Sql, CommandTimeout) = (sql, timeout);
 
         public BuiltinsSqlCommand<T> WithTimeout(CommandTimeout timeout)
-            => new BuiltinsSqlCommand<T>(Sql, timeout);
+            => new(Sql, timeout);
 
-        public T[] Execute(SqlConnection conn)
+        public T?[] Execute(SqlConnection conn)
         {
             using var cmd = this.ReusableCommand(conn);
             try {
@@ -158,13 +155,13 @@ namespace ProgressOnderwijsUtils
 
         [UsefulToKeepAttribute("lib method")]
         public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new PocosSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
+            => new(Sql, CommandTimeout, fieldMapping);
 
         public EnumeratedObjectsSqlCommand<T> ToLazilyEnumeratedCommand()
-            => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
+            => new(Sql, CommandTimeout, FieldMapping);
 
         public PocosSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
-            => new PocosSqlCommand<T>(Sql, commandTimeout, FieldMapping);
+            => new(Sql, commandTimeout, FieldMapping);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -199,15 +196,15 @@ namespace ProgressOnderwijsUtils
             => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
         public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
-            => new EnumeratedObjectsSqlCommand<T>(Sql, timeout, FieldMapping);
+            => new(Sql, timeout, FieldMapping);
 
         [UsefulToKeep("lib method")]
         public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
+            => new(Sql, CommandTimeout, fieldMapping);
 
         [UsefulToKeep("lib method")]
         public PocosSqlCommand<T> ToEagerlyEnumeratedCommand()
-            => new PocosSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
+            => new(Sql, CommandTimeout, FieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {
