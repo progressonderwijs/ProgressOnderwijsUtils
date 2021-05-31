@@ -10,7 +10,7 @@
     <PackageReference Include="Dapper" Version="2.0.90" />
     <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.114" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.114.1" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
     <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj" />
   </ItemGroup>
