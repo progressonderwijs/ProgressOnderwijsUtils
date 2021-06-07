@@ -78,9 +78,13 @@ namespace ProgressOnderwijsUtils
             static Func<object?, T> ForConvertible(Type type, ValueConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
-                    return obj => obj == null ? default(T)! : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromProvider(obj)!;
+                    return obj => obj == null
+                        ? default(T)!
+                        : obj is T alreadyCast
+                            ? alreadyCast
+                            : (T)converter.ConvertFromProvider(obj);
                 } else {
-                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromProvider(obj)!;
+                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromProvider(obj);
                 }
             }
         }
@@ -92,13 +96,27 @@ namespace ProgressOnderwijsUtils
             static Func<object?, T> MakeConverter(Type type)
             {
                 if (!type.IsValueType) {
-                    return obj => obj == null ? default! : obj is IHasValueConverter<T> && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                    return obj => obj == null
+                        ? default(T)!
+                        : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
+                            ? (T)converter.ConvertToProvider(obj)
+                            : (T)obj;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
-                    return obj => obj is IHasValueConverter && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                    return obj =>
+                        obj is null
+                            ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + type.FriendlyName())
+                            : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
+                                ? (T)converter.ConvertToProvider(obj)
+                                : (T)obj;
                 }
-                return obj => obj == null ? default! : obj is IHasValueConverter && AutomaticValueConverters.GetOrNull(obj.GetType()) is {} converter ? (T)converter.ConvertToProvider(obj)! : (T)obj!;
+                return obj =>
+                    obj is null
+                    ? default(T)!
+                    : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
+                        ? (T)converter.ConvertToProvider(obj)
+                        : (T)obj;
             }
         }
 
@@ -121,9 +139,9 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidCastException("Cannot cast (db)null to " + type.ToCSharpFriendlyTypeName());
                 }
                 return null;
-            } else if (AutomaticValueConverters.GetOrNull(type) is {} targetConvertible) {
+            } else if (AutomaticValueConverters.GetOrNull(type) is { } targetConvertible) {
                 return targetConvertible.ConvertFromProvider(val);
-            } else if (AutomaticValueConverters.GetOrNull(val.GetType()) is {} sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
+            } else if (AutomaticValueConverters.GetOrNull(val.GetType()) is { } sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
                 return sourceConvertible.ConvertToProvider(val);
             } else {
                 return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
