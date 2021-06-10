@@ -118,6 +118,17 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void ToDb_is_NoOp_when_already_of_type()
+        {
+            PAssert.That(() => DbValueConverter.ToDb<int>(3) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<int?>(3) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<TrivialValue<int>>(new TrivialValue<int>(3)).Value == 3);
+            PAssert.That(() => DbValueConverter.ToDb<TrivialValue<int>?>(new TrivialValue<int>(3)).Value.Value == 3);
+            PAssert.That(() => DbValueConverter.ToDb<DayOfWeek>(DayOfWeek.Wednesday) == DayOfWeek.Wednesday);
+            PAssert.That(() => DbValueConverter.ToDb<DayOfWeek?>(DayOfWeek.Wednesday) == DayOfWeek.Wednesday);
+        }
+
+        [Fact]
         public void NullableTrivialConverterConvertsNullableValueIntoUnwrappedNull_ToDb()
             => PAssert.That(() => DbValueConverter.ToDb<int?>(default(TrivialValue<int>?)) == null);
 
