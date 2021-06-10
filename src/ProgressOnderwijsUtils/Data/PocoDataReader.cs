@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtils
                         columnBoxedAsColumnType = columnBoxedAsObject;
                         WhenNullable_IsColumnDBNull = null;
                     } else {
-                        var propertyIsNotNull = IsExpressionNonNull(propertyValue);
+                        var propertyIsNotNull = AutomaticValueConverters.IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Condition(propertyIsNotNull, columnBoxedAsObject, Expression.Constant(DBNull.Value, typeof(object)));
                         WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).CompileFast();
                     }
@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtils
                         columnBoxedAsColumnType = columnBoxedAsObject;
                         WhenNullable_IsColumnDBNull = null;
                     } else {
-                        var propertyIsNotNull = IsExpressionNonNull(propertyValue);
+                        var propertyIsNotNull = AutomaticValueConverters.IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Coalesce(columnValueAsNonNullable, Expression.Constant(DBNull.Value, typeof(object)));
                         WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).CompileFast();
                     }
@@ -169,11 +169,6 @@ namespace ProgressOnderwijsUtils
                     TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, pocoParameter).CompileFast();
                 }
             }
-
-            static Expression IsExpressionNonNull(Expression propertyValue)
-                => propertyValue.Type.IsNullableValueType() ? Expression.Property(propertyValue, nameof(Nullable<int>.HasValue))
-                    : propertyValue.Type.IsValueType ? Expression.Constant(false)
-                    : Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
         }
 
         static readonly ColumnInfo[] columnInfos;

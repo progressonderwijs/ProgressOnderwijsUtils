@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
@@ -92,8 +93,8 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(() => DbValueConverter.FromDb<DayOfWeek>(2) == DayOfWeek.Tuesday);
 
         [Fact]
-        public void NonUnderlyingIntsConvertToEnum_crashes()
-            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<DayOfWeek>((short)2) == DayOfWeek.Tuesday);
+        public void NonUnderlyingIntsConvertToEnum_can_work()
+            => PAssert.That(() => DbValueConverter.FromDb<DayOfWeek>((short)2) == DayOfWeek.Tuesday);
 
         [Fact]
         public void DoublesConvertToInt_crashes()
@@ -114,6 +115,17 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialValue<int>(3)) == 3);
             PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialValue<int?>(3)) == 3);
             PAssert.That(() => DbValueConverter.ToDb<int?>(default(TrivialValue<int?>?)) == null);
+        }
+
+        [Fact]
+        public void ToDb_is_NoOp_when_already_of_type()
+        {
+            PAssert.That(() => DbValueConverter.ToDb<int>(3) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<int?>(3) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<TrivialValue<int>>(new TrivialValue<int>(3)).Value == 3);
+            PAssert.That(() => DbValueConverter.ToDb<TrivialValue<int>?>(new TrivialValue<int>(3)).Value.Value == 3);
+            PAssert.That(() => DbValueConverter.ToDb<DayOfWeek>(DayOfWeek.Wednesday) == DayOfWeek.Wednesday);
+            PAssert.That(() => DbValueConverter.ToDb<DayOfWeek?>(DayOfWeek.Wednesday) == DayOfWeek.Wednesday);
         }
 
         [Fact]
@@ -156,7 +168,27 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void CanCastToNullableFromConvertible()
-            => PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialValue<int?>(3)) == 3);
+            => PAssert.That(() => 3 == DbValueConverter.ToDb<int?>(new TrivialValue<int?>(3)));
+
+        [Fact]
+        public void CanCastToNullableFromEnum()
+            => PAssert.That(() => 3 == DbValueConverter.ToDb<int?>(DayOfWeek.Wednesday));
+
+        [Fact]
+        public void CanCastToByteArrayFromULong()
+            => PAssert.That(() => DbValueConverter.ToDb<byte[]>(ulong.MaxValue).SequenceEqual(Enumerable.Repeat((byte)255, 8)));
+
+        [Fact]
+        public void CanCastToByteArrayFromNullableULong()
+            => PAssert.That(() => null == DbValueConverter.ToDb<byte[]?>(default(ulong?)));
+
+        [Fact]
+        public void CanCastFromByteArrayToNullableULong()
+        {
+            var allBitsOn = Enumerable.Repeat((byte)255, 8).ToArray();
+            PAssert.That(() => null == DbValueConverter.FromDb<ulong?>(default(byte[]?)));
+            PAssert.That(() => ulong.MaxValue == DbValueConverter.FromDb<ulong?>(allBitsOn));
+        }
 
         [Fact]
         public void CanCastToNullableConvertibleOfReferenceType()
@@ -198,6 +230,17 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => 3 == (int?)DbValueConverter.DynamicCast(DayOfWeek.Wednesday, typeof(int?)));
             PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek?)DbValueConverter.DynamicCast(3, typeof(DayOfWeek)));
             PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek?)DbValueConverter.DynamicCast(3, typeof(DayOfWeek?)));
+        }
+
+        [Fact]
+        public void CanConvertIntsFromDbToEnums()
+        {
+            PAssert.That(() => DayOfWeek.Wednesday == DbValueConverter.FromDb<DayOfWeek?>(3));
+            PAssert.That(() => DayOfWeek.Wednesday == DbValueConverter.FromDb<DayOfWeek>(3));
+            PAssert.That(() => null == DbValueConverter.FromDb<DayOfWeek?>(null));
+            PAssert.That(() => 3 == DbValueConverter.ToDb<int>(DayOfWeek.Wednesday));
+            PAssert.That(() => 3 == DbValueConverter.ToDb<int?>(DayOfWeek.Wednesday));
+            PAssert.That(() => null == DbValueConverter.ToDb<int?>(null));
         }
 
         [Fact]

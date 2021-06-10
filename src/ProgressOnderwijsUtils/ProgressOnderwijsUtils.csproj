@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>74.2.0</Version>
-    <PackageReleaseNotes>Tweak nullability annotations.</PackageReleaseNotes>
+    <Version>74.3.0</Version>
+    <PackageReleaseNotes>Improve the automatically resolved ValueConverter selection.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
