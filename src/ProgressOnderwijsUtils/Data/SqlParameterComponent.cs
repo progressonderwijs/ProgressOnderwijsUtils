@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils
                 sql.AppendTo(ref factory);
             } else if (argument is INestableSql nestableSql) {
                 nestableSql.Sql.AppendTo(ref factory);
-            } else if (argument != null && AutomaticValueConverters.GetOrNull(argument.GetType()) is { } converter) {
+            } else if (argument is { } and not Enum && AutomaticValueConverters.GetOrNull(argument.GetType()) is { } converter) {
                 AppendParamTo(ref factory, converter.ConvertToProvider(argument));
             } else {
                 AppendParamTo(ref factory, argument);
