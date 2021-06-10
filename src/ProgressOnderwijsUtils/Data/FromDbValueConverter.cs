@@ -91,32 +91,29 @@ namespace ProgressOnderwijsUtils
 
         static class ToDbHelper<T>
         {
-            public static readonly Func<object?, T> Convert = MakeConverter(typeof(T));
+            public static readonly Func<object?, T> Convert = MakeConverter();
 
-            static Func<object?, T> MakeConverter(Type type)
+            static Func<object?, T> MakeConverter()
             {
-                if (!type.IsValueType) {
-                    return obj => obj == null
-                        ? default(T)!
-                        : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
-                            ? (T)converter.ConvertToProvider(obj)
-                            : (T)obj;
-                }
-                var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
-                if (nonnullableUnderlyingType == null) {
+                if (typeof(T).IsNullableValueType() || !typeof(T).IsValueType) {
                     return obj =>
                         obj is null
-                            ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + type.FriendlyName())
-                            : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
-                                ? (T)converter.ConvertToProvider(obj)
-                                : (T)obj;
+                            ? default(T)!
+                            : obj is T typed
+                                ? typed
+                                : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
+                                    ? (T)converter.ConvertToProvider(obj)
+                                    : throw new($"{obj.GetType().FriendlyName()} cannot be cast to {typeof(T).FriendlyName()}");
+                } else {
+                    return obj =>
+                        obj is null
+                            ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + typeof(T).FriendlyName())
+                            : obj is T typed
+                                ? typed
+                                : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
+                                    ? (T)converter.ConvertToProvider(obj)
+                                    : throw new($"{obj.GetType().FriendlyName()} cannot be cast to {typeof(T).FriendlyName()}");
                 }
-                return obj =>
-                    obj is null
-                    ? default(T)!
-                    : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
-                        ? (T)converter.ConvertToProvider(obj)
-                        : (T)obj;
             }
         }
 
