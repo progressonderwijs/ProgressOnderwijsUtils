@@ -17,8 +17,8 @@ namespace ProgressOnderwijsUtils.Tests.Collections
             var bSeq = b?.AsEnumerable();
             PAssert.That(() => eq.Equals(a, b) == shouldBeEqual);
             PAssert.That(() => eq.Equals(aSeq, bSeq) == shouldBeEqual);
-            PAssert.That(() => (eq.GetHashCode(a) == eq.GetHashCode(b)) == shouldBeEqual);
-            PAssert.That(() => (eq.GetHashCode(aSeq) == eq.GetHashCode(bSeq)) == shouldBeEqual);
+            PAssert.That(() => eq.GetHashCode(a) == eq.GetHashCode(b) == shouldBeEqual);
+            PAssert.That(() => eq.GetHashCode(aSeq) == eq.GetHashCode(bSeq) == shouldBeEqual);
         }
 
         [Fact]

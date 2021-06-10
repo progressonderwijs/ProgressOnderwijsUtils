@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="sqlConn">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
-        public static T[] ReadPlain<T>(this ParameterizedSql q, SqlConnection sqlConn)
+        public static T?[] ReadPlain<T>(this ParameterizedSql q, SqlConnection sqlConn)
             => q.OfBuiltins<T>().Execute(sqlConn);
 
         [MustUseReturnValue]
