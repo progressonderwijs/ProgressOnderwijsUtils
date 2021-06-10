@@ -36,6 +36,6 @@ namespace ProgressOnderwijsUtils
             => SignString(certificate, JsonSerializer.Serialize(obj));
 
         public static TState VerifySignedJson<TState>(X509Certificate2 certificate, string signedState)
-            => JsonSerializer.Deserialize<TState>(VerifySignedString(certificate, signedState) ?? throw new Exception("Signature verification failed"));
+            => JsonSerializer.Deserialize<TState>(VerifySignedString(certificate, signedState) ?? throw new Exception("Signature verification failed")) ?? throw new Exception("Deserialization error?");
     }
 }
