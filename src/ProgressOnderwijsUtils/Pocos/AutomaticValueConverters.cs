@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
             where TConverterSource : struct, IValueConverterSource<TModel, TProvider>
-            where TModel : struct, IHasValueConverter<TModel, TProvider, TConverterSource>
+            where TModel : IHasValueConverter<TModel, TProvider, TConverterSource>
             => new TConverterSource().GetValueConverter();
 
         internal static readonly MethodInfo CreateValueConverter_OpenGenericMethod = ((Func<ValueConverter>)CreateValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2>).Method.GetGenericMethodDefinition();

@@ -16,5 +16,5 @@ namespace ProgressOnderwijsUtils
 
     public interface IHasValueConverter<TModel, TProvider, [UsedImplicitly] TValueConverterSource> : IHasValueConverter<TProvider>
         where TValueConverterSource : struct, IValueConverterSource<TModel, TProvider>
-        where TModel : struct, IHasValueConverter<TModel, TProvider, TValueConverterSource> { }
+        where TModel : IHasValueConverter<TModel, TProvider, TValueConverterSource> { }
 }
