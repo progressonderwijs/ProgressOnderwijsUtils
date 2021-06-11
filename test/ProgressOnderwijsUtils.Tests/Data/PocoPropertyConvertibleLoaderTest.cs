@@ -40,6 +40,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string AsString { get; }
         }
 
+        public sealed record CustomRefTypeConvertible(int AsInt) : IHasValueConverter<CustomRefTypeConvertible, int, CustomRefTypeConvertible.Source>
+        {
+            public struct Source : IValueConverterSource<CustomRefTypeConvertible, int>
+            {
+                public ValueConverter<CustomRefTypeConvertible, int> GetValueConverter()
+                    => this.DefineConverter(o => o.AsInt, s => new(s));
+            }
+        }
+
         public sealed record BlaOk3 : IWrittenImplicitly, IReadImplicitly
         {
             public CustomBla Bla2 { get; set; }
@@ -59,6 +68,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public CustomBla Bla2 { get; set; }
             public CustomBla? Bla3 { get; }
         }
+
+        public sealed record ARecordWithARefTypeConvertibleProperty(CustomRefTypeConvertible? Id, string? Bla, string Bla2) : IWrittenImplicitly;
 
         public sealed record BlaOk_with_struct_property : IWrittenImplicitly, IReadImplicitly
         {
@@ -109,6 +120,19 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk4>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
+        }
+
+        [Fact]
+        public void PocoSupportsRefTypeConvertibles()
+        {
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
+
+            var target = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
+
+            var fromDb = SQL($"select Id = iif(Id %2 =0, null, Id), Bla, Bla2 from #MyTable t order by t.Id").ReadPocos<ARecordWithARefTypeConvertibleProperty>(Connection);
+            var expected = SampleObjects.Select(x => new ARecordWithARefTypeConvertibleProperty(x.Id % 2 == 0 ? null : new(x.Id), x.Bla, x.Bla2));
+            PAssert.That(() => expected.SequenceEqual(fromDb));
         }
 
         [Fact]
