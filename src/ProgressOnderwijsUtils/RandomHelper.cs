@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
 {
     public sealed class RandomHelper
     {
-        public static readonly RandomHelper Secure = new RandomHelper(new RNGCryptoServiceProvider().GetBytes);
+        public static readonly RandomHelper Secure = new RandomHelper(bytes => RandomNumberGenerator.Fill(bytes));
 
         static RandomHelper Insecure(int seed)
             => new RandomHelper(new Random(seed).NextBytes);
