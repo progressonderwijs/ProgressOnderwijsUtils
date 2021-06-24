@@ -53,8 +53,21 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate)
         {
-            var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
-            var xml = XElement.Parse(rawXml);
+            byte[] bytes;
+            try {
+                bytes = Convert.FromBase64String(rawSamlResponse);
+            } catch (FormatException e) {
+                return Maybe.Error($"Invalid base64: {e.Message}");
+            }
+
+            var rawXml = Encoding.UTF8.GetString(bytes);
+
+            XElement xml;
+            try {
+                xml = XElement.Parse(rawXml);
+            } catch (XmlException e) {
+                return Maybe.Error($"Invalid XML: {e.Message}");
+            }
 
             try {
                 ValidateSchema(xml);
@@ -112,12 +125,12 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static (string? inresponseTo, DateTime notOnOrAfter) GetSubjectConfirmationData(XElement assertion)
         {
             var subjectConfirmationData = assertion
-                    .Element(SamlNamespaces.SAML_NS + "Subject")
-                    .AssertNotNull()
-                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
-                    .AssertNotNull()
-                    .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
-                    .AssertNotNull();
+                .Element(SamlNamespaces.SAML_NS + "Subject")
+                .AssertNotNull()
+                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
+                .AssertNotNull()
+                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
+                .AssertNotNull();
             return (
                 XmlConvert.DecodeName((string?)subjectConfirmationData.Attribute("InResponseTo")),
                 (DateTime)subjectConfirmationData.Attribute("NotOnOrAfter").AssertNotNull()
