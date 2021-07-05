@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>74.5.0</Version>
-    <PackageReleaseNotes>Improve error handling SsoProcessor.</PackageReleaseNotes>
+    <Version>74.6.0</Version>
+    <PackageReleaseNotes>Add WebDriverPool</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
