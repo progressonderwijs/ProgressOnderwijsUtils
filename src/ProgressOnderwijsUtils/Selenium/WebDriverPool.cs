@@ -3,9 +3,8 @@ using System.Collections.Concurrent;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
-using Progress.Business.Tools;
 
-namespace Progress.WebApp.SmokeTests.Configuration
+namespace ProgressOnderwijsUtils.Selenium
 {
     /// <summary>
     /// In theory, ChromeDriverServer (etc.) should use some form of pooling internally, so there's theoretically little need to here.
