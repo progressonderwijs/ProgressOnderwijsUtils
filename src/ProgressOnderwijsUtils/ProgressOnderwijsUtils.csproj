@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>74.5.0</Version>
-    <PackageReleaseNotes>Improve error handling SsoProcessor.</PackageReleaseNotes>
+    <Version>74.6.0</Version>
+    <PackageReleaseNotes>Add WebDriverPool</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -23,6 +23,7 @@
     <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.0.0-beta4" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
