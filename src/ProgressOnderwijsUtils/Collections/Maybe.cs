@@ -135,6 +135,12 @@ namespace ProgressOnderwijsUtils.Collections
         public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, TOk whenOk, TError whenError)
             => isOk ? Ok(whenOk).AsMaybeWithoutError<TError>() : Error(whenError);
 
+        public static Maybe<Unit, TError> Verify<TError>(bool isOk, Func<TError> whenError)
+            => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError());
+
+        public static Maybe<Unit, TError> Verify<TError>(bool isOk, TError whenError)
+            => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError);
+
         /// <summary>
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>

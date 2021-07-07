@@ -57,6 +57,15 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void Maybe_check_returns_Unit_or_error()
+        {
+            PAssert.That(() => Maybe.Verify(true, "an error").IsOk);
+            PAssert.That(() => Maybe.Verify(false, "an error").ContainsError(err=> err== "an error"));
+            PAssert.That(() => Maybe.Verify(true, () => "an error").IsOk);
+            PAssert.That(() => Maybe.Verify(false, () => "an error").ContainsError(err=> err== "an error"));
+        }
+
+        [Fact]
         public void Maybe_try_is_ok_unless_exception_is_thrown()
         {
             PAssert.That(() => Maybe.Try(() => int.Parse("42")).Catch<Exception>().Contains(42));
