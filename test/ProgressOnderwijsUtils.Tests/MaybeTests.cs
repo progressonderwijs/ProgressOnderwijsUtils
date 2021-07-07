@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Tests
             // ReSharper disable once RedundantCast
             PAssert.That(() => Maybe.Ok((string?)"42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
 #pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable 8620 //R# bug?
+#pragma warning disable 8620 //R# bugje?
             PAssert.That(() => Maybe.Ok(default(string)).AsMaybeWithoutError<Unit>().Contains(default(string)));
 #pragma warning restore 8620
 #pragma warning restore IDE0079 // Remove unnecessary suppression
@@ -57,6 +57,15 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void Maybe_check_returns_Unit_or_error()
+        {
+            PAssert.That(() => Maybe.Verify(true, "an error").IsOk);
+            PAssert.That(() => Maybe.Verify(false, "an error").ContainsError(err=> err== "an error"));
+            PAssert.That(() => Maybe.Verify(true, () => "an error").IsOk);
+            PAssert.That(() => Maybe.Verify(false, () => "an error").ContainsError(err=> err== "an error"));
+        }
+
+        [Fact]
         public void Maybe_try_is_ok_unless_exception_is_thrown()
         {
             PAssert.That(() => Maybe.Try(() => int.Parse("42")).Catch<Exception>().Contains(42));
@@ -86,14 +95,14 @@ namespace ProgressOnderwijsUtils.Tests
             cleanupCalled = 0;
             maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(() => {
                 cleanupCalled++;
-                throw new Exception();
+                throw new();
             });
             PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is AggregateException));
 
             cleanupCalled = 0;
-            var unitMaybeWithCleanup = Maybe.Try(() => throw new Exception("bla")).Finally(() => {
+            var unitMaybeWithCleanup = Maybe.Try(() => throw new("bla")).Finally(() => {
                 cleanupCalled++;
-                throw new Exception();
+                throw new();
             });
             PAssert.That(() => cleanupCalled == 1 && unitMaybeWithCleanup.ContainsError(e => e is AggregateException));
         }
