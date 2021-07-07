@@ -170,7 +170,7 @@ namespace ProgressOnderwijsUtils
                         DataTable? DeletionExecution()
                         {
                             if (!outputAllDeletedRows) {
-                                DeletionQuery(default).ExecuteNonQuery(conn);
+                                DeletionQuery(default(ParameterizedSql)).ExecuteNonQuery(conn);
                                 return null;
                             }
 
@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtils
                         SQL($"drop table {tempTableName};").ExecuteNonQuery(conn);
                         sw.Stop();
                         log($"...took {sw.Elapsed}");
-                        perflog.Add(new DeletionReport { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                        perflog.Add(new() { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                     }
                 );
 
