@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Tests
             // ReSharper disable once RedundantCast
             PAssert.That(() => Maybe.Ok((string?)"42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
 #pragma warning disable IDE0079 // Remove unnecessary suppression
-#pragma warning disable 8620 //R# bug?
+#pragma warning disable 8620 //R# bugje?
             PAssert.That(() => Maybe.Ok(default(string)).AsMaybeWithoutError<Unit>().Contains(default(string)));
 #pragma warning restore 8620
 #pragma warning restore IDE0079 // Remove unnecessary suppression
