@@ -86,14 +86,14 @@ namespace ProgressOnderwijsUtils.Tests
             cleanupCalled = 0;
             maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(() => {
                 cleanupCalled++;
-                throw new Exception();
+                throw new();
             });
             PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is AggregateException));
 
             cleanupCalled = 0;
-            var unitMaybeWithCleanup = Maybe.Try(() => throw new Exception("bla")).Finally(() => {
+            var unitMaybeWithCleanup = Maybe.Try(() => throw new("bla")).Finally(() => {
                 cleanupCalled++;
-                throw new Exception();
+                throw new();
             });
             PAssert.That(() => cleanupCalled == 1 && unitMaybeWithCleanup.ContainsError(e => e is AggregateException));
         }
