@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils.Collections
             => okOrError switch {
                 Maybe_Ok<TOk> okValue => ifOk(okValue.Value),
                 Maybe_Error<TError> errValue => ifError(errValue.Error),
-                _ => throw new Exception($"Maybe is neither Ok nor Error.")
+                _ => throw new($"Maybe is neither Ok nor Error.")
             };
 
         /// <summary>
@@ -72,14 +72,14 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static implicit operator Maybe<TOk, TError>(Maybe_Error<TError> err)
-            => new Maybe<TOk, TError>(err);
+            => new(err);
 
         /// <summary>
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.
         /// </summary>
         [Pure]
         public static implicit operator Maybe<TOk, TError>(Maybe_Ok<TOk> err)
-            => new Maybe<TOk, TError>(err);
+            => new(err);
 
         public bool TryGet([MaybeNullWhen(false)] out TOk okValueIfOk, [MaybeNullWhen(true)] out TError errorValueIfError)
         {
@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils.Collections
                     (okValueIfOk, errorValueIfError) = (default(TOk)! /*okValueIfOk is annotated MaybeNull*/, errValue.Error);
                     return false;
                 default:
-                    throw new Exception($"Maybe is neither Ok nor Error.");
+                    throw new($"Maybe is neither Ok nor Error.");
             }
         }
 
@@ -106,28 +106,28 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Maybe_Ok<T> Ok<T>(T val)
-            => new Maybe_Ok<T>(val);
+            => new(val);
 
         /// <summary>
         /// Creates a succesful Maybe value without a value.
         /// </summary>
         [Pure]
         public static Maybe_Ok<Unit> Ok()
-            => new Maybe_Ok<Unit>(Unit.Value);
+            => new(Unit.Value);
 
         /// <summary>
         /// Create a failed maybe with an error state describing a failed operation.
         /// </summary>
         [Pure]
         public static Maybe_Error<TError> Error<TError>(TError error)
-            => new Maybe_Error<TError>(error);
+            => new(error);
 
         /// <summary>
         /// Create a failed maybe without any additional information about the error.
         /// </summary>
         [Pure]
         public static Maybe_Error<Unit> Error()
-            => new Maybe_Error<Unit>(Unit.Value);
+            => new(Unit.Value);
 
         public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, Func<TOk> whenOk, Func<TError> whenError)
             => isOk ? Ok(whenOk()).AsMaybeWithoutError<TError>() : Error(whenError());
@@ -171,13 +171,13 @@ namespace ProgressOnderwijsUtils.Collections
         /// Usage: Maybe.Try( () => Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
         /// </summary>
         public static MaybeTryBody Try(Action tryBody)
-            => new MaybeTryBody(tryBody);
+            => new(tryBody);
 
         /// <summary>
         /// Usage: Maybe.Try( () => Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
         /// </summary>
         public static MaybeTryBody<TOk> Try<TOk>(Func<TOk> tryBody)
-            => new MaybeTryBody<TOk>(tryBody);
+            => new(tryBody);
     }
 
     public readonly struct MaybeTryBody
