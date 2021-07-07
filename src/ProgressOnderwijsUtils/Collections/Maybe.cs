@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        public void Deconstruct(out bool isOk, [MaybeNull] out TOk okValueIfOk, [MaybeNull] out TError errorValueIfError)
+        public void Deconstruct(out bool isOk, out TOk? okValueIfOk, out TError? errorValueIfError)
             => isOk = TryGet(out okValueIfOk, out errorValueIfError);
     }
 
