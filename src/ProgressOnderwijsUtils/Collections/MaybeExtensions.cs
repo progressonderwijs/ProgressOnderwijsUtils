@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Resources;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace ProgressOnderwijsUtils.Collections
 {
     public static class MaybeExtensions
     {
-        [return: MaybeNull]
         [Pure]
-        public static TError ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
+        public static TError? ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TError : class?
             => state.TryGet(out _, out var whenError) ? null : whenError;
 
@@ -26,9 +22,8 @@ namespace ProgressOnderwijsUtils.Collections
             where TError : struct
             => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
 
-        [return: MaybeNull]
         [Pure]
-        public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
+        public static TOk? ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : class?
             => state.TryGet(out var whenOk, out _) ? whenOk : null;
 
@@ -43,13 +38,13 @@ namespace ProgressOnderwijsUtils.Collections
             => state.TryGet(out var okValue, out _) ? okValue : default(TOk?);
 
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state)
-            => state.TryGet(out var okValue, out var error) ? okValue : throw new Exception("Assertion that Maybe is Ok failed; error state: " + error);
+            => state.TryGet(out var okValue, out var error) ? okValue : throw new("Assertion that Maybe is Ok failed; error state: " + error);
 
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state, Func<TError, Exception?> exceptionWhenError)
             => state.TryGet(out var okValue, out var error) ? okValue : throw exceptionWhenError(error) ?? new Exception("Assertion that Maybe is Ok failed; error state: " + error);
 
         public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
-            => state.TryGet(out var okValue, out var error) ? throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue) : error;
+            => state.TryGet(out var okValue, out var error) ? throw new("Assertion that Maybe is Error failed; ok state: " + okValue) : error;
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -274,7 +269,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             var (okValues, errValues) = maybes.Partition();
-            return errValues.Any() ? (Maybe<TOk[], TError[]>)Maybe.Error(errValues) : Maybe.Ok(okValues).AsMaybeWithoutError<TError[]>();
+            return errValues.Any() ? Maybe.Error(errValues) : Maybe.Ok(okValues);
         }
 
         [Pure]
