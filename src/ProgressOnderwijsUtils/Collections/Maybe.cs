@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils.Collections
                     (okValueIfOk, errorValueIfError) = (default(TOk)! /*okValueIfOk is annotated MaybeNull*/, errValue.Error);
                     return false;
                 default:
-                    throw new($"Maybe is neither Ok nor Error.");
+                    throw new("Maybe is neither Ok nor Error.");
             }
         }
 
