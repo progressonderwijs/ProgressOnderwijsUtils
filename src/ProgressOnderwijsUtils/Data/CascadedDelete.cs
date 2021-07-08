@@ -211,8 +211,8 @@ namespace ProgressOnderwijsUtils
                         into {newDelTable}
                         from {childTable.QualifiedNameSql} as fk
                         join {table.QualifiedNameSql} as pk on {pkJoin}
-                        join {tempTableName} as tt on {ttJoin}
                         {whereClause}
+                            and exists(select 1 from {tempTableName} as tt where {ttJoin})
                         ;
                         
                         select count(*) from {newDelTable}
