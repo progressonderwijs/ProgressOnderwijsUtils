@@ -81,6 +81,13 @@ namespace ProgressOnderwijsUtils.Collections
         public static implicit operator Maybe<TOk, TError>(Maybe_Ok<TOk> err)
             => new(err);
 
+        /// <summary>
+        /// Allow discarding the return value. A lot of methods only need to return whether they succeeded, but a lot of sources of maybe return a result
+        /// </summary>
+        [Pure]
+        public static implicit operator Maybe<Unit, TError>(Maybe<TOk, TError> maybe)
+            => maybe.WhenOk(_ => { });
+
         public bool TryGet([MaybeNullWhen(false)] out TOk okValueIfOk, [MaybeNullWhen(true)] out TError errorValueIfError)
         {
             switch (okOrError) {
