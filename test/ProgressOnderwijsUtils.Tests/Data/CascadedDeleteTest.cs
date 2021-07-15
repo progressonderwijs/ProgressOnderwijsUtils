@@ -155,6 +155,34 @@ namespace ProgressOnderwijsUtils.Tests.Data
         }
 
         [Fact]
+        public void NonUniqueForeignKeyDoesNotLeadToExplosionOfDeletions()
+        {
+            SQL($@"
+                create table TRoot ( root int primary key, B int);
+                create table T1 ( C int primary key, root int references TRoot (root));
+                create table TLeaf ( Z int primary key, C int references T1 (C));
+            ").ExecuteNonQuery(Connection);
+
+            SQL($@"
+                insert into TRoot values (1, 11), (2, 22), (3, 33);
+                insert into T1 values (1,1), (2, 2), (3, 3), (11,1), (22,2), (33,3);
+
+                insert into TLeaf values (1, 1);
+            ").ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, });
+
+            var rowsFromTRoot= deletionReport.Single(t => t.Table == "dbo.TRoot");
+            PAssert.That(() => rowsFromTRoot.DeletedAtMostRowCount == 1);
+            var rowsFromT1 = deletionReport.Single(t => t.Table == "dbo.T1");
+            PAssert.That(() => rowsFromT1.DeletedAtMostRowCount == 2);
+            var rowsFromTLeaf = deletionReport.Single(t => t.Table == "dbo.TLeaf");
+            PAssert.That(() => rowsFromTLeaf.DeletedAtMostRowCount == 1);
+        }
+
+
+        [Fact]
         public void CascadeDeleteBreaksOnSpecificTable()
         {
             SQL($@"
