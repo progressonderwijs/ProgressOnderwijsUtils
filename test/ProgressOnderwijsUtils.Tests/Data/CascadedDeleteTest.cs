@@ -165,23 +165,20 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             SQL($@"
                 insert into TRoot values (1, 11), (2, 22), (3, 33);
-                insert into T1 values (1,1), (2, 2), (3, 3);
+                insert into T1 values (1,1), (2, 2), (3, 3), (11,1), (22,2), (33,3);
 
-                insert into TLeaf values (1, 1), (2, null, (3, null, 5), (4, null, null);
+                insert into TLeaf values (1, 1);
             ").ExecuteNonQuery(Connection);
-
-            var initialTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Connection);
-
-            PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, });
 
-            var finalTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Connection);
-            PAssert.That(() => finalTLeafKeys.SetEqual(new[] { 3, 4 }));
-
-            var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray();
-            PAssert.That(() => rowsFromT1.Single().DeletedRows!.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5 }));
+            var rowsFromTRoot= deletionReport.Single(t => t.Table == "dbo.TRoot");
+            PAssert.That(() => rowsFromTRoot.DeletedAtMostRowCount == 1);
+            var rowsFromT1 = deletionReport.Single(t => t.Table == "dbo.T1");
+            PAssert.That(() => rowsFromT1.DeletedAtMostRowCount == 2);
+            var rowsFromTLeaf = deletionReport.Single(t => t.Table == "dbo.TLeaf");
+            PAssert.That(() => rowsFromTLeaf.DeletedAtMostRowCount == 1);
         }
 
 
