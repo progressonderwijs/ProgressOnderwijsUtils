@@ -1,4 +1,4 @@
-﻿
+
 Building this project will produce an analyzer .dll, as well as the
 following two ways you may wish to package that analyzer:
  * A NuGet package (.nupkg file) that will add your assembly as a

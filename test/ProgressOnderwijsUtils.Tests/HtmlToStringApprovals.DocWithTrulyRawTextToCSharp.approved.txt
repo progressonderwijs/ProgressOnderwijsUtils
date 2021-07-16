@@ -1,4 +1,4 @@
-﻿_html.Content(
+_html.Content(
     _head.Content(
         _script._type("mytype")
             .Content(

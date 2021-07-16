@@ -1,4 +1,4 @@
-﻿<Project>
+<Project>
   <Import Project="Common.props" />
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

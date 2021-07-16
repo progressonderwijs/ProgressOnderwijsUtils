@@ -1,4 +1,4 @@
-﻿PSGetPropertyKeyFromName
+PSGetPropertyKeyFromName
 SHCreateItemFromParsingName
 IShellItem2
 PropVariantToInt32

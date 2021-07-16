@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../src/Common.props" />
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;

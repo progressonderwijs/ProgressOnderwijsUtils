@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Data.SqlClient;
 using static ProgressOnderwijsUtils.SafeSql;
 

@@ -1,1 +1,1 @@
-﻿<!DOCTYPE html><html><head><title>Hello world: a &lt; b &amp; "b" &gt; 'c'; </title></head><body><textarea>Hello world: a &lt; b &amp; "b" &gt; 'c'; </textarea></body></html>
+<!DOCTYPE html><html><head><title>Hello world: a &lt; b &amp; "b" &gt; 'c'; </title></head><body><textarea>Hello world: a &lt; b &amp; "b" &gt; 'c'; </textarea></body></html>
