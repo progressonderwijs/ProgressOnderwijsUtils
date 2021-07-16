@@ -1,4 +1,4 @@
-﻿namespace ProgressOnderwijsUtils.SchemaReflection
+namespace ProgressOnderwijsUtils.SchemaReflection
 {
     struct EightFlags
     {

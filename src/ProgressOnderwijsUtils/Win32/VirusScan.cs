@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Windows.Sdk;
 
 namespace ProgressOnderwijsUtils.Win32

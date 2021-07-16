@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 
 #pragma warning disable IDE0051 // Remove unused private members

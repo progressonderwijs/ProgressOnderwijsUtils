@@ -1,4 +1,4 @@
-﻿using ProgressOnderwijsUtils.Html;
+using ProgressOnderwijsUtils.Html;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

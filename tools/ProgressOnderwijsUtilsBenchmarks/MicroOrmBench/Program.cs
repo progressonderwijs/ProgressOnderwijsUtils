@@ -1,4 +1,4 @@
-﻿namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class MicroOrmBenchmarkProgram
     {

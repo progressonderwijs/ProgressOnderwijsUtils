@@ -1,1 +1,1 @@
-﻿<!DOCTYPE html><html><head><title>Hello world!</title></head><body><p title="Hello world: a < b &amp; &quot;b&quot; > 'c'; ">no content</p></body></html>
+<!DOCTYPE html><html><head><title>Hello world!</title></head><body><p title="Hello world: a < b &amp; &quot;b&quot; > 'c'; ">no content</p></body></html>

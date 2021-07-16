@@ -1,4 +1,4 @@
-﻿new ExampleValue {
+new ExampleValue {
     MyInt = 42,
     Nested = new ExampleValue {
         MyInt = 0,

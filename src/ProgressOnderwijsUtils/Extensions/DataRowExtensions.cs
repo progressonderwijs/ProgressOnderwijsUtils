@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils

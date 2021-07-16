@@ -1,4 +1,4 @@
-﻿param($installPath, $toolsPath, $package, $project)
+param($installPath, $toolsPath, $package, $project)
 
 $analyzersPaths = Join-Path (Join-Path (Split-Path -Path $toolsPath -Parent) "analyzers" ) * -Resolve
 

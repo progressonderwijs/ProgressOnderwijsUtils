@@ -1,4 +1,4 @@
-﻿- Update the version number in the project file
+- Update the version number in the project file
 - AppVeyor is configured to deploy to NuGet when master is pushed. If you need to deploy manually instead:
     - open the library directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
     - Run:

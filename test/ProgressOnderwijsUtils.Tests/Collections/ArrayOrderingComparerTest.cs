@@ -1,4 +1,4 @@
-﻿using ExpressionToCodeLib;
+using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 

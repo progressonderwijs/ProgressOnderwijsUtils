@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;

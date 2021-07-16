@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html><html><head><title>Hello world!</title><meta hidden="hmm"><link rel="bla"><base href="nowhere"></head><body><area>
+<!DOCTYPE html><html><head><title>Hello world!</title><meta hidden="hmm"><link rel="bla"><base href="nowhere"></head><body><area>
 <br>
 <col>
 <embed>
