@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>76.1.0</Version>
-    <PackageReleaseNotes>Fix performance bug in CascadeDelete</PackageReleaseNotes>
+    <Version>76.2.0</Version>
+    <PackageReleaseNotes>Use BOM-less UTF-8 for approved files.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
