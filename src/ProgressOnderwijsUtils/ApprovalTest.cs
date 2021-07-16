@@ -43,14 +43,14 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public bool IsChangedFrom(string text)
-            => !File.Exists(ApprovalPath) || File.ReadAllText(ApprovalPath, Encoding.UTF8) != text;
+            => !File.Exists(ApprovalPath) || File.ReadAllText(ApprovalPath) != text;
 
         [MustUseReturnValue]
         public bool UpdateIfChangedFrom(string text)
         {
             var isChangedFrom = IsChangedFrom(text);
             if (isChangedFrom) {
-                File.WriteAllText(ApprovalPath, text, Encoding.UTF8);
+                File.WriteAllText(ApprovalPath, text);
             }
             return isChangedFrom;
         }
