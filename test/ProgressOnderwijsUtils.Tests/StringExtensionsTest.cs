@@ -49,7 +49,9 @@ namespace ProgressOnderwijsUtils.Tests
         public void ReplaceRingelS()
         {
             PAssert.That(() => StringUtils.VervangRingelS("ß") == "ss");
+            PAssert.That(() => StringUtils.VervangRingelS("ẞ") == "ss");
             PAssert.That(() => StringUtils.VervangRingelS("aßb") == "assb");
+            PAssert.That(() => StringUtils.VervangRingelS("ßẞ") == "ssss");
             PAssert.That(() => StringUtils.VervangRingelS("") == "");
         }
 
