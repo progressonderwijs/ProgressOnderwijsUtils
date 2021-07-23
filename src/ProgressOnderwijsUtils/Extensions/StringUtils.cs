@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static string VervangRingelS(string str)
-            => str.Replace("ß", "ss");
+            => str.Replace("ß", "ss").Replace("ẞ", "ss");
 
         [Pure]
         public static string SepaTekenset(string s)

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>76.2.0</Version>
-    <PackageReleaseNotes>Use BOM-less UTF-8 for approved files.</PackageReleaseNotes>
+    <Version>76.3.0</Version>
+    <PackageReleaseNotes>Add support for extended ringle-S (U+01E9E)</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
