@@ -19,7 +19,6 @@ namespace ProgressOnderwijsUtils
         CommandTimeout CommandTimeout { get; }
     }
 
-
     public interface IWithTimeout<out TSelf> : INestableSql
         where TSelf : IWithTimeout<TSelf>
     {
@@ -44,14 +43,18 @@ namespace ProgressOnderwijsUtils
         public NonQuerySqlCommand(ParameterizedSql sql, CommandTimeout timeout)
             => (Sql, CommandTimeout) = (sql, timeout);
 
-        public int Execute(SqlConnection conn)
+        public void Execute(SqlConnection conn)
+            => Execute(conn, out _);
+
+        public void Execute(SqlConnection conn, out int nrOfRowsAffected)
         {
             using var cmd = this.ReusableCommand(conn);
             try {
                 if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                    return 0;
+                    nrOfRowsAffected = 0;
+                    return;
                 }
-                return cmd.Command.ExecuteNonQuery();
+                nrOfRowsAffected = cmd.Command.ExecuteNonQuery();
             } catch (Exception e) {
                 throw cmd.CreateExceptionWithTextAndArguments(e, this);
             }

@@ -46,9 +46,13 @@ namespace ProgressOnderwijsUtils
         public static T ReadScalar<T>(this ParameterizedSql sql, SqlConnection sqlConn)
             => sql.OfScalar<T>().Execute(sqlConn);
 
-        /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
-        public static int ExecuteNonQuery(this ParameterizedSql sql, SqlConnection sqlConn)
+        /// <summary>Executes an sql statement</summary>
+        public static void ExecuteNonQuery(this ParameterizedSql sql, SqlConnection sqlConn)
             => sql.OfNonQuery().Execute(sqlConn);
+
+        /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server voideraction for whitespace-only commands.</summary>
+        public static void ExecuteNonQuery(this ParameterizedSql sql, SqlConnection sqlConn, out int nrOfRowsAffected)
+            => sql.OfNonQuery().Execute(sqlConn, out nrOfRowsAffected);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
