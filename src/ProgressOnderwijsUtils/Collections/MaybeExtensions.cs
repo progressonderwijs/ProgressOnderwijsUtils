@@ -37,6 +37,13 @@ namespace ProgressOnderwijsUtils.Collections
             where TOk : struct
             => state.TryGet(out var okValue, out _) ? okValue : default(TOk?);
 
+        public static void AssertOk<TError>(this Maybe<Unit, TError> state)
+        {
+            if (!state.TryGet(out _, out var error)) {
+                throw new("Assertion that Maybe is Ok failed; error state: " + error);
+            }
+        }
+
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state)
             => state.TryGet(out var okValue, out var error) ? okValue : throw new("Assertion that Maybe is Ok failed; error state: " + error);
 
