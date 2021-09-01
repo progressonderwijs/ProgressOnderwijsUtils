@@ -23,6 +23,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 SqlXType.Decimal => "(" + Precision + "," + Scale + ")",
                 SqlXType.NVarChar or SqlXType.NChar => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength / 2 + ")",
                 SqlXType.VarChar or SqlXType.Char or SqlXType.VarBinary or SqlXType.Binary => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength + ")",
+                SqlXType.DateTime2 when Scale != 7 => "(" + Scale + ")",
                 _ => ""
             };
 
