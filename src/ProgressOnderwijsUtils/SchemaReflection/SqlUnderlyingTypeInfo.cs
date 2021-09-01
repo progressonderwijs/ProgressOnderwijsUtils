@@ -19,17 +19,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         string ColumnPrecisionSpecifier()
-        {
-            if (XType == SqlXType.Decimal) {
-                return "(" + Precision + "," + Scale + ")";
-            } else if (XType == SqlXType.NVarChar || XType == SqlXType.NChar) {
-                return MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength / 2 + ")";
-            } else if (XType == SqlXType.VarChar || XType == SqlXType.Char || XType == SqlXType.VarBinary || XType == SqlXType.Binary) {
-                return MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : "(" + MaxLength + ")";
-            } else {
-                return "";
-            }
-        }
+            => XType switch {
+                SqlXType.Decimal or SqlXType.Numeric => $"({Precision},{Scale})",
+                SqlXType.NVarChar or SqlXType.NChar => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength / 2})",
+                SqlXType.VarChar or SqlXType.Char or SqlXType.VarBinary or SqlXType.Binary => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength})",
+                SqlXType.DateTime2 or SqlXType.DateTimeOffset or SqlXType.Time when Scale != 7 => $"({Scale})",
+                _ => ""
+            };
 
         public string ToSqlTypeName()
             => ToSqlTypeNameWithoutNullability() + NullabilityAnnotation();
