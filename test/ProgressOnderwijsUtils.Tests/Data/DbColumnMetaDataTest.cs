@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
@@ -47,5 +45,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void NVarchar_ToSqlColumnDefinition_ExampleWorks()
             => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
+
+        [Fact]
+        public void NChar_ToSqlColumnDefinition_ExampleWorks()
+            => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null).ToSqlColumnDefinition() == "test NChar(1) not null");
     }
 }

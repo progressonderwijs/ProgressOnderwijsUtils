@@ -57,8 +57,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
 
             var maxLengthForSqlServer = (short)(typeId switch {
-                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => maxLength * 2 ?? -1,
-                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => maxLength ?? -1,
+                SqlSystemTypeId.NVarChar => maxLength * 2 ?? -1,
+                SqlSystemTypeId.NChar => maxLength * 2 ?? 2,
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.VarBinary => maxLength ?? -1,
+                SqlSystemTypeId.Char or SqlSystemTypeId.Binary => maxLength ?? 1,
                 _ => 0,
             });
 
