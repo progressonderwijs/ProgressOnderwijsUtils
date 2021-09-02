@@ -65,6 +65,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var (precision, scale) =
                 typeId switch {
                     SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => (38, 2),
+                    SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time => (0, 7),
                     _ => (0, 0)
                 };
             var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
