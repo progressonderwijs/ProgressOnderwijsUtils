@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
-            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
+            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? -1 : -1);
 
             var precision = hasDecimalStyleScale ? 38 : 0;
             var scale = hasDecimalStyleScale ? 2 : 0;
@@ -74,6 +74,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public bool IsRowVersion
             => UserTypeId == SqlSystemTypeId.RowVersion;
+
+        public bool HasMaxLength
+            => MaxLength > 0;
 
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);

@@ -7,7 +7,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public readonly byte Precision;
         public readonly byte Scale;
         public readonly bool IsNullable;
-        public const short VARCHARMAX_MAXLENGTH_FOR_SQLSERVER = -1;
 
         public SqlTypeInfo(SqlSystemTypeId userTypeId, short maxLength, byte precision, byte scale, bool isNullable)
         {
@@ -21,8 +20,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         string ColumnPrecisionSpecifier()
             => UserTypeId switch {
                 SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
-                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength / 2})",
-                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength})",
+                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength > 0 ? $"({MaxLength / 2})" : "(max)",
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength > 0 ? $"({MaxLength})" : "(max)",
                 SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
                 _ => ""
             };
