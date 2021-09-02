@@ -55,7 +55,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
             var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
-            var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
             var maxLengthForSqlServer = (short)(typeId switch {
                 SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => maxLength * 2 ?? -1,
@@ -63,8 +62,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 _ => 0,
             });
 
-            var precision = hasDecimalStyleScale ? 38 : 0;
-            var scale = hasDecimalStyleScale ? 2 : 0;
+            var (precision, scale) =
+                dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?) ? (38, 2) : (0, 0);
             var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
             return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
