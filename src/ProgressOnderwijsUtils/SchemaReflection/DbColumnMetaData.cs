@@ -62,10 +62,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var precision = hasDecimalStyleScale ? 38 : 0;
             var scale = hasDecimalStyleScale ? 2 : 0;
             var xType = SqlXTypeExtensions.NetTypeToSqlXType(dataType);
-            return new(name, xType, maxLengthForSqlServer, (byte)precision, (byte)scale) {
-                IsNullable = dataType.CanBeNull(),
-                IsPrimaryKey = isKey,
-            };
+            var metaData = new DbColumnMetaData(name, xType, maxLengthForSqlServer, (byte)precision, (byte)scale);
+            return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
             // ReSharper restore RedundantCast
         }
 
