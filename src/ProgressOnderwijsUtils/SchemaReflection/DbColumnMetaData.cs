@@ -55,10 +55,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
             var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
-
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
-            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? -1 : -1);
+            var maxLengthForSqlServer = (short)(typeId switch {
+                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => maxLength * 2 ?? -1,
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => maxLength * 2 ?? -1,
+                _ => 0,
+            });
 
             var precision = hasDecimalStyleScale ? 38 : 0;
             var scale = hasDecimalStyleScale ? 2 : 0;
