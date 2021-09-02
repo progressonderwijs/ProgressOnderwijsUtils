@@ -54,13 +54,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
+            var xType = SqlXTypeExtensions.NetTypeToSqlXType(dataType);
+
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
             var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
 
             var precision = hasDecimalStyleScale ? 38 : 0;
             var scale = hasDecimalStyleScale ? 2 : 0;
-            var xType = SqlXTypeExtensions.NetTypeToSqlXType(dataType);
             var metaData = new DbColumnMetaData(name, xType, maxLengthForSqlServer, (byte)precision, (byte)scale);
             return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
