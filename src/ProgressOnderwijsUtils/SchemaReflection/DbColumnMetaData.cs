@@ -68,8 +68,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time => (0, 7),
                     _ => (0, 0)
                 };
-            var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
-            return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
+
+            return new(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale) { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
 
         public bool IsString
