@@ -35,5 +35,17 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => columnsFromCodeAsSql.SequenceEqual(columnsFromDbAsSql));
         }
+
+        [Fact]
+        public void Varbinary_ToSqlColumnDefinition_ExampleWorks()
+            => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, 42).ToSqlColumnDefinition() == "test VarBinary(42) null");
+
+        [Fact]
+        public void VarbinaryMax_ToSqlColumnDefinition_ExampleWorks()
+            => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, null).ToSqlColumnDefinition() == "test VarBinary(max) null");
+
+        [Fact]
+        public void NVarchar_ToSqlColumnDefinition_ExampleWorks()
+            => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
     }
 }
