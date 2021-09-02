@@ -2,14 +2,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public readonly struct SqlTypeInfo
     {
-        public readonly SqlXType UserTypeId;
+        public readonly SqlSystemTypeId UserTypeId;
         public readonly short MaxLength;
         public readonly byte Precision;
         public readonly byte Scale;
         public readonly bool IsNullable;
         public const short VARCHARMAX_MAXLENGTH_FOR_SQLSERVER = -1;
 
-        public SqlTypeInfo(SqlXType userTypeId, short maxLength, byte precision, byte scale, bool isNullable)
+        public SqlTypeInfo(SqlSystemTypeId userTypeId, short maxLength, byte precision, byte scale, bool isNullable)
         {
             UserTypeId = userTypeId;
             MaxLength = maxLength;
@@ -20,10 +20,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         string ColumnPrecisionSpecifier()
             => UserTypeId switch {
-                SqlXType.Decimal or SqlXType.Numeric => $"({Precision},{Scale})",
-                SqlXType.NVarChar or SqlXType.NChar => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength / 2})",
-                SqlXType.VarChar or SqlXType.Char or SqlXType.VarBinary or SqlXType.Binary => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength})",
-                SqlXType.DateTime2 or SqlXType.DateTimeOffset or SqlXType.Time when Scale != 7 => $"({Scale})",
+                SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
+                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength / 2})",
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength == VARCHARMAX_MAXLENGTH_FOR_SQLSERVER ? "(max)" : $"({MaxLength})",
+                SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
                 _ => ""
             };
 

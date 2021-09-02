@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public sealed record DbColumnMetaData(
         string ColumnName,
-        SqlXType UserTypeId,
+        SqlSystemTypeId UserTypeId,
         short MaxLength,
         byte Precision,
         byte Scale
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
-            var xType = SqlXTypeExtensions.NetTypeToSqlXType(dataType);
+            var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
 
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             var precision = hasDecimalStyleScale ? 38 : 0;
             var scale = hasDecimalStyleScale ? 2 : 0;
-            var metaData = new DbColumnMetaData(name, xType, maxLengthForSqlServer, (byte)precision, (byte)scale);
+            var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
             return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
 
@@ -70,10 +70,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => UserTypeId.SqlUnderlyingTypeInfo().ClrType == typeof(string);
 
         public bool IsUnicode
-            => UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar;
+            => UserTypeId == SqlSystemTypeId.NVarChar || UserTypeId == SqlSystemTypeId.NChar;
 
         public bool IsRowVersion
-            => UserTypeId == SqlXType.RowVersion;
+            => UserTypeId == SqlSystemTypeId.RowVersion;
 
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);
@@ -94,7 +94,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             if (IsRowVersion) {
                 return this with {
-                    UserTypeId = SqlXType.Binary,
+                    UserTypeId = SqlSystemTypeId.Binary,
                     MaxLength = 8,
                 };
             } else {
