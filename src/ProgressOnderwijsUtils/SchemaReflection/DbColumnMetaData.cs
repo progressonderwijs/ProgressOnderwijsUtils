@@ -59,7 +59,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
 
             // ReSharper disable RedundantCast
-            return new(name, SqlXTypeExtensions.NetTypeToSqlXType(dataType), maxLengthForSqlServer, (byte)(hasDecimalStyleScale ? 38 : 0), (byte)(hasDecimalStyleScale ? 2 : 0)) {
+            var precision = hasDecimalStyleScale ? 38 : 0;
+            var scale = hasDecimalStyleScale ? 2 : 0;
+            var xType = SqlXTypeExtensions.NetTypeToSqlXType(dataType);
+            return new(name, xType, maxLengthForSqlServer, (byte)precision, (byte)scale) {
                 IsNullable = dataType.CanBeNull(),
                 IsPrimaryKey = isKey,
             };
