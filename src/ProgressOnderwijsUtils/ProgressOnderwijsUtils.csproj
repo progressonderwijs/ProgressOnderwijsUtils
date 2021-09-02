@@ -23,7 +23,7 @@
     <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.0.0-beta4" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.0.0-rc1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
