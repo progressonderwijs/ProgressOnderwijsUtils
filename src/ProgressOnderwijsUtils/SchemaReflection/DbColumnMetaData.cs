@@ -56,14 +56,22 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
 
-            var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
+            var maxLengthForSqlServer = (short)(typeId switch {
+                SqlSystemTypeId.NVarChar => maxLength * 2 ?? -1,
+                SqlSystemTypeId.NChar => maxLength * 2 ?? 2,
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.VarBinary => maxLength ?? -1,
+                SqlSystemTypeId.Char or SqlSystemTypeId.Binary => maxLength ?? 1,
+                _ => 0,
+            });
 
-            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? -1 : -1);
+            var (precision, scale) =
+                typeId switch {
+                    SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => (38, 2),
+                    SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time => (0, 7),
+                    _ => (0, 0)
+                };
 
-            var precision = hasDecimalStyleScale ? 38 : 0;
-            var scale = hasDecimalStyleScale ? 2 : 0;
-            var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
-            return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
+            return new(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale) { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
 
         public bool IsString
