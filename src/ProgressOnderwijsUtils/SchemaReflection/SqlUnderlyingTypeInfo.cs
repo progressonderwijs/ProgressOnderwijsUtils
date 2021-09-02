@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public struct SqlTypeInfo
+    public readonly struct SqlTypeInfo
     {
         public readonly SqlXType XType;
         public readonly short MaxLength;
