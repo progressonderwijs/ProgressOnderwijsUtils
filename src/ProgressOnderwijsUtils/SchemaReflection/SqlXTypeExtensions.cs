@@ -93,13 +93,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             foreach (var o in typeLookup) {
                 if (o.xType == sqlXType) {
-                    return new SqlUnderlyingTypeInfo(sqlXType, o.clrType);
+                    return new(sqlXType, o.clrType);
                 }
             }
             throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
         }
 
-        static readonly ConcurrentDictionary<Type, SqlXType?> convertedTypesCache = new ConcurrentDictionary<Type, SqlXType?>();
+        static readonly ConcurrentDictionary<Type, SqlXType?> convertedTypesCache = new();
 
         /// <summary>
         /// Finds the best mapping of this clr-type to an sql XType.
