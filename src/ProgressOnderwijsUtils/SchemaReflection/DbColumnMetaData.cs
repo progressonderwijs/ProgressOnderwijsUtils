@@ -81,14 +81,29 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);
 
-        public SqlTypeInfo SqlTypeInfo()
-            => new(UserTypeId, MaxLength, Precision, Scale, IsNullable);
-
         public string ToSqlColumnDefinition()
-            => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
+            => $"{ColumnName} {ToSqlTypeName()}";
+
+        string ColumnPrecisionSpecifier()
+            => UserTypeId switch {
+                SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
+                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength > 0 ? $"({MaxLength / 2})" : "(max)",
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength > 0 ? $"({MaxLength})" : "(max)",
+                SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
+                _ => ""
+            };
+
+        public string ToSqlTypeName()
+            => ToSqlTypeNameWithoutNullability() + NullabilityAnnotation();
+
+        public string ToSqlTypeNameWithoutNullability()
+            => UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + ColumnPrecisionSpecifier();
+
+        string NullabilityAnnotation()
+            => IsNullable ? " null" : " not null";
 
         public ParameterizedSql ToSqlColumnDefinitionSql()
-            => ParameterizedSql.CreateDynamic($"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}");
+            => ParameterizedSql.CreateDynamic($"{ColumnName} {ToSqlTypeName()}");
 
         public DataColumn ToDataColumn()
             => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
