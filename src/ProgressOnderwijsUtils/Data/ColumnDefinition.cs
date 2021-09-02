@@ -39,14 +39,14 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType, ColumnAccessibility columnAccessibility)
-            => new(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
+        public static ColumnDefinition FromSqlSystemTypeId(int columnOrdinal, string columnName, SqlSystemTypeId sqlSystemTypeId, ColumnAccessibility columnAccessibility)
+            => new(sqlSystemTypeId.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
 
         public override string ToString()
             => DataType.ToCSharpFriendlyTypeName() + " " + Name;
 
         public static ColumnDefinition FromDbColumnMetaData(DbColumnMetaData col, int colIdx)
-            => FromSqlXType(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
+            => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
 
         static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
             => col switch {

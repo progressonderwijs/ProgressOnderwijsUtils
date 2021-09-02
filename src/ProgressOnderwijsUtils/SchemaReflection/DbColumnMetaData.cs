@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public sealed record DbColumnMetaData(
         string ColumnName,
-        SqlXType UserTypeId,
+        SqlSystemTypeId UserTypeId,
         short MaxLength,
         byte Precision,
         byte Scale
@@ -54,38 +54,56 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
+            var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
+
             var hasDecimalStyleScale = dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?);
 
-            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER : SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
+            var maxLengthForSqlServer = (short)(dataType == typeof(string) ? maxLength * 2 ?? -1 : -1);
 
-            // ReSharper disable RedundantCast
-            return new(name, SqlXTypeExtensions.NetTypeToSqlXType(dataType), maxLengthForSqlServer, (byte)(hasDecimalStyleScale ? 38 : 0), (byte)(hasDecimalStyleScale ? 2 : 0)) {
-                IsNullable = dataType.CanBeNull(),
-                IsPrimaryKey = isKey,
-            };
-            // ReSharper restore RedundantCast
+            var precision = hasDecimalStyleScale ? 38 : 0;
+            var scale = hasDecimalStyleScale ? 2 : 0;
+            var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
+            return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
 
         public bool IsString
             => UserTypeId.SqlUnderlyingTypeInfo().ClrType == typeof(string);
 
         public bool IsUnicode
-            => UserTypeId == SqlXType.NVarChar || UserTypeId == SqlXType.NChar;
+            => UserTypeId == SqlSystemTypeId.NVarChar || UserTypeId == SqlSystemTypeId.NChar;
 
         public bool IsRowVersion
-            => UserTypeId == SqlXType.RowVersion;
+            => UserTypeId == SqlSystemTypeId.RowVersion;
+
+        public bool HasMaxLength
+            => MaxLength > 0;
 
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);
 
-        public SqlTypeInfo SqlTypeInfo()
-            => new(UserTypeId, MaxLength, Precision, Scale, IsNullable);
-
         public string ToSqlColumnDefinition()
-            => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
+            => $"{ColumnName} {ToSqlTypeName()}";
+
+        string ColumnPrecisionSpecifier()
+            => UserTypeId switch {
+                SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
+                SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength > 0 ? $"({MaxLength / 2})" : "(max)",
+                SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength > 0 ? $"({MaxLength})" : "(max)",
+                SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
+                _ => ""
+            };
+
+        public string ToSqlTypeName()
+            => ToSqlTypeNameWithoutNullability() + NullabilityAnnotation();
+
+        public string ToSqlTypeNameWithoutNullability()
+            => UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + ColumnPrecisionSpecifier();
+
+        string NullabilityAnnotation()
+            => IsNullable ? " null" : " not null";
 
         public ParameterizedSql ToSqlColumnDefinitionSql()
-            => ParameterizedSql.CreateDynamic($"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}");
+            => ParameterizedSql.CreateDynamic($"{ColumnName} {ToSqlTypeName()}");
 
         public DataColumn ToDataColumn()
             => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
@@ -94,7 +112,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             if (IsRowVersion) {
                 return this with {
-                    UserTypeId = SqlXType.Binary,
+                    UserTypeId = SqlSystemTypeId.Binary,
                     MaxLength = 8,
                 };
             } else {

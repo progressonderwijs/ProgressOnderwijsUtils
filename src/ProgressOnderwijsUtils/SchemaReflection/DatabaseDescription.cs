@@ -155,7 +155,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public bool IsNullable
                 => ColumnMetaData.IsNullable;
 
-            public SqlXType UserTypeId
+            public SqlSystemTypeId UserTypeId
                 => ColumnMetaData.UserTypeId;
 
             public ParameterizedSql SqlColumnName()
