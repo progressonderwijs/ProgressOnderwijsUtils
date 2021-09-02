@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public readonly byte Precision;
         public readonly byte Scale;
         public readonly bool IsNullable;
-        public const int VARCHARMAX_MAXLENGTH_FOR_SQLSERVER = -1;
+        public const short VARCHARMAX_MAXLENGTH_FOR_SQLSERVER = -1;
 
         public SqlTypeInfo(SqlXType xType, short maxLength, byte precision, byte scale, bool isNullable)
         {
