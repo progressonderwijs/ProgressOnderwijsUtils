@@ -63,7 +63,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             });
 
             var (precision, scale) =
-                dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?) ? (38, 2) : (0, 0);
+                typeId switch {
+                    SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => (38, 2),
+                    _ => (0, 0)
+                };
             var metaData = new DbColumnMetaData(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale);
             return metaData with { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
         }
