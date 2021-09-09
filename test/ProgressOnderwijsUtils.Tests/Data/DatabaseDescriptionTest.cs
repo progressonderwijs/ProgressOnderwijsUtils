@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             var constraint = allConstraints.Single(c => c.Name == "ck_TestConstraint");
 
-            PAssert.That(() => constraint.Table.UnqualifiedName == "CheckConstraintTest");
+            PAssert.That(() => db.TryGetTableById(constraint.TableObjectId).AssertNotNull().UnqualifiedName == "CheckConstraintTest");
             PAssert.That(() => constraint.Definition == "([Test]<>(0))");
             PAssert.That(() => constraint.Name == "ck_TestConstraint");
 
@@ -108,6 +108,17 @@ end;";
             PAssert.That(() => trigger.Name == "EenTrigger");
             PAssert.That(() => trigger.TableObjectId == table.ObjectId);
             PAssert.That(() => trigger.Definition == definition);
+        }
+
+        [Fact]
+        public void SequencesAreLoadedAsExpected()
+        {
+            SQL($"create sequence dbo.TestSeq as Int minvalue 1").ExecuteNonQuery(Connection);
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            var expected = new SequenceSqlDefinition("dbo.TestSeq", SqlSystemTypeId.Int, false, true, null, 1, 1, int.MaxValue);
+
+            PAssert.That(() => db.Sequences["DBO.TESTSEQ"] == expected);
         }
 
         [Fact]
@@ -143,6 +154,55 @@ end;";
             PAssert.That(() => !table.Columns.Single(c => c.ColumnName == "Testvarchar").IsUnicode);
             PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnchar").IsUnicode);
             PAssert.That(() => table.Columns.Single(c => c.ColumnName == "Testnvarchar").IsUnicode);
+        }
+
+        [Fact]
+        public void DefaultValueConstraint_LoadOK()
+        {
+            SQL(
+                $@"
+                create table dbo.CheckDefaultValues (
+                    SomeValue int not null
+                );
+                alter table dbo.CheckDefaultValues add constraint df_SomeValue default (42) for SomeValue;
+            "
+            ).ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+                
+            var table = db.TryGetTableByName("dbo.CheckDefaultValues").AssertNotNull();
+            var column = table.Columns.Single();
+            var constraint = column.DefaultValueConstraint.AssertNotNull();
+
+            PAssert.That(() => constraint.Name == "df_SomeValue");
+            PAssert.That(() => constraint.Definition == "((42))");
+        }
+
+        [Fact]
+        public void ComputedColumns_LoadOK()
+        {
+            SQL(
+                $@"
+                create table dbo.CheckComputedValues (
+                    Bla int not null,
+                    SomeValue as (42) persisted not null,
+                    SomeOtherValue as (cast(null as nvarchar(max)))
+                );
+            "
+            ).ExecuteNonQuery(Connection);
+
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            var columns = db.TryGetTableByName("dbo.CheckComputedValues").AssertNotNull().Columns;
+
+            PAssert.That(() => columns[1].ComputedAs.AssertNotNull().Definition == "((42))");
+            PAssert.That(() => columns[1].ComputedAs.AssertNotNull().IsPersisted);
+            PAssert.That(() => columns[1].UserTypeId == SqlSystemTypeId.Int);
+            PAssert.That(() => columns[1].IsNullable == false);
+            PAssert.That(() => columns[2].ComputedAs.AssertNotNull().Definition == "(CONVERT([nvarchar](max),NULL))");
+            PAssert.That(() => columns[2].ComputedAs.AssertNotNull().IsPersisted == false);
+            PAssert.That(() => columns[2].UserTypeId == SqlSystemTypeId.NVarChar);
+            PAssert.That(() => columns[2].IsNullable == true);
         }
     }
 }
