@@ -46,7 +46,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, DbForeignKey[] foreignKeys, CheckConstraintEntry[] checkConstraints, DmlTableTrigger[] dmlTableTriggers)
+        public DatabaseDescription(
+            DbNamedObjectId[] tables,
+            DbNamedObjectId[] views,
+            Dictionary<DbObjectId, DbColumnMetaData[]> columns,
+            ForeignKeySqlDefinition[] foreignKeys,
+            CheckConstraintSqlDefinition[] checkConstraints,
+            DmlTableTriggerSqlDefinition[] dmlTableTriggers,
+            DefaultValueConstraintSqlDefinition[] defaultConstraints,
+            ComputedColumnSqlDefinition[] computedColumnDefinitions,
+            SequenceSqlDefinition[] sequences)
         {
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
@@ -64,7 +73,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
             var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintEntry.LoadAll(conn), DmlTableTrigger.LoadAll(conn));
+            return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintSqlDefinition.LoadAll(conn), DmlTableTriggerSqlDefinition.LoadAll(conn), DefaultValueConstraintSqlDefinition.LoadAll(conn), ComputedColumnSqlDefinition.LoadAll(conn), SequenceSqlDefinition.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
