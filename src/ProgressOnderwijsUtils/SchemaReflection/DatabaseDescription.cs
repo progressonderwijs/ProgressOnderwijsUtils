@@ -37,10 +37,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public sealed class DatabaseDescription
     {
+        public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
-        readonly ILookup<DbObjectId, CheckConstraint> checkConstraintsByTableId;
-        readonly ILookup<DbObjectId, DmlTableTrigger> triggersByTableId;
         readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
         public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
         readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
@@ -57,16 +56,28 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             ComputedColumnSqlDefinition[] computedColumnDefinitions,
             SequenceSqlDefinition[] sequences)
         {
-            tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
+            Sequences = sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
+            var defaultsByColumnId = defaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
+            var computedColumnsByColumnId = computedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
+            var checkContraintsByTableId = checkConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+            var triggersByTableId = dmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+
+            var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
+
+            tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
             viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
             var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
             fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
             fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
-            checkConstraintsByTableId = checkConstraints.ToLookup(o => o.TableObjectId, o => new CheckConstraint(o, tableById[o.TableObjectId]));
-            triggersByTableId = dmlTableTriggers.ToLookup(o => o.TableObjectId);
             tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
             ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
         }
+
+        public sealed record DataByTableId(
+            Dictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues,
+            Dictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns,
+            Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
+            Dictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers);
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         {
@@ -82,8 +93,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public IEnumerable<View> AllViews
             => viewById.Values;
 
-        public IEnumerable<CheckConstraint> AllCheckConstraints
-            => checkConstraintsByTableId.SelectMany(c => c);
+        public IEnumerable<CheckConstraintSqlDefinition> AllCheckConstraints
+            => AllTables.SelectMany(t => t.CheckConstraints);
 
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
@@ -94,7 +105,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
-        public sealed record ForeignKeyColumn (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
+        public sealed record ForeignKeyColumn(TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
 
         public sealed class ForeignKey
         {
@@ -105,14 +116,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public readonly FkReferentialAction DeleteReferentialAction;
             public readonly FkReferentialAction UpdateReferentialAction;
 
-            internal ForeignKey(DbForeignKey o, IReadOnlyDictionary<DbObjectId, Table> tablesById)
+            internal ForeignKey(ForeignKeySqlDefinition fkDef, IReadOnlyDictionary<DbObjectId, Table> tablesById)
             {
-                ReferencedParentTable = tablesById[o.ReferencedParentTable];
-                ReferencingChildTable = tablesById[o.ReferencingChildTable];
-                Columns = o.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
-                UnqualifiedName = o.ConstraintName;
-                DeleteReferentialAction = o.DeleteReferentialAction;
-                UpdateReferentialAction = o.UpdateReferentialAction;
+                ReferencedParentTable = tablesById[fkDef.ReferencedParentTable];
+                ReferencingChildTable = tablesById[fkDef.ReferencingChildTable];
+                Columns = fkDef.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
+                UnqualifiedName = fkDef.ConstraintName;
+                DeleteReferentialAction = fkDef.DeleteReferentialAction;
+                UpdateReferentialAction = fkDef.UpdateReferentialAction;
             }
 
             public string QualifiedName
@@ -139,11 +150,15 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             public readonly Table Table;
             public readonly DbColumnMetaData ColumnMetaData;
+            public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
+            public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-            public TableColumn(Table table, DbColumnMetaData columnMetaData)
+            public TableColumn(Table table, DbColumnMetaData columnMetaData, DataByTableId dataByTableId)
             {
                 ColumnMetaData = columnMetaData;
                 Table = table;
+                DefaultValueConstraint = dataByTableId.DefaultValues.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
+                ComputedAs = dataByTableId.ComputedColumns.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
             }
 
             public DbColumnId ColumnId
@@ -179,14 +194,19 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public sealed class Table
         {
-            public readonly DatabaseDescription db;
+            public readonly TableColumn[] Columns;
+            public readonly DmlTableTriggerSqlDefinition[] Triggers;
+            public readonly CheckConstraintSqlDefinition[] CheckConstraints;
             readonly DbNamedObjectId NamedTableId;
+            public readonly DatabaseDescription db;
 
-            internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns)
+            internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns, DataByTableId dataByTableId)
             {
                 this.db = db;
                 NamedTableId = namedTableId;
-                Columns = columns.ArraySelect(col => new TableColumn(this, col));
+                Columns = columns.ArraySelect(col => new TableColumn(this, col, dataByTableId));
+                Triggers = dataByTableId.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
+                CheckConstraints = dataByTableId.CheckContraints.GetValueOrDefault(ObjectId).EmptyIfNull();
             }
 
             public DbObjectId ObjectId
@@ -194,8 +214,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public string QualifiedName
                 => NamedTableId.QualifiedName;
-
-            public readonly TableColumn[] Columns;
 
             public string SchemaName
                 => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
@@ -220,12 +238,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public IEnumerable<ForeignKey> KeysFromReferencingChildren
                 => db.fksByReferencedParentObjectId[ObjectId];
-
-            public IEnumerable<CheckConstraint> CheckConstraints
-                => db.checkConstraintsByTableId[ObjectId];
-
-            public IEnumerable<DmlTableTrigger> Triggers
-                => db.triggersByTableId[ObjectId];
 
             public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
                 => KeysFromReferencingChildren

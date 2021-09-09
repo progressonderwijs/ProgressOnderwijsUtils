@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -27,7 +26,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             };
     }
 
-    public struct DbForeignKey
+    public struct ForeignKeySqlDefinition
     {
         public string ConstraintName;
         public FkReferentialAction DeleteReferentialAction, UpdateReferentialAction;
@@ -48,7 +47,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DbColumnId ReferencingChildColumn { get; init; }
         public string Name { get; init; }
 
-        public static DbForeignKey[] LoadAll(SqlConnection conn)
+        public static ForeignKeySqlDefinition[] LoadAll(SqlConnection conn)
         {
             var foreignKeys = SQL(
                     $@"
@@ -72,7 +71,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 .Select(
                     fk => {
                         var fkColEntry = fk.First();
-                        return new DbForeignKey {
+                        return new ForeignKeySqlDefinition {
                             ForeignKeyObjectId = fk.Key,
                             ConstraintName = fkColEntry.Name,
                             DeleteReferentialAction = fkColEntry.DeleteReferentialAction,
