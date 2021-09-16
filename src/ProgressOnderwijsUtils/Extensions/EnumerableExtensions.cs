@@ -71,10 +71,6 @@ namespace ProgressOnderwijsUtils
             => !source.Any(predicate);
 
         [Pure]
-        public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
-            => condition ? source.Where(predicate) : source;
-
-        [Pure]
         public static IReadOnlyList<T> ToReadOnly<T>(this IEnumerable<T> list)
             => list.ToArray();
 
