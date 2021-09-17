@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Tests
                 where !type.IsPublic || !method.IsPublic
                 select type.Name + "." + method.Name;
 
-            PAssert.That(() => !problems.Any());
+            PAssert.That(() => problems.None());
         }
     }
 }

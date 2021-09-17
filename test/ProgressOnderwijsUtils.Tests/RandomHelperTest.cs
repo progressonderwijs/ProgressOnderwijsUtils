@@ -29,8 +29,8 @@ namespace ProgressOnderwijsUtils.Tests
                 var StR = RandomHelper.Secure.GetStringOfLatinUpperOrLower(len);
                 PAssert.That(() => str.Length == len);
                 PAssert.That(() => StR.Length == len);
-                PAssert.That(() => !str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
-                PAssert.That(() => !StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
+                PAssert.That(() => str.AsEnumerable().None(c => c < 'a' || c > 'z'));
+                PAssert.That(() => StR.AsEnumerable().None(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
             }
         }
 

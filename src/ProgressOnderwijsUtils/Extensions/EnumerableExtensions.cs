@@ -56,18 +56,22 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool None<TSource>(this IEnumerable<TSource> source)
+            // ReSharper disable once UseNone
             => !source.Any();
 
         [Pure]
         public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+            // ReSharper disable once UseNone
             => !source.Any(predicate);
 
         [Pure]
         public static bool None<TSource>(this IQueryable<TSource> source)
+            // ReSharper disable once UseNone
             => !source.Any();
 
         [Pure]
         public static bool None<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+            // ReSharper disable once UseNone
             => !source.Any(predicate);
 
         [Pure]
