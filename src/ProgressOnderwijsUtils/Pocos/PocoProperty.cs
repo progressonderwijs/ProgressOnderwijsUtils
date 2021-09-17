@@ -73,12 +73,12 @@ namespace ProgressOnderwijsUtils
             Func<TOwner, object?>? getter;
 
             public Func<TOwner, object?>? Getter
-                => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
+                => getter ??= MkGetter(getterMethod, PropertyInfo.PropertyType);
 
             Setter<TOwner>? setter;
 
             public Setter<TOwner>? Setter
-                => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
+                => setter ??= MkSetter(setterMethod, PropertyInfo.PropertyType);
 
             Func<object, object?>? untypedGetter;
 
