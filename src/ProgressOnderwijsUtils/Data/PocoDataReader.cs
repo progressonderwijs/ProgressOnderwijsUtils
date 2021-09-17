@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
                 Value = value;
             }
 
-            public static readonly Optional Empty = default;
+            public static readonly Optional Empty = new();
 
             public T GetValue()
                 => HasValue ? Value : throw new InvalidOperationException("Has no value");

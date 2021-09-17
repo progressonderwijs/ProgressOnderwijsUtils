@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
             => sortColumns.EmptyIfNull();
 
         public static OrderByColumns Empty
-            => default;
+            => new();
 
         public OrderByColumns(IEnumerable<ColumnSort> order)
             => sortColumns = DeduplicateByName(order);

@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Collections
         readonly Impl? list;
 
         public static SList<T> Empty
-            => default;
+            => new();
 
         public bool IsEmpty
             => list == null;

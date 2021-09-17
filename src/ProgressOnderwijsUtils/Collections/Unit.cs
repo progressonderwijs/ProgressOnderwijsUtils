@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
     public struct Unit
     {
         public static Unit Value
-            => default;
+            => new();
 
         public static Unit SideEffect(Action action)
         {
