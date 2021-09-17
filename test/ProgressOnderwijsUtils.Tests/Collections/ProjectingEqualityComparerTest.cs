@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class ProjectingEqualityComparerTest
     {
-        sealed record Example (string A, int B, DateTime? C, int[]? D);
+        sealed record Example(string A, int B, DateTime? C, int[]? D);
 
         readonly ProjectingEqualityComparer<Example> EmptyComparer = new();
         readonly Example A1 = new("A", 1, null, null);

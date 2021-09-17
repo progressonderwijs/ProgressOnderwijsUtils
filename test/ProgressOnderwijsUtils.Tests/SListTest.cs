@@ -89,9 +89,11 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => list.Tail.Tail.Tail.IsEmpty);
             PAssert.That(() => list.Tail.Prepend(1) == list);
             // ReSharper disable once UnusedVariable
-            _ = Assert.Throws<Exception>(() => {
-                var x = list.Tail.Tail.Tail.Tail;
-            });
+            _ = Assert.Throws<Exception>(
+                () => {
+                    var x = list.Tail.Tail.Tail.Tail;
+                }
+            );
         }
 
         [Fact]
@@ -103,9 +105,11 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => list.Tail.Head == 2);
             PAssert.That(() => list.Tail.Tail.Head == 3);
             // ReSharper disable once UnusedVariable
-            _ = Assert.Throws<Exception>(() => {
-                var x = list.Tail.Tail.Tail.Head;
-            });
+            _ = Assert.Throws<Exception>(
+                () => {
+                    var x = list.Tail.Tail.Tail.Head;
+                }
+            );
         }
 
         [Fact]
@@ -138,9 +142,11 @@ namespace ProgressOnderwijsUtils.Tests
 
             PAssert.That(
                 () =>
-                    (from aList in lists
-                        from bList in lists
-                        select aList == bList == (aList.GetHashCode() == bList.GetHashCode())).All(x => x));
+                (
+                    from aList in lists
+                    from bList in lists
+                    select aList == bList == (aList.GetHashCode() == bList.GetHashCode())).All(x => x)
+            );
         }
     }
 }

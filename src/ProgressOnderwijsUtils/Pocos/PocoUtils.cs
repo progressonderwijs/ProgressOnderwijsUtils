@@ -39,7 +39,8 @@ namespace ProgressOnderwijsUtils
                     if (retval == null) {
                         throw new ArgumentException(
                             "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-                            "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property");
+                            "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property"
+                        );
                     }
                     return retval;
                 } else if (typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TPoco))) {
@@ -55,7 +56,8 @@ namespace ProgressOnderwijsUtils
                 } else {
                     throw new InvalidOperationException(
                         "Impossible: parent " + typeof(TParent) + " is neither the poco type " + typeof(TPoco)
-                        + " itself, nor a (base) class, nor a base interface.");
+                        + " itself, nor a (base) class, nor a base interface."
+                    );
                 }
             }
         }
@@ -75,7 +77,8 @@ namespace ProgressOnderwijsUtils
 
             throw new ArgumentException(
                 "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
+                "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property)
+            );
         }
 
         static void AssertMemberMightMatchAProperty<TObject, TProperty>(Expression<Func<TObject, TProperty>> property, MemberInfo memberInfo, MemberExpression membExpr)
@@ -84,13 +87,15 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException(
                     "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
                     "Actual input: " + ExpressionToCode.ToCode(property) + "\n" +
-                    "(The type of " + ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull()) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)");
+                    "(The type of " + ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull()) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)"
+                );
             }
 
             if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
                 throw new ArgumentException(
                     "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-                    "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
+                    "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field"
+                );
             }
         }
 

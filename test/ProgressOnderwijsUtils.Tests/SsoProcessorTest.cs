@@ -18,10 +18,16 @@ namespace ProgressOnderwijsUtils.Tests
         public void GetRedirectUrl_signature_verifies()
         {
             var certificate = new X509Certificate2("testCert.pfx", "testPassword");
-            var rawUri = SsoProcessor.GetRedirectUrl(new AuthnRequest("123", "http://example.com", new ServiceProviderConfig {
-                certificate = certificate,
-                entity = "http://example.com"
-            }));
+            var rawUri = SsoProcessor.GetRedirectUrl(
+                new AuthnRequest(
+                    "123",
+                    "http://example.com",
+                    new ServiceProviderConfig {
+                        certificate = certificate,
+                        entity = "http://example.com"
+                    }
+                )
+            );
             var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=" }, StringSplitOptions.None);
             var signedData = Encoding.UTF8.GetBytes(querySplit[0]);
             var rsaKey = (RSA)certificate.PublicKey.Key;
@@ -33,10 +39,14 @@ namespace ProgressOnderwijsUtils.Tests
         public void EncodeAndSignAsFormArgument_signature_verifies()
         {
             var certificate = new X509Certificate2("testCert.pfx", "testPassword");
-            var base64EncodedRequest = new AuthnRequest("123", "http://example.com", new ServiceProviderConfig {
-                certificate = certificate,
-                entity = "http://example.com"
-            }).EncodeAndSignAsFormArgument(certificate.GetRSAPrivateKey().AssertNotNull());
+            var base64EncodedRequest = new AuthnRequest(
+                "123",
+                "http://example.com",
+                new ServiceProviderConfig {
+                    certificate = certificate,
+                    entity = "http://example.com"
+                }
+            ).EncodeAndSignAsFormArgument(certificate.GetRSAPrivateKey().AssertNotNull());
             var rawRequest = Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedRequest));
             var doc = new XmlDocument();
             doc.LoadXml(rawRequest);

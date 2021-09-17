@@ -295,9 +295,11 @@ namespace ProgressOnderwijsUtils
         }
 
         public static CancellationToken CreateLinkedTokenWith(this CancellationToken a, CancellationToken b)
-            => b == CancellationToken.None ? a
-                : a == CancellationToken.None ? b
-                : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
+            => b == CancellationToken.None
+                ? a
+                : a == CancellationToken.None
+                    ? b
+                    : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
     }
 
     public sealed class ComparisonComparer<T> : IComparer<T>
@@ -327,6 +329,10 @@ namespace ProgressOnderwijsUtils
             => x == null ? y == null : y != null && equals(x, y);
 
         public int GetHashCode(T obj)
-            => hashCode != null ? hashCode(obj) : obj != null ? obj.GetHashCode() : 0;
+            => hashCode != null
+                ? hashCode(obj)
+                : obj != null
+                    ? obj.GetHashCode()
+                    : 0;
     }
 }

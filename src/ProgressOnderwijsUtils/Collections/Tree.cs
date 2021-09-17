@@ -14,7 +14,6 @@ namespace ProgressOnderwijsUtils.Collections
         where TTree : IRecursiveStructure<TTree>
     {
         TTree TypedThis { get; }
-
         IReadOnlyList<TTree> Children { get; }
     }
 
@@ -53,7 +52,6 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
-
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>

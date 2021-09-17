@@ -17,12 +17,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML basicDoc =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body.Content(
-                    _p.Content("Hello world!")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body.Content(_p.Content("Hello world!"))
             );
 
         [Fact]
@@ -35,12 +31,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithEmptyClass =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body._class(default(string)).Content(
-                    _p.Content("Hello world!")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body._class(default(string)).Content(_p.Content("Hello world!"))
             );
 
         [Fact]
@@ -53,12 +45,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithOneClass =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body._class("aClass").Content(
-                    _p.Content("Hello world!")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body._class("aClass").Content(_p.Content("Hello world!"))
             );
 
         [Fact]
@@ -71,12 +59,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithTwoClasses =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body._class("aClass")._class("bClass").Content(
-                    _p.Content("Hello world!")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body._class("aClass")._class("bClass").Content(_p.Content("Hello world!"))
             );
 
         [Fact]
@@ -89,12 +73,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithOddChars =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body.Content(
-                    _p.Content("Hello world: a < b & \"b\" > 'c'; ")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body.Content(_p.Content("Hello world: a < b & \"b\" > 'c'; "))
             );
 
         [Fact]
@@ -107,12 +87,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithOddCharsInAttribute =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world!")
-                ),
-                _body.Content(
-                    _p._title("Hello world: a < b & \"b\" > 'c'; ").Content("no content")
-                )
+                _head.Content(_title.Content("Hello world!")),
+                _body.Content(_p._title("Hello world: a < b & \"b\" > 'c'; ").Content("no content"))
             );
 
         [Fact]
@@ -148,12 +124,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         static readonly HtmlTagKinds.HTML docWithEscapableRawText =
             _html.Content(
-                _head.Content(
-                    _title.Content("Hello world: a < b & \"b\" > 'c'; ")
-                ),
-                _body.Content(
-                    _textarea.Content("Hello world: a < b & \"b\" > 'c'; ")
-                )
+                _head.Content(_title.Content("Hello world: a < b & \"b\" > 'c'; ")),
+                _body.Content(_textarea.Content("Hello world: a < b & \"b\" > 'c'; "))
             );
 
         [Fact]
@@ -170,9 +142,7 @@ namespace ProgressOnderwijsUtils.Tests
                     _script._type("mytype").Content("Hello world: a < b & \"b\" > 'c'; </style> "),
                     _style._id("myId").Content("Hello world: a < b & \"b\" > 'c'; </script> ")
                 ),
-                _body.Content(
-                    _p.Content("Hello world!")
-                )
+                _body.Content(_p.Content("Hello world!"))
             );
     }
 }

@@ -103,7 +103,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
             var (inresponseTo, notOnOrAfter) = GetSubjectConfirmationData(assertion);
             if (notOnOrAfter.Kind != DateTimeKind.Utc) {
-                return Maybe.Error($"NotOnOrAfter must be UTC");
+                return Maybe.Error("NotOnOrAfter must be UTC");
             }
 
             var now = DateTime.UtcNow;
@@ -119,7 +119,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     roles = GetAttributes(assertion, ROLE),
                     InResponseTo = inresponseTo,
                     AuthnContextClassRef = (string?)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext")?.Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
-                });
+                }
+            );
         }
 
         static (string? inresponseTo, DateTime notOnOrAfter) GetSubjectConfirmationData(XElement assertion)
@@ -147,7 +148,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             ).SingleOrNull();
 
         static string[] GetAttributes(XElement assertion, string key)
-            => (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
+            => (
+                from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent?.Attribute("Name")?.Value == key
                 // ReSharper restore PossibleNullReferenceException

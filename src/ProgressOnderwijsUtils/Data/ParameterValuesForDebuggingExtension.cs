@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
         {
             public List<object> arguments;
 
-                public string RegisterParameterAndGetName<T>(T o)
+            public string RegisterParameterAndGetName<T>(T o)
                 where T : IQueryParameter
             {
                 arguments.Add(o.EquatableValue);

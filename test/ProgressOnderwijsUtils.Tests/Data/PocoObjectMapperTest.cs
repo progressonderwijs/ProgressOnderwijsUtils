@@ -11,7 +11,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
     public sealed class PocoObjectMapperTest : TransactedLocalConnection
     {
         public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SQL($@"
+            => SQL(
+                $@"
                 SELECT top ({rows})
                     SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
                 from (select SalesOrderID = 13 union all select 14) a01
@@ -134,7 +135,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 throw new Exception("This constructor should never be selected, the poco orm should choose the longest constructor");
             }
 
-            public ExampleWithMoreConstructor(int salesOrderId, string accountNumber, DateTime dueDate, bool onlineOrderFlag, byte status, decimal totalDue, byte[] someBlob)
+            public ExampleWithMoreConstructor(
+                int salesOrderId,
+                string accountNumber,
+                DateTime dueDate,
+                bool onlineOrderFlag,
+                byte status,
+                decimal totalDue,
+                byte[] someBlob)
             {
                 SalesOrderId = salesOrderId;
                 AccountNumber = accountNumber;
@@ -146,7 +154,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             }
             // ReSharper disable UnusedParameter.Local
 #pragma warning disable IDE0060 // Remove unused parameter
-            public ExampleWithMoreConstructor(int salesOrderId, string accountNumber, DateTime dueDate, bool onlineOrderFlag, byte status, decimal totalDue, byte[] someBlob, int unmatchable)
+            public ExampleWithMoreConstructor(
+                    int salesOrderId,
+                    string accountNumber,
+                    DateTime dueDate,
+                    bool onlineOrderFlag,
+                    byte status,
+                    decimal totalDue,
+                    byte[] someBlob,
+                    int unmatchable)
 #pragma warning restore IDE0060 // Remove unused parameter
                 // ReSharper restore UnusedParameter.Local
             {
@@ -226,7 +242,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public static ParameterizedSql CreateTableWithSampleData(SqlConnection sqlConnection)
             {
                 var tableName = SQL($"#rowversions");
-                SQL($@"
+                SQL(
+                    $@"
                 create table {tableName} (
                     AShorterVersion binary(4)
                     , AnotherVersion binary(8) not null
@@ -234,15 +251,18 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , AFinalVersion varbinary(max)
                     , Counter int identity not null
                 );
-            ").ExecuteNonQuery(sqlConnection);
+            "
+                ).ExecuteNonQuery(sqlConnection);
 
-                SQL($@"
+                SQL(
+                    $@"
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1 as int), cast(2 as bigint), cast(3 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100 as int), cast(20000 as bigint), cast(30000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(10000 as int), cast(200000000 as bigint), cast(300000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1000000 as int), cast(2000000000000 as bigint), cast(3000000000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100000000 as int), cast(20000000000000000 as bigint), cast(30000000000000000 as bigint));
-            ").ExecuteNonQuery(sqlConnection);
+            "
+                ).ExecuteNonQuery(sqlConnection);
                 return tableName;
             }
         }
@@ -309,12 +329,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
 
             var expected = Enumerable.Range(0, initialPocos.Length)
-                .Select(power => new PocoWithRowVersions(0) {
-                    Counter = power + 1 + initialPocos.Length,
-                    AshorterVersion = 1 * (uint)Math.Pow(100, power),
-                    AnotherVersion = 2 * (ulong)Math.Pow(10000, power),
-                    AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power))
-                })
+                .Select(
+                    power => new PocoWithRowVersions(0) {
+                        Counter = power + 1 + initialPocos.Length,
+                        AshorterVersion = 1 * (uint)Math.Pow(100, power),
+                        AnotherVersion = 2 * (ulong)Math.Pow(10000, power),
+                        AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power))
+                    }
+                )
                 .ToArray();
 
             var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
@@ -329,11 +351,13 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var tableName = PocoWithRowVersions.CreateTableWithSampleData(Connection);
             SQL($"delete from {tableName}").ExecuteNonQuery(Connection);
             var srcData = Enumerable.Range(0, 1000)
-                .Select(i => new PocoWithRowVersions(0) {
-                    AshorterVersion = 1 * (uint)i,
-                    AnotherVersion = 2 * (ulong)i,
-                    AFinalVersion = (Enum64Bit)(3 * (ulong)i)
-                })
+                .Select(
+                    i => new PocoWithRowVersions(0) {
+                        AshorterVersion = 1 * (uint)i,
+                        AnotherVersion = 2 * (ulong)i,
+                        AFinalVersion = (Enum64Bit)(3 * (ulong)i)
+                    }
+                )
                 .ToArray();
 
             srcData.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));

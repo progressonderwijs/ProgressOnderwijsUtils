@@ -8,13 +8,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
     public sealed class EnumeratePocosTest : TransactedLocalConnection
     {
         static ParameterizedSql ExampleQuery
-            => SQL($@"
+            => SQL(
+                $@"
                 select content='bla', id= 3
                 union all
                 select content='hmm', id= 37
                 union all
                 select content=null, id= 1337
-                ");
+                "
+            );
 
         public sealed record ExampleRow : IWrittenImplicitly
         {

@@ -15,17 +15,12 @@ namespace ProgressOnderwijsUtils
     public interface ISqlCommandTracer
     {
         SqlTraceEvent[] ListAllCommands();
-
         void RegisterEvent(string commandText, TimeSpan duration);
         SqlTracerAgumentInclusion ArgumentInclusion { get; }
         bool IsTracing { get; }
     }
 
-    public enum SqlTracerAgumentInclusion
-    {
-        ExcludingArgumentValues,
-        IncludingArgumentValues,
-    }
+    public enum SqlTracerAgumentInclusion { ExcludingArgumentValues, IncludingArgumentValues, }
 
     public static class SqlCommandTracer
     {

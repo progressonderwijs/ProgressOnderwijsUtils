@@ -32,14 +32,17 @@ namespace ProgressOnderwijsUtils
             //perf: put this in a seperate class so usage of stringutils doesn't imply loading (and compiling) these just yet.
             public static readonly Regex
                 whiteSpaceSequence = new Regex(@"[ \t_]+", CommonOptions),
-                capLetter = new Regex(@"
+                capLetter = new Regex(
+                    @"
                         (?<=[a-zA-Z])[0-9]+
                         |(?<![A-Z])[A-Z][a-z]*
                         |(?<=[A-Z])[A-Z]
                             (
                                 [a-rt-z]
                                 |s[a-z]
-                            )[a-z]*", CommonOptions);
+                            )[a-z]*",
+                    CommonOptions
+                );
         }
 
         static class SepaStripperRegexes

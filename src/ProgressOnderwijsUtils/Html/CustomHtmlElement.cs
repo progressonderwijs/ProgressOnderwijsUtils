@@ -7,9 +7,11 @@ namespace ProgressOnderwijsUtils.Html
         readonly HtmlFragment contents;
 
         public CustomHtmlElement(string tagName, HtmlAttribute[]? attributes, HtmlFragment[]? childNodes)
-            : this(tagName,
+            : this(
+                tagName,
                 attributes == null || attributes.Length == 0 ? HtmlAttributes.Empty : HtmlAttributes.FromArray(attributes),
-                childNodes == null || childNodes.Length == 0 ? null : childNodes) { }
+                childNodes == null || childNodes.Length == 0 ? null : childNodes
+            ) { }
 
         internal CustomHtmlElement(string tagName, HtmlAttributes attributes, HtmlFragment childNodes)
         {

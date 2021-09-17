@@ -58,7 +58,8 @@ namespace ProgressOnderwijsUtils
                             replaceMethod,
                             Expression.Constant("\n"),
                             Expression.Constant("\n    ")
-                        )),
+                        )
+                    ),
                     Expression.Constant(",\n")
                 );
 

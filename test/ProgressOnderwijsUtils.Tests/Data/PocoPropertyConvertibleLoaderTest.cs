@@ -88,13 +88,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         BulkInsertTarget CreateTempTable()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     id int not null primary key
                     , bla nvarchar(max) null
                     , bla2 nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
             return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 

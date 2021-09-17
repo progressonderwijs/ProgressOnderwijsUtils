@@ -53,10 +53,13 @@ namespace ProgressOnderwijsUtils.Html
                 => !attr.Name.EqualsOrdinalCaseInsensitive("style") || SafeStyleRegex.IsMatch(attr.Value);
 
             static readonly Regex
-                SafeStyleRegex = new Regex(@"^
+                SafeStyleRegex = new Regex(
+                    @"^
                     \s*margin(-(left|right|top|bottom))?\s*:\s*
                     \d+(px|em|cm|mm|)\s*;?\s*
-                    $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+                    $",
+                    RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture
+                );
         }
 
         public sealed class StripElementsWithInlineJavascriptFilter : IHtmlFilter
@@ -139,14 +142,20 @@ namespace ProgressOnderwijsUtils.Html
 
         static readonly string[]
             banned = "script style".Split(' '),
-            safe = Regex.Split(@"a abbr acronym b big blockquote br caption center
+            safe = Regex.Split(
+                @"a abbr acronym b big blockquote br caption center
                 cite code col colgroup dd del dfn div dl dt em fieldset font h1 h2
                 h3 h4 h5 h6 hr i img ins legend li ol p pre q samp small span strong
-                sub sup table tbody td tfoot th thead tr tt u ul var", @"\s+"),
+                sub sup table tbody td tfoot th thead tr tt u ul var",
+                @"\s+"
+            ),
             //TODO: we should allow html5 stuff too: article aside details figcaption figure footer header main mark nav section summary time bdi meter progress ruby rp rt wbr
-            safeAttr = Regex.Split(@"align alt bgcolor border cellpadding cellspacing
+            safeAttr = Regex.Split(
+                @"align alt bgcolor border cellpadding cellspacing
                 color colspan dir face height href lang rowspan size
-                style title width", @"\s+");
+                style title width",
+                @"\s+"
+            );
 
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
         public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
@@ -170,8 +179,10 @@ namespace ProgressOnderwijsUtils.Html
                     return safeChildren.AsFragment();
                 }
                 if (safety == TagSafety.SafeToKeep) {
-                    return elem.ReplaceAttributesAndContents(HtmlAttributes.FromArray(elem.Attributes.Where(filter.AllowAttribute).ToArray()),
-                        safeChildren).AsFragment();
+                    return elem.ReplaceAttributesAndContents(
+                        HtmlAttributes.FromArray(elem.Attributes.Where(filter.AllowAttribute).ToArray()),
+                        safeChildren
+                    ).AsFragment();
                 }
             }
 

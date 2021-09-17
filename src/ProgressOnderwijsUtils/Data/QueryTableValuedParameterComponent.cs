@@ -37,9 +37,11 @@ namespace ProgressOnderwijsUtils
             var paramName = factory.RegisterParameterAndGetName(this);
             ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
             if (cachedLength >= 0) {
-                var roundedUpToNearestPowerOfFourOrZeroOrMinusOne = cachedLength == 0 ? 0
-                    : cachedLength > 1 << 20 ? -1
-                    : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
+                var roundedUpToNearestPowerOfFourOrZeroOrMinusOne = cachedLength == 0
+                    ? 0
+                    : cachedLength > 1 << 20
+                        ? -1
+                        : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
                 if (roundedUpToNearestPowerOfFourOrZeroOrMinusOne >= 0) {
                     if (cachedLength > roundedUpToNearestPowerOfFourOrZeroOrMinusOne) {
                         throw new Exception("Internal error: " + cachedLength + " > " + roundedUpToNearestPowerOfFourOrZeroOrMinusOne);

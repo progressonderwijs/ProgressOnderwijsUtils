@@ -88,6 +88,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_9()
             => BulkInsertTestSampleRow.SampleRows(9).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+
         [Benchmark]
         public void BulkCopyToSqlServer_uncachedTarget_81()
             => BulkInsertTestSampleRow.SampleRows(81).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));

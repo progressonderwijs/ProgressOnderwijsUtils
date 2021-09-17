@@ -95,7 +95,8 @@ namespace ProgressOnderwijsUtils
             return Regex.Replace(
                 upc1,
                 @"[']\p{Lu}",
-                match => match.ToString().ToLowerInvariant());
+                match => match.ToString().ToLowerInvariant()
+            );
         }
     }
 }

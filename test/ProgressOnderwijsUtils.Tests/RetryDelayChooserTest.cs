@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.Tests
             var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
             delayChooser.RegisterErrorAt(startMoment);
             var actualRetryDelayAfterOneError = delayChooser.RetryDelayAt(startMoment);
-            PAssert.That(() => Utils.FuzzyEquals(actualRetryDelayAfterOneError.TotalSeconds /constantFailureDelayTarget.TotalSeconds, 0.00116));
+            PAssert.That(() => Utils.FuzzyEquals(actualRetryDelayAfterOneError.TotalSeconds / constantFailureDelayTarget.TotalSeconds, 0.00116));
         }
 
         [Fact]

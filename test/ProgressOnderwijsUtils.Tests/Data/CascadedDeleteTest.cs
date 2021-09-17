@@ -10,22 +10,20 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class CascadedDeleteTest : TransactedLocalConnection
     {
-        enum AId
-        {
-            One = 1,
-            Two = 2,
-        }
+        enum AId { One = 1, Two = 2, }
 
         [Fact]
         public void CascadedDeleteFollowsAForeignKey()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 ( A int primary key, B int);
                 create table T2 ( C int primary key, A int references T1 (A) );
 
                 insert into T1 values (1,11), (2,22), (3, 33);
                 insert into T2 values (111,1), (333,3);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
 
@@ -42,13 +40,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadedDeleteFollowsAUniqueConstraintBasedForeignKey()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 ( A int not null unique, B int);
                 create table T2 ( C int not null, A int references T1 (A) );
 
                 insert into T1 values (1,11), (2,22), (3, 33);
                 insert into T2 values (111,1), (333,3);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
 
@@ -65,7 +65,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadedDeleteDetectsCycles()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 ( A int not null unique, B int);
                 create table T2 ( B int not null unique, A int references T1 (A) );
                 alter table T1 add constraint T1FK foreign key (B) references T2(B);
@@ -76,7 +77,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 update T1 set B = 111 where A = 1;
                 update T1 set B = 333 where A = 3;
 
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var initialDependentValues = SQL($"select B from T2").ReadPlain<int>(Connection);
 
@@ -100,11 +102,13 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 return table;
             }
 
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 ( A int primary key identity(1,1), B int);
 
                 insert into T1 values (11), (22), (33);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, PksToDelete("A", 1, 2));
@@ -122,20 +126,24 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadedDeleteFollowsADiamondOfForeignKey()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table TRoot ( root int primary key, B int);
                 create table T1 ( C int primary key, root int references TRoot (root));
                 create table T2 ( D int primary key, root int references TRoot (root));
                 create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
-            SQL($@"
+            SQL(
+                $@"
                 insert into TRoot values (1,11), (2,22), (3, 33);
                 insert into T1 values (4,1), (5, 2);
                 insert into T2 values (4,2), (5, 3);
 
                 insert into TLeaf values (1, 4, null), (2, null, 4), (3, null, 5), (4, null, null);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var initialTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Connection);
 
@@ -157,23 +165,27 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void NonUniqueForeignKeyDoesNotLeadToExplosionOfDeletions()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table TRoot ( root int primary key, B int);
                 create table T1 ( C int primary key, root int references TRoot (root));
                 create table TLeaf ( Z int primary key, C int references T1 (C));
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
-            SQL($@"
+            SQL(
+                $@"
                 insert into TRoot values (1, 11), (2, 22), (3, 33);
                 insert into T1 values (1,1), (2, 2), (3, 3), (11,1), (22,2), (33,3);
 
                 insert into TLeaf values (1, 1);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, });
 
-            var rowsFromTRoot= deletionReport.Single(t => t.Table == "dbo.TRoot");
+            var rowsFromTRoot = deletionReport.Single(t => t.Table == "dbo.TRoot");
             PAssert.That(() => rowsFromTRoot.DeletedAtMostRowCount == 1);
             var rowsFromT1 = deletionReport.Single(t => t.Table == "dbo.T1");
             PAssert.That(() => rowsFromT1.DeletedAtMostRowCount == 2);
@@ -181,11 +193,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => rowsFromTLeaf.DeletedAtMostRowCount == 1);
         }
 
-
         [Fact]
         public void CascadeDeleteBreaksOnSpecificTable()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 (A int primary key);
                 create table T2 (B int primary key, A int references T1 (A) on delete set null);
                 create table T3 (C int primary key, A int references T1 (A));
@@ -193,7 +205,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 insert into T1 values (1);
                 insert into T2 values (2, 1);
                 insert into T3 values (3, 1);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             bool StopCascading(string onTable)
                 => onTable == "dbo.T2";
@@ -207,14 +220,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadeDeleteFollowsNullableForeignKeyAndThenSameTableForeignKey()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 (A int primary key);
                 create table T2 (B int primary key, A int references T1, C int references T2);
 
                 insert into T1 values (1);
                 insert into T2 values (2, 1, null);
                 insert into T2 values (3, null, 2);
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
@@ -225,7 +240,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadeDeleteAllowsSameTableCyclesWhenThoseAreSimultaneouslyDeletable()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table T1 (A int primary key);
                 create table T2 (B int primary key, A int references T1, C int references T2);
 
@@ -233,7 +249,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 insert into T2 values (2, 1, null);
                 insert into T2 values (3, 1, 2);
                 update T2 set C=3 where B=2
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
             var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);

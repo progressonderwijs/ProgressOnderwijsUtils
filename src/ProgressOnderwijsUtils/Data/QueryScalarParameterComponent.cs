@@ -14,10 +14,14 @@ namespace ProgressOnderwijsUtils
 
         static object MapParameterToSqlValue(object val)
         {
-            var mapper = mappings.GetOrAdd(val.GetType(), type =>
-                type == typeof(CurrentTimeToken) ? _ => DateTime.Now
-                : AutomaticValueConverters.GetOrNull(type) is { } pocoConvertible ? o => pocoConvertible.ConvertToProvider(o)
-                : null
+            var mapper = mappings.GetOrAdd(
+                val.GetType(),
+                type =>
+                    type == typeof(CurrentTimeToken)
+                        ? _ => DateTime.Now
+                        : AutomaticValueConverters.GetOrNull(type) is { } pocoConvertible
+                            ? o => pocoConvertible.ConvertToProvider(o)
+                            : null
             );
 
             return mapper?.Invoke(val) ?? val;

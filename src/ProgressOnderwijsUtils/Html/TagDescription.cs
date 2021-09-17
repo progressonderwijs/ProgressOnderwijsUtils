@@ -36,17 +36,22 @@ namespace ProgressOnderwijsUtils.Html
         static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
             => typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(mi => {
-                    var typeArgument = mi.GetGenericArguments().Single();
-                    return typeArgument.GetGenericParameterConstraints()
-                        .All(constraint =>
-                            constraint.IsAssignableFrom(tagType)
-                            || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
-                })
+                .Where(
+                    mi => {
+                        var typeArgument = mi.GetGenericArguments().Single();
+                        return typeArgument.GetGenericParameterConstraints()
+                            .All(
+                                constraint =>
+                                    constraint.IsAssignableFrom(tagType)
+                                    || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType)
+                            );
+                    }
+                )
                 .ToDictionary(
                     method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })!).Attributes.Last().Name,
                     method => method.Name,
-                    StringComparer.OrdinalIgnoreCase);
+                    StringComparer.OrdinalIgnoreCase
+                );
 
         public static TagDescription LookupTag(string tagName)
             => ByTagName.TryGetValue(tagName, out var desc)

@@ -19,10 +19,8 @@ namespace ProgressOnderwijsUtils
 
         public virtual string? Name
         {
-            get
-                => throw new NotSupportedException();
-            set
-                => throw new NotSupportedException();
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
     }
 }
