@@ -84,7 +84,8 @@ namespace ProgressOnderwijsUtils.Tests
                 () =>
                     colSort.Columns.Concat(colSort.Columns).Reverse()
                         .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName.AssertNotNull()))
-                    == colSort);
+                    == colSort
+            );
 
         [Fact]
         public void OperatorsOk()
@@ -110,8 +111,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ThenByColumnsOk()
-            => PAssert.That(
-                () => new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)) == new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
+            => PAssert.That(() => new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)) == new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
 
         [Fact]
         public void FirstByOk()
@@ -138,23 +138,24 @@ namespace ProgressOnderwijsUtils.Tests
         public void AssumeThenByOk()
         {
             PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(OrderByColumns.Empty) == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
-            PAssert.That(
-                () => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD })) == new OrderByColumns(new[] { ziggyA, abcA, }));
-            PAssert.That(
-                () => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, acolD })) == new OrderByColumns(new[] { ziggyA, }));
+            PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD })) == new OrderByColumns(new[] { ziggyA, abcA, }));
+            PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, acolD })) == new OrderByColumns(new[] { ziggyA, }));
             PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolD })) == OrderByColumns.Empty);
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD, ziggyA, abcA, }))
-                    == new OrderByColumns(new[] { ziggyA, abcA, }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, })
+            );
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, ziggyA, acolD, }))
-                    == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, acolD })
+            );
             PAssert.That(
                 () =>
                     new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolA }))
-                    == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+                    == new OrderByColumns(new[] { ziggyA, abcA, acolD })
+            );
         }
     }
 }

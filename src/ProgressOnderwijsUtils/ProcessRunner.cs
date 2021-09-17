@@ -84,7 +84,8 @@ namespace ProgressOnderwijsUtils
                         }
                     };
                     return Disposable.Empty;
-                });
+                }
+            );
             var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
                     proc.ErrorDataReceived += (_, e) => {
@@ -96,7 +97,8 @@ namespace ProgressOnderwijsUtils
                         }
                     };
                     return Disposable.Empty;
-                });
+                }
+            );
             var replayableMergedOutput = stdout.Merge(stderr).Replay();
             _ = replayableMergedOutput.Connect();
             stopwatch.Start();
@@ -113,7 +115,8 @@ namespace ProgressOnderwijsUtils
                         // already termined, ignore
                     }
                 },
-                false);
+                false
+            );
             WriteStdIn(proc);
 
             return new AsyncProcessResult(exitCodeCompletion.Task, replayableMergedOutput);
@@ -144,11 +147,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public enum ProcessOutputKind
-    {
-        StdOutput,
-        StdError,
-    }
+    public enum ProcessOutputKind { StdOutput, StdError, }
 
     public sealed class AsyncProcessResult
     {
@@ -165,7 +164,11 @@ namespace ProgressOnderwijsUtils
         {
             var prefixWithSpace = prefix + " ";
             var culture = CultureInfo.InvariantCulture;
-            _ = Output.Subscribe(outputStreamEvent => { Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line); });
+            _ = Output.Subscribe(
+                outputStreamEvent => {
+                    Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line);
+                }
+            );
         }
 
         public Task<string[]> StdOutput()

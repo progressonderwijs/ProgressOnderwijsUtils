@@ -107,9 +107,7 @@ namespace ProgressOnderwijsUtils
         public override TColumn GetFieldValue<TColumn>(int ordinal)
             => columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter
                 ? getter(current.GetValue())
-                : throw new InvalidOperationException(
-                    $"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}."
-                    );
+                : throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
 
         readonly struct ColumnInfo
         {
@@ -189,7 +187,26 @@ namespace ProgressOnderwijsUtils
                     var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
                     var isUnique = isKey && properties.None(other => other != pocoProperty && other.IsKey);
                     columnIndexByName.Add(columnInfo.Name, i);
-                    _ = schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
+                    _ = schemaTable.Rows.Add(
+                        columnInfo.Name,
+                        i,
+                        -1,
+                        null,
+                        null,
+                        columnInfo.ColumnType,
+                        null,
+                        false,
+                        allowDbNull,
+                        true,
+                        false,
+                        isUnique,
+                        isKey,
+                        false,
+                        null,
+                        null,
+                        null,
+                        "val"
+                    );
                     columnInfosBuilder.Add(columnInfo);
                     i++;
                 }
@@ -200,26 +217,28 @@ namespace ProgressOnderwijsUtils
         static DataTable CreateEmptySchemaTable()
         {
             var dt = new DataTable();
-            dt.Columns.AddRange(new[] {
-                new DataColumn("ColumnName", typeof(string)),
-                new DataColumn("ColumnOrdinal", typeof(int)),
-                new DataColumn("ColumnSize", typeof(int)),
-                new DataColumn("NumericPrecision", typeof(short)),
-                new DataColumn("NumericScale", typeof(short)),
-                new DataColumn("DataType", typeof(Type)),
-                new DataColumn("ProviderType", typeof(int)),
-                new DataColumn("IsLong", typeof(bool)),
-                new DataColumn("AllowDBNull", typeof(bool)),
-                new DataColumn("IsReadOnly", typeof(bool)),
-                new DataColumn("IsRowVersion", typeof(bool)),
-                new DataColumn("IsUnique", typeof(bool)),
-                new DataColumn("IsKey", typeof(bool)),
-                new DataColumn("IsAutoIncrement", typeof(bool)),
-                new DataColumn("BaseCatalogName", typeof(string)),
-                new DataColumn("BaseSchemaName", typeof(string)),
-                new DataColumn("BaseTableName", typeof(string)),
-                new DataColumn("BaseColumnName", typeof(string)),
-            });
+            dt.Columns.AddRange(
+                new[] {
+                    new DataColumn("ColumnName", typeof(string)),
+                    new DataColumn("ColumnOrdinal", typeof(int)),
+                    new DataColumn("ColumnSize", typeof(int)),
+                    new DataColumn("NumericPrecision", typeof(short)),
+                    new DataColumn("NumericScale", typeof(short)),
+                    new DataColumn("DataType", typeof(Type)),
+                    new DataColumn("ProviderType", typeof(int)),
+                    new DataColumn("IsLong", typeof(bool)),
+                    new DataColumn("AllowDBNull", typeof(bool)),
+                    new DataColumn("IsReadOnly", typeof(bool)),
+                    new DataColumn("IsRowVersion", typeof(bool)),
+                    new DataColumn("IsUnique", typeof(bool)),
+                    new DataColumn("IsKey", typeof(bool)),
+                    new DataColumn("IsAutoIncrement", typeof(bool)),
+                    new DataColumn("BaseCatalogName", typeof(string)),
+                    new DataColumn("BaseSchemaName", typeof(string)),
+                    new DataColumn("BaseTableName", typeof(string)),
+                    new DataColumn("BaseColumnName", typeof(string)),
+                }
+            );
             return dt;
         }
 

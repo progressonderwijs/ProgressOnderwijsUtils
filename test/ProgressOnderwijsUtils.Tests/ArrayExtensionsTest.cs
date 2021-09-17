@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var arr = new[] { "foo", "baar" };
             var viaLinq = arr.AsEnumerable().SelectMany(a => a.ToCharArray());
-            var viaArrays = arr.SelectMany(a=>a.ToCharArray());
+            var viaArrays = arr.SelectMany(a => a.ToCharArray());
 
             PAssert.That(() => viaLinq.SequenceEqual(viaArrays));
         }

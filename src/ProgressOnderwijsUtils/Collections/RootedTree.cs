@@ -68,7 +68,6 @@ namespace ProgressOnderwijsUtils.Collections
         readonly struct TreePathSegment
         {
             public readonly int Index;
-
             public readonly Tree<T> ThisSubTree;
 
             public TreePathSegment(int index, Tree<T> node)
@@ -101,6 +100,7 @@ namespace ProgressOnderwijsUtils.Collections
             return copy;
         }
 
-        RootedTree<T> IRecursiveStructure<RootedTree<T>>.TypedThis => this;
+        RootedTree<T> IRecursiveStructure<RootedTree<T>>.TypedThis
+            => this;
     }
 }
