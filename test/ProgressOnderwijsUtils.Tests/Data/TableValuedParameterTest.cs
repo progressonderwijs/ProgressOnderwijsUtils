@@ -117,10 +117,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
         [Fact]
         public void Binary_columns_can_be_used_in_tvps()
-            => PAssert.That(() => SQL($@"
+            => PAssert.That(
+                () => SQL(
+                    $@"
                 select sum(datalength(hashes.QueryTableValue))
                 from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
-            ").ReadPlain<long>(Connection).Single() == 16);
+            "
+                ).ReadPlain<long>(Connection).Single() == 16
+            );
 
         public sealed class TestDataPoco : IReadImplicitly
         {
@@ -142,7 +146,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void Test_SqlDataReader_GetBytes_for_its_spec()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table get_bytes_test
                 (
                     data varbinary(max) not null
@@ -150,7 +155,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
                 insert into get_bytes_test
                 values ({testData});
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             using var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault);
             using var reader = cmd.Command.ExecuteReader(CommandBehavior.Default);

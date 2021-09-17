@@ -21,7 +21,8 @@ namespace ProgressOnderwijsUtils
                     "Invalid inheritance:\n" +
                     GetType().FriendlyName() + " inherits from " +
                     GetType().BaseType?.FriendlyName() + " but it was expected to inherit from " +
-                    typeof(ResourceStore<T>).FriendlyName());
+                    typeof(ResourceStore<T>).FriendlyName()
+                );
             }
         }
 

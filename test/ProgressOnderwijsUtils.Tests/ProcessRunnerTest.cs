@@ -103,7 +103,11 @@ namespace ProgressOnderwijsUtils.Tests
                 Stdlnput = inputLines.JoinStrings("\r\n"),
             }.StartProcess(token);
             var collected = new List<string>();
-            _ = result.Output.Subscribe(o => { collected.Add(o.Line); });
+            _ = result.Output.Subscribe(
+                o => {
+                    collected.Add(o.Line);
+                }
+            );
 
             _ = result.Output.Wait();
             _ = result.ExitCode.Wait(100);

@@ -23,11 +23,14 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var approval = ApprovalTest.CreateHere();
             File.Delete(approval.ApprovalPath);
-            Utils.TryWithCleanup(() => {
-                PAssert.That(() => !File.Exists(approval.ApprovalPath));
-                _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
-                PAssert.That(() => File.Exists(approval.ApprovalPath));
-            }, () => File.Delete(approval.ApprovalPath));
+            Utils.TryWithCleanup(
+                () => {
+                    PAssert.That(() => !File.Exists(approval.ApprovalPath));
+                    _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
+                    PAssert.That(() => File.Exists(approval.ApprovalPath));
+                },
+                () => File.Delete(approval.ApprovalPath)
+            );
         }
 
         [Fact]
@@ -35,11 +38,14 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var approval = ApprovalTest.CreateHere();
             File.WriteAllText(approval.ApprovalPath, "hello");
-            Utils.TryWithCleanup(() => {
-                _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
-                PAssert.That(() => File.Exists(approval.ApprovalPath));
-                PAssert.That(() => File.ReadAllText(approval.ApprovalPath) == "bla");
-            }, () => File.Delete(approval.ApprovalPath));
+            Utils.TryWithCleanup(
+                () => {
+                    _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
+                    PAssert.That(() => File.Exists(approval.ApprovalPath));
+                    PAssert.That(() => File.ReadAllText(approval.ApprovalPath) == "bla");
+                },
+                () => File.Delete(approval.ApprovalPath)
+            );
         }
 
         [Fact]
@@ -47,11 +53,14 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var approval = ApprovalTest.CreateHere();
             File.WriteAllText(approval.ApprovalPath, "hello");
-            Utils.TryWithCleanup(() => {
-                approval.AssertUnchangedAndSave("hello");
-                PAssert.That(() => File.Exists(approval.ApprovalPath));
-                PAssert.That(() => File.ReadAllText(approval.ApprovalPath) == "hello");
-            }, () => File.Delete(approval.ApprovalPath));
+            Utils.TryWithCleanup(
+                () => {
+                    approval.AssertUnchangedAndSave("hello");
+                    PAssert.That(() => File.Exists(approval.ApprovalPath));
+                    PAssert.That(() => File.ReadAllText(approval.ApprovalPath) == "hello");
+                },
+                () => File.Delete(approval.ApprovalPath)
+            );
         }
     }
 }

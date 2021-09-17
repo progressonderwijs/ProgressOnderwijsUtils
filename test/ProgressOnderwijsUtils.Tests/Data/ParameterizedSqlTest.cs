@@ -254,10 +254,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             => PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
 
         [TestNotLiteral]
-        enum ExampleNonLiteralEnum
-        {
-            SomeValue = 1,
-        }
+        enum ExampleNonLiteralEnum { SomeValue = 1, }
     }
 
     sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }

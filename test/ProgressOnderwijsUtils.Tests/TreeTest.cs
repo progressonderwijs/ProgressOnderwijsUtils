@@ -233,7 +233,6 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => output.SequenceEqual(expected));
         }
 
-
         [Fact]
         public void TreeRebuildSupportsMessyGunkMixingNullsAndEmpty()
         {

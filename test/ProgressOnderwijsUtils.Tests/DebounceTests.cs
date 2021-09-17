@@ -28,7 +28,8 @@ namespace ProgressOnderwijsUtils.Tests
             var handler = HandlerUtils.Debounce(
                 TimeSpan.FromMilliseconds(10),
                 () =>
-                    taskCS.SetResult(0));
+                    taskCS.SetResult(0)
+            );
 
             handler();
             Assert.NotEqual(TaskStatus.RanToCompletion, task.Status);
@@ -43,7 +44,8 @@ namespace ProgressOnderwijsUtils.Tests
             var handler = HandlerUtils.Debounce(
                 TimeSpan.FromMilliseconds(35),
                 () =>
-                    task.SetResult(0));
+                    task.SetResult(0)
+            );
             var sw = Stopwatch.StartNew();
             handler();
             _ = task.Task.Wait(500);
@@ -64,7 +66,8 @@ namespace ProgressOnderwijsUtils.Tests
                     counts.Add(count);
                     Thread.Sleep(100);
                     _ = Interlocked.Decrement(ref inCriticalSection);
-                });
+                }
+            );
             for (var n = 0; n < 5; n++) {
                 var runs = counts.Count;
                 handler();
@@ -96,19 +99,22 @@ namespace ProgressOnderwijsUtils.Tests
             var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(debounceDurationThreshhold), () => debouncedHandlerCompletion.SetResult(sw.Elapsed));
 
             var eventFiringTasks = Enumerable.Range(0, numberOfEventFiringThreads)
-                .Select(threadId =>
-                    Task.Run(async () => {
-                        var actualTimes = new List<DateTime>(3 * durationThatEventsAreFired / debounceDurationThreshhold);
-                        var elapsed = Stopwatch.StartNew();
-                        var r = new Random(threadId);
-                        while (elapsed.Elapsed < TimeSpan.FromMilliseconds(durationThatEventsAreFired)) {
-                            var nextDelay = Task.Delay(r.Next(debounceDurationThreshhold));
-                            handler();
-                            actualTimes.Add(DateTime.UtcNow);
-                            await nextDelay;
-                        }
-                        return actualTimes.ToArray();
-                    })
+                .Select(
+                    threadId =>
+                        Task.Run(
+                            async () => {
+                                var actualTimes = new List<DateTime>(3 * durationThatEventsAreFired / debounceDurationThreshhold);
+                                var elapsed = Stopwatch.StartNew();
+                                var r = new Random(threadId);
+                                while (elapsed.Elapsed < TimeSpan.FromMilliseconds(durationThatEventsAreFired)) {
+                                    var nextDelay = Task.Delay(r.Next(debounceDurationThreshhold));
+                                    handler();
+                                    actualTimes.Add(DateTime.UtcNow);
+                                    await nextDelay;
+                                }
+                                return actualTimes.ToArray();
+                            }
+                        )
                 )
                 .ToArray();
 

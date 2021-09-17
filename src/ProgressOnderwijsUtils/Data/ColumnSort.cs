@@ -3,11 +3,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public enum SortDirection
-    {
-        Asc,
-        Desc
-    }
+    public enum SortDirection { Asc, Desc }
 
     [Serializable]
     public readonly struct ColumnSort : IEquatable<ColumnSort>

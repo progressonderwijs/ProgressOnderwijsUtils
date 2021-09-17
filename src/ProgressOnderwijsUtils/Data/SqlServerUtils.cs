@@ -12,7 +12,8 @@ namespace ProgressOnderwijsUtils
         public static void KillOtherUserProcessesOnDb(SqlConnection sqlContext, string catalog)
         {
             try {
-                SQL($@"
+                SQL(
+                    $@"
                     declare @query as nvarchar(max) = isnull((
                             select string_agg(N'kill ' + cast(s.session_id as nvarchar(max)) + N'; ', nchar(10))
                             from sys.dm_exec_sessions s
@@ -24,7 +25,8 @@ namespace ProgressOnderwijsUtils
                         ),'');
 
                     exec(@query);
-                ").ExecuteNonQuery(sqlContext);
+                "
+                ).ExecuteNonQuery(sqlContext);
             } catch (Exception e) when (IsSpidAlreadyDeadException(e)) {
                 //the spid may already be dead by the time we get around to killing it, which throws an error.  We ignore that error.
             }

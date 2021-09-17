@@ -14,18 +14,34 @@ namespace ProgressOnderwijsUtils
 {
     public static class CascadedDelete
     {
-        public static DeletionReport[] RecursivelyDelete<TId>(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, string pkColumn, params TId[] pksToDelete)
+        public static DeletionReport[] RecursivelyDelete<TId>(
+            SqlConnection conn,
+            DatabaseDescription.Table initialTableAsEntered,
+            bool outputAllDeletedRows,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
+            string pkColumn,
+            params TId[] pksToDelete)
             where TId : Enum
         {
             var pkColumnSql = ParameterizedSql.CreateDynamic(pkColumn);
-            return RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, new[] { pkColumn }, SQL($@"
+            return RecursivelyDelete(
+                conn,
+                initialTableAsEntered,
+                outputAllDeletedRows,
+                logger,
+                stopCascading,
+                new[] { pkColumn },
+                SQL(
+                    $@"
                 select {pkColumnSql} = q.QueryTableValue 
                 from {pksToDelete} q
-            "));
+            "
+                )
+            );
         }
 
-        public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            TId>(
+        public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] TId>(
             SqlConnection conn,
             DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
@@ -47,14 +63,26 @@ namespace ProgressOnderwijsUtils
                 PocoUtils.GetProperties<TId>().ArraySelect((pocoProperty, index) => new ColumnDefinition(pocoProperty.DataType, pocoProperty.Name, index, ColumnAccessibility.Normal))
             );
             pksToDelete.BulkCopyToSqlServer(conn, target);
-            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
+            var report = RecursivelyDelete(
+                conn,
+                initialTableAsEntered,
+                outputAllDeletedRows,
+                logger,
+                stopCascading,
+                pkColumns,
+                SQL(
+                    $@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
-            "));
+            "
+                )
+            );
 
-            SQL($@"
+            SQL(
+                $@"
                 drop table {pksTable}
-            ").ExecuteNonQuery(conn);
+            "
+            ).ExecuteNonQuery(conn);
 
             return report;
         }
@@ -69,14 +97,26 @@ namespace ProgressOnderwijsUtils
             pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
             BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
 
-            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
+            var report = RecursivelyDelete(
+                conn,
+                initialTableAsEntered,
+                outputAllDeletedRows,
+                logger,
+                stopCascading,
+                pkColumns,
+                SQL(
+                    $@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
-            "));
+            "
+                )
+            );
 
-            SQL($@"
+            SQL(
+                $@"
                 drop table {pksTable}
-            ").ExecuteNonQuery(conn);
+            "
+            ).ExecuteNonQuery(conn);
 
             return report;
         }
@@ -88,7 +128,14 @@ namespace ProgressOnderwijsUtils
         /// 
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
-        public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, string[] pkColumns, ParameterizedSql pksTVParameter)
+        public static DeletionReport[] RecursivelyDelete(
+            SqlConnection conn,
+            DatabaseDescription.Table initialTableAsEntered,
+            bool outputAllDeletedRows,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
+            string[] pkColumns,
+            ParameterizedSql pksTVParameter)
         {
             void log(string message)
                 => logger?.Invoke(message);
@@ -103,21 +150,25 @@ namespace ProgressOnderwijsUtils
             var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
             pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
 
-            var idsToDelete = SQL($@"
+            var idsToDelete = SQL(
+                $@"
                 insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
                 {pksTVParameter};
 
                 select count(*) from {delTable};
-            ").ReadScalar<int>(conn);
+            "
+            ).ReadScalar<int>(conn);
 
-            var initialRowCountToDelete = SQL($@"
+            var initialRowCountToDelete = SQL(
+                $@"
                 delete dt
                 from {delTable} dt
                 left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
                 where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
                 ;
                 select count(*) from {delTable}
-            ").ReadScalar<int>(conn);
+            "
+            ).ReadScalar<int>(conn);
 
             log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
 
@@ -160,12 +211,14 @@ namespace ProgressOnderwijsUtils
                         log($"Delete {nrRowsToDelete} from {table.QualifiedName}...");
 
                         ParameterizedSql DeletionQuery(ParameterizedSql outputClause)
-                            => SQL($@"
+                            => SQL(
+                                $@"
                                 delete pk
                                 {outputClause}
                                 from {table.QualifiedNameSql} pk
                                 join {tempTableName} tt on {ttJoin};
-                            ");
+                            "
+                            );
 
                         DataTable? DeletionExecution()
                         {
@@ -178,13 +231,15 @@ namespace ProgressOnderwijsUtils
                                 return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
                             }
 
-                            return SQL($@"
+                            return SQL(
+                                $@"
                                 declare @output_deleted table(
                                     {table.Columns.Select(col => col.ColumnMetaData.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
                                 );
                                 {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
                                 select * from @output_deleted;
-                            ").OfDataTable().Execute(conn);
+                            "
+                            ).OfDataTable().Execute(conn);
                         }
 
                         var sw = Stopwatch.StartNew();

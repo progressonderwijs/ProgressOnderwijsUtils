@@ -17,11 +17,7 @@ using Microsoft.EntityFrameworkCore.Query;
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
-    public enum FieldMappingMode
-    {
-        RequireExactColumnMatches,
-        IgnoreExtraPocoProperties,
-    }
+    public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
 
     public static class ParameterizedSqlObjectMapper
     {
@@ -65,8 +61,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="sqlConn">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
-        public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, SqlConnection sqlConn)
+        public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, SqlConnection sqlConn)
             where T : IWrittenImplicitly
             => q.OfPocos<T>().Execute(sqlConn);
 
@@ -284,9 +279,11 @@ namespace ProgressOnderwijsUtils
             }
 
             static Expression? GetBuiltInExprOrNull(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type nonNullableUnderlyingType)
-                => GetBuiltInMethod(nonNullableUnderlyingType) is not { } builtin ? null
-                    : builtin.IsStatic ? Expression.Call(builtin, readerParamExpr, fieldIdxExpr)
-                    : Expression.Call(readerParamExpr, builtin, fieldIdxExpr);
+                => GetBuiltInMethod(nonNullableUnderlyingType) is not { } builtin
+                    ? null
+                    : builtin.IsStatic
+                        ? Expression.Call(builtin, readerParamExpr, fieldIdxExpr)
+                        : Expression.Call(readerParamExpr, builtin, fieldIdxExpr);
 
             public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly

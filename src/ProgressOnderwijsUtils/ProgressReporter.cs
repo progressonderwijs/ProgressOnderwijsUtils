@@ -43,10 +43,13 @@ namespace ProgressOnderwijsUtils
         }
 
         public ProgressReporter(int TotalSteps, string reportNameForConsole, int? reportEveryFractionOfTotal = null, TimeSpan? reportEveryTimeSpan = null)
-            : this(TotalSteps,
+            : this(
+                TotalSteps,
                 report =>
-                    Console.WriteLine(
-                        reportNameForConsole + ": " + report.PercentDone + "%, " + report.TimeLeft.TotalSeconds.ToString("f1") + "s left (" + report.Start + " - " + report.Eta + ")"), reportEveryFractionOfTotal, reportEveryTimeSpan) { }
+                    Console.WriteLine(reportNameForConsole + ": " + report.PercentDone + "%, " + report.TimeLeft.TotalSeconds.ToString("f1") + "s left (" + report.Start + " - " + report.Eta + ")"),
+                reportEveryFractionOfTotal,
+                reportEveryTimeSpan
+            ) { }
 
         public void Step(int steps = 1)
         {

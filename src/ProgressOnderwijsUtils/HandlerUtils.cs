@@ -33,7 +33,8 @@ namespace ProgressOnderwijsUtils
                                 }
                             }
                         }
-                    });
+                    }
+                );
             };
         }
     }

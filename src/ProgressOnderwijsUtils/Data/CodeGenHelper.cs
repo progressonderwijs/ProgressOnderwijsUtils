@@ -37,7 +37,9 @@ namespace ProgressOnderwijsUtils
                             dc => {
                                 var columnDefinition = ColumnDefinition.Create(dc);
                                 return GetColumnProperty(columnDefinition, colNameOverride);
-                            }).JoinStrings())
+                            }
+                        ).JoinStrings()
+                    )
                     + "}\n"
                 ).Replace("\n", "\r\n");
         }

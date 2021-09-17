@@ -134,7 +134,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void SaveToUtf8ExcludesIndentation()
         {
-            var doc = XDocument.Parse(@"<test>
+            var doc = XDocument.Parse(
+                @"<test>
     <nested>
         <elements>
             <here>
@@ -142,16 +143,19 @@ namespace ProgressOnderwijsUtils.Tests
             </here>
         </elements>
     </nested>
-</test>");
+</test>"
+            );
 
             var utf8BytesFromXml = XmlCompression.ToUtf8(doc);
             var stringFromBytes = UTF8.GetString(utf8BytesFromXml);
 
             //XDocument.Parse/Serialize appears to sometimes lose CR's
             //The behavior differs at least between net462 on windows and netcoreapp20 on linux
-            PAssert.That(() => stringFromBytes.Replace("\r", "") == @"<test><nested><elements><here>
+            PAssert.That(
+                () => stringFromBytes.Replace("\r", "") == @"<test><nested><elements><here>
                 Ƒϕϕ
-            </here></elements></nested></test>".Replace("\r", ""));
+            </here></elements></nested></test>".Replace("\r", "")
+            );
         }
 
         [Fact]

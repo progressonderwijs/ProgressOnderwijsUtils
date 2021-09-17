@@ -19,7 +19,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     {
         public DbObjectId DbObjectId { get; init; }
         public DbColumnId ColumnId { get; init; }
-        public byte ColumnFlags { get => columnFlags.PackedValues; init => columnFlags.PackedValues = value; }
+
+        public byte ColumnFlags
+        {
+            get => columnFlags.PackedValues;
+            init => columnFlags.PackedValues = value;
+        }
+
         EightFlags columnFlags;
 
         public bool IsNullable

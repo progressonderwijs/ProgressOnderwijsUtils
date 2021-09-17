@@ -29,12 +29,14 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             var x = 0;
             for (var iter = 0; iter < iters; iter++) {
-                var b = tree.Rebuild(node => node.Children.Count + node.NodeValue * 13, (_, val, kids) =>
-                    val % 2 == 0
-                        ? kids
-                        : val % 3 == 0
-                            ? null
-                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
+                var b = tree.Rebuild(
+                    node => node.Children.Count + node.NodeValue * 13,
+                    (_, val, kids) =>
+                        val % 2 == 0
+                            ? kids
+                            : val % 3 == 0
+                                ? null
+                                : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
                 );
 
                 x += b.Sum(o => o.PreorderTraversal().Select(n => n.NodeValue).Sum());

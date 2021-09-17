@@ -47,8 +47,10 @@ namespace ProgressOnderwijsUtils.Tests
             var tidiedSample = HtmlFragment.ParseFragment(sample2).Sanitize().ToStringWithoutDoctype();
             PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
             PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
-            PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this")
-                && tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>", StringComparison.Ordinal));
+            PAssert.That(
+                () => tidiedSample.Contains("include this") && tidiedSample.Contains("test this")
+                    && tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>", StringComparison.Ordinal)
+            );
         }
 
         const string sample3 = "<p>&nbsp;whee</p>";
@@ -104,8 +106,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void AllowsMarginStyleTags()
-            => PAssert.That(
-                () => HtmlFragment.ParseFragment(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().ToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().ToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
 
         [Fact]
         public void OwaspCaseInsensitiveXssAttackVector()
@@ -121,8 +122,12 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Owasp_Decimal_HTML_character_references_without_trailing_semicolons()
-            => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:<IMG SRC=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&
-#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+            => PAssert.That(
+                () => HtmlFragment.ParseFragment(
+                    @"Test element:<IMG SRC=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&
+#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>"
+                ).Sanitize().ToStringWithoutDoctype() == "Test element:"
+            );
 
         [Fact]
         public void Owasp_Extraneous_open_brackets()
@@ -182,8 +187,12 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Owasp_IMG_STYLE_with_expression()
-            => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:exp/*<A STYLE='no\xss:noxss(""*//*"");
-xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>").Sanitize().ToStringWithoutDoctype() == "Test element:exp/*<a></a>");
+            => PAssert.That(
+                () => HtmlFragment.ParseFragment(
+                    @"Test element:exp/*<A STYLE='no\xss:noxss(""*//*"");
+xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>"
+                ).Sanitize().ToStringWithoutDoctype() == "Test element:exp/*<a></a>"
+            );
 
         [Fact]
         public void Owasp_META_using_data()
@@ -219,9 +228,13 @@ xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>").Sanitize().ToStringWithoutDoctype
 
         [Fact]
         public void Owasp_DownleveHiddenBlock()
-            => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:<!--[if gte IE 4]>
+            => PAssert.That(
+                () => HtmlFragment.ParseFragment(
+                    @"Test element:<!--[if gte IE 4]>
  <SCRIPT>alert('XSS');</SCRIPT>
- <![endif]-->").Sanitize().ToStringWithoutDoctype() == "Test element:");
+ <![endif]-->"
+                ).Sanitize().ToStringWithoutDoctype() == "Test element:"
+            );
 
         [Fact]
         public void Owasp_OBJECT_tag()

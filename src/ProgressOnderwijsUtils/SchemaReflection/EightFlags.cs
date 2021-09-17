@@ -9,10 +9,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public bool this[int idx]
         {
-            get
-                => (PackedValues & 1 << idx) != 0;
-            set
-                => PackedValues = value ? (byte)(PackedValues | 1 << idx) : (byte)(PackedValues & ~(1 << idx));
+            get => (PackedValues & 1 << idx) != 0;
+            set => PackedValues = value ? (byte)(PackedValues | 1 << idx) : (byte)(PackedValues & ~(1 << idx));
         }
     }
 }

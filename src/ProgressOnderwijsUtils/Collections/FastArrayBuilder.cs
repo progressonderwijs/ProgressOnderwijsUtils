@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Collections
 #pragma warning disable IDE0044 // Add readonly modifier
 #pragma warning disable IDE0051 // Remove unused private members
         //InitSize total:
-        T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15;//accessed via unsafe ref.
+        T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15; //accessed via unsafe ref.
 
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;

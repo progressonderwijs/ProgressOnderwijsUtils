@@ -49,7 +49,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 //Console.WriteLine(s.Length);
 
                 return s;
-            })();
+            }
+        )();
 
         static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
         static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);

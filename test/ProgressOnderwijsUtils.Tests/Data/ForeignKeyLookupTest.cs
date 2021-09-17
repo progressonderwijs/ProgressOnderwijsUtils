@@ -12,7 +12,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void AllDependantTables_works_recursively()
         {
-            SQL($@"
+            SQL(
+                $@"
                 create table dbo.ForeignKeyLookupRoot (
                     IdRoot int not null primary key
                 );
@@ -26,7 +27,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     IdLeaf int not null primary key
                     , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
                 );
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
             var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;

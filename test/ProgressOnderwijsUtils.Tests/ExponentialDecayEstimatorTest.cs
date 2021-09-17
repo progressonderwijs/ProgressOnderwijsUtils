@@ -95,8 +95,10 @@ namespace ProgressOnderwijsUtils.Tests
                 currentEstimation = estimator.AddAmount(currentMoment, randomValueMeanOne * stepSizeInHalfLives * actualRatePerHalfLife);
             }
 
-            PAssert.That(() => Math.Abs(currentEstimation.EstimatedEventCountPerHalflife - actualRatePerHalfLife) < actualRatePerHalfLife * 0.05,
-                "if I observe 1000 events per half-life for 100 halflives, then the current estimate should be within 5% of the true value");
+            PAssert.That(
+                () => Math.Abs(currentEstimation.EstimatedEventCountPerHalflife - actualRatePerHalfLife) < actualRatePerHalfLife * 0.05,
+                "if I observe 1000 events per half-life for 100 halflives, then the current estimate should be within 5% of the true value"
+            );
         }
     }
 }

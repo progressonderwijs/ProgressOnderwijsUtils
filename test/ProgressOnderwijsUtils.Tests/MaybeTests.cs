@@ -60,9 +60,9 @@ namespace ProgressOnderwijsUtils.Tests
         public void Maybe_check_returns_Unit_or_error()
         {
             PAssert.That(() => Maybe.Verify(true, "an error").IsOk);
-            PAssert.That(() => Maybe.Verify(false, "an error").ContainsError(err=> err== "an error"));
+            PAssert.That(() => Maybe.Verify(false, "an error").ContainsError(err => err == "an error"));
             PAssert.That(() => Maybe.Verify(true, () => "an error").IsOk);
-            PAssert.That(() => Maybe.Verify(false, () => "an error").ContainsError(err=> err== "an error"));
+            PAssert.That(() => Maybe.Verify(false, () => "an error").ContainsError(err => err == "an error"));
         }
 
         [Fact]
@@ -86,24 +86,30 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.Contains(42));
 
             cleanupCalled = 0;
-            maybeWithCleanup = Maybe.Try(() => int.Parse("42")).Finally(() => {
-                cleanupCalled++;
-                throw new InvalidOperationException();
-            });
+            maybeWithCleanup = Maybe.Try(() => int.Parse("42")).Finally(
+                () => {
+                    cleanupCalled++;
+                    throw new InvalidOperationException();
+                }
+            );
             PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is InvalidOperationException));
 
             cleanupCalled = 0;
-            maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(() => {
-                cleanupCalled++;
-                throw new();
-            });
+            maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(
+                () => {
+                    cleanupCalled++;
+                    throw new();
+                }
+            );
             PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is AggregateException));
 
             cleanupCalled = 0;
-            var unitMaybeWithCleanup = Maybe.Try(() => throw new("bla")).Finally(() => {
-                cleanupCalled++;
-                throw new();
-            });
+            var unitMaybeWithCleanup = Maybe.Try(() => throw new("bla")).Finally(
+                () => {
+                    cleanupCalled++;
+                    throw new();
+                }
+            );
             PAssert.That(() => cleanupCalled == 1 && unitMaybeWithCleanup.ContainsError(e => e is AggregateException));
         }
 
@@ -171,7 +177,8 @@ namespace ProgressOnderwijsUtils.Tests
                 _ => {
                     notOk_whenOk_called = true;
                     return 42;
-                });
+                }
+            );
             PAssert.That(() => notOk_whenOk_called == false);
 
             var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
@@ -395,28 +402,32 @@ namespace ProgressOnderwijsUtils.Tests
                     let v = 1
                     from b in okExample
                     select v
-                ).Contains(1));
+                ).Contains(1)
+            );
             PAssert.That(
                 () => (
                     from a in okExample
                     let v = 1
                     from b in notOkExample
                     select v
-                ).IsError);
+                ).IsError
+            );
             PAssert.That(
                 () => (
                     from a in notOkExample
                     let v = 1
                     from b in okExample
                     select v
-                ).IsError);
+                ).IsError
+            );
             PAssert.That(
                 () => (
                     from a in notOkExample
                     let v = 1
                     from b in notOkExample
                     select v
-                ).IsOk == false);
+                ).IsOk == false
+            );
         }
 
         [Fact]

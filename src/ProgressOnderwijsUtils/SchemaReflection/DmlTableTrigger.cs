@@ -6,7 +6,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
     {
         public static DmlTableTriggerSqlDefinition[] LoadAll(SqlConnection conn)
-            => SQL($@"
+            => SQL(
+                $@"
                     select
                         ObjectId = tr.object_id
                         , tr.name
@@ -16,6 +17,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     join sys.tables t on t.object_id = tr.parent_id
                     where 1=1
                         and tr.parent_class = 1
-                ").ReadPocos<DmlTableTriggerSqlDefinition>(conn);
+                "
+            ).ReadPocos<DmlTableTriggerSqlDefinition>(conn);
     }
 }

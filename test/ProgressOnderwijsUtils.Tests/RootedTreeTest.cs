@@ -21,9 +21,11 @@ namespace ProgressOnderwijsUtils.Tests
         public void ReplaceSubTree_can_replace_nested_node()
         {
             var tree =
-                Tree.Node(1,
+                Tree.Node(
+                    1,
                     Tree.Node(2),
-                    Tree.Node(3,
+                    Tree.Node(
+                        3,
                         Tree.Node(4),
                         Tree.Node(5)
                     )
@@ -38,23 +40,30 @@ namespace ProgressOnderwijsUtils.Tests
                 .Root;
 
             PAssert.That(() => !newTree.Equals(tree));
-            PAssert.That(() => newTree.Equals(
-                Tree.Node(1,
-                    Tree.Node(2),
-                    Tree.Node(42,
-                        Tree.Node(4),
-                        Tree.Node(5)
-                    )
-                ).RootHere()));
+            PAssert.That(
+                () => newTree.Equals(
+                    Tree.Node(
+                        1,
+                        Tree.Node(2),
+                        Tree.Node(
+                            42,
+                            Tree.Node(4),
+                            Tree.Node(5)
+                        )
+                    ).RootHere()
+                )
+            );
         }
 
         [Fact]
         public void RootedTree_Sibling_Implementation_Works_Correctly()
         {
             var tree =
-                Tree.Node(1,
+                Tree.Node(
+                    1,
                     Tree.Node(2),
-                    Tree.Node(3,
+                    Tree.Node(
+                        3,
                         Tree.Node(4),
                         Tree.Node(5)
                     ),

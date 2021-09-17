@@ -20,11 +20,13 @@ namespace ProgressOnderwijsUtils.Tests
             const int threadCount = 2;
 
             var attributeLists = Enumerable.Range(0, attrListCount)
-                .Select(i =>
-                    Enumerable.Range(0, i % (maxInitAttrListLength + 1))
-                        .Aggregate(HtmlAttributes.Empty,
-                            (attrs, _) => attrs.Add("X", "value")
-                        )
+                .Select(
+                    i =>
+                        Enumerable.Range(0, i % (maxInitAttrListLength + 1))
+                            .Aggregate(
+                                HtmlAttributes.Empty,
+                                (attrs, _) => attrs.Add("X", "value")
+                            )
                 )
                 .ToArray();
 
@@ -33,27 +35,32 @@ namespace ProgressOnderwijsUtils.Tests
             var errors = new ConcurrentQueue<string>();
 
             using (var barrier = new Barrier(threadCount)) {
-                var tasks = perThreadLists.Select((lists, threadI) => Task.Factory.StartNew(() => {
-                    barrier.SignalAndWait();
-                    var threadName = "thread" + threadI;
-                    for (var i = 0; i < lists.Length; i++) {
-                        lists[i] = lists[i]
-                                .Add(threadName, "value")
-                                .Add(threadName, "value")
-                            ;
-                    }
-                    barrier.SignalAndWait();
-                    for (var i = 0; i < lists.Length; i++) {
-                        var attrList = lists[i];
-                        var initLength = i % (maxInitAttrListLength + 1);
+                var tasks = perThreadLists.Select(
+                    (lists, threadI) => Task.Factory.StartNew(
+                        () => {
+                            barrier.SignalAndWait();
+                            var threadName = "thread" + threadI;
+                            for (var i = 0; i < lists.Length; i++) {
+                                lists[i] = lists[i]
+                                        .Add(threadName, "value")
+                                        .Add(threadName, "value")
+                                    ;
+                            }
+                            barrier.SignalAndWait();
+                            for (var i = 0; i < lists.Length; i++) {
+                                var attrList = lists[i];
+                                var initLength = i % (maxInitAttrListLength + 1);
 
-                        if (attrList.Count != initLength + 2
-                            || !attrList.Take(initLength).All(attr => attr.Name == "X" && attr.Value == "value")
-                            || !attrList.Skip(initLength).All(attr => attr.Name == threadName && attr.Value == "value")) {
-                            errors.Enqueue($"{threadI} / attrList[{i}]: expected {initLength + 2} attrs, have {attrList.Count}; names: {attrList.Select(attr => attr.Name).JoinStrings(", ")}");
-                        }
-                    }
-                }, TaskCreationOptions.LongRunning)).ToArray();
+                                if (attrList.Count != initLength + 2
+                                    || !attrList.Take(initLength).All(attr => attr.Name == "X" && attr.Value == "value")
+                                    || !attrList.Skip(initLength).All(attr => attr.Name == threadName && attr.Value == "value")) {
+                                    errors.Enqueue($"{threadI} / attrList[{i}]: expected {initLength + 2} attrs, have {attrList.Count}; names: {attrList.Select(attr => attr.Name).JoinStrings(", ")}");
+                                }
+                            }
+                        },
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray();
 
                 Task.WaitAll(tasks);
             }

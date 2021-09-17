@@ -1,4 +1,5 @@
 //#define SINGLETHREADED
+
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
@@ -32,8 +33,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         {
             var shuffledDistinctCount = Enumerable.Range(0, IterationsPerTry).Select(ReshuffledIndex).Distinct().Count();
             if (shuffledDistinctCount != IterationsPerTry) {
-                Output(
-                    $"Shuffling of indexes is INVALID: shuffling {IterationsPerTry} indices resulted in just {shuffledDistinctCount} indices");
+                Output($"Shuffling of indexes is INVALID: shuffling {IterationsPerTry} indices resulted in just {shuffledDistinctCount} indices");
             }
         }
 
@@ -79,17 +79,20 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         public static SQLiteConnection CreateSqliteConnection()
         {
-            var sqliteConn = new SQLiteConnection(new SQLiteConnectionStringBuilder {
-                DataSource = @":memory:", //benchmark.db
-                JournalMode = SQLiteJournalModeEnum.Wal,
-                FailIfMissing = false,
-                DateTimeFormat = SQLiteDateFormats.Ticks,
-            }.ToString());
+            var sqliteConn = new SQLiteConnection(
+                new SQLiteConnectionStringBuilder {
+                    DataSource = @":memory:", //benchmark.db
+                    JournalMode = SQLiteJournalModeEnum.Wal,
+                    FailIfMissing = false,
+                    DateTimeFormat = SQLiteDateFormats.Ticks,
+                }.ToString()
+            );
             var ok = false;
             try {
                 sqliteConn.Open();
 
-                _ = sqliteConn.Query<ExampleObject>(@"
+                _ = sqliteConn.Query<ExampleObject>(
+                    @"
                     create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
 
                     insert into example (a,b,c,d,e)
@@ -106,7 +109,8 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                     cross join(select 0 as x union all select 1 union all select 2) e
                     cross join(select 0 as x union all select 1 union all select 2 union all select 3) f
                     cross join(select 0 as x union all select 1 union all select 2 union all select 3) g
-                ");
+                "
+                );
                 ok = true;
                 return sqliteConn;
             } finally {
@@ -167,9 +171,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             var variance = elapsed.Select(t => (t - mean) * (t - mean)).Average() / (elapsed.Count - 1);
             var stddev = Math.Sqrt(variance);
             var scale = 1000.0 / (Tries * IterationsPerTry);
-            Output($"{mean / IterationsPerTry:f2}μs ~ {stddev / IterationsPerTry:f2}μs overall;" +
+            Output(
+                $"{mean / IterationsPerTry:f2}μs ~ {stddev / IterationsPerTry:f2}μs overall;" +
                 $"{latencyDistribution.Mean * 1000:f2}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f2}μs latency;" +
-                $" {gen0 * scale:f4}/{gen1 * scale:f4}/{gen2 * scale:f4} milliGC;  {name}  {ignore}");
+                $" {gen0 * scale:f4}/{gen1 * scale:f4}/{gen2 * scale:f4} milliGC;  {name}  {ignore}"
+            );
         }
     }
 }

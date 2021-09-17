@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
             return newChildNodes;
         }
 
-        public static TO[] SelectMany<TI,TO>(this TI[] list, Func<TI, TO[]> map)
+        public static TO[] SelectMany<TI, TO>(this TI[] list, Func<TI, TO[]> map)
             => list.ArraySelect(map).ConcatArrays();
 
         public static T[] ConcatArrays<T>(this T[][] arrays)

@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ReturnTheSameDictionaryWhenMergingWithEmpty()
         {
-            var original = new Dictionary<int, string>() {
+            var original = new Dictionary<int, string> {
                 { 1, "foo" },
                 { 2, "bar" }
             };
@@ -21,13 +21,13 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ReturnsContentOfBothDictionaries()
         {
-            var first = new Dictionary<int, string>() {
+            var first = new Dictionary<int, string> {
                 { 1, "foo" },
             };
-            var second = new Dictionary<int, string>() {
+            var second = new Dictionary<int, string> {
                 { 2, "bar" }
             };
-            var combined = new Dictionary<int, string>() {
+            var combined = new Dictionary<int, string> {
                 { 1, "foo" },
                 { 2, "bar" }
             };
@@ -37,13 +37,13 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ReturnsValueOfLastDictionaryWhenBothDictionariesContainSameKey()
         {
-            var first = new Dictionary<int, string>() {
+            var first = new Dictionary<int, string> {
                 { 2, "foo" },
             };
-            var second = new Dictionary<int, string>() {
+            var second = new Dictionary<int, string> {
                 { 2, "bar" }
             };
-            var combined = new Dictionary<int, string>() {
+            var combined = new Dictionary<int, string> {
                 { 2, "bar" }
             };
             PAssert.That(() => first.Merge(second).SequenceEqual(combined));
@@ -52,16 +52,16 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ReturnsTheResultOfMultipleMergedArrays()
         {
-            var first = new Dictionary<int, string>() {
+            var first = new Dictionary<int, string> {
                 { 1, "foo" },
             };
-            var second = new Dictionary<int, string>() {
+            var second = new Dictionary<int, string> {
                 { 2, "bar" }
             };
-            var third = new Dictionary<int, string>() {
+            var third = new Dictionary<int, string> {
                 { 3, "baz" }
             };
-            var combined = new Dictionary<int, string>() {
+            var combined = new Dictionary<int, string> {
                 { 1, "foo" },
                 { 2, "bar" },
                 { 3, "baz" }

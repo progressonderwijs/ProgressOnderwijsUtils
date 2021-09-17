@@ -10,7 +10,6 @@ namespace ProgressOnderwijsUtils.Html
         public static IHtmlElementAllowingContent ReplaceContentWith(this IHtmlElementAllowingContent element, HtmlFragment children)
             => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
-
         public static IHtmlElement ReplaceAttributesAndContents(this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
             => element.ApplyAlteration(new ContentAlteration(children)).ReplaceAttributesWith(attributes);
 

@@ -27,8 +27,10 @@ namespace ProgressOnderwijsUtils.Tests
                 var a = Utils.ToSortableShortString(i);
                 var b = Utils.ToSortableShortString(j);
                 if (cmp.Compare(a, b) >= 0) {
-                    throw new Exception("numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " +
-                        b);
+                    throw new Exception(
+                        "numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " +
+                        b
+                    );
                 }
             }
         }
@@ -73,10 +75,10 @@ namespace ProgressOnderwijsUtils.Tests
                         Math.Sign(
                             combo1.Cast<long?>()
                                 .ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare)
-                                .FirstOrNullable(x => x != 0) ?? 0L);
+                                .FirstOrNullable(x => x != 0) ?? 0L
+                        );
                     if (strComparison != seqComparison) {
-                        throw new Exception(
-                            $"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
+                        throw new Exception($"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
                     }
                 }
             }
@@ -123,14 +125,21 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => !new ParameterizedSqlExecutionException().IsRetriableConnectionFailure());
             PAssert.That(
                 () =>
-                    new ParameterizedSqlExecutionException("bla",
-                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
+                    new ParameterizedSqlExecutionException(
+                        "bla",
+                        new DataException("The underlying provider failed on Open.")
+                    ).IsRetriableConnectionFailure()
+            );
             PAssert.That(
                 () =>
                     new AggregateException(
-                        new ParameterizedSqlExecutionException("bla",
-                            new DataException("The underlying provider failed on Open.")),
-                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
+                        new ParameterizedSqlExecutionException(
+                            "bla",
+                            new DataException("The underlying provider failed on Open.")
+                        ),
+                        new DataException("The underlying provider failed on Open.")
+                    ).IsRetriableConnectionFailure()
+            );
             PAssert.That(() => !new AggregateException().IsRetriableConnectionFailure());
             PAssert.That(() => !default(Exception).IsRetriableConnectionFailure());
         }
@@ -166,7 +175,8 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(
                 () =>
                     Utils.TransitiveClosure(nodes, nums => nums.Select(num => num * 2 % 6))
-                        .SetEquals(new[] { 2, 4, 0, 3 }));
+                        .SetEquals(new[] { 2, 4, 0, 3 })
+            );
         }
 
         [Fact]
@@ -222,14 +232,16 @@ namespace ProgressOnderwijsUtils.Tests
             var finallyReached = false;
             var wasComputationFinallyReachedBeforeCleanup = false;
             try {
-                _ = Utils.TryWithCleanup((Func<int>)(() => {
-                    try {
-                        throw new Exception("1337");
-                    } finally {
-                        finallyReached = true;
-                    }
-                }),
-                    () => wasComputationFinallyReachedBeforeCleanup = finallyReached);
+                _ = Utils.TryWithCleanup(
+                    (Func<int>)(() => {
+                        try {
+                            throw new Exception("1337");
+                        } finally {
+                            finallyReached = true;
+                        }
+                    }),
+                    () => wasComputationFinallyReachedBeforeCleanup = finallyReached
+                );
             } catch {
                 //the pointof this test is to test crash situations!
             }

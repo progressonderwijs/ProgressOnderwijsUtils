@@ -83,13 +83,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         BulkInsertTarget CreateTempTable()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     id int not null primary key
                     , bla nvarchar(max) null
                     , bla2 nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
@@ -151,13 +153,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopySupportsCumputedColumn()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     Id int not null primary key
                     , Computed as convert(bit, 1) -- deliberately not placed at the end
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             new[] {
                 new ComputedColumnExample {
@@ -166,10 +170,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 }
             }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-            var fromDb = SQL($@"
+            var fromDb = SQL(
+                $@"
                 select *
                 from {tableName}
-            ").ReadPocos<ComputedColumnExample>(Connection).Single();
+            "
+            ).ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
@@ -194,13 +200,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopyAllowsOmittingSourcePropertiesForIdentityColumns()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     Id int not null primary key
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             new[] {
                 new ExcludingIdentityColumn {
@@ -209,10 +217,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 }
             }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-            var fromDb = SQL($@"
+            var fromDb = SQL(
+                $@"
                 select *
                 from {tableName}
-            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
+            "
+            ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -220,13 +230,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopyIgnoresPropertiesCorrespondingIdentityColumns()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     Id int not null primary key
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             new[] {
                 new IncludingIdentityColumn {
@@ -236,10 +248,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 }
             }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-            var fromDb = SQL($@"
+            var fromDb = SQL(
+                $@"
                 select *
                 from {tableName}
-            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
+            "
+            ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -247,13 +261,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopySupportsKeepIdentity()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     Id int not null primary key
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             new[] {
                 new IncludingIdentityColumn {
@@ -262,10 +278,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 }
             }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
 
-            var fromDb = SQL($@"
+            var fromDb = SQL(
+                $@"
                 select *
                 from {tableName}
-            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
+            "
+            ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 0);
         }
 
@@ -273,19 +291,23 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopySupportsCumputedColumnEvenAfterDropTable()
         {
             var tableName = SQL($"#MyTable");
-            SQL($@"
+            SQL(
+                $@"
                 create table {tableName} (
                     Id int not null primary key
                     , ToDrop int null
                     , Computed as convert(bit, 1) -- deliberately not placed at the end
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
-            SQL($@"
+            SQL(
+                $@"
                 alter table {tableName}
                 drop column ToDrop;
-            ").ExecuteNonQuery(Connection);
+            "
+            ).ExecuteNonQuery(Connection);
 
             new[] {
                 new ComputedColumnExample {
@@ -294,10 +316,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 }
             }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-            var fromDb = SQL($@"
+            var fromDb = SQL(
+                $@"
                 select *
                 from {tableName}
-            ").ReadPocos<ComputedColumnExample>(Connection).Single();
+            "
+            ).ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
