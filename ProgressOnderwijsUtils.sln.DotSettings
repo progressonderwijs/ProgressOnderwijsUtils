@@ -1,4 +1,4 @@
-<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntellisenseGloballyEnabled/IntellisenseEnabled/@EntryValue">Disabled</s:String>
     <s:String x:Key="/Default/CodeInspection/CSharpLanguageProject/LanguageLevel/@EntryValue">Latest</s:String>
 	<s:Boolean x:Key="/Default/CodeEditing/NullCheckPatterns/CanUseCustomExpressionPatternForAssertion/@EntryValue">True</s:Boolean>
@@ -28,6 +28,7 @@ $EXPR$.AssertNotNull();</s:String>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/FormatStatementOnSemicolon/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SmartParenthEnabled/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Browsers/Browsers/@EntryValue">C54+,E12+,FF52+,IE11+,S9+</s:String>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=Microsoft_002EWindows_002ECsWin32_002ESourceGenerator_005C_002A_002Eg_002Ecs/@EntryIndexedValue">True</s:Boolean>
 	
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=webstatic2_002Fwwwroot_002Fdist_002F_002A_002A/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=webstatic2_002Fwwwroot_002Fdist_002F_002A_002A/@EntryIndexRemoved">True</s:Boolean>
@@ -57,6 +58,7 @@ $EXPR$.AssertNotNull();</s:String>
 	
 	
 	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=GeneratedPocos_002E_002A_002Ecs/@EntryIndexedValue">GeneratedPocos.*.cs</s:String>
+	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=_002A_002Eg_002Ecs/@EntryIndexedValue">*.g.cs</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/DoNotShowVsBulb/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
