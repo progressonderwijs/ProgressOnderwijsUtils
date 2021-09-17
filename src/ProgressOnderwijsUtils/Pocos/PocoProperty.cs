@@ -83,15 +83,7 @@ namespace ProgressOnderwijsUtils
             Func<object, object?>? untypedGetter;
 
             public Func<object, object?>? UntypedGetter
-            {
-                get {
-                    if (untypedGetter == null) {
-                        var localGetter = Getter;
-                        untypedGetter = localGetter is null ? null : o => localGetter((TOwner)o);
-                    }
-                    return untypedGetter;
-                }
-            }
+                => untypedGetter ??= Getter is { } localGetter ? o => localGetter((TOwner)o) : null;
 
             public object? UnsafeSetPropertyAndReturnObject(object o, object? newValue)
             {
