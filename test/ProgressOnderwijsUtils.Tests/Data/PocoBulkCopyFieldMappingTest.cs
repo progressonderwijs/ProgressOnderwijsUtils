@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void Exact_mapping_gives_exception_on_less_columns()
         {
             var bulkInsertTarget = CreateTargetTable();
-            Assert.Throws<InvalidOperationException>(() => { bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Connection, new[] { new LessColumns { Id = 37, SomeColumn = 42 } }); });
+            _ = Assert.Throws<InvalidOperationException>(() => { bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Connection, new[] { new LessColumns { Id = 37, SomeColumn = 42 } }); });
         }
 
         [Fact]

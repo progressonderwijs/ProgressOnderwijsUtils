@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Collections
         readonly Impl? list;
 
         public static SList<T> Empty
-            => default;
+            => new();
 
         public bool IsEmpty
             => list == null;
@@ -205,10 +205,10 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public static SList<T> SingleElement<T>(T element)
-            => new SList<T>(element, default);
+            => new SList<T>(element, new());
 
         [UsefulToKeep("library method")]
         public static SList<T> Empty<T>()
-            => default;
+            => new();
     }
 }

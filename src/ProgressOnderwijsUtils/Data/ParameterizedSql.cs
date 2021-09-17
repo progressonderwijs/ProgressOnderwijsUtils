@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
         /// The empty sql string.
         /// </summary>
         public static ParameterizedSql Empty
-            => default;
+            => new();
 
         public static readonly ParameterizedSql TruthyEmpty = new ParameterizedSql(new StringSqlFragment(""));
 

@@ -71,8 +71,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var enumerable = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
             using var enumerator = enumerable.GetEnumerator();
             using var enumerator2 = enumerable.GetEnumerator();
-            enumerator.MoveNext();
-            Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
+            _ = enumerator.MoveNext();
+            _ = Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
         }
     }
 }

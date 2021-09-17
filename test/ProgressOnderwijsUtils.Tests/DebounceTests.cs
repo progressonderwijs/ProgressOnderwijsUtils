@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             handler();
             Assert.NotEqual(TaskStatus.RanToCompletion, task.Status);
-            task.Wait(1000);
+            _ = task.Wait(1000);
             Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Tests
                     task.SetResult(0));
             var sw = Stopwatch.StartNew();
             handler();
-            task.Task.Wait(500);
+            _ = task.Task.Wait(500);
 
             var elapsedMS = sw.Elapsed.TotalMilliseconds;
             PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils.Tests
                     var count = Interlocked.Increment(ref inCriticalSection);
                     counts.Add(count);
                     Thread.Sleep(100);
-                    Interlocked.Decrement(ref inCriticalSection);
+                    _ = Interlocked.Decrement(ref inCriticalSection);
                 });
             for (var n = 0; n < 5; n++) {
                 var runs = counts.Count;
@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils.Tests
                 )
                 .ToArray();
 
-            Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
+            _ = Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
 
             if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire)) {
                 throw new Exception($"debounced handler failed to run even {gracePeriod}ms after the last event fired");

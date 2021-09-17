@@ -26,9 +26,9 @@ namespace ProgressOnderwijsUtils
             var output = new StringBuilder();
             var doneUpto = 0;
             while (true) {
-                output.Append(message, doneUpto, nextSlash - doneUpto);
+                _ = output.Append(message, doneUpto, nextSlash - doneUpto);
                 var nextChar = message[nextSlash + 1];
-                output.Append(
+                _ = output.Append(
                     nextChar switch {
                         'n' => '\n',
                         'r' => '\r',
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
                 doneUpto = nextSlash + 2;
                 nextSlash = message.IndexOf('\\', doneUpto);
                 if (nextSlash < 0 || message.Length == nextSlash + 1) {
-                    output.Append(message, doneUpto, message.Length - doneUpto);
+                    _ = output.Append(message, doneUpto, message.Length - doneUpto);
                     return output.ToString();
                 }
             }

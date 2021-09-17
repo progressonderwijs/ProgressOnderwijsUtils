@@ -1,11 +1,34 @@
-<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntellisenseGloballyEnabled/IntellisenseEnabled/@EntryValue">Disabled</s:String>
     <s:String x:Key="/Default/CodeInspection/CSharpLanguageProject/LanguageLevel/@EntryValue">Latest</s:String>
+	<s:Boolean x:Key="/Default/CodeEditing/NullCheckPatterns/CanUseCustomExpressionPatternForAssertion/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeEditing/NullCheckPatterns/CanUseCustomStatementPatternForAssertion/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeEditing/NullCheckPatterns/CustomExpressionPatternText/@EntryValue">// Use the following placeholders:&#xD;
+// $EXPR$    -- source expression&#xD;
+// $NAME$    -- source name (string literal or 'nameof' expression)&#xD;
+// $MESSAGE$ -- string literal in the form of "$NAME$ != null"&#xD;
+$EXPR$.AssertNotNull()</s:String>
+	<s:String x:Key="/Default/CodeEditing/NullCheckPatterns/CustomStatementPatternText/@EntryValue">// Use the following placeholders:&#xD;
+// $EXPR$    -- source expression&#xD;
+// $NAME$    -- source name (string literal or 'nameof' expression)&#xD;
+// $MESSAGE$ -- string literal in the form of "$NAME$ != null"&#xD;
+$EXPR$.AssertNotNull();</s:String>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EContractRequiresPattern/@EntryIndexedValue">100</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002ECustomExpressionBasedPattern/@EntryIndexedValue">5000</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002ECustomStatementBasedPattern/@EntryIndexedValue">1000</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EDebugAssertPattern/@EntryIndexedValue">50</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EGenericContractRequiresPattern/@EntryIndexedValue">99</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EIfReferenceEqualsThenThrowPattern/@EntryIndexedValue">199</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EIfThenThrowPattern/@EntryIndexedValue">200</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EPatternMatchingIfThenThrowPattern/@EntryIndexedValue">500</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002EThrowExpressionNullCheckPattern/@EntryIndexedValue">3000</s:Int64>
+	<s:Int64 x:Key="/Default/CodeEditing/NullCheckPatterns/PatternTypeNamesToPriority/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002ENullChecking_002ETraceAssertPattern/@EntryIndexedValue">49</s:Int64>
 	<s:String x:Key="/Default/CodeEditing/TypingAssist/BraceInsertType/@EntryValue">DISABLED</s:String>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/FormatBlockOnRBrace/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/FormatStatementOnSemicolon/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/SmartParenthEnabled/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Browsers/Browsers/@EntryValue">C54+,E12+,FF52+,IE11+,S9+</s:String>
+	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=Microsoft_002EWindows_002ECsWin32_002ESourceGenerator_005C_002A_002Eg_002Ecs/@EntryIndexedValue">True</s:Boolean>
 	
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=webstatic2_002Fwwwroot_002Fdist_002F_002A_002A/@EntryIndexedValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/ExcludedFiles/FileMasksToSkip/=webstatic2_002Fwwwroot_002Fdist_002F_002A_002A/@EntryIndexRemoved">True</s:Boolean>
@@ -35,6 +58,7 @@
 	
 	
 	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=GeneratedPocos_002E_002A_002Ecs/@EntryIndexedValue">GeneratedPocos.*.cs</s:String>
+	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=_002A_002Eg_002Ecs/@EntryIndexedValue">*.g.cs</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/DoNotShowVsBulb/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
@@ -65,9 +89,12 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeBraces_005Flock/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeBraces_005Fwhile/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeConstructorOrDestructorBody/@EntryIndexedValue">HINT</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeDefaultValueWhenTypeEvident/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeDefaultValueWhenTypeNotEvident/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeLocalFunctionBody/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeMethodOrOperatorBody/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeModifiersOrder/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeObjectCreationWhenTypeNotEvident/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeRedundantParentheses/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ArrangeStaticMemberQualifier/@EntryIndexedValue">ERROR</s:String>
 	
@@ -99,7 +126,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CollectionNeverUpdated_002EGlobal/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CollectionNeverUpdated_002ELocal/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CommentTypo/@EntryIndexedValue">DO_NOT_SHOW</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CompareNonConstrainedGenericWithNull/@EntryIndexedValue">HINT</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CompareNonConstrainedGenericWithNull/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConditionalTernaryEqualBranch/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConditionIsAlwaysTrueOrFalse/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConstantConditionalAccessQualifier/@EntryIndexedValue">ERROR</s:String>
@@ -107,7 +134,8 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConstructorInitializerLoop/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ContainerAnnotationRedundancy/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ContractAnnotationNotParsed/@EntryIndexedValue">ERROR</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertClosureToMethodGroup/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertClosureToMethodGroup/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertClosureToMethodGroup/@EntryIndexRemoved">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertIfStatementToConditionalTernaryExpression/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertIfStatementToSwitchStatement/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertNullableToShortForm/@EntryIndexedValue">WARNING</s:String>
@@ -241,7 +269,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NegativeEqualityExpression/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NestedStringInterpolation/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NonReadonlyFieldInGetHashCode/@EntryIndexedValue">HINT</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NonReadonlyMemberInGetHashCode/@EntryIndexedValue">SUGGESTION</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NonReadonlyMemberInGetHashCode/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NotAccessedField_002ECompiler/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NotAccessedField_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=NotAccessedField_002ELocal/@EntryIndexedValue">ERROR</s:String>
@@ -283,6 +311,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleStructMemberModificationOfNonVariableStruct/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleUnintendedQueryableAsEnumerable/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleUnintendedReferenceComparison/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossiblyImpureMethodCallOnReadonlyVariable/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossiblyMissingIndexerInitializerComma/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PrivateFieldCanBeConvertedToLocalVariable/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PublicConstructorInAbstractClass/@EntryIndexedValue">WARNING</s:String>
@@ -425,6 +454,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=StringLiteralTypo/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=StringLiteralWrongQuotes/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=StringStartsWithIsCultureSpecific/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=SuggestDiscardDeclarationVarStyle/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=SuggestUseVarKeywordEverywhere/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=SuggestVarOrType_005FBuiltInTypes/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=SuggestVarOrType_005FBuiltInTypes/@EntryIndexRemoved">True</s:Boolean>
@@ -462,8 +492,8 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedMember_002ELocal/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedMethodReturnValue_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedMethodReturnValue_002ELocal/@EntryIndexedValue">ERROR</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedParameter_002EGlobal/@EntryIndexedValue">WARNING</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedParameter_002ELocal/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedParameter_002EGlobal/@EntryIndexedValue">SUGGESTION</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedParameter_002ELocal/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedParameterInPartialMethod/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedTupleComponentInReturnValue/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=UnusedTypeParameter/@EntryIndexedValue">ERROR</s:String>
@@ -493,12 +523,15 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VirtualMemberNeverOverridden_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VirtualMemberNeverOverridden_002ELocal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VoidMethodWithMustUseReturnValueAttribute/@EntryIndexedValue">ERROR</s:String>
+	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/RunLongAnalysisInSwa/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/RunValueAnalysisInNullableWarningsEnabledContext/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
 	<s:String x:Key="/Default/CodeInspection/TypeScriptInspections/Level/@EntryValue">TypeScript30</s:String>
-	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=PNet_0020Cleanup/@EntryIndexedValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;Profile name="PNet Cleanup"&gt;&lt;CSCodeStyleAttributes ArrangeTypeAccessModifier="True" ArrangeTypeMemberAccessModifier="True" SortModifiers="True" RemoveRedundantParentheses="True" AddMissingParentheses="False" ArrangeBraces="True" ArrangeAttributes="True" ArrangeArgumentsStyle="True" ArrangeCodeBodyStyle="False" ArrangeVarStyle="True" /&gt;&lt;CSEnforceVarKeywordUsageSettings&gt;True&lt;/CSEnforceVarKeywordUsageSettings&gt;&lt;CSOptimizeUsings&gt;&lt;OptimizeUsings&gt;False&lt;/OptimizeUsings&gt;&lt;EmbraceInRegion&gt;False&lt;/EmbraceInRegion&gt;&lt;RegionName&gt;&lt;/RegionName&gt;&lt;/CSOptimizeUsings&gt;&lt;CSReformatCode&gt;True&lt;/CSReformatCode&gt;&lt;AspOptimizeRegisterDirectives&gt;True&lt;/AspOptimizeRegisterDirectives&gt;&lt;HtmlReformatCode&gt;True&lt;/HtmlReformatCode&gt;&lt;FormatAttributeQuoteDescriptor&gt;True&lt;/FormatAttributeQuoteDescriptor&gt;&lt;CSArrangeQualifiers&gt;True&lt;/CSArrangeQualifiers&gt;&lt;CSFixBuiltinTypeReferences&gt;True&lt;/CSFixBuiltinTypeReferences&gt;&lt;/Profile&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=JenkinsAutoCleanup/@EntryIndexedValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;Profile name="JenkinsAutoCleanup"&gt;&lt;CSCodeStyleAttributes ArrangeTypeAccessModifier="True" ArrangeTypeMemberAccessModifier="True" SortModifiers="True" RemoveRedundantParentheses="True" AddMissingParentheses="False" ArrangeBraces="True" ArrangeAttributes="True" ArrangeArgumentsStyle="False" ArrangeCodeBodyStyle="False" ArrangeVarStyle="True" /&gt;&lt;CSOptimizeUsings&gt;&lt;OptimizeUsings&gt;False&lt;/OptimizeUsings&gt;&lt;EmbraceInRegion&gt;False&lt;/EmbraceInRegion&gt;&lt;RegionName&gt;&lt;/RegionName&gt;&lt;/CSOptimizeUsings&gt;&lt;CSReformatCode&gt;True&lt;/CSReformatCode&gt;&lt;XAMLCollapseEmptyTags&gt;False&lt;/XAMLCollapseEmptyTags&gt;&lt;CSArrangeQualifiers&gt;True&lt;/CSArrangeQualifiers&gt;&lt;CSFixBuiltinTypeReferences&gt;True&lt;/CSFixBuiltinTypeReferences&gt;&lt;/Profile&gt;</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=PNet_0020Cleanup/@EntryIndexedValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;Profile name="PNet Cleanup"&gt;&lt;CSCodeStyleAttributes ArrangeTypeAccessModifier="True" ArrangeTypeMemberAccessModifier="True" SortModifiers="True" RemoveRedundantParentheses="True" AddMissingParentheses="False" ArrangeBraces="True" ArrangeAttributes="True" ArrangeArgumentsStyle="True" ArrangeCodeBodyStyle="False" ArrangeVarStyle="True" /&gt;&lt;CSEnforceVarKeywordUsageSettings&gt;True&lt;/CSEnforceVarKeywordUsageSettings&gt;&lt;CSOptimizeUsings&gt;&lt;OptimizeUsings&gt;False&lt;/OptimizeUsings&gt;&lt;EmbraceInRegion&gt;False&lt;/EmbraceInRegion&gt;&lt;RegionName&gt;&lt;/RegionName&gt;&lt;/CSOptimizeUsings&gt;&lt;CSReformatCode&gt;True&lt;/CSReformatCode&gt;&lt;HtmlReformatCode&gt;True&lt;/HtmlReformatCode&gt;&lt;FormatAttributeQuoteDescriptor&gt;True&lt;/FormatAttributeQuoteDescriptor&gt;&lt;CSArrangeQualifiers&gt;True&lt;/CSArrangeQualifiers&gt;&lt;CSFixBuiltinTypeReferences&gt;True&lt;/CSFixBuiltinTypeReferences&gt;&lt;CorrectVariableKindsDescriptor&gt;True&lt;/CorrectVariableKindsDescriptor&gt;&lt;VariablesToInnerScopesDescriptor&gt;True&lt;/VariablesToInnerScopesDescriptor&gt;&lt;JsReformatCode&gt;True&lt;/JsReformatCode&gt;&lt;JsFormatDocComments&gt;True&lt;/JsFormatDocComments&gt;&lt;RemoveRedundantQualifiersTs&gt;True&lt;/RemoveRedundantQualifiersTs&gt;&lt;OptimizeImportsTs&gt;True&lt;/OptimizeImportsTs&gt;&lt;OptimizeReferenceCommentsTs&gt;True&lt;/OptimizeReferenceCommentsTs&gt;&lt;RemoveCodeRedundancies&gt;True&lt;/RemoveCodeRedundancies&gt;&lt;CssReformatCode&gt;True&lt;/CssReformatCode&gt;&lt;JsInsertSemicolon&gt;True&lt;/JsInsertSemicolon&gt;&lt;/Profile&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Var_0020Cleanup/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Var_0020Cleanup/@EntryIndexRemoved">True</s:Boolean>
-	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">PNet Cleanup</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeCleanup/RecentlyUsedProfile/@EntryValue">JenkinsAutoCleanup</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/SilentCleanupProfile/@EntryValue">PNet Cleanup</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CommonFormatter/ENFORCE_LINE_ENDING_STYLE/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/APPLY_ON_COMPLETION/@EntryValue">True</s:Boolean>
@@ -511,9 +544,15 @@
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/CONSTRUCTOR_OR_DESTRUCTOR_BODY/@EntryValue">ExpressionBody</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/DEFAULT_INTERNAL_MODIFIER/@EntryValue">Implicit</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/DEFAULT_PRIVATE_MODIFIER/@EntryValue">Implicit</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/DEFAULT_VALUE_WHEN_TYPE_EVIDENT/@EntryValue">DefaultExpression</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/DEFAULT_VALUE_WHEN_TYPE_NOT_EVIDENT/@EntryValue">DefaultExpression</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/LOCAL_FUNCTION_BODY/@EntryValue">ExpressionBody</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/METHOD_OR_OPERATOR_BODY/@EntryValue">ExpressionBody</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/OBJECT_CREATION_WHEN_TYPE_EVIDENT/@EntryValue">TargetTyped</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/OBJECT_CREATION_WHEN_TYPE_NOT_EVIDENT/@EntryValue">TargetTyped</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/PARENTHESES_NON_OBVIOUS_OPERATIONS/@EntryValue">0</s:String>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/TRAILING_COMMA_IN_MULTILINE_LISTS/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpCodeStyle/TRAILING_COMMA_IN_SINGLELINE_LISTS/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ACCESSOR_DECLARATION_BRACES/@EntryValue">END_OF_LINE</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_LINQ_QUERY/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/ALIGN_MULTILINE_ARGUMENT/@EntryValue">False</s:Boolean>
@@ -553,16 +592,26 @@
 	
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_CODE/@EntryValue">1</s:Int64>
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_BLANK_LINES_IN_DECLARATIONS/@EntryValue">0</s:Int64>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_EMBEDDED_ARRANGEMENT/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_EXPR_MEMBER_ARRANGEMENT/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_INITIALIZER_ARRANGEMENT/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_INVOCATION_PARENS_ARRANGEMENT/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/KEEP_EXISTING_SWITCH_EXPRESSION_ARRANGEMENT/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/LINE_FEED_AT_FILE_END/@EntryValue">True</s:Boolean>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/MAX_ARRAY_INITIALIZER_ELEMENTS_ON_LINE/@EntryValue">10</s:Int64>
+	
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/MAX_FORMAL_PARAMETERS_ON_LINE/@EntryValue">6</s:Int64>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/MAX_INITIALIZER_ELEMENTS_ON_LINE/@EntryValue">3</s:Int64>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/MAX_INVOCATION_ARGUMENTS_ON_LINE/@EntryValue">15</s:Int64>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/NESTED_TERNARY_STYLE/@EntryValue">EXPANDED</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/OLD_ENGINE/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/OTHER_BRACES/@EntryValue">END_OF_LINE</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_ACCESSOR_ATTRIBUTE_ON_SAME_LINE_EX/@EntryValue">NEVER</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_ACCESSORHOLDER_ATTRIBUTE_ON_SAME_LINE_EX/@EntryValue">NEVER</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_CATCH_ON_NEW_LINE/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_CONSTRUCTOR_INITIALIZER_ON_SAME_LINE/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_CONSTRUCTOR_INITIALIZER_ON_SAME_LINE/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_ELSE_ON_NEW_LINE/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_ACCESSOR_ON_SINGLE_LINE/@EntryValue">NEVER</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_ACCESSOR_ON_SINGLE_LINE/@EntryValue">ALWAYS</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_METHOD_ON_SINGLE_LINE/@EntryValue">NEVER</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_EXPR_PROPERTY_ON_SINGLE_LINE/@EntryValue">NEVER</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_FIELD_ATTRIBUTE_ON_SAME_LINE/@EntryValue">False</s:Boolean>
@@ -572,8 +621,9 @@
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_ACCESSOR_ATTRIBUTE_ON_SAME_LINE/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_ACCESSOR_ON_SINGLE_LINE/@EntryValue">False</s:Boolean>
 	
-	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_ANONYMOUSMETHOD_ON_SINGLE_LINE/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_ANONYMOUSMETHOD_ON_SINGLE_LINE/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_EMBEDDED_STATEMENT_ON_SAME_LINE/@EntryValue">NEVER</s:String>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_ENUM_ON_SINGLE_LINE/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_LINQ_ON_SINGLE_LINE/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/PLACE_SIMPLE_METHOD_ON_SINGLE_LINE/@EntryValue">False</s:Boolean>
 	
@@ -598,6 +648,8 @@
 	
 	
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_AFTER_DECLARATION_LPAR/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_AFTER_INVOCATION_LPAR/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_ARGUMENTS_STYLE/@EntryValue">CHOP_IF_LONG</s:String>
 	
 	
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_ARRAY_INITIALIZER_STYLE/@EntryValue">CHOP_IF_LONG</s:String>
@@ -605,9 +657,14 @@
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_BINARY_OPSIGN/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_EXTENDS_COLON/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_FIRST_TYPE_PARAMETER_CONSTRAINT/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_INVOCATION_RPAR/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_BEFORE_LINQ_EXPRESSION/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_CHAINED_BINARY_EXPRESSIONS/@EntryValue">WRAP_IF_LONG</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_CHAINED_METHOD_CALLS/@EntryValue">WRAP_IF_LONG</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_ENUM_DECLARATION/@EntryValue">CHOP_IF_LONG</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_FOR_STMT_HEADER_STYLE/@EntryValue">CHOP_IF_LONG</s:String>
-	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LIMIT/@EntryValue">250</s:Int64>
-	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LINES/@EntryValue">False</s:Boolean>
+	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LIMIT/@EntryValue">500</s:Int64>
+	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LINES/@EntryValue">True</s:Boolean>
 	
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_LINQ_EXPRESSIONS/@EntryValue">CHOP_ALWAYS</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeFormatting/CSharpFormat/WRAP_MULTIPLE_DECLARATION_STYLE/@EntryValue">CHOP_IF_LONG</s:String>
@@ -640,7 +697,7 @@
 	<s:Int64 x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/MIN_BLANK_LINES_AROUND_FUNCTIONS/@EntryValue">0</s:Int64>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/PLACE_CATCH_ON_NEW_LINE/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/PLACE_FINALLY_ON_NEW_LINE/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/QUOTE_STYLE/@EntryValue">SingleQuoted</s:String>
+	<s:String x:Key="/Default/CodeStyle/CodeFormatting/JavaScriptCodeFormatting/QUOTE_STYLE/@EntryValue">DoubleQuoted</s:String>
 	
 	
 	
@@ -663,6 +720,7 @@
 	
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=System_002ELinq/@EntryIndexedValue">System.Linq</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpVarKeywordUsage/ForBuiltInTypes/@EntryValue">UseVar</s:String>
+	<s:Boolean x:Key="/Default/CodeStyle/EditorConfig/SyncToVisualStudio/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/IntroduceVariableUseVar/UseVarForIntroduceVariableRefactoring/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeStyle/Naming/CSharpAutoNaming/IsNotificationDisabled/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/ExceptionName/@EntryValue"></s:String>
@@ -732,98 +790,100 @@
 	<s:String x:Key="/Default/Environment/ExternalSources/NavigationMode/@EntryValue">Sources</s:String>
 	<s:Boolean x:Key="/Default/Environment/Feedback/SendActivityLogs/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Feedback/ShouldPrompt/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Filtering/IncludeCoverageFilters/=Progress_002EBusiness_003B_002A_003B_002A_003B_002A/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Filtering/IncludeCoverageFilters/=Progress_002EWebApp_003B_002A_003B_002A_003B_002A/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/Hierarchy/Browsers/Browsers/@EntryValue">C39+,FF36+,IE11+</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/LocationType/@EntryValue">TEMP_FOLDER</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=0048b688_002Df328_002D4b0b_002Db534_002D2b7b7599f0ac/@EntryIndexedValue">(min*, max*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=013dfd0a_002Db4bd_002D4fd7_002Dad22_002Da914c9552227/@EntryIndexedValue">System.Text.StringBuilder.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=014a2a39_002De790_002D4b13_002D864e_002D10400a327c34/@EntryIndexedValue">Progress.Business.Text.TextVal.Create</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=01751c7c_002Deccd_002D48eb_002Db442_002D8e7231ecf0fe/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlHelpers.Content</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=02d1ce12_002D7682_002D433b_002Da29c_002D369e78ad5778/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlFragment.Fragment</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=0e039978_002D75d0_002D4f9a_002Da068_002D82818be3fd0a/@EntryIndexedValue">Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=145b1436_002Dbda0_002D4d59_002D977e_002Da6a69275f45f/@EntryIndexedValue">ProgressOnderwijsUtils.TopologicalSort.OrderByTopology</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=1c98be8d_002Dbf00_002D4d7d_002D904b_002D00f3fd877a69/@EntryIndexedValue">System.Threading.Tasks.Task.WhenAny</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=2029f74c_002D71aa_002D4533_002Db00b_002D3eeba663bcad/@EntryIndexedValue">System.Console.Write*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=2662a25b_002D6f2b_002D4b0f_002Dba59_002Df7d1374352f7/@EntryIndexedValue">*.Equals(obj)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=2988b2ce_002D0295_002D449d_002D8660_002D0c3f1744069a/@EntryIndexedValue">Progress.Business.PDbConnectionRelatedExtensions.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=2dd2c75c_002D4008_002D4d4a_002Db2d1_002Dd62651e2c4ba/@EntryIndexedValue">(start*, end*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=349a3300_002Dcb00_002D448e_002D82ac_002Dceb9712148d0/@EntryIndexedValue">(key, value)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=45add507_002D57fe_002D46d9_002D80f2_002D2d77cdafe634/@EntryIndexedValue">Progress.Business.Text.LiteralTranslatable.WithTooltip</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=58bca1c4_002Dee5d_002D4a82_002D9b6b_002D86681ba698e8/@EntryIndexedValue">Progress.Business.SchemaReflection.GeneratedMetaObjectTable`1.ReadByColumn</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=5c3c96e4_002D538f_002D4b90_002Da273_002Da3fa94835681/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Translator</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=6038a2a8_002Dc3ff_002D46da_002D8a57_002D2f7af475a5ac/@EntryIndexedValue">(first*, last*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=652131e2_002D43e0_002D4bc6_002D96fd_002Ddec2e589121e/@EntryIndexedValue">System.Exception.Exception</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=67d37321_002De0e9_002D4cc6_002D9bcc_002Dcd3ea0aeeeae/@EntryIndexedValue">*.ExecuteTransaction</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=795e523c_002Debe5_002D4255_002D8692_002D703da23cba5f/@EntryIndexedValue">Newtonsoft.Json.Linq.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7ca82a2f_002D0f9b_002D452d_002D9b27_002D60691e7b15d2/@EntryIndexedValue">System.String.EndsWith</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7fc8945d_002D36ee_002D41a5_002D9caa_002D9f6b212de873/@EntryIndexedValue">Progress.WebApp.Base.LijstContainer`2.LijstContainer</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=82077f1f_002D4aa7_002D4841_002Da228_002D88ad1ea18691/@EntryIndexedValue">System.Xml.Linq.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=8a67800b_002D35e4_002D47fc_002Da1ff_002D3221663c9d33/@EntryIndexedValue">System.Linq.Queryable.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=8fa5a5bf_002D023e_002D42cb_002Dab38_002Dca0df68e5aef/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Col</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=951ad628_002D6989_002D4611_002Db60c_002D11f0833b161a/@EntryIndexedValue">System.Console.Read*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=9582b267_002Dda50_002D49a2_002D9b73_002D0922993a2cc6/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableExtensions.None</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=9c099c9c_002D223a_002D43b5_002D9b40_002Db5428819423e/@EntryIndexedValue">System.Math.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=9cda2cf9_002Db2e8_002D4eec_002D8a82_002Daf42b7fd599e/@EntryIndexedValue">ExpressionToCodeLib.PAssert.That</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=b6d9c34e_002D3a9a_002D4068_002D9918_002D849a22457cd8/@EntryIndexedValue">ProgressOnderwijsUtils.SafeSql.SQL</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=b87de240_002Db8b1_002D4211_002D9bb2_002D93f1ffe4ae27/@EntryIndexedValue">Progress.Business.Taken.TakenInfrastructuur.BackgroundServiceHelpers.LoopWithRetries</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=bb85c8b8_002D5d7b_002D45c0_002D8dbe_002Dae0c53f9cd99/@EntryIndexedValue">System.AggregateException.AggregateException</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=bcd184c8_002D0916_002D4a4d_002D9bb2_002D8d394a0602b8/@EntryIndexedValue">Progress.Business.Import.BusinessConversie.RunConversie</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=c4461179_002D4147_002D432b_002Da264_002D5c7efdd272ed/@EntryIndexedValue">ProgressOnderwijsUtils.DisposableExtensions.Using</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=c4494567_002De4ef_002D4889_002Da4c6_002D98f4bad4a2a6/@EntryIndexedValue">(first*, second*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=cc8669c3_002Db801_002D4a9f_002D96db_002Daee52e9cd1fc/@EntryIndexedValue">(from*, to*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=d9cb0215_002D4094_002D4253_002Dbfa5_002Db3effea8791c/@EntryIndexedValue">System.Linq.Enumerable.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=d9d47188_002Def17_002D498c_002D8b0e_002D7a0277ef8dc8/@EntryIndexedValue">(format, arg*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=df18560c_002D02e4_002D43b3_002D99b8_002D7201c170d47b/@EntryIndexedValue">ProgressOnderwijsUtils.Html.AttributeConstructionMethods.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=e0b6bcc4_002Da76f_002D4fec_002D834d_002D005acaa4a5a5/@EntryIndexedValue">System.String.Format</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=e4779f23_002Df713_002D44ed_002D85f4_002D240a10fd5f1a/@EntryIndexedValue">System.InvalidOperationException.InvalidOperationException</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=e5c702f6_002D9fb7_002D498f_002Daa82_002D777e236984f2/@EntryIndexedValue">(begin*, end*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=e9b336a7_002D0350_002D4f94_002Dad6b_002De2bc65196ca4/@EntryIndexedValue">*.WithScaledDbCommandTimeout</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=f32cd109_002D6f15_002D4e13_002Da8d3_002D219f85aae82a/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableOfStringExtension.JoinStrings</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=fad8d215_002De95f_002D4471_002D9e51_002D1e012252954b/@EntryIndexedValue">PAssert.That*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=095b0509_002Dd7c4_002D428a_002D9a59_002D15a842cbf828/@EntryIndexedValue">(start*, end*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=10cad267_002D2f41_002D4a84_002D926d_002D65decc012d1f/@EntryIndexedValue">Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=19662915_002D5e71_002D4fc6_002Db5bd_002D54c0128702d7/@EntryIndexedValue">Progress.Business.Text.TextVal.Create</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=212a50ac_002De0d6_002D47e3_002D8bcb_002Dd3dc87531a6a/@EntryIndexedValue">(first*, last*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=29e5b120_002D20fe_002D4016_002Db664_002D26b400f7223d/@EntryIndexedValue">(first*, second*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=2f62b632_002D707d_002D4b41_002D8e5b_002D29f215f95d24/@EntryIndexedValue">ProgressOnderwijsUtils.Html.AttributeConstructionMethods.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=36e97da2_002D00dc_002D4473_002Dbbf8_002Ddf4153a691aa/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlFragment.Fragment</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=37edd92d_002D6327_002D41d9_002Dbd44_002D4b9383b0f45c/@EntryIndexedValue">System.InvalidOperationException.InvalidOperationException</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=46d82887_002Daaf3_002D4a32_002Db564_002Dbe33beac2ea4/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableExtensions.None</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=527cb025_002D93be_002D4682_002Da62f_002D671db57eae5c/@EntryIndexedValue">Progress.WebApp.Base.LijstContainer`2.LijstContainer</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=547a1932_002D0cf4_002D4a23_002D9a21_002D39262633a8df/@EntryIndexedValue">System.Console.Write*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=5cbda47c_002D345c_002D4de2_002Dba08_002D1cfcfea6ea89/@EntryIndexedValue">System.Math.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=5dd47c0c_002Dd542_002D43b0_002Da021_002D6563087e2d6b/@EntryIndexedValue">Newtonsoft.Json.Linq.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=628a9b59_002Ddcca_002D463c_002Db599_002D2e5f24d26394/@EntryIndexedValue">ExpressionToCodeLib.PAssert.That</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=6693c65f_002Dc5ef_002D4935_002Db1d4_002D0455c52fc1d5/@EntryIndexedValue">ProgressOnderwijsUtils.DisposableExtensions.Using</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=6710adc4_002D1381_002D44e7_002D8ceb_002D2f827258b66c/@EntryIndexedValue">Progress.Business.Import.BusinessConversie.RunConversie</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=6ad00497_002D90af_002D4181_002Da95d_002D1a50b06d4c15/@EntryIndexedValue">(begin*, end*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=6c067adc_002Dfc48_002D4fd5_002D8682_002Dbaf0a14db3ec/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Col</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=7b77a521_002Da6a0_002D4677_002D86a7_002Da1862d172cf4/@EntryIndexedValue">PAssert.That*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=7cdc41dd_002D959b_002D4459_002D9f43_002D5433c3ee8db1/@EntryIndexedValue">System.Console.Read*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=804af122_002D391b_002D4585_002D91ec_002D12ad5adb957a/@EntryIndexedValue">(from*, to*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=80932fcd_002Dfb9d_002D4e1b_002Da53f_002Db4c27bb5fc80/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlHelpers.Content</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=8364fce8_002D483b_002D4b00_002D9adb_002Dee5d8c88c01a/@EntryIndexedValue">System.AggregateException.AggregateException</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=9649145e_002D4311_002D4c1d_002Da2af_002D7273b1a64ed5/@EntryIndexedValue">System.Linq.Enumerable.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=98cff708_002D775a_002D4502_002Db56f_002D00a668e58bac/@EntryIndexedValue">System.Threading.Tasks.Task.WhenAny</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=99a99fe2_002D491e_002D4dc6_002D8e94_002Dea34209f64b5/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Translator</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=a794f4d9_002Dfafa_002D48c9_002Daca0_002D2aaf17168d61/@EntryIndexedValue">Progress.Business.Taken.TakenInfrastructuur.BackgroundServiceHelpers.LoopWithRetries</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=aa288875_002D8ae2_002D40ae_002D8d28_002D54dbacfddf4d/@EntryIndexedValue">*.Equals(obj)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=aac66faa_002Dfac9_002D480c_002D89b4_002D60c842750ec4/@EntryIndexedValue">*.ExecuteTransaction</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=b53e0c6d_002D6bd7_002D4330_002Db8ff_002D24d9b0773dd7/@EntryIndexedValue">(format, arg*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=b7ded571_002D41fe_002D437b_002Dbc85_002D599d7e680ec6/@EntryIndexedValue">(key, value)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=b90b87b9_002D5a0c_002D4a2a_002Db026_002D6254c5d5f28f/@EntryIndexedValue">System.String.EndsWith</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=b9573ef4_002D386b_002D4513_002Dabd7_002De1a8442739c5/@EntryIndexedValue">System.Text.StringBuilder.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=bbd58691_002Da62f_002D4e3d_002D88b7_002Df81d9adfbbc7/@EntryIndexedValue">System.Xml.Linq.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=be6688b1_002D91bb_002D4d5a_002Dba8e_002D883cc16c43cb/@EntryIndexedValue">ProgressOnderwijsUtils.TopologicalSort.OrderByTopology</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=c9f00a7c_002D7014_002D4679_002D88c5_002D8a3a520dee99/@EntryIndexedValue">Progress.Business.SchemaReflection.GeneratedMetaObjectTable`1.ReadByColumn</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=cc5097db_002Dd97e_002D4158_002Db2b6_002D6d9d6186a832/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableOfStringExtension.JoinStrings</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=dc9515c7_002D1693_002D40e8_002D82c0_002D2eb13a4ee514/@EntryIndexedValue">*.WithScaledDbCommandTimeout</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=de128502_002D7c0c_002D4687_002Dab4a_002Dcb2ce2e5af35/@EntryIndexedValue">System.Exception.Exception</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=e3c0d661_002D2d78_002D42fd_002D9a57_002D2c711e778b59/@EntryIndexedValue">System.String.Format</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=ea9ac125_002Dbc1c_002D4902_002D901e_002Dacb24e2a4ac9/@EntryIndexedValue">ProgressOnderwijsUtils.SafeSql.SQL</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=ee3db08e_002D81e2_002D4789_002Dabd9_002D7d638cb7cc7d/@EntryIndexedValue">Progress.Business.Text.LiteralTranslatable.WithTooltip</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=ef012e44_002Df297_002D4f43_002Da7dd_002D4843370c2169/@EntryIndexedValue">(min*, max*)</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=f15b5b25_002D8d21_002D4ae3_002D9cfb_002Df4eeec253c58/@EntryIndexedValue">System.Linq.Queryable.*</s:String>
-	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=f653364f_002D5419_002D484b_002Db90a_002Da134d671dc1b/@EntryIndexedValue">Progress.Business.PDbConnectionRelatedExtensions.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=04e9c255_002Dfa76_002D4d02_002Da1de_002D7e996e5762f5/@EntryIndexedValue">PAssert.That*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=063cbe51_002D3cfc_002D4c4d_002Db384_002D1fc08bea659a/@EntryIndexedValue">Progress.Business.Taken.TakenInfrastructuur.BackgroundServiceHelpers.LoopWithRetries</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=0a64a8a3_002D273b_002D44e7_002Db153_002Dd12c69d412be/@EntryIndexedValue">Progress.Business.Text.LiteralTranslatable.WithTooltip</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=0d642676_002D2df4_002D4153_002Db2d2_002D9beee7038bbb/@EntryIndexedValue">ProgressOnderwijsUtils.DisposableExtensions.Using</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=13d595fc_002Dfaf2_002D4e0d_002Dab35_002Dac53b7cc1e3a/@EntryIndexedValue">System.String.Format</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=141c61ed_002Da46e_002D41ef_002Dad51_002D37f39389d1ff/@EntryIndexedValue">System.Console.Read*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=1564f6ee_002De818_002D45c8_002Da514_002D7b0e11113cd1/@EntryIndexedValue">Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=21f45a7b_002D4b8c_002D49c7_002Db56e_002D11ec2baa5262/@EntryIndexedValue">Progress.WebApp.Base.LijstContainer`2.LijstContainer</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=29c10f50_002D6a51_002D497c_002D87f1_002D810c70324b42/@EntryIndexedValue">System.Exception.Exception</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=312b3fb9_002Dca84_002D4f5e_002Dbf11_002Df860248ee9e4/@EntryIndexedValue">(min*, max*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=335d6a07_002D9fbb_002D4a85_002Da202_002D2005cae46522/@EntryIndexedValue">ExpressionToCodeLib.PAssert.That</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=368701e8_002Da753_002D4864_002D9f8e_002D7153360c5017/@EntryIndexedValue">ProgressOnderwijsUtils.SafeSql.SQL</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=37cd107f_002D7188_002D4f2b_002Db205_002D6b2bbff4fc6c/@EntryIndexedValue">System.Text.StringBuilder.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=3ac715f3_002Da528_002D40ec_002Db8b6_002Dbf6238e0ff1b/@EntryIndexedValue">Progress.Business.Import.BusinessConversie.RunConversie</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=3aeca074_002D833d_002D413b_002D8054_002Df8e85bdf5966/@EntryIndexedValue">System.Console.Write*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=3d9d6f6d_002D6ebf_002D43ef_002D8c4c_002D41823cd7b8cf/@EntryIndexedValue">System.Threading.Tasks.Task.WhenAny</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=4ad2e72d_002D78fd_002D4347_002D8d54_002Dcd6b3560bb76/@EntryIndexedValue">System.Math.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=4b21256c_002D187a_002D4a76_002D9c32_002D01a848bf1ecd/@EntryIndexedValue">System.InvalidOperationException.InvalidOperationException</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=4f020ce7_002Deba7_002D47e9_002D824f_002Deef59e38ff54/@EntryIndexedValue">(first*, second*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=57535926_002D10bc_002D49b6_002D9d06_002D26e77dca56c1/@EntryIndexedValue">Progress.Business.PDbConnectionRelatedExtensions.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=633eea92_002D4c5f_002D4f6d_002D8a08_002D01dab24ffab1/@EntryIndexedValue">(first*, last*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=72e6eae5_002D53d3_002D44a1_002Db4af_002Dfef7d81eeffd/@EntryIndexedValue">System.String.EndsWith</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7625d328_002D4cbb_002D4bf6_002D8100_002D1df1c1d5f8d9/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlFragment.Fragment</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7939b4d6_002D6e3b_002D4d2d_002Dab56_002D03b611f39a2c/@EntryIndexedValue">*.Equals(obj)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=79496236_002D388d_002D4b99_002Dbe8d_002Dced54abe7a39/@EntryIndexedValue">(start*, end*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7bd611c6_002Dec7d_002D4b62_002D9b24_002D041b0bb340de/@EntryIndexedValue">(key, value)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=7e841863_002De074_002D4575_002Dbe3c_002D9d01af5da351/@EntryIndexedValue">System.Xml.Linq.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=80f4befd_002Df112_002D417a_002Db15e_002Def5c61110f74/@EntryIndexedValue">System.AggregateException.AggregateException</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=84920d67_002D2220_002D4b45_002D9303_002D957afe714895/@EntryIndexedValue">System.Linq.Queryable.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=8a8ceb24_002Dcd9c_002D4e9d_002Db238_002D5ba59a67bbf2/@EntryIndexedValue">ProgressOnderwijsUtils.Html.AttributeConstructionMethods.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=904aa703_002D623b_002D4664_002Dac81_002Dfdd88ba1bbf1/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlHelpers.Content</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=9580cf7b_002Dc86f_002D4bfc_002D82bb_002D879520124599/@EntryIndexedValue">Progress.Business.SchemaReflection.GeneratedMetaObjectTable`1.ReadByColumn</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=aeca8b34_002Dacfc_002D466b_002D9494_002D70b33a746537/@EntryIndexedValue">ProgressOnderwijsUtils.TopologicalSort.OrderByTopology</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=b506c57d_002D5b98_002D4f4d_002D8eb8_002Da4b8a6fa03c9/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Col</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=bfd2ec70_002D1bd4_002D4179_002D99c8_002D15778a71cb8b/@EntryIndexedValue">Progress.Business.Text.TextVal.Create</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=c47b109f_002Da038_002D47ed_002Da4e1_002Dc2c25a529299/@EntryIndexedValue">(format, arg*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=cb9d7f9c_002Db592_002D4d98_002D839e_002D5033cd9cad7d/@EntryIndexedValue">Newtonsoft.Json.Linq.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=d0336217_002D295c_002D485a_002Daf02_002D8a13ba04efd8/@EntryIndexedValue">*.WithScaledDbCommandTimeout</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=d755f05a_002D70dc_002D4864_002D89fb_002D9b102abcadaa/@EntryIndexedValue">System.Linq.Enumerable.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=d7da157a_002Dbc5e_002D43a7_002Da5dd_002D703c8321ac08/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Translator</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=ebbc244e_002De001_002D4df8_002Da1a7_002D7f42ce0b600c/@EntryIndexedValue">(begin*, end*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=f65e65e5_002D281f_002D4357_002D8446_002D9b45985f4f22/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableExtensions.None</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=f9ca985a_002Dbaca_002D4b31_002D90d0_002D0de8b46d3fc6/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableOfStringExtension.JoinStrings</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=fa856565_002D130b_002D4f7c_002Da2f6_002D730d68f50879/@EntryIndexedValue">(from*, to*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/CSharpParameterNameHintsOptions/ExclusionList/=fccca518_002D5bf8_002D4d9c_002D889d_002D858c24904030/@EntryIndexedValue">*.ExecuteTransaction</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=05384406_002D4fc2_002D425e_002D8d5a_002D2fb85fa79585/@EntryIndexedValue">ProgressOnderwijsUtils.TopologicalSort.OrderByTopology</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=111acbbd_002D8251_002D48e5_002Db4ed_002D032ddf226892/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableExtensions.None</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=18ea57cf_002Da17e_002D4358_002Db649_002Df5b60cbebc48/@EntryIndexedValue">Progress.WebApp.Base.LijstContainer`2.LijstContainer</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=197832f0_002D364a_002D4e80_002Da8be_002Dcefa5e238396/@EntryIndexedValue">Progress.Business.Text.TextVal.Create</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=238a90fb_002D3da6_002D4e87_002D835e_002D5efa8e4d1275/@EntryIndexedValue">System.String.EndsWith</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=436c12a9_002Db9c0_002D44ca_002D9e70_002D98969a5ee22b/@EntryIndexedValue">ProgressOnderwijsUtils.Html.AttributeConstructionMethods.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=4392b8a2_002D7669_002D48d0_002Dbc5e_002Dcd1b833c2453/@EntryIndexedValue">Progress.Business.SchemaReflection.GeneratedMetaObjectTable`1.ReadByColumn</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=47a807af_002D763a_002D48b9_002D8bf6_002D526ed1fca704/@EntryIndexedValue">(start*, end*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=4a04939d_002D219d_002D4bb9_002Db42d_002Dc6e5dd1be24a/@EntryIndexedValue">ExpressionToCodeLib.PAssert.That</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=4ceb8bcd_002Dca36_002D4651_002D869f_002D019338292774/@EntryIndexedValue">System.Console.Read*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=5381fa48_002D655a_002D4cf5_002Dbf09_002Dc78ec6abf48a/@EntryIndexedValue">*.Equals(obj)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=53ca277b_002Ddb8b_002D4611_002D8fe4_002D1d6598bb4154/@EntryIndexedValue">System.Xml.Linq.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=55340240_002D9431_002D4b09_002D93d5_002D344485930d37/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlHelpers.Content</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=56e08392_002D1e3d_002D4719_002Db17a_002D5d6b257b56cd/@EntryIndexedValue">System.AggregateException.AggregateException</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=57799c34_002D4583_002D4ab8_002Da825_002D65da5fb129db/@EntryIndexedValue">Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=5b8a7b67_002D2062_002D4849_002Daedc_002D2294c93f920a/@EntryIndexedValue">System.Linq.Queryable.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=69ad4789_002D1631_002D403a_002D930b_002Dbf2efd9d7ef8/@EntryIndexedValue">System.String.Format</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=6fd9b2e9_002D738e_002D4ec2_002D979f_002D384112dfc899/@EntryIndexedValue">Newtonsoft.Json.Linq.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=81616dbb_002D384b_002D4b4e_002Dbcc7_002D72267f953fa0/@EntryIndexedValue">System.Console.Write*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=816c7f5a_002D6ae3_002D4911_002Da30b_002D8bb452294c1b/@EntryIndexedValue">ProgressOnderwijsUtils.Html.HtmlFragment.Fragment</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=82e6e87a_002Da8cb_002D4420_002D8f0b_002D70e327109054/@EntryIndexedValue">ProgressOnderwijsUtils.EnumerableOfStringExtension.JoinStrings</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=83a80519_002D95f8_002D483b_002D9d27_002D928872916cce/@EntryIndexedValue">ProgressOnderwijsUtils.DisposableExtensions.Using</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=85f4b5a6_002D0beb_002D4d4b_002D910c_002D2243b74954ed/@EntryIndexedValue">PAssert.That*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=86028e71_002Da261_002D4b6e_002D9c46_002Da2f7420c6c4a/@EntryIndexedValue">Progress.Business.Import.BusinessConversie.RunConversie</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=87325680_002Dedbd_002D4bdd_002D966f_002D101ef4381494/@EntryIndexedValue">(format, arg*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=88b9886c_002D979d_002D4a44_002D8349_002Ddceab9f9a9ca/@EntryIndexedValue">Progress.Business.PDbConnectionRelatedExtensions.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=8ef8d391_002De70d_002D48f5_002D9713_002D8e0e4e18c5a1/@EntryIndexedValue">Progress.Business.Taken.TakenInfrastructuur.BackgroundServiceHelpers.LoopWithRetries</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=8f874c5b_002De891_002D429e_002D9ae2_002D083f2803f4ac/@EntryIndexedValue">ProgressOnderwijsUtils.SafeSql.SQL</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=90aa89a1_002Dcd03_002D417e_002Da32e_002D4a793e8a1d5a/@EntryIndexedValue">System.Math.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=9ac2a9b7_002D9a83_002D4176_002Da683_002D8798a0b5b9fe/@EntryIndexedValue">(min*, max*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=9d2cd84c_002D1d03_002D40ff_002D8b43_002Da442b27c0425/@EntryIndexedValue">System.Exception.Exception</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=9f36ad93_002Da254_002D4f45_002D947f_002De601a5c2b2d1/@EntryIndexedValue">(first*, last*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=a2464f23_002D0297_002D447d_002D963e_002D46f7b1bf3085/@EntryIndexedValue">(key, value)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=a2aec3e1_002D30d3_002D414c_002D8ed9_002D9efb62f0f8d9/@EntryIndexedValue">System.Text.StringBuilder.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=b180bdff_002D3d04_002D41dc_002Db254_002D6991acbc22bc/@EntryIndexedValue">System.InvalidOperationException.InvalidOperationException</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=c2689438_002D375d_002D44b9_002Da750_002Dbd7100ee5b09/@EntryIndexedValue">System.Linq.Enumerable.*</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=c47a9420_002Dbb02_002D47f9_002Dbc7b_002Dbc4fd1ed1362/@EntryIndexedValue">(begin*, end*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=cd0e021b_002D3355_002D4575_002Da8c6_002D3254583bdd6e/@EntryIndexedValue">(from*, to*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=cd3e0cf7_002Dea8f_002D44ee_002Db225_002Dd604a4048355/@EntryIndexedValue">*.WithScaledDbCommandTimeout</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=d085b426_002D449e_002D46d7_002Da686_002D354c570addfe/@EntryIndexedValue">Progress.Business.Text.LiteralTranslatable.WithTooltip</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=d69bbbc7_002D6398_002D4e28_002D9620_002D7eb482d55ccb/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Col</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=dc399b1c_002Db33d_002D4399_002D965b_002D70d9a4c671f9/@EntryIndexedValue">(first*, second*)</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=ec2ebe8e_002De40b_002D422f_002Db53b_002Dd9ee6989fee7/@EntryIndexedValue">Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Translator</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=faa24f5d_002Db938_002D4c8b_002Da4e5_002De75bba827525/@EntryIndexedValue">System.Threading.Tasks.Task.WhenAny</s:String>
+	<s:String x:Key="/Default/Environment/InlayHints/VBParameterNameHintsOptions/ExclusionList/=fe36c15e_002Dc525_002D4ebc_002Dace4_002Db4ceb99ed640/@EntryIndexedValue">*.ExecuteTransaction</s:String>
 	<s:String x:Key="/Default/Environment/ManagedLanguageParameterNameHintsOptions/BlackList/@EntryValue">(begin*, end*)
 (start*, end*)
 (first*, last*)
@@ -870,18 +930,19 @@ Progress.WebApp.Base.LijstContainer`2.LijstContainer
 Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
 System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:Boolean x:Key="/Default/Environment/ManagedLanguageParameterNameHintsOptions/ShowForConstantsAndEnumMembers/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Antivirus/@EntryIndexedValue">DO_NOTHING</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=AutoRecoverer/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Format/@EntryIndexedValue">LIVE_MONITOR</s:String>
-	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Roslyn_002Dswea/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Roslyn_002Dswea/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=ShowAnnotations/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=SolExp_002DTrack/@EntryIndexedValue">LIVE_MONITOR</s:String>
-	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DIsDownloadRefreshEnabled/@EntryIndexedValue">LIVE_MONITOR</s:String>
-	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DOnEnvironmentStatup/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DIsDownloadRefreshEnabled/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DOnEnvironmentStatup/@EntryIndexedValue">DO_NOTHING</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=SyncSettings/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=TextEditor_002DCodeLens/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=TextEditor_002DTrackChanges_002D2/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=VCS/@EntryIndexedValue">DO_NOTHING</s:String>
-	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=VsBulb/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=VsBulb/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=XAML_0020Designer/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=AutoRecoverer/@EntryIndexedValue">AUTO_FIX</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=Format/@EntryIndexedValue">AUTO_FIX</s:String>
@@ -889,6 +950,7 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=VCS/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=VCS/@EntryIndexRemoved">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/AutoExpandResults/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EdotCover_002EIde_002ECore_002EFilterManagement_002EModel_002ESolutionFilterSettingsManagerMigrateSettings/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002EParameterNameHints_002ECSharpParameterNameHintsOptionsAutoFixExclusionListMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EFeature_002EServices_002ECSharp_002EParameterNameHints_002ECSharpParameterNameHintsOptionsMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EFeature_002EServices_002EDaemon_002ESettings_002EMigration_002ESwaWarningsModeSettingsMigrate/@EntryIndexedValue">True</s:Boolean>
@@ -914,6 +976,8 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">Color</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/PsiSymbolIcon/PsiSymbolIconThemeSelection/@EntryValue">SymbolsVs11Color</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/AttributeFilterXml/@EntryValue">&lt;data /&gt;</s:String>
+	<s:String x:Key="/Default/FilterSettingsManager/CoverageFilterXml/@EntryValue">&lt;data&gt;&lt;IncludeFilters&gt;&lt;Filter ModuleMask="Progress.Business" ModuleVersionMask="*" ClassMask="*" FunctionMask="*" IsEnabled="True" /&gt;&lt;Filter ModuleMask="Progress.WebApp" ModuleVersionMask="*" ClassMask="*" FunctionMask="*" IsEnabled="True" /&gt;&lt;/IncludeFilters&gt;&lt;ExcludeFilters /&gt;&lt;/data&gt;</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/Comment/@EntryValue">You should import static members of SafeSql</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/CustomPatternPlaceholder/=fmtString/@KeyIndexDefined">True</s:Boolean>
@@ -940,6 +1004,17 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TreatPostfixAndPrefixOperatorEquivalent/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TreatReversedBinaryExpressionsEquivalent/@EntryValue">Never</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TypePlaceholderMatchesVoid/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/Comment/@EntryValue">Avoid Path.Combine, because it forces callers to values that are ambiguously files or directories with neither static nor runtime checking.</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/CustomPatternPlaceholder/=args/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/CustomPatternPlaceholder/=args/Properties/=Maximal/@EntryIndexedValue">-1</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/CustomPatternPlaceholder/=args/Properties/=Minimal/@EntryIndexedValue">-1</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/CustomPatternPlaceholder/=args/Type/@EntryValue">ArgumentPlaceholder</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/SearchPattern/@EntryValue">Path.Combine($args$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/Severity/@EntryValue">WARNING</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=51A48C0BDD04D440BA88A0BFAE2ADF66/SuppressionKey/@EntryValue">AvoidPathCombine</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Properties/=ExactType/@EntryIndexedValue">False</s:String>
@@ -958,6 +1033,45 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/Severity/@EntryValue">WARNING</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/ShortenReferences/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/Comment/@EntryValue">Avoid .All(... =&gt; !expression), use .None(... =&gt; expression)</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=a/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=a/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=a/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=a/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=arg/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=arg/Properties/=CaseSensitive/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=arg/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=arg/Properties/=RegEx/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=arg/Type/@EntryValue">IdentifierPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=expr/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=expr/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=expr/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/CustomPatternPlaceholder/=expr/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/ReplacePattern/@EntryValue">$expr$.None($arg$ =&gt; $a$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/SearchPattern/@EntryValue">$expr$.All($arg$ =&gt; !$a$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=61328E91BA319849A5FDB1BF44DA6FC2/SuppressionKey/@EntryValue">UseNone</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/Comment/@EntryValue">Avoid thread-dependant culture.</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/CustomPatternPlaceholder/=str/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/CustomPatternPlaceholder/=str/Properties/=ExactType/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/CustomPatternPlaceholder/=str/Properties/=ExpressionType/@EntryIndexedValue">System.String</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/CustomPatternPlaceholder/=str/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/ReplacePattern/@EntryValue">$str$.ToUpperInvariant()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/SearchPattern/@EntryValue">$str$.ToUpper()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=6372095683E1A444BDC858DFACDD0447/SuppressionKey/@EntryValue">AvoidThreadCulture</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
@@ -986,6 +1100,25 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/Severity/@EntryValue">WARNING</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/ShortenReferences/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/Comment/@EntryValue">Avoid !Any, use None</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=args/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=args/Properties/=Maximal/@EntryIndexedValue">-1</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=args/Properties/=Minimal/@EntryIndexedValue">-1</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=args/Type/@EntryValue">ArgumentPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=expr/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=expr/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=expr/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/CustomPatternPlaceholder/=expr/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/ReplacePattern/@EntryValue">$expr$.None($args$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/SearchPattern/@EntryValue">!$expr$.Any($args$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E00013D1224A74F90B99E4F593B5F94/SuppressionKey/@EntryValue">UseNone</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/Properties/=ExactType/@EntryIndexedValue">False</s:String>
@@ -999,6 +1132,21 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/SearchPattern/@EntryValue">!$maybe$.IsOk</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/Severity/@EntryValue">WARNING</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/SuppressionKey/@EntryValue">AvoidMaybeNotIsOk</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/Comment/@EntryValue">Avoid thread-dependant culture.</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/CustomPatternPlaceholder/=str/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/CustomPatternPlaceholder/=str/Properties/=ExactType/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/CustomPatternPlaceholder/=str/Properties/=ExpressionType/@EntryIndexedValue">System.String</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/CustomPatternPlaceholder/=str/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/ReplacePattern/@EntryValue">$str$.ToLowerInvariant()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/SearchPattern/@EntryValue">$str$.ToLower()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8EA01C305FFE8C42AFBC0013B2071080/SuppressionKey/@EntryValue">AvoidThreadCulture</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/@KeyIndexDefined">False</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexRemoved">True</s:Boolean>
@@ -1044,6 +1192,34 @@ System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/ReplacePattern/@EntryValue"></s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/SearchPattern/@EntryValue">string.Join($separator$,$strings$)</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/Comment/@EntryValue">Prefer .None(... =&gt; X == Y) over .All(... =&gt; X != Y)</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=a/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=a/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=a/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=a/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=arg/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=arg/Properties/=CaseSensitive/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=arg/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=arg/Properties/=RegEx/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=arg/Type/@EntryValue">IdentifierPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=b/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=b/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=b/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=b/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=expr/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=expr/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=expr/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/CustomPatternPlaceholder/=expr/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/ReplacePattern/@EntryValue">$expr$.None($arg$ =&gt; $a$ == $b$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/SearchPattern/@EntryValue">$expr$.All($arg$ =&gt; $a$ != $b$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=BC589B6ADD48864FAB112D6B1BA732FE/SuppressionKey/@EntryValue">UseNone</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/Comment/@EntryValue">Use x.JoinStrings(y) extension method instead of string.Join(y, x)</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=separator/@KeyIndexDefined">True</s:Boolean>

@@ -253,7 +253,7 @@ namespace ProgressOnderwijsUtils
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
                 argOffset = 0,
-                paramValues = default,
+                paramValues = new(),
             };
             impl?.AppendTo(ref factory);
             var key = new ParameterizedSqlEquatableKey {

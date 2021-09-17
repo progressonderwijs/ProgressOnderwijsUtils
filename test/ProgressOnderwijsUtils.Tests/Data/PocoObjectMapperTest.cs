@@ -76,8 +76,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             // ReSharper disable once UnusedVariable
             var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSettersWithMissingProperties>();
-            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
-            Assert.ThrowsAny<Exception>(() => query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection));
+            _ = Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            _ = Assert.ThrowsAny<Exception>(() => query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection));
             var retval = SQL($"select AccountNumber, SalesOrderId from ({query.Sql}) x").ReadPocos<ExampleWithJustSettersWithMissingProperties>(Connection); //implicitly assert does not throw
 
             PAssert.That(() => retval.Length == 512);
@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             // ReSharper disable once UnusedVariable
             var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSettersWithExtraProperties>();
-            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            _ = Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
             var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
 
             PAssert.That(() => retval.Length == 512);
@@ -207,7 +207,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             // ReSharper disable once UnusedVariable
             var query = ParameterizedSqlForRows(512).OfPocos<ExampleWithConstructorWithExtraProperties>();
-            Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
+            _ = Assert.ThrowsAny<Exception>(() => query.Execute(Connection));
             var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
 
             PAssert.That(() => retval.Length == 512);

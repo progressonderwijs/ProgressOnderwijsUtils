@@ -73,25 +73,17 @@ namespace ProgressOnderwijsUtils
             Func<TOwner, object?>? getter;
 
             public Func<TOwner, object?>? Getter
-                => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
+                => getter ??= MkGetter(getterMethod, PropertyInfo.PropertyType);
 
             Setter<TOwner>? setter;
 
             public Setter<TOwner>? Setter
-                => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
+                => setter ??= MkSetter(setterMethod, PropertyInfo.PropertyType);
 
             Func<object, object?>? untypedGetter;
 
             public Func<object, object?>? UntypedGetter
-            {
-                get {
-                    if (untypedGetter == null) {
-                        var localGetter = Getter;
-                        untypedGetter = localGetter is null ? default(Func<object, object?>?) : o => localGetter!((TOwner)o);
-                    }
-                    return untypedGetter;
-                }
-            }
+                => untypedGetter ??= Getter is { } localGetter ? o => localGetter((TOwner)o) : null;
 
             public object? UnsafeSetPropertyAndReturnObject(object o, object? newValue)
             {

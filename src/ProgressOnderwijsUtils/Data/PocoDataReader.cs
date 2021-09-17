@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
                 Value = value;
             }
 
-            public static readonly Optional Empty = default;
+            public static readonly Optional Empty = new();
 
             public T GetValue()
                 => HasValue ? Value : throw new InvalidOperationException("Has no value");
@@ -187,9 +187,9 @@ namespace ProgressOnderwijsUtils
                     var columnInfo = new ColumnInfo(pocoProperty);
                     var isKey = pocoProperty.IsKey;
                     var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
-                    var isUnique = isKey && !properties.Any(other => other != pocoProperty && other.IsKey);
+                    var isUnique = isKey && properties.None(other => other != pocoProperty && other.IsKey);
                     columnIndexByName.Add(columnInfo.Name, i);
-                    schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
+                    _ = schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
                     columnInfosBuilder.Add(columnInfo);
                     i++;
                 }

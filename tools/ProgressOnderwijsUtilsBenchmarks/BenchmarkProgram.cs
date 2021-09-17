@@ -12,14 +12,14 @@ namespace ProgressOnderwijsUtilsBenchmarks
             //MicroOrmBenchmarkProgram.RunBenchmarks();
             //RunTreeBenchmarks();
             //RunArrayBuilderBenchmarks();
-            BenchmarkRunner.Run<SmallBatchInsertBench>();
+            _ = BenchmarkRunner.Run<SmallBatchInsertBench>();
         }
 
         [UsedImplicitly]
         static void RunArrayBuilderBenchmarks()
         {
             IntArrayBuilderBenchmark.SanityCheck(10000);
-            new BenchmarkSwitcher(new[] {
+            _ = new BenchmarkSwitcher(new[] {
                 typeof(IntArrayBuilderBenchmark),
                 typeof(BigStructArrayBuilderBenchmark),
                 typeof(ByteArrayBuilderBenchmark),

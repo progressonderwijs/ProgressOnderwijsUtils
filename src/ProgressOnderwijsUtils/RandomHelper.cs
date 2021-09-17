@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils
             var letters = (uint)max - min + 1;
             var sb = new StringBuilder();
             for (var i = 0; i < length; i++) {
-                sb.Append((char)(GetUInt32(letters) + min));
+                _ = sb.Append((char)(GetUInt32(letters) + min));
             }
             return sb.ToString();
         }
@@ -106,7 +106,7 @@ namespace ProgressOnderwijsUtils
             var MIN = char.ToUpper(min);
             var sb = new StringBuilder();
             for (var i = 0; i < length; i++) {
-                sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
+                _ = sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
             }
             return sb.ToString();
         }

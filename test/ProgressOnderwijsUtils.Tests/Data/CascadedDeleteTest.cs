@@ -93,9 +93,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
             DataTable PksToDelete(string name, params int[] pks)
             {
                 var table = new DataTable();
-                table.Columns.Add(name, typeof(int));
+                _ = table.Columns.Add(name, typeof(int));
                 foreach (var pk in pks) {
-                    table.Rows.Add(pk);
+                    _ = table.Rows.Add(pk);
                 }
                 return table;
             }

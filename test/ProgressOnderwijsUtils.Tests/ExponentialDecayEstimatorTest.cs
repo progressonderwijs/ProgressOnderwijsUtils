@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ValueCanBeAdded()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
-            estimator.AddAmount(someTime, 1.337);
+            _ = estimator.AddAmount(someTime, 1.337);
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime).RawValue, 1.337));
         }
 
@@ -33,8 +33,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void AddingAtSameMomentIsEquivalentToOneAdd()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
-            estimator.AddAmount(someTime, 1.337);
-            estimator.AddAmount(someTime, 1.337);
+            _ = estimator.AddAmount(someTime, 1.337);
+            _ = estimator.AddAmount(someTime, 1.337);
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime).RawValue, 2 * 1.337));
         }
 
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ValueIsHalvedAfterHalflife()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
-            estimator.AddAmount(someTime, 20);
+            _ = estimator.AddAmount(someTime, 20);
 
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime + halflife).RawValue, 10));
         }
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             //is this a good idea?
             var estimator = new ExponentialDecayEstimator(halflife);
-            estimator.AddAmount(someTime, 20);
+            _ = estimator.AddAmount(someTime, 20);
 
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime - halflife).RawValue, 20));
         }
@@ -63,8 +63,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void AddingValuesOverTimeAccountsForDecay()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
-            estimator.AddAmount(someTime, 20);
-            estimator.AddAmount(someTime + halflife, 20);
+            _ = estimator.AddAmount(someTime, 20);
+            _ = estimator.AddAmount(someTime + halflife, 20);
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime + halflife + halflife).RawValue, 15));
         }
 
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var estimator = new ExponentialDecayEstimator(halflife);
             var someLargeAmount = double.MaxValue;
-            estimator.AddAmount(someTime, someLargeAmount);
+            _ = estimator.AddAmount(someTime, someLargeAmount);
             var farFutureMoment = someTime.AddDays(halflife.TotalDays * 10000);
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(farFutureMoment).RawValue, 0));
         }

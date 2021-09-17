@@ -75,13 +75,13 @@ namespace ProgressOnderwijsUtils.Tests
                 ExecutableName = "ping",
                 Arguments = "localhost -n 100",
             }.StartProcess(cancel.Token);
-            result.Output.Subscribe(o => output.WriteLine(o.Line));
+            _ = result.Output.Subscribe(o => output.WriteLine(o.Line));
 
             var hasStartedPinging = result.Output.Any(o => o.Line.StartsWith("Pinging", StringComparison.Ordinal)).Wait();
             var elapsedAfterFirstOutput = timer.Elapsed;
             PAssert.That(() => hasStartedPinging && !result.ExitCode.IsCompleted && elapsedAfterFirstOutput < TimeSpan.FromSeconds(4));
             cancel.Cancel();
-            Task.WaitAny(result.ExitCode); //WaitAny does not throw, unlike .Wait()
+            _ = Task.WaitAny(result.ExitCode); //WaitAny does not throw, unlike .Wait()
 
             var elapsedAfterExit = timer.Elapsed;
             PAssert.That(() => result.ExitCode.IsCompleted && elapsedAfterExit < TimeSpan.FromSeconds(8));
@@ -103,10 +103,10 @@ namespace ProgressOnderwijsUtils.Tests
                 Stdlnput = inputLines.JoinStrings("\r\n"),
             }.StartProcess(token);
             var collected = new List<string>();
-            result.Output.Subscribe(o => { collected.Add(o.Line); });
+            _ = result.Output.Subscribe(o => { collected.Add(o.Line); });
 
-            result.Output.Wait();
-            result.ExitCode.Wait(100);
+            _ = result.Output.Wait();
+            _ = result.ExitCode.Wait(100);
             var finalExitCodeStatus = result.ExitCode.Status;
 
             var outputLineCount = collected.Count;

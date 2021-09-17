@@ -195,7 +195,7 @@ namespace ProgressOnderwijsUtils.Html
             => "HtmlFragment: " + this.ToStringWithoutDoctype();
 
         public static HtmlFragment Empty
-            => default;
+            => new();
 
         public static implicit operator HtmlFragment(CustomHtmlElement element)
             => Element(element);

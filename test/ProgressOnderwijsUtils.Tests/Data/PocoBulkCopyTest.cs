@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
+            _ = Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[1].BulkCopyToSqlServer(Connection, target));
+            _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[1].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[1].BulkCopyToSqlServer(Connection, target));
+            _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[1].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -306,7 +306,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[1].BulkCopyToSqlServer(Connection, target));
+            _ = Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[1].BulkCopyToSqlServer(Connection, target));
         }
     }
 }

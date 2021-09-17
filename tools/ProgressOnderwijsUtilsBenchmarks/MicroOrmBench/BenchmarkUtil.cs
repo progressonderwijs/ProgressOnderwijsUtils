@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             try {
                 sqliteConn.Open();
 
-                sqliteConn.Query<ExampleObject>(@"
+                _ = sqliteConn.Query<ExampleObject>(@"
                     create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
 
                     insert into example (a,b,c,d,e)

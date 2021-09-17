@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             foreach (var col in colSort.Columns) {
                 // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                colSort.ToggleSortDirection(col.ColumnName.AssertNotNull()); //we're testing if this really is pure.
+                _ = colSort.ToggleSortDirection(col.ColumnName.AssertNotNull()); //we're testing if this really is pure.
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void DefaultIsEmpty()
             //check that default order is the empty order:
-            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default);
+            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
 
         [Fact]
         public void ToggleOk()

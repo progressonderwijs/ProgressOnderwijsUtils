@@ -169,7 +169,7 @@ end;";
             ).ExecuteNonQuery(Connection);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-                
+
             var table = db.TryGetTableByName("dbo.CheckDefaultValues").AssertNotNull();
             var column = table.Columns.Single();
             var constraint = column.DefaultValueConstraint.AssertNotNull();

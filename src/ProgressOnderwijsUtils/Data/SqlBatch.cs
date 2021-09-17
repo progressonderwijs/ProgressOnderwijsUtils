@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
             try {
                 adapter.MissingSchemaAction = MissingSchemaAction;
                 var dt = new DataTable();
-                adapter.Fill(dt);
+                _ = adapter.Fill(dt);
                 return dt;
             } catch (Exception e) {
                 throw cmd.CreateExceptionWithTextAndArguments(e, this);

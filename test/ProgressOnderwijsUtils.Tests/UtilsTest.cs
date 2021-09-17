@@ -222,13 +222,13 @@ namespace ProgressOnderwijsUtils.Tests
             var finallyReached = false;
             var wasComputationFinallyReachedBeforeCleanup = false;
             try {
-                Utils.TryWithCleanup((Func<int>)(() => {
-                        try {
-                            throw new Exception("1337");
-                        } finally {
-                            finallyReached = true;
-                        }
-                    }),
+                _ = Utils.TryWithCleanup((Func<int>)(() => {
+                    try {
+                        throw new Exception("1337");
+                    } finally {
+                        finallyReached = true;
+                    }
+                }),
                     () => wasComputationFinallyReachedBeforeCleanup = finallyReached);
             } catch {
                 //the pointof this test is to test crash situations!

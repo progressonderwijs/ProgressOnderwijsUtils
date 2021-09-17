@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
             var enumerableType = set.GetType();
             if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out var factory)) {
                 factory = CreateTableValuedParameterFactory(enumerableType);
-                tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
+                _ = tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
             if (factory == null) {
                 throw new ArgumentException("Cannot interpret " + enumerableType.ToCSharpFriendlyTypeName() + " as a table valued parameter", nameof(set));

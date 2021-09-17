@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             var unused = nullStringReturningQuery.ReadScalar<string>(Connection); //assert query OK.
 
-            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialValue<string>>(Connection));
+            _ = Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialValue<string>>(Connection));
         }
 
         [Fact]

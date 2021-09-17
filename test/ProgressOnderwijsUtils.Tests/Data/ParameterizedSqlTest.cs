@@ -156,7 +156,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             // ReSharper disable once NotAccessedVariable
             ParameterizedSql ignore;
             // ReSharper disable once AssignNullToNotNullAttribute
-            Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
+            _ = Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
         }
 
         [Fact]
@@ -216,9 +216,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void DealsWithApparentlyNestedParameterPlaceholders()
         {
             var badQuery = SQL($@"A{{x{1}}}Z");
-            Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
+            _ = Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
             using var conn = new SqlConnection();
-            Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
+            _ = Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
         }
 
         [Fact]

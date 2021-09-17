@@ -152,14 +152,14 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AssertOk_crashes_iif_error()
         {
-            Assert.ThrowsAny<Exception>(() => Maybe.ErrorWhenNotNull("asd").AssertOk());
+            _ = Assert.ThrowsAny<Exception>(() => Maybe.ErrorWhenNotNull("asd").AssertOk());
             PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().AssertOk() == 3);
         }
 
         [Fact]
         public void AssertError_crashes_iif_Ok()
         {
-            Assert.ThrowsAny<Exception>(() => Maybe.OkWhenNotNull("asd").AssertError());
+            _ = Assert.ThrowsAny<Exception>(() => Maybe.OkWhenNotNull("asd").AssertError());
             PAssert.That(() => Maybe.Error(3).AsMaybeWithoutValue<string>().AssertError() == 3);
         }
 
@@ -422,8 +422,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Default_Maybe_throws()
         {
-            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).TryGet(out _, out _));
-            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(_ => 0, _ => 0));
+            _ = Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).TryGet(out _, out _));
+            _ = Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(_ => 0, _ => 0));
         }
 
 #pragma warning disable 618 //obsoletion is kind of the point.

@@ -32,14 +32,12 @@ namespace ProgressOnderwijsUtils
 
         public static Suggestion[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
         {
-#pragma warning disable IDE0007 // Use implicit type
-            Dictionary<string, ColumnDefinition> dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase)!; // roslyn bug workaround?
-#pragma warning restore IDE0007 // Use implicit type
+            var dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase);
 
             var list = new List<Suggestion>(srcColumns.Length + dstColumns.Length);
             foreach (var srcColumn in srcColumns) {
                 if (dstColumnsByName.TryGetValue(srcColumn.Name, out var dstColumn)) {
-                    dstColumnsByName.Remove(dstColumn.Name);
+                    _ = dstColumnsByName.Remove(dstColumn.Name);
                     list.Add(new Suggestion(srcColumn, dstColumn));
                 } else {
                     list.Add(new Suggestion(srcColumn, null));
@@ -54,7 +52,7 @@ namespace ProgressOnderwijsUtils
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
-                bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
+                _ = bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
             }
         }
     }

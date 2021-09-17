@@ -56,18 +56,22 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool None<TSource>(this IEnumerable<TSource> source)
+            // ReSharper disable once UseNone
             => !source.Any();
 
         [Pure]
         public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+            // ReSharper disable once UseNone
             => !source.Any(predicate);
 
         [Pure]
         public static bool None<TSource>(this IQueryable<TSource> source)
+            // ReSharper disable once UseNone
             => !source.Any();
 
         [Pure]
         public static bool None<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
+            // ReSharper disable once UseNone
             => !source.Any(predicate);
 
         [Pure]
@@ -202,11 +206,11 @@ namespace ProgressOnderwijsUtils
             var properties = typeof(T).GetProperties();
 
             if (useHeader) {
-                csvBuilder.AppendLine(properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter));
+                _ = csvBuilder.AppendLine(properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter));
             }
             foreach (var item in items) {
                 var line = properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter);
-                csvBuilder.AppendLine(line);
+                _ = csvBuilder.AppendLine(line);
             }
             return csvBuilder.ToString();
         }
