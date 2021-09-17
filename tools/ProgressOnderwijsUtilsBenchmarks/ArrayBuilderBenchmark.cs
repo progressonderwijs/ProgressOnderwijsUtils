@@ -94,7 +94,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 new Job {
                     Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000, },
                     Accuracy = { MaxRelativeError = 0.01, },
-                }.WithGcForce(true));
+                }.WithGcForce(true)
+            );
         }
     }
 
@@ -109,7 +110,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public (int MaxSize, int Threads, int Count, double avgLength) Config;
 
         public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
-            => from maxSize in new[] { 3, 17, 98, 561, 18_347, /*104_920,600_000*/ }
+            =>
+                from maxSize in new[] { 3, 17, 98, 561, 18_347, /*104_920,600_000*/ }
                 from threads in new[] { 1, 8 }
                 let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 8
                 let count = (int)(0.5 + 300_000_000.0 / ((maxSize + 2) * (objCost + 2) + 30))
@@ -129,32 +131,41 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void List()
-            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(
-                _ => Task.Factory.StartNew(
-                    () => {
-                        foreach (var size in Sizes.AssertNotNull()) {
-                            var builder = new List<T>();
-                            for (var i = 0; i < size; i++) {
-                                builder.Add(default(TFactory).Init(i));
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    _ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = new List<T>();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
                             }
-                            GC.KeepAlive(builder.ToArray());
-                        }
-                    },
-                    TaskCreationOptions.LongRunning)).ToArray());
+                        },
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void ArrayBuilder()
-            => Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(_ => Task.Factory.StartNew(
-                () => {
-                    foreach (var size in Sizes.AssertNotNull()) {
-                        var builder = new ArrayBuilder<T>();
-                        for (var i = 0; i < size; i++) {
-                            builder.Add(default(TFactory).Init(i));
-                        }
-                        GC.KeepAlive(builder.ToArray());
-                    }
-                },
-                TaskCreationOptions.LongRunning)).ToArray());
+            => Task.WaitAll(
+                Enumerable.Range(0, Config.Threads).Select(
+                    _ => Task.Factory.StartNew(
+                        () => {
+                            foreach (var size in Sizes.AssertNotNull()) {
+                                var builder = new ArrayBuilder<T>();
+                                for (var i = 0; i < size; i++) {
+                                    builder.Add(default(TFactory).Init(i));
+                                }
+                                GC.KeepAlive(builder.ToArray());
+                            }
+                        },
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void WithoutInlineValues()
@@ -170,7 +181,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                                 GC.KeepAlive(builder.ToArray());
                             }
                         },
-                        TaskCreationOptions.LongRunning)).ToArray());
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void WithSegmentsAsArray()
@@ -186,7 +200,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                                 GC.KeepAlive(builder.ToArray());
                             }
                         },
-                        TaskCreationOptions.LongRunning)).ToArray());
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void Inline63ValuesAndSegments()
@@ -202,7 +219,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                                 GC.KeepAlive(builder.ToArray());
                             }
                         },
-                        TaskCreationOptions.LongRunning)).ToArray());
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void Inline16ValuesAndSegments()
@@ -218,7 +238,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                                 GC.KeepAlive(builder.ToArray());
                             }
                         },
-                        TaskCreationOptions.LongRunning)).ToArray());
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         [Benchmark]
         public void Inline32ValuesAndSegments()
@@ -234,7 +257,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                                 GC.KeepAlive(builder.ToArray());
                             }
                         },
-                        TaskCreationOptions.LongRunning)).ToArray());
+                        TaskCreationOptions.LongRunning
+                    )
+                ).ToArray()
+            );
 
         public static void SanityCheck(int maxLen)
         {

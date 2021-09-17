@@ -16,7 +16,8 @@ namespace ProgressOnderwijsUtils
                 commandText,
                 @"/\*.*?\*/|--.*?$",
                 "",
-                RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline);
+                RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline
+            );
             if (Regex.IsMatch(commandTextWithoutComments, @"(?<!count\()\*")) {
                 throw new InvalidOperationException(parameterizedSql.GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
             }

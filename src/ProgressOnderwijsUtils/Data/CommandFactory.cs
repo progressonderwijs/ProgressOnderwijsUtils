@@ -32,7 +32,9 @@ namespace ProgressOnderwijsUtils
 
     public struct ReusableCommand : IDisposable
     {
-        public SqlCommand Command => MutableCommand.AssertNotNull();
+        public SqlCommand Command
+            => MutableCommand.AssertNotNull();
+
         SqlCommand? MutableCommand;
         public readonly IDisposable? QueryTimer;
 

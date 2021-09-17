@@ -54,14 +54,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
-                list.Add(new ExampleObject {
-                    A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
-                    B = reader.GetInt32(1),
-                    C = reader.GetString(2),
-                    D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
-                    E = reader.GetInt32(4),
-                    Arg = reader.GetInt64(5),
-                });
+                list.Add(
+                    new ExampleObject {
+                        A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
+                        B = reader.GetInt32(1),
+                        C = reader.GetString(2),
+                        D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
+                        E = reader.GetInt32(4),
+                        Arg = reader.GetInt64(5),
+                    }
+                );
             }
             return list.Count;
         }
@@ -102,14 +104,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
-                list.Add(new ExampleObject {
-                    A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
-                    B = reader.GetInt32(1),
-                    C = reader.GetString(2),
-                    D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
-                    E = reader.GetInt32(4),
-                    Arg = reader.GetInt64(5),
-                });
+                list.Add(
+                    new ExampleObject {
+                        A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
+                        B = reader.GetInt32(1),
+                        C = reader.GetString(2),
+                        D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
+                        E = reader.GetInt32(4),
+                        Arg = reader.GetInt64(5),
+                    }
+                );
             }
             return list.Count;
         }
@@ -119,10 +123,13 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         static int ExecuteSqliteQueryCached(SQLiteConnection sqliteConn, int rows)
         {
             if (!connCmdCache.TryGetValue(sqliteConn, out var cmdCache)) {
-                cmdCache = connCmdCache.GetOrAdd(sqliteConn, conn => {
-                    conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
-                    return new Dictionary<string, SQLiteCommand>();
-                });
+                cmdCache = connCmdCache.GetOrAdd(
+                    sqliteConn,
+                    conn => {
+                        conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
+                        return new Dictionary<string, SQLiteCommand>();
+                    }
+                );
             }
 
             if (!cmdCache.TryGetValue(ExampleObject.RawSqliteQueryString, out var sqliteCmd)) {
@@ -166,14 +173,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             var list = new List<ExampleObject>();
             using (var reader = sqliteCmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 while (reader.Read()) {
-                    list.Add(new ExampleObject {
-                        A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
-                        B = reader.GetInt32(1),
-                        C = reader.GetString(2),
-                        D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
-                        E = reader.GetInt32(4),
-                        Arg = reader.GetInt64(5),
-                    });
+                    list.Add(
+                        new ExampleObject {
+                            A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
+                            B = reader.GetInt32(1),
+                            C = reader.GetString(2),
+                            D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
+                            E = reader.GetInt32(4),
+                            Arg = reader.GetInt64(5),
+                        }
+                    );
                 }
             }
             //cmd.Connection = null;
@@ -218,14 +227,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
-                list.Add(new ExampleObject {
-                    A = reader.GetSqlInt32(0).ToNullableInt(),
-                    B = reader.GetInt32(1),
-                    C = reader.GetString(2),
-                    D = reader.GetSqlBoolean(3).ToNullableBool(),
-                    E = reader.GetInt32(4),
-                    Arg = reader.GetInt64(5),
-                });
+                list.Add(
+                    new ExampleObject {
+                        A = reader.GetSqlInt32(0).ToNullableInt(),
+                        B = reader.GetInt32(1),
+                        C = reader.GetString(2),
+                        D = reader.GetSqlBoolean(3).ToNullableBool(),
+                        E = reader.GetInt32(4),
+                        Arg = reader.GetInt64(5),
+                    }
+                );
             }
             return list.Count;
         }
@@ -262,34 +273,36 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<WideExampleObject>();
             while (reader.Read()) {
-                list.Add(new WideExampleObject {
-                    SalesOrderId = reader.GetInt32(0),
-                    RevisionNumber = reader.GetByte(1),
-                    OrderDate = reader.GetDateTime(2),
-                    DueDate = reader.GetDateTime(3),
-                    ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
-                    Status = reader.GetByte(5),
-                    OnlineOrderFlag = reader.GetBoolean(6),
-                    SalesOrderNumber = reader.GetSqlString(7).ToNullableString(),
-                    PurchaseOrderNumber = reader.GetSqlString(8).ToNullableString(),
-                    AccountNumber = reader.GetSqlString(9).ToNullableString(),
-                    CustomerId = reader.GetInt32(10),
-                    SalesPersonId = reader.GetSqlInt32(11).ToNullableInt(),
-                    TerritoryId = reader.GetSqlInt32(12).ToNullableInt(),
-                    BillToAddressId = reader.GetInt32(13),
-                    ShipToAddressId = reader.GetInt32(14),
-                    ShipMethodId = reader.GetInt32(15),
-                    CreditCardId = reader.GetSqlInt32(16).ToNullableInt(),
-                    CreditCardApprovalCode = reader.GetSqlString(17).ToNullableString(),
-                    CurrencyRateId = reader.GetSqlInt32(18).ToNullableInt(),
-                    SubTotal = reader.GetDecimal(19),
-                    TaxAmt = reader.GetDecimal(20),
-                    Freight = reader.GetDecimal(21),
-                    TotalDue = reader.GetDecimal(22),
-                    Comment = reader.GetSqlString(23).ToNullableString(),
-                    Rowguid = reader.GetGuid(24),
-                    ModifiedDate = reader.GetDateTime(25),
-                });
+                list.Add(
+                    new WideExampleObject {
+                        SalesOrderId = reader.GetInt32(0),
+                        RevisionNumber = reader.GetByte(1),
+                        OrderDate = reader.GetDateTime(2),
+                        DueDate = reader.GetDateTime(3),
+                        ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                        Status = reader.GetByte(5),
+                        OnlineOrderFlag = reader.GetBoolean(6),
+                        SalesOrderNumber = reader.GetSqlString(7).ToNullableString(),
+                        PurchaseOrderNumber = reader.GetSqlString(8).ToNullableString(),
+                        AccountNumber = reader.GetSqlString(9).ToNullableString(),
+                        CustomerId = reader.GetInt32(10),
+                        SalesPersonId = reader.GetSqlInt32(11).ToNullableInt(),
+                        TerritoryId = reader.GetSqlInt32(12).ToNullableInt(),
+                        BillToAddressId = reader.GetInt32(13),
+                        ShipToAddressId = reader.GetInt32(14),
+                        ShipMethodId = reader.GetInt32(15),
+                        CreditCardId = reader.GetSqlInt32(16).ToNullableInt(),
+                        CreditCardApprovalCode = reader.GetSqlString(17).ToNullableString(),
+                        CurrencyRateId = reader.GetSqlInt32(18).ToNullableInt(),
+                        SubTotal = reader.GetDecimal(19),
+                        TaxAmt = reader.GetDecimal(20),
+                        Freight = reader.GetDecimal(21),
+                        TotalDue = reader.GetDecimal(22),
+                        Comment = reader.GetSqlString(23).ToNullableString(),
+                        Rowguid = reader.GetGuid(24),
+                        ModifiedDate = reader.GetDateTime(25),
+                    }
+                );
             }
             return list.Count;
         }
@@ -307,34 +320,36 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<WideExampleObject>();
             while (reader.Read()) {
-                list.Add(new WideExampleObject {
-                    SalesOrderId = reader.GetInt32(0),
-                    RevisionNumber = reader.GetByte(1),
-                    OrderDate = reader.GetDateTime(2),
-                    DueDate = reader.GetDateTime(3),
-                    ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
-                    Status = reader.GetByte(5),
-                    OnlineOrderFlag = reader.GetBoolean(6),
-                    SalesOrderNumber = reader.IsDBNull(7) ? null : reader.GetString(7),
-                    PurchaseOrderNumber = reader.IsDBNull(8) ? null : reader.GetString(8),
-                    AccountNumber = reader.IsDBNull(9) ? null : reader.GetString(9),
-                    CustomerId = reader.GetInt32(10),
-                    SalesPersonId = reader.IsDBNull(11) ? null : reader.GetInt32(11),
-                    TerritoryId = reader.IsDBNull(12) ? null : reader.GetInt32(12),
-                    BillToAddressId = reader.GetInt32(13),
-                    ShipToAddressId = reader.GetInt32(14),
-                    ShipMethodId = reader.GetInt32(15),
-                    CreditCardId = reader.IsDBNull(16) ? null : reader.GetInt32(16),
-                    CreditCardApprovalCode = reader.IsDBNull(17) ? null : reader.GetString(17),
-                    CurrencyRateId = reader.IsDBNull(18) ? null : reader.GetInt32(18),
-                    SubTotal = reader.GetDecimal(19),
-                    TaxAmt = reader.GetDecimal(20),
-                    Freight = reader.GetDecimal(21),
-                    TotalDue = reader.GetDecimal(22),
-                    Comment = reader.IsDBNull(23) ? null : reader.GetString(23),
-                    Rowguid = reader.GetGuid(24),
-                    ModifiedDate = reader.GetDateTime(25),
-                });
+                list.Add(
+                    new WideExampleObject {
+                        SalesOrderId = reader.GetInt32(0),
+                        RevisionNumber = reader.GetByte(1),
+                        OrderDate = reader.GetDateTime(2),
+                        DueDate = reader.GetDateTime(3),
+                        ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
+                        Status = reader.GetByte(5),
+                        OnlineOrderFlag = reader.GetBoolean(6),
+                        SalesOrderNumber = reader.IsDBNull(7) ? null : reader.GetString(7),
+                        PurchaseOrderNumber = reader.IsDBNull(8) ? null : reader.GetString(8),
+                        AccountNumber = reader.IsDBNull(9) ? null : reader.GetString(9),
+                        CustomerId = reader.GetInt32(10),
+                        SalesPersonId = reader.IsDBNull(11) ? null : reader.GetInt32(11),
+                        TerritoryId = reader.IsDBNull(12) ? null : reader.GetInt32(12),
+                        BillToAddressId = reader.GetInt32(13),
+                        ShipToAddressId = reader.GetInt32(14),
+                        ShipMethodId = reader.GetInt32(15),
+                        CreditCardId = reader.IsDBNull(16) ? null : reader.GetInt32(16),
+                        CreditCardApprovalCode = reader.IsDBNull(17) ? null : reader.GetString(17),
+                        CurrencyRateId = reader.IsDBNull(18) ? null : reader.GetInt32(18),
+                        SubTotal = reader.GetDecimal(19),
+                        TaxAmt = reader.GetDecimal(20),
+                        Freight = reader.GetDecimal(21),
+                        TotalDue = reader.GetDecimal(22),
+                        Comment = reader.IsDBNull(23) ? null : reader.GetString(23),
+                        Rowguid = reader.GetGuid(24),
+                        ModifiedDate = reader.GetDateTime(25),
+                    }
+                );
             }
             return list.Count;
         }

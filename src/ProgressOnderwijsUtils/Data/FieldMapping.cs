@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
                 var dst = entry.Dst;
                 if (dst == null) {
                     if (src == null) {
-                        errors.Add($"Empty mapping entry is invalid.");
+                        errors.Add("Empty mapping entry is invalid.");
                     } else if (!AllowExtraSourceColumns) {
                         errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} does not fill any corresponding target field.");
                     }
