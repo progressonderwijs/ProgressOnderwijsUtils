@@ -189,7 +189,7 @@ namespace ProgressOnderwijsUtils
                     var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
                     var isUnique = isKey && !properties.Any(other => other != pocoProperty && other.IsKey);
                     columnIndexByName.Add(columnInfo.Name, i);
-                    schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
+                    _ = schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
                     columnInfosBuilder.Add(columnInfo);
                     i++;
                 }

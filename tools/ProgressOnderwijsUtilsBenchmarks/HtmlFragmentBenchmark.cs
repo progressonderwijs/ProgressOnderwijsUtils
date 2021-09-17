@@ -35,10 +35,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             public Config()
             {
-                AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerForce"));
-                AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
-                AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("Workstation"));
-                AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("WorkstationForce"));
+                _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerForce"));
+                _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
+                _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("Workstation"));
+                _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("WorkstationForce"));
             }
         }
 
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void AngleSharpParseFromUtf8()
         {
             using var stream = new MemoryStream(htmlUtf8);
-            new HtmlParser().ParseDocument(stream);
+            _ = new HtmlParser().ParseDocument(stream);
         }
 
         [Benchmark]

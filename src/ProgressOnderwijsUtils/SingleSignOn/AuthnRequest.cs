@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             signedXml.KeyInfo = keyInfo;
             signedXml.ComputeSignature();
             var xmlDigitalSignature = signedXml.GetXml();
-            doc.DocumentElement.AssertNotNull().AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+            _ = doc.DocumentElement.AssertNotNull().AppendChild(doc.ImportNode(xmlDigitalSignature, true));
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.InnerXml));
         }
 

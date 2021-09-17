@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
             var list = new List<Suggestion>(srcColumns.Length + dstColumns.Length);
             foreach (var srcColumn in srcColumns) {
                 if (dstColumnsByName.TryGetValue(srcColumn.Name, out var dstColumn)) {
-                    dstColumnsByName.Remove(dstColumn.Name);
+                    _ = dstColumnsByName.Remove(dstColumn.Name);
                     list.Add(new Suggestion(srcColumn, dstColumn));
                 } else {
                     list.Add(new Suggestion(srcColumn, null));
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
-                bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
+                _ = bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
             }
         }
     }

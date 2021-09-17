@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
                     result[reader.Name.ToLowerInvariant()] = reader.Value;
                     next = reader.MoveToNextAttribute();
                 }
-                reader.MoveToElement();
+                _ = reader.MoveToElement();
             }
             return result;
         }

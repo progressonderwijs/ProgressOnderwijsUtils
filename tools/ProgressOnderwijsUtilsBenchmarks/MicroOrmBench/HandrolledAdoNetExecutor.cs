@@ -47,10 +47,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 IsNullable = false,
                 Value = rows,
             };
-            cmd.Parameters.Add(topP);
-            cmd.Parameters.Add(numP);
-            cmd.Parameters.Add(heheP);
-            cmd.Parameters.Add(argP);
+            _ = cmd.Parameters.Add(topP);
+            _ = cmd.Parameters.Add(numP);
+            _ = cmd.Parameters.Add(heheP);
+            _ = cmd.Parameters.Add(argP);
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
@@ -95,10 +95,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 IsNullable = false,
                 Value = rows,
             };
-            cmd.Parameters.Add(topP);
-            cmd.Parameters.Add(numP);
-            cmd.Parameters.Add(heheP);
-            cmd.Parameters.Add(argP);
+            _ = cmd.Parameters.Add(topP);
+            _ = cmd.Parameters.Add(numP);
+            _ = cmd.Parameters.Add(heheP);
+            _ = cmd.Parameters.Add(argP);
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
@@ -151,10 +151,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                     IsNullable = false,
                     //Value = ExampleObject.someInt64Value,
                 };
-                sqliteCmd.Parameters.Add(topP);
-                sqliteCmd.Parameters.Add(numP);
-                sqliteCmd.Parameters.Add(heheP);
-                sqliteCmd.Parameters.Add(argP);
+                _ = sqliteCmd.Parameters.Add(topP);
+                _ = sqliteCmd.Parameters.Add(numP);
+                _ = sqliteCmd.Parameters.Add(heheP);
+                _ = sqliteCmd.Parameters.Add(argP);
                 sqliteCmd.Connection = sqliteConn;
             }
 
@@ -211,10 +211,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 IsNullable = false,
                 Value = rows,
             };
-            cmd.Parameters.Add(topP);
-            cmd.Parameters.Add(numP);
-            cmd.Parameters.Add(heheP);
-            cmd.Parameters.Add(argP);
+            _ = cmd.Parameters.Add(topP);
+            _ = cmd.Parameters.Add(numP);
+            _ = cmd.Parameters.Add(heheP);
+            _ = cmd.Parameters.Add(argP);
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<ExampleObject>();
             while (reader.Read()) {
@@ -258,7 +258,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 IsNullable = false,
                 Value = rows,
             };
-            cmd.Parameters.Add(topP);
+            _ = cmd.Parameters.Add(topP);
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<WideExampleObject>();
             while (reader.Read()) {
@@ -303,7 +303,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 IsNullable = false,
                 Value = rows,
             };
-            cmd.Parameters.Add(topP);
+            _ = cmd.Parameters.Add(topP);
             using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
             var list = new List<WideExampleObject>();
             while (reader.Read()) {

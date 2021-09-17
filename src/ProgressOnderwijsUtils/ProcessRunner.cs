@@ -66,9 +66,9 @@ namespace ProgressOnderwijsUtils
 
             proc.Exited += (_, _) => {
                 try {
-                    exitCodeCompletion.TrySetResult(proc.ExitCode);
+                    _ = exitCodeCompletion.TrySetResult(proc.ExitCode);
                 } catch (Exception ex) {
-                    exitCodeCompletion.TrySetException(ex);
+                    _ = exitCodeCompletion.TrySetException(ex);
                 }
                 MarkOnePartClosed();
             };
@@ -98,12 +98,12 @@ namespace ProgressOnderwijsUtils
                     return Disposable.Empty;
                 });
             var replayableMergedOutput = stdout.Merge(stderr).Replay();
-            replayableMergedOutput.Connect();
+            _ = replayableMergedOutput.Connect();
             stopwatch.Start();
-            proc.Start();
+            _ = proc.Start();
             proc.BeginErrorReadLine();
             proc.BeginOutputReadLine();
-            token.Register(
+            _ = token.Register(
                 () => {
                     try {
                         if (exitCodeCompletion.TrySetCanceled() && !proc.HasExited) {
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
         public int RunProcessWithoutRedirection()
         {
             var proc = CreateProcessObj();
-            proc.Start();
+            _ = proc.Start();
             WriteStdIn(proc);
             proc.WaitForExit();
             return proc.ExitCode;
@@ -165,7 +165,7 @@ namespace ProgressOnderwijsUtils
         {
             var prefixWithSpace = prefix + " ";
             var culture = CultureInfo.InvariantCulture;
-            Output.Subscribe(outputStreamEvent => { Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line); });
+            _ = Output.Subscribe(outputStreamEvent => { Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line); });
         }
 
         public Task<string[]> StdOutput()

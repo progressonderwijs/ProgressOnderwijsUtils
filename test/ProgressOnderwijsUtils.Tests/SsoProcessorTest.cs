@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Tests
             var validRawSamlResponse = "...";
             var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(@"..."));
             var attributes = SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
-            attributes.AssertOk();
+            _ = attributes.AssertOk();
         }
     }
 }

@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
                         todo.Push(currentNode.Children.GetEnumerator());
                     } else {
                         children.Dispose();
-                        todo.Pop();
+                        _ = todo.Pop();
                     }
                 }
             } finally {

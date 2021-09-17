@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var col = new ColumnSort("ziggy", SortDirection.Asc);
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            col.WithReverseDirection().WithDifferentName("test"); //to test whether it's really pure.
+            _ = col.WithReverseDirection().WithDifferentName("test"); //to test whether it's really pure.
             Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc), col);
         }
 

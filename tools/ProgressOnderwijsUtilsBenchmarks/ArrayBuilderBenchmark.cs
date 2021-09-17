@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         public ArrBenchConfig()
         {
-            AddJob(
+            _ = AddJob(
                 new Job {
                     Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000, },
                     Accuracy = { MaxRelativeError = 0.01, },
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void Setup()
         {
             Sizes = GetSizes(Config.Count, Config.MaxSize);
-            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(_ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => _ = Thread.Yield(), TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
         }
 
         static int[] GetSizes(int count, int maxSize)

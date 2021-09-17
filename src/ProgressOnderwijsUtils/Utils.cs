@@ -168,10 +168,10 @@ namespace ProgressOnderwijsUtils
             if (value != 0) {
                 var digit = (int)(value % 36);
                 SssHelper(target, value / 36, index + 1);
-                target.Append(MapToBase36Char(digit));
+                _ = target.Append(MapToBase36Char(digit));
             } else {
                 var encodedLength = index + 13; //-6..6 for int32; but for 64-bit -13..13 so to futureproof this offset by 13
-                target.Append(MapToBase36Char(encodedLength));
+                _ = target.Append(MapToBase36Char(encodedLength));
             }
         }
 
@@ -180,10 +180,10 @@ namespace ProgressOnderwijsUtils
             if (value != 0) {
                 var digit = (int)(value % 36); //in range -35..0!!
                 SssNegHelper(target, value / 36, index + 1);
-                target.Append(MapToBase36Char(35 + digit));
+                _ = target.Append(MapToBase36Char(35 + digit));
             } else {
                 var encodedLength = 13 - index; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
-                target.Append(MapToBase36Char(encodedLength));
+                _ = target.Append(MapToBase36Char(encodedLength));
             }
         }
 
@@ -286,7 +286,7 @@ namespace ProgressOnderwijsUtils
         {
             try {
                 // ReSharper disable ObjectCreationAsStatement
-                new MailAddress(emailAdres);
+                _ = new MailAddress(emailAdres);
                 // ReSharper restore ObjectCreationAsStatement
                 return true;
             } catch {

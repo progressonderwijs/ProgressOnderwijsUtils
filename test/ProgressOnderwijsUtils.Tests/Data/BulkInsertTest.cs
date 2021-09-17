@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
             var evilEnumerable = BulkInsertTestSampleRow.SampleRows(16).Where(_ => SQL($"select 1").ReadScalar<int>(Connection) == 1);
-            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
+            _ = Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]

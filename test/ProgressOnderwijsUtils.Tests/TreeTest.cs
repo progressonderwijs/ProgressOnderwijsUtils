@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             // ReSharper disable once NotAccessedVariable
             Tree<int> ignore;
-            Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
+            _ = Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
         }
 
         [Fact]
@@ -360,7 +360,7 @@ namespace ProgressOnderwijsUtils.Tests
             );
 
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            Tree.BuildRecursively(tree, t => t.Children);
+            _ = Tree.BuildRecursively(tree, t => t.Children);
         }
     }
 }

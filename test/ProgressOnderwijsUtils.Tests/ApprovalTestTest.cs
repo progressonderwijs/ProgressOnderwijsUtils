@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils.Tests
             File.Delete(approval.ApprovalPath);
             Utils.TryWithCleanup(() => {
                 PAssert.That(() => !File.Exists(approval.ApprovalPath));
-                Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
+                _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
                 PAssert.That(() => File.Exists(approval.ApprovalPath));
             }, () => File.Delete(approval.ApprovalPath));
         }
@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils.Tests
             var approval = ApprovalTest.CreateHere();
             File.WriteAllText(approval.ApprovalPath, "hello");
             Utils.TryWithCleanup(() => {
-                Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
+                _ = Assert.ThrowsAny<Exception>(() => approval.AssertUnchangedAndSave("bla"));
                 PAssert.That(() => File.Exists(approval.ApprovalPath));
                 PAssert.That(() => File.ReadAllText(approval.ApprovalPath) == "bla");
             }, () => File.Delete(approval.ApprovalPath));

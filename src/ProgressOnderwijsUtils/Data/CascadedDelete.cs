@@ -233,7 +233,7 @@ namespace ProgressOnderwijsUtils
                         DeleteKids(childTable, newDelTable, referencingCols, newChain);
                     }
                 }
-                onStackDeletionTables.Pop();
+                _ = onStackDeletionTables.Pop();
             }
         }
 

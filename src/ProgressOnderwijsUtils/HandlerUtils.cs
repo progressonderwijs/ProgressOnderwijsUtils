@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             var totalNr = 0;
             return () => {
                 var myNr = Interlocked.Increment(ref totalNr);
-                Task.Delay(delay).ContinueWith(
+                _ = Task.Delay(delay).ContinueWith(
                     _ => {
                         var oldState = Interlocked.CompareExchange(ref totalNr, myNr, myNr);
                         if (oldState == myNr) {

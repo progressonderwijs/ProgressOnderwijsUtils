@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             public Config()
             {
-                AddJob(
+                _ = AddJob(
                     Job.MediumRun
                         .WithLaunchCount(1)
                         .WithWarmupCount(3)

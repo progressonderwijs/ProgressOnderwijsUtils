@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Win32
                 return bitLockerStatus;
             } finally {
                 if (ppv != null) {
-                    ((IShellItem2*)ppv)->Release();
+                    _ = ((IShellItem2*)ppv)->Release();
                 }
             }
         }
