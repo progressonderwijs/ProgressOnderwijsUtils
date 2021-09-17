@@ -168,7 +168,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             ).ExecuteNonQuery(Connection);
             var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
 
-            using (var cmd = query.Sql.CreateSqlCommand(conn2, default))
+            using (var cmd = query.Sql.CreateSqlCommand(conn2, new()))
             using (var reader = cmd.Command.ExecuteReader()) {
                 target.BulkInsert(Connection, reader, "from query");
             }

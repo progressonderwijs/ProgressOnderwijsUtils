@@ -43,10 +43,10 @@ namespace ProgressOnderwijsUtils.Collections
             => PathSegments.Last().ThisSubTree.RootHere();
 
         public RootedTree<T> PreviousSibling()
-            => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? default : Parent.Children[IndexInParent() - 1];
+            => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? new() : Parent.Children[IndexInParent() - 1];
 
         public RootedTree<T> NextSibling()
-            => !HasValue || IsRoot || IndexInParent() + 1 >= Parent.Children.Count ? default : Parent.Children[IndexInParent() + 1];
+            => !HasValue || IsRoot || IndexInParent() + 1 >= Parent.Children.Count ? new() : Parent.Children[IndexInParent() + 1];
 
         public bool Equals(RootedTree<T> other)
             //two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.

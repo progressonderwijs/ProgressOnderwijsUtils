@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils.Html
                         ReadOnlySpan<char> head;
                         if (endIdx == -1) {
                             head = haystack;
-                            haystack = default;
+                            haystack = new();
                         } else {
                             head = haystack.Slice(0, endIdx);
                             haystack = haystack.Slice(endIdx + 1);
@@ -120,7 +120,7 @@ namespace ProgressOnderwijsUtils.Html
                         ReadOnlySpan<char> head;
                         if (endIdx == -1) {
                             head = haystack;
-                            haystack = default;
+                            haystack = new();
                         } else {
                             head = haystack.Slice(0, endIdx);
                             haystack = haystack.Slice(endIdx + 1);
@@ -195,7 +195,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlAttributes Empty
-            => default;
+            => new();
 
         public static HtmlAttributes FromArray(HtmlAttribute[] arr)
             => new HtmlAttributes(arr, arr.Length);

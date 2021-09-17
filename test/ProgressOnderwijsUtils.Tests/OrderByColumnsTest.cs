@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void DefaultIsEmpty()
             //check that default order is the empty order:
-            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default);
+            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
 
         [Fact]
         public void ToggleOk()

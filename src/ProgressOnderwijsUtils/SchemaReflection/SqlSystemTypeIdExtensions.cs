@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 .Select(i => i.GetGenericArguments()[2])
                 .SingleOrNull();
             if (converterType == null) {
-                return default;
+                return null;
             }
             var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValueConverterSource<,>));
             var coversionReturnType = conversionProviderType.GetGenericArguments()[1];

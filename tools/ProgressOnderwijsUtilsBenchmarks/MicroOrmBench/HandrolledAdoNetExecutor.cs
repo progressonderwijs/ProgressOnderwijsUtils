@@ -55,10 +55,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             var list = new List<ExampleObject>();
             while (reader.Read()) {
                 list.Add(new ExampleObject {
-                    A = reader.IsDBNull(0) ? default(int?) : reader.GetInt32(0),
+                    A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                     B = reader.GetInt32(1),
                     C = reader.GetString(2),
-                    D = reader.IsDBNull(3) ? default(bool?) : reader.GetBoolean(3),
+                    D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
                     E = reader.GetInt32(4),
                     Arg = reader.GetInt64(5),
                 });
@@ -103,10 +103,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             var list = new List<ExampleObject>();
             while (reader.Read()) {
                 list.Add(new ExampleObject {
-                    A = reader.IsDBNull(0) ? default(int?) : reader.GetInt32(0),
+                    A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                     B = reader.GetInt32(1),
                     C = reader.GetString(2),
-                    D = reader.IsDBNull(3) ? default(bool?) : reader.GetBoolean(3),
+                    D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
                     E = reader.GetInt32(4),
                     Arg = reader.GetInt64(5),
                 });
@@ -167,10 +167,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             using (var reader = sqliteCmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 while (reader.Read()) {
                     list.Add(new ExampleObject {
-                        A = reader.IsDBNull(0) ? default(int?) : reader.GetInt32(0),
+                        A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                         B = reader.GetInt32(1),
                         C = reader.GetString(2),
-                        D = reader.IsDBNull(3) ? default(bool?) : reader.GetBoolean(3),
+                        D = reader.IsDBNull(3) ? null : reader.GetBoolean(3),
                         E = reader.GetInt32(4),
                         Arg = reader.GetInt64(5),
                     });
@@ -232,16 +232,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static int? ToNullableInt(this SqlInt32 num)
-            => num.IsNull ? default(int?) : num.Value;
+            => num.IsNull ? null : num.Value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static bool? ToNullableBool(this SqlBoolean num)
-            => num.IsNull ? default(bool?) : num.Value;
+            => num.IsNull ? null : num.Value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // ReSharper disable once UnusedMember.Local
         static string? ToNullableString(this SqlString str)
-            => str.IsNull ? default : str.Value;
+            => str.IsNull ? null : str.Value;
 
         public static void RunWideQuery(Benchmarker benchmarker)
         {
@@ -267,7 +267,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                     RevisionNumber = reader.GetByte(1),
                     OrderDate = reader.GetDateTime(2),
                     DueDate = reader.GetDateTime(3),
-                    ShipDate = reader.IsDBNull(4) ? default(DateTime?) : reader.GetDateTime(4),
+                    ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
                     Status = reader.GetByte(5),
                     OnlineOrderFlag = reader.GetBoolean(6),
                     SalesOrderNumber = reader.GetSqlString(7).ToNullableString(),
@@ -312,26 +312,26 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                     RevisionNumber = reader.GetByte(1),
                     OrderDate = reader.GetDateTime(2),
                     DueDate = reader.GetDateTime(3),
-                    ShipDate = reader.IsDBNull(4) ? default(DateTime?) : reader.GetDateTime(4),
+                    ShipDate = reader.IsDBNull(4) ? null : reader.GetDateTime(4),
                     Status = reader.GetByte(5),
                     OnlineOrderFlag = reader.GetBoolean(6),
-                    SalesOrderNumber = reader.IsDBNull(7) ? default : reader.GetString(7),
-                    PurchaseOrderNumber = reader.IsDBNull(8) ? default : reader.GetString(8),
-                    AccountNumber = reader.IsDBNull(9) ? default : reader.GetString(9),
+                    SalesOrderNumber = reader.IsDBNull(7) ? null : reader.GetString(7),
+                    PurchaseOrderNumber = reader.IsDBNull(8) ? null : reader.GetString(8),
+                    AccountNumber = reader.IsDBNull(9) ? null : reader.GetString(9),
                     CustomerId = reader.GetInt32(10),
-                    SalesPersonId = reader.IsDBNull(11) ? default(int?) : reader.GetInt32(11),
-                    TerritoryId = reader.IsDBNull(12) ? default(int?) : reader.GetInt32(12),
+                    SalesPersonId = reader.IsDBNull(11) ? null : reader.GetInt32(11),
+                    TerritoryId = reader.IsDBNull(12) ? null : reader.GetInt32(12),
                     BillToAddressId = reader.GetInt32(13),
                     ShipToAddressId = reader.GetInt32(14),
                     ShipMethodId = reader.GetInt32(15),
-                    CreditCardId = reader.IsDBNull(16) ? default(int?) : reader.GetInt32(16),
-                    CreditCardApprovalCode = reader.IsDBNull(17) ? default : reader.GetString(17),
-                    CurrencyRateId = reader.IsDBNull(18) ? default(int?) : reader.GetInt32(18),
+                    CreditCardId = reader.IsDBNull(16) ? null : reader.GetInt32(16),
+                    CreditCardApprovalCode = reader.IsDBNull(17) ? null : reader.GetString(17),
+                    CurrencyRateId = reader.IsDBNull(18) ? null : reader.GetInt32(18),
                     SubTotal = reader.GetDecimal(19),
                     TaxAmt = reader.GetDecimal(20),
                     Freight = reader.GetDecimal(21),
                     TotalDue = reader.GetDecimal(22),
-                    Comment = reader.IsDBNull(23) ? default : reader.GetString(23),
+                    Comment = reader.IsDBNull(23) ? null : reader.GetString(23),
                     Rowguid = reader.GetGuid(24),
                     ModifiedDate = reader.GetDateTime(25),
                 });
