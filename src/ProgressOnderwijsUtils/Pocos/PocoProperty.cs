@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils
                 get {
                     if (untypedGetter == null) {
                         var localGetter = Getter;
-                        untypedGetter = localGetter is null ? default(Func<object, object?>?) : o => localGetter!((TOwner)o);
+                        untypedGetter = localGetter is null ? null : o => localGetter((TOwner)o);
                     }
                     return untypedGetter;
                 }
