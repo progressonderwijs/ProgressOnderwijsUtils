@@ -204,5 +204,13 @@ end;";
             PAssert.That(() => columns[2].UserTypeId == SqlSystemTypeId.NVarChar);
             PAssert.That(() => columns[2].IsNullable == true);
         }
+
+        [Fact]
+        public void User_table_dbo_dtproperties_is_not_part_of_the_db_description()
+        {
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+
+            PAssert.That(() => db.TryGetTableByName("dbo.dtproperties") == null);
+        }
     }
 }
