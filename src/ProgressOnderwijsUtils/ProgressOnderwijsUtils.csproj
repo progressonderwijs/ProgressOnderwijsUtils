@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>80.0.1</Version>
-    <PackageReleaseNotes>Remove any MS-shipped user-table from the database description; e.g. the dbo.dtproperties system table.</PackageReleaseNotes>
+    <Version>80.0.1<!--todo bump major version--></Version>
+    <PackageReleaseNotes>Utils.Lazy return Func&lt;&gt; intead of Lazy&lt;&gt;.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
