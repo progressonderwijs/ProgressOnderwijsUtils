@@ -79,20 +79,12 @@ namespace ProgressOnderwijsUtils
             => list.ToArray();
 
         [Pure]
-        public static HashSet<T> ToSet<T>(this IEnumerable<T> list)
-            => new HashSet<T>(list);
-
-        [Pure]
-        public static HashSet<T> ToSet<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer)
-            => new HashSet<T>(list, comparer);
-
-        [Pure]
         public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other)
-            => list.ToSet().SetEquals(other);
+            => list.ToHashSet().SetEquals(other);
 
         [Pure]
         public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other, IEqualityComparer<T> comparer)
-            => list.ToSet(comparer).SetEquals(other);
+            => list.ToHashSet(comparer).SetEquals(other);
 
         [Pure]
         public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T>? list)
