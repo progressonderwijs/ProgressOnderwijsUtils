@@ -279,18 +279,6 @@ namespace ProgressOnderwijsUtils
         public static int LogBase2RoundedUp(uint x)
             => x <= 1 ? 0 : LogBase2RoundedDown(x - 1) + 1;
 
-        public static bool IsEmailAdresGeldig(string emailAdres)
-        {
-            try {
-                // ReSharper disable ObjectCreationAsStatement
-                _ = new MailAddress(emailAdres);
-                // ReSharper restore ObjectCreationAsStatement
-                return true;
-            } catch {
-                return false;
-            }
-        }
-
         public static CancellationToken CreateLinkedTokenWith(this CancellationToken a, CancellationToken b)
             => b == CancellationToken.None
                 ? a
