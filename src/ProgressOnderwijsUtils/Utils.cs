@@ -37,16 +37,6 @@ namespace ProgressOnderwijsUtils
             return () => LazyInitializer.EnsureInitialized(ref value, ref initialized, ref sync, factory);
         }
 
-        /// <summary>
-        /// Swap two objects.
-        /// </summary>
-        public static void Swap<T>(ref T one, ref T other)
-        {
-            var tmp = one;
-            one = other;
-            other = tmp;
-        }
-
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
             => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 
@@ -58,7 +48,7 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<DistinctArray<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
-            var set = elems.ToSet(comparer);
+            var set = elems.ToHashSet(comparer);
             var distinctNewlyReachable = set.ToDistinctArray();
             while (distinctNewlyReachable.Count > 0) {
                 distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray().ToDistinctArrayFromDistinct_Unchecked();
@@ -288,18 +278,6 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static int LogBase2RoundedUp(uint x)
             => x <= 1 ? 0 : LogBase2RoundedDown(x - 1) + 1;
-
-        public static bool IsEmailAdresGeldig(string emailAdres)
-        {
-            try {
-                // ReSharper disable ObjectCreationAsStatement
-                _ = new MailAddress(emailAdres);
-                // ReSharper restore ObjectCreationAsStatement
-                return true;
-            } catch {
-                return false;
-            }
-        }
 
         public static CancellationToken CreateLinkedTokenWith(this CancellationToken a, CancellationToken b)
             => b == CancellationToken.None

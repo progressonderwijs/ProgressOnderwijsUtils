@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void OverloadForSetsWorks()
         {
-            var hashSet = new[] { 1, 2, 4, 5 }.ToSet();
+            var hashSet = new[] { 1, 2, 4, 5 }.ToHashSet();
             var sut = hashSet.ToDistinctArray();
 
             PAssert.That(() => sut.Count == 4);

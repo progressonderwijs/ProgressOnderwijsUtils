@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             if (doc.Root == null) {
                 throw new InvalidOperationException("empty documents not supported");
             }
-            var usedNamespaces = doc.Descendants().Select(el => el.Name.Namespace).ToSet();
+            var usedNamespaces = doc.Descendants().Select(el => el.Name.Namespace).ToHashSet();
             usedNamespaces.UnionWith(doc.Descendants().Attributes().Select(attr => attr.Name.Namespace));
 
             var unusedRootNamespaceDeclarations = doc.Descendants().Attributes()
