@@ -7,6 +7,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class ProjectingEqualityComparerTest
     {
+        // ReSharper disable once NotAccessedPositionalProperty.Local
         sealed record Example(string A, int B, DateTime? C, int[]? D);
 
         readonly ProjectingEqualityComparer<Example> EmptyComparer = new();
