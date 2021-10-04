@@ -37,16 +37,6 @@ namespace ProgressOnderwijsUtils
             return () => LazyInitializer.EnsureInitialized(ref value, ref initialized, ref sync, factory);
         }
 
-        /// <summary>
-        /// Swap two objects.
-        /// </summary>
-        public static void Swap<T>(ref T one, ref T other)
-        {
-            var tmp = one;
-            one = other;
-            other = tmp;
-        }
-
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
             => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 

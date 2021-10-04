@@ -103,26 +103,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void SwapValue()
-        {
-            var one = 1;
-            var other = 2;
-            Utils.Swap(ref one, ref other);
-            PAssert.That(() => one == 2);
-            PAssert.That(() => other == 1);
-        }
-
-        [Fact]
-        public void SwapReference()
-        {
-            var one = "1";
-            var other = "2";
-            Utils.Swap(ref one, ref other);
-            PAssert.That(() => one == "2");
-            PAssert.That(() => other == "1");
-        }
-
-        [Fact]
         public void MaandSpanTest()
         {
             PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)) == 0);
