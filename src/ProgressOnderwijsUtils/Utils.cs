@@ -27,8 +27,15 @@ namespace ProgressOnderwijsUtils
             return x == y || delta / magnitude < relativeEpsilon;
         }
 
-        public static Lazy<T> Lazy<T>(Func<T> factory)
-            => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
+        public static Func<T> Lazy<T>(Func<T> factory)
+        {
+            //Ideally we'd use Lazy<T>, but that either caches exceptions or fails to lock around initialization. see: https://github.com/dotnet/runtime/issues/27421#issuecomment-424732179
+            var value = default(T?);
+            var initialized = false;
+            var sync = (object)factory;
+
+            return () => LazyInitializer.EnsureInitialized(ref value, ref initialized, ref sync, factory);
+        }
 
         /// <summary>
         /// Swap two objects.

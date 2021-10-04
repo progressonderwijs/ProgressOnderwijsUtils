@@ -92,14 +92,14 @@ namespace ProgressOnderwijsUtils.Tests
             var sometimesFailingLazy = Utils.Lazy(() => ++count % 4 == 0 ? count : throw new("gotcha!"));
 
             PAssert.That(() => count == 1);
-            PAssert.That(() => nonFailingLazy.Value == 2);
+            PAssert.That(() => nonFailingLazy() == 2);
             PAssert.That(() => count == 2);
-            PAssert.That(() => nonFailingLazy.Value == 2, "A second read of the lazily computed value should not change the value");
+            PAssert.That(() => nonFailingLazy() == 2, "A second read of the lazily computed value should not change the value");
             PAssert.That(() => count == 2, "A second read of the lazily computed value must not have side-effects");
 
-            _ = Assert.Throws<Exception>(() => _ = sometimesFailingLazy.Value);
+            _ = Assert.Throws<Exception>(() => _ = sometimesFailingLazy());
             PAssert.That(() => count == 3);
-            PAssert.That(() => sometimesFailingLazy.Value == 4);
+            PAssert.That(() => sometimesFailingLazy() == 4);
         }
 
         [Fact]
