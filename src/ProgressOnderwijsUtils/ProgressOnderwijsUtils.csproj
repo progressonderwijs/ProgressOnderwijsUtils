@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-
     <Version>81.0.0</Version>
     <PackageReleaseNotes>Utils.Lazy returns Func&lt;&gt; intead of Lazy&lt;&gt; and no longer caches exceptions.  Utils.Swap removed (can be replaced by tuple assignment).  ToSet removed (can be replaced with Linq ToHashSet).</PackageReleaseNotes>
 
