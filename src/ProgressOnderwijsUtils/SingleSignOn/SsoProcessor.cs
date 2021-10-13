@@ -81,7 +81,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             doc.LoadXml(rawXml);
 
             var dsig = new SignedXml(doc);
-            var signatureElements = doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>();
+            var signatureElements = doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().ToArray();
+
             dsig.LoadXml(signatureElements.Single());
             if (!dsig.CheckSignature(certificate.PublicKey.Key)) {
                 return Maybe.Error("Signature invalid");
