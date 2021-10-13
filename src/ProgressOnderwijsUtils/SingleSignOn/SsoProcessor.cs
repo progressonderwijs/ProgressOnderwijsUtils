@@ -80,8 +80,13 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             };
             doc.LoadXml(rawXml);
 
+            var signatureElements = doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().ToArray();
+            if (signatureElements.Length != 1) {
+                return Maybe.Error(signatureElements.Length == 0 ? "Signature missing" : "Multiple signatures");
+            }
+
             var dsig = new SignedXml(doc);
-            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+            dsig.LoadXml(signatureElements.Single());
             if (!dsig.CheckSignature(certificate.PublicKey.Key)) {
                 return Maybe.Error("Signature invalid");
             }
