@@ -20,7 +20,7 @@
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="2021.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
     <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
