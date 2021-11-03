@@ -62,10 +62,10 @@ namespace ProgressOnderwijsUtils.Html
                 );
         }
 
-        public sealed class StripElementsWithInlineJavascriptFilter : IHtmlFilter
+        public sealed class StripElementsWithInlineJavascriptOrBadUrisFilter : IHtmlFilter
         {
-            StripElementsWithInlineJavascriptFilter() { }
-            public static readonly IHtmlFilter Instance = new StripElementsWithInlineJavascriptFilter();
+            StripElementsWithInlineJavascriptOrBadUrisFilter() { }
+            public static readonly IHtmlFilter Instance = new StripElementsWithInlineJavascriptOrBadUrisFilter();
 
             public TagSafety AllowTag(IHtmlElement elem)
             {
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils.Html
             );
 
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
+        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptOrBadUrisFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
     }
 
     public static class HtmlFragmentSanitizeExtension
