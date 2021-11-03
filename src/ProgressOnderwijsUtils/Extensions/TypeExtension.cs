@@ -94,10 +94,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string FriendlyName(this Type type)
-            => type.ToCSharpFriendlyTypeName();
-
-        [Pure]
         [return: MaybeNull]
         public static T Attr<T>(this MemberInfo mi)
             where T : Attribute

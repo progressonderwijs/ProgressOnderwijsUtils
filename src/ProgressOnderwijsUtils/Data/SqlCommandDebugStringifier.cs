@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
                     : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
             } catch {
                 isStructured = false;
-                pseudoSqlType = $"[Unmappable; C#:{par.Value?.GetType().FriendlyName()}]";
+                pseudoSqlType = $"[Unmappable; C#:{par.Value?.GetType().ToCSharpFriendlyTypeName()}]";
                 //in debug scenarios, I don't want this to throw
             }
             var declareVariable = "DECLARE " + par.ParameterName + " AS " + pseudoSqlType;

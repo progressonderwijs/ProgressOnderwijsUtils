@@ -272,8 +272,8 @@ namespace ProgressOnderwijsUtils
                 if (GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, nonNullableUnderlyingType) is { } builtin) {
                     return nonNullableUnderlyingType != nonNullableType ? Expression.Convert(builtin, nonNullableType) : builtin;
                 } else {
-                    var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.FriendlyName()} is not  built-in and has no PocoPropertyConverter");
-                    var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.ProviderClrType) ?? throw new($"The converter for {type.FriendlyName()} produces {converter.ProviderClrType.FriendlyName()} which is not db-mappable");
+                    var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.ToCSharpFriendlyTypeName()} is not  built-in and has no PocoPropertyConverter");
+                    var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.ProviderClrType) ?? throw new($"The converter for {type.ToCSharpFriendlyTypeName()} produces {converter.ProviderClrType.ToCSharpFriendlyTypeName()} which is not db-mappable");
                     return ReplacingExpressionVisitor.Replace(converter.ConvertFromProviderExpression.Parameters.Single(), callExpr, converter.ConvertFromProviderExpression.Body);
                 }
             }
@@ -320,9 +320,6 @@ namespace ProgressOnderwijsUtils
 
             public static class PlainImpl<T>
             {
-                static string FriendlyName
-                    => type.ToCSharpFriendlyTypeName();
-
                 public static readonly Func<TReader, T> ReadValue;
 
                 static Type type
@@ -340,7 +337,7 @@ namespace ProgressOnderwijsUtils
                 {
                     if (!IsSupportedType(type)) {
                         throw new ArgumentException(
-                            FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
+                            type.ToCSharpFriendlyTypeName() + " cannot be auto loaded as plain data since it isn't a basic type ("
                             + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!"
                         );
                     }
@@ -349,7 +346,7 @@ namespace ProgressOnderwijsUtils
                 public static void VerifyDataReaderShape(TReader reader)
                 {
                     if (reader.FieldCount != 1) {
-                        throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + " != 1");
+                        throw new InvalidOperationException("Cannot unpack DbDataReader into type " + type.ToCSharpFriendlyTypeName() + "; column count = " + reader.FieldCount + " != 1");
                     }
                 }
             }

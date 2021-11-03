@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,9 +20,9 @@ namespace ProgressOnderwijsUtils
             if (typeof(T) != GetType()) {
                 throw new InvalidOperationException(
                     "Invalid inheritance:\n" +
-                    GetType().FriendlyName() + " inherits from " +
-                    GetType().BaseType?.FriendlyName() + " but it was expected to inherit from " +
-                    typeof(ResourceStore<T>).FriendlyName()
+                    GetType().ToCSharpFriendlyTypeName() + " inherits from " +
+                    GetType().BaseType?.ToCSharpFriendlyTypeName() + " but it was expected to inherit from " +
+                    typeof(ResourceStore<T>).ToCSharpFriendlyTypeName()
                 );
             }
         }
