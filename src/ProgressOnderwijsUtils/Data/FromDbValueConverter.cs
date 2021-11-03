@@ -103,16 +103,16 @@ namespace ProgressOnderwijsUtils
                                 ? typed
                                 : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
                                     ? (T)converter.ConvertToProvider(obj)
-                                    : throw new($"{obj.GetType().FriendlyName()} cannot be cast to {typeof(T).FriendlyName()}");
+                                    : throw new($"{obj.GetType().ToCSharpFriendlyTypeName()} cannot be cast to {typeof(T).ToCSharpFriendlyTypeName()}");
                 } else {
                     return obj =>
                         obj is null
-                            ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + typeof(T).FriendlyName())
+                            ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + typeof(T).ToCSharpFriendlyTypeName())
                             : obj is T typed
                                 ? typed
                                 : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
                                     ? (T)converter.ConvertToProvider(obj)
-                                    : throw new($"{obj.GetType().FriendlyName()} cannot be cast to {typeof(T).FriendlyName()}");
+                                    : throw new($"{obj.GetType().ToCSharpFriendlyTypeName()} cannot be cast to {typeof(T).ToCSharpFriendlyTypeName()}");
                 }
             }
         }

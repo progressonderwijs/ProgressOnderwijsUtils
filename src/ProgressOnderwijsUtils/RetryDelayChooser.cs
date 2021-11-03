@@ -58,5 +58,12 @@ namespace ProgressOnderwijsUtils
 
         public TimeSpan ErrorsPerSecondToRetryDelay(double approximateErrorsPerSecond)
             => TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * delayTargetInSecondsCubed);
+
+        public TimeSpan GetDelayForErrorThatJustHappened_ThreadSafe()
+        {
+            lock (this) {
+                return RegisterErrorAndGetDelay(DateTime.UtcNow);
+            }
+        }
     }
 }
