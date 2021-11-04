@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Html
@@ -62,24 +63,47 @@ namespace ProgressOnderwijsUtils.Html
                 );
         }
 
-        public sealed class StripElementsWithInlineJavascriptFilter : IHtmlFilter
+        public sealed class StripElementsWithInlineJavascriptOrBadUrisFilter : IHtmlFilter
         {
-            StripElementsWithInlineJavascriptFilter() { }
-            public static readonly IHtmlFilter Instance = new StripElementsWithInlineJavascriptFilter();
+            StripElementsWithInlineJavascriptOrBadUrisFilter() { }
+            public static readonly IHtmlFilter Instance = new StripElementsWithInlineJavascriptOrBadUrisFilter();
 
             public TagSafety AllowTag(IHtmlElement elem)
             {
                 foreach (var attr in elem.Attributes) {
-                    if (attr.Name.StartsWith("on", StringComparison.OrdinalIgnoreCase)) {
-                        return TagSafety.ShouldRemoveButKeepContent;
-                    }
-                    if ((attr.Name.EqualsOrdinalCaseInsensitive("href") || attr.Name.EqualsOrdinalCaseInsensitive("src"))
-                        && !attr.Value.StartsWith("http:", StringComparison.InvariantCultureIgnoreCase)
-                        && !attr.Value.StartsWith("https:", StringComparison.InvariantCultureIgnoreCase)) {
+                    if (!IsAttrSafe(attr)) {
                         return TagSafety.ShouldRemoveButKeepContent;
                     }
                 }
                 return TagSafety.SafeToKeep;
+
+                static bool IsAttrSafe(HtmlAttribute attr)
+                    => !attr.Name.StartsWith("on", StringComparison.OrdinalIgnoreCase)
+                        && (!attr.Name.EqualsOrdinalCaseInsensitive("href") && !attr.Name.EqualsOrdinalCaseInsensitive("src") || IsUriSafe(attr));
+
+                static bool IsUriSafe(HtmlAttribute attr)
+                    => Uri.TryCreate(attr.Value, UriKind.Absolute, out var uri) && (
+                        uri.Scheme.EqualsOrdinalCaseInsensitive("http")
+                        || uri.Scheme.EqualsOrdinalCaseInsensitive("https")
+                        || uri.Scheme.EqualsOrdinalCaseInsensitive("mailto")
+                        && attr.Name.EqualsOrdinalCaseInsensitive("href")
+                        && uri.IsDefaultPort
+                        && uri.Fragment == ""
+                        && uri.HostNameType == UriHostNameType.Dns
+                        && uri.AbsolutePath == ""
+                        && IsMailtoQuerySafe(uri)
+                    );
+
+                static bool IsMailtoQuerySafe(Uri uri)
+                {
+                    var qs = HttpUtility.ParseQueryString(uri.Query);
+                    foreach (var key in qs.AllKeys) {
+                        if (!key.EqualsOrdinalCaseInsensitive("subject") && !key.EqualsOrdinalCaseInsensitive("body")) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
             }
 
             public bool AllowAttribute(HtmlAttribute attr)
@@ -158,7 +182,7 @@ namespace ProgressOnderwijsUtils.Html
             );
 
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
+        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptOrBadUrisFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
     }
 
     public static class HtmlFragmentSanitizeExtension

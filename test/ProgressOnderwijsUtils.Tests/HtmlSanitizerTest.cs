@@ -105,6 +105,34 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.");
 
         [Fact]
+        public void MailtoHrefsAreAllowed()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is <a href=""mailto:bla@example.com"">a link</a>.");
+
+        [Fact]
+        public void MailtoHrefsCantHaveFragments()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com#unsupported"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+
+        [Fact]
+        public void NoImgMailTos()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <img src=""mailto:bla@example.com"">").Sanitize().ToStringWithoutDoctype() == @"This is ");
+
+        [Fact]
+        public void MailtoHrefsCantHavePaths()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com/lala"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+
+        [Fact]
+        public void MailtoHrefsHaveSingleTo()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com,foo@bar.com"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+
+        [Fact]
+        public void MailtoHrefsCanHaveSubjectAndBody()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:foo@bar.com?sUbJect=asfdasdf&bODY=asdf"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is <a href=""mailto:foo@bar.com?sUbJect=asfdasdf&amp;bODY=asdf"">a link</a>.");
+
+        [Fact]
+        public void MailtoHrefsCannotHaveArbitraryQueries()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:foo@bar.com?sUbJect=asfdasdf&Arbitrary=asdf"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+
+        [Fact]
         public void AllowsMarginStyleTags()
             => PAssert.That(() => HtmlFragment.ParseFragment(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().ToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
 
