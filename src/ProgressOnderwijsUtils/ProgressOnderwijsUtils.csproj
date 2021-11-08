@@ -27,7 +27,7 @@
     <PackageReference Include="Selenium.WebDriver" Version="4.0.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="5.0.0" />
-    <PackageReference Include="System.Security.Permissions" Version="5.0.0" />
+    <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
     <PackageReference Include="ZlibWithDictionary" version="2.5.0" />
   </ItemGroup>
 </Project>
