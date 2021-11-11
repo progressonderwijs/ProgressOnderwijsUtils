@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>82.1.0</Version>
+    <Version>82.2.0</Version>
     <PackageReleaseNotes>Allow mailto links to pass through sanitization if they look sort of sane</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
