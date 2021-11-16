@@ -19,6 +19,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => StringUtils.SepaTekensetEnModificaties("Antonín Dvořák") == "Antonin Dvorak");
             PAssert.That(() => StringUtils.SepaTekensetEnModificaties("@ßẞ!#$!@SDfef9{ɚ0 df0o4[[") == "ssssSDfef90 df0o4[[");
+            PAssert.That(() => StringUtils.SepaTekensetEnModificaties("ΝΕΣΧΑΑΣΗ ΘΤΡ ΡΗΣΔΙΟ") == null);
             PAssert.That(() => StringUtils.SepaTekensetEnModificaties(null) == null);
         }
 

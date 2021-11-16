@@ -93,7 +93,6 @@ namespace ProgressOnderwijsUtils
             => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
         [Pure]
-        [return: NotNullIfNotNull("s")]
         public static string? SepaTekensetEnModificaties(string? s)
         {
             if (s == null) {
@@ -103,7 +102,7 @@ namespace ProgressOnderwijsUtils
             s = VerwijderDiakrieten(s);
             s = VervangRingelS(s);
             s = SepaTekenset(s);
-            return s;
+            return s.NullIfWhiteSpace();
         }
 
         [Pure]
