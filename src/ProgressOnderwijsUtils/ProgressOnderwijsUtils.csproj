@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>83.0.0</Version>
+    <Version>83.0.0-alpha1</Version>
     <PackageReleaseNotes>Bump dependencies to .net 6.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
