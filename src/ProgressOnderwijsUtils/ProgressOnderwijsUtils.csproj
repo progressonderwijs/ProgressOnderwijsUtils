@@ -28,6 +28,6 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.5.0" />
+    <PackageReference Include="ZlibWithDictionary" version="2.6.0" />
   </ItemGroup>
 </Project>
