@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.Tests
             );
             var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=" }, StringSplitOptions.None);
             var signedData = Encoding.UTF8.GetBytes(querySplit[0]);
-            var rsaKey = (RSA)certificate.PublicKey.Key;
+            var rsaKey = certificate.GetRSAPublicKey();
             var signature = Convert.FromBase64String(Uri.UnescapeDataString(querySplit[1]));
             PAssert.That(() => rsaKey.VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
         }
