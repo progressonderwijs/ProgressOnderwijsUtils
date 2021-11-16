@@ -6,6 +6,7 @@
     <Description>ProgressOnderwijs utility methods+classes for asp.net core.</Description>
     <PackageReleaseNotes>Removed support for obsolete security headers</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
