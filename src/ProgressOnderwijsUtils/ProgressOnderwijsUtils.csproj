@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>82.2.0</Version>
-    <PackageReleaseNotes>Allow mailto links to pass through sanitization if they look sort of sane</PackageReleaseNotes>
+    <Version>82.3.0</Version>
+    <PackageReleaseNotes>Bump DotNetZip dependency to relax system security dependency and avoid nuget warnings.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -28,6 +28,6 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.5.0" />
+    <PackageReference Include="ZlibWithDictionary" version="2.6.0" />
   </ItemGroup>
 </Project>
