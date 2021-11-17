@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
         public static T ToDb<T>(object? valueFromCode)
         {
             try {
-                return ToDbHelper<T>.Convert(valueFromCode);
+                return ToDbHelper<T>.Convert(valueFromCode)!;
             } catch (Exception e) {
                 var valTypeString = valueFromCode?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
                 throw new InvalidCastException("Cannot cast " + valTypeString + " to type " + typeof(T).ToCSharpFriendlyTypeName(), e);
@@ -56,9 +56,9 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         static class FromDbHelper<T>
         {
-            public static readonly Func<object?, T> Convert = MakeConverter(typeof(T));
+            public static readonly Func<object?, T?> Convert = MakeConverter(typeof(T));
 
-            static Func<object?, T> MakeConverter(Type type)
+            static Func<object?, T?> MakeConverter(Type type)
             {
                 var converter = AutomaticValueConverters.GetOrNull(type);
                 if (converter != null) {
@@ -75,34 +75,34 @@ namespace ProgressOnderwijsUtils
                 return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
 
-            static Func<object?, T> ForConvertible(Type type, ValueConverter converter)
+            static Func<object?, T?> ForConvertible(Type type, ValueConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
                     return obj => obj == null
-                        ? default(T)!
+                        ? default(T)
                         : obj is T alreadyCast
                             ? alreadyCast
-                            : (T)converter.ConvertFromProvider(obj);
+                            : (T?)converter.ConvertFromProvider(obj);
                 } else {
-                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromProvider(obj);
+                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T?)converter.ConvertFromProvider(obj);
                 }
             }
         }
 
         static class ToDbHelper<T>
         {
-            public static readonly Func<object?, T> Convert = MakeConverter();
+            public static readonly Func<object?, T?> Convert = MakeConverter();
 
-            static Func<object?, T> MakeConverter()
+            static Func<object?, T?> MakeConverter()
             {
                 if (typeof(T).IsNullableValueType() || !typeof(T).IsValueType) {
                     return obj =>
                         obj is null
-                            ? default(T)!
+                            ? default(T)
                             : obj is T typed
                                 ? typed
                                 : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
-                                    ? (T)converter.ConvertToProvider(obj)
+                                    ? (T?)converter.ConvertToProvider(obj)
                                     : throw new($"{obj.GetType().ToCSharpFriendlyTypeName()} cannot be cast to {typeof(T).ToCSharpFriendlyTypeName()}");
                 } else {
                     return obj =>
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
                             : obj is T typed
                                 ? typed
                                 : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
-                                    ? (T)converter.ConvertToProvider(obj)
+                                    ? (T?)converter.ConvertToProvider(obj)
                                     : throw new($"{obj.GetType().ToCSharpFriendlyTypeName()} cannot be cast to {typeof(T).ToCSharpFriendlyTypeName()}");
                 }
             }

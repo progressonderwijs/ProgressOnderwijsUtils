@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Maybe).Assembly.Location));
             var documentId = DocumentId.CreateNewId(projectId);
             solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
-            return solution.GetProject(projectId);
+            return solution.GetProject(projectId).AssertNotNull();
         }
     }
 }
