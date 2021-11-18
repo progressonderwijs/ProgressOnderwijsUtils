@@ -106,7 +106,7 @@ namespace ProgressOnderwijsUtils
                 arr = new T[len];
                 var writeCursor = arr.AsSpan();
                 foreach (var kid in arrays) {
-                    var replacements = kid.AsSpan();
+                    var replacements = new ReadOnlySpan<T>(kid);
                     replacements.CopyTo(writeCursor);
                     writeCursor = writeCursor.Slice(replacements.Length);
                 }
