@@ -38,6 +38,17 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void ConcatArraysSupportsMixedTypes()
+        {
+            var obj = new object();
+            var arrA = new[] { "string", };
+            var arrB = new[] { obj };
+            PAssert.That(() => new[] { arrA, arrB }.ConcatArrays().SequenceEqual(new[] { "string", obj }));
+            PAssert.That(() => new[] { arrB, arrA }.ConcatArrays().SequenceEqual(new[] { obj, "string", }));
+        }
+
+
+        [Fact]
         public void AppendingingEmptyWorks()
         {
             var arr = new[] { "foo", "baar" };
