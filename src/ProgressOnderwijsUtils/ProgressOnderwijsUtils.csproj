@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>83.0.1</Version>
-    <PackageReleaseNotes>Support mixed types in ConcatArrays</PackageReleaseNotes>
+    <Version>83.1.0</Version>
+    <PackageReleaseNotes>Update SqlClient</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
