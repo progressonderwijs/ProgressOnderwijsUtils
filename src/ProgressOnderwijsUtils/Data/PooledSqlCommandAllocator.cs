@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                     return result;
                 }
             }
-            var cmd = new SqlCommand();
+            var cmd = new SqlCommand { EnableOptimizedParameterBinding = true, };
             var parameters = new SqlParameter[length];
             for (var i = 0; i < length; i++) {
                 parameters[i] = new SqlParameter { ParameterName = CommandFactory.IndexToParameterName(i) };
