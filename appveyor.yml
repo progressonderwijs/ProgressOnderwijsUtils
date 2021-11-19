@@ -4,8 +4,9 @@ branches:
   - master
 image: Visual Studio 2022
 environment:
-  CONNECTION_STRING: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
-services: mssql2017
+  CONNECTION_STRING: Server=(local)\SQL2019;Database=master;User ID=sa;Password=Password12!;Encrypt=False
+init:
+- net start MSSQL$SQL2019
 build_script:
 - cmd: dotnet build -c Release
 - cmd: dotnet pack -c Release --include-symbols --include-source
