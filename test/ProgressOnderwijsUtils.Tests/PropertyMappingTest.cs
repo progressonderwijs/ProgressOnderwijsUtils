@@ -149,5 +149,46 @@ namespace ProgressOnderwijsUtils.Tests
 
             PAssert.That(() => mapped.Single().NullableProperty == null);
         }
+
+        [Fact]
+        public void MapProperties_werkt_voor_multiple_types()
+        {
+            var objects = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Wednesday,
+                    Unused = "as",
+                    Kind = DateTimeKind.Local,
+                },
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Monday,
+                    Unused = "X",
+                    Kind = DateTimeKind.Unspecified,
+                },
+            };
+            var copy = objects.ArraySelect(o => o with { });
+
+            var mapped = PropertyMapper
+                .CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7))
+                .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)))
+                .Map(objects);
+
+            PAssert.That(() => objects.SequenceEqual(copy), "Original objects should not be changed");
+
+            var expected = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Thursday,
+                    Unused = "as",
+                    Kind = DateTimeKind.Utc,
+                },
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Tuesday,
+                    Unused = "X",
+                    Kind = DateTimeKind.Local,
+                },
+            };
+
+            PAssert.That(() => mapped.SequenceEqual(expected));
+        }
+
     }
 }
