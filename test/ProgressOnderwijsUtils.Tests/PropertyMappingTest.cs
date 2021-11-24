@@ -190,5 +190,39 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => mapped.SequenceEqual(expected));
         }
 
+        [Fact]
+        public void AddToPropertyMappers_werkt()
+        {
+            var objects = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Unspecified, },
+            };
+            var original = objects.ArraySelect(o => o with { });
+            var firstMap = new SingleIdMapping<DayOfWeek>[] { new(DayOfWeek.Wednesday, DayOfWeek.Monday), new(DayOfWeek.Monday, DayOfWeek.Wednesday), };
+            var secondMap = new SingleIdMapping<DateTimeKind>[] { new(DateTimeKind.Local, DateTimeKind.Unspecified), new(DateTimeKind.Unspecified, DateTimeKind.Local), };
+
+            var mappers = new PropertyMappers();
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(original), "Empty mapper does nothing");
+
+            _ = firstMap.AddToPropertyMappers(ref mappers);
+
+            var expectedAfterFirstMapper = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Local, },
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Unspecified, },
+            };
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterFirstMapper));
+
+            _ = secondMap.AddToPropertyMappers(ref mappers);
+
+            var expectedAfterSecondMapper = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Unspecified, },
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
+            };
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterSecondMapper));
+        }
+
     }
 }
