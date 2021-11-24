@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_niet_voor_multiple_mapper()
+        public void MapProperties_werkt_niet_voor_multiple_mappers_van_zelfde_type()
         {
             var mappers = PropertyMapper.CreateForDictionary(new Dictionary<DayOfWeek, DayOfWeek> { [DayOfWeek.Wednesday] = DayOfWeek.Thursday, });
 
