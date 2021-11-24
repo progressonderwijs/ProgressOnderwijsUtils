@@ -62,6 +62,20 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void MapProperties_Identity_map_doet_niks()
+        {
+            var objects = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Wednesday,
+                },
+            };
+
+            var mapped = PropertyMapper.CreateForIdentityMap<DayOfWeek>().Map(objects);
+
+            PAssert.That(() => objects.SequenceEqual(mapped));
+        }
+
+        [Fact]
         public void MapProperties_werkt_niet_voor_multiple_mappers_van_zelfde_type()
         {
             var mappers = PropertyMapper.CreateForDictionary(new Dictionary<DayOfWeek, DayOfWeek> { [DayOfWeek.Wednesday] = DayOfWeek.Thursday, });
