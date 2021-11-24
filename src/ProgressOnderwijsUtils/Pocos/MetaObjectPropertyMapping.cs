@@ -17,7 +17,6 @@ namespace ProgressOnderwijsUtils
 
     public static class PropertyMapper
     {
-        [UsefulToKeep("Library function")]
         public static PropertyMappers CreateForValue<TProperty>(TProperty value)
             where TProperty : struct, Enum
             => CreateForFunc<TProperty>(_ => value);
@@ -43,7 +42,6 @@ namespace ProgressOnderwijsUtils
                 }
             );
 
-        [UsefulToKeep("Library function")]
         public static PropertyMappers CreateForIdentityMap<TProperty>()
             where TProperty : struct, Enum
             => CreateForFunc(NoopLambda<TProperty>.Instance);
