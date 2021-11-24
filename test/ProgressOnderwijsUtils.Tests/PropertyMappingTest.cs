@@ -233,6 +233,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             PAssert.That(() => !isMapped);
             PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Local);
+            PAssert.That(() => dayOfWeekMapper.MapId(DateTimeKind.Local) == DateTimeKind.Local);
         }
 
         [Fact]
@@ -246,6 +247,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             PAssert.That(() => isMapped);
             PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Utc);
+            PAssert.That(() => mapper.MapId(DateTimeKind.Local) == DateTimeKind.Utc);
         }
     }
 }

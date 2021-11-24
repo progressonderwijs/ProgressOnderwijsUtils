@@ -151,6 +151,10 @@ namespace ProgressOnderwijsUtils
         public (Func<TId, TId> mapper, bool idNonIdentityMap) GetIdMapper<TId>()
             where TId : struct, Enum
             => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>() : (NoopLambda<TId>.Instance, false);
+
+        public TId MapId<TId>(TId id)
+            where TId : struct, Enum
+            => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>().mapper(id) : id;
     }
 
     public static class PropertyMappersExtensions
