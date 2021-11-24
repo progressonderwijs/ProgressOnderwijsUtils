@@ -224,5 +224,28 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterSecondMapper));
         }
 
+        [Fact]
+        public void GetIdMapper_returns_identity_for_unmapped()
+        {
+            var dayOfWeekMapper = PropertyMapper.CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7));
+
+            var (func, isMapped) = dayOfWeekMapper.GetIdMapper<DateTimeKind>();
+
+            PAssert.That(() => !isMapped);
+            PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Local);
+        }
+
+        [Fact]
+        public void GetIdMapper_returns_relevant_func_for_mapped()
+        {
+            var mapper = PropertyMapper
+                .CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7))
+                .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)));
+
+            var (func, isMapped) = mapper.GetIdMapper<DateTimeKind>();
+
+            PAssert.That(() => isMapped);
+            PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Utc);
+        }
     }
 }
