@@ -12,6 +12,8 @@ namespace ProgressOnderwijsUtils.Tests
         sealed record TestObject : ICopyable<TestObject>, IWrittenImplicitly
         {
             public DayOfWeek EnumIntProperty { get; set; }
+            public DateTimeKind Kind { get; set; }
+            public string? Unused { get; set; }
         }
 
         [Fact]
