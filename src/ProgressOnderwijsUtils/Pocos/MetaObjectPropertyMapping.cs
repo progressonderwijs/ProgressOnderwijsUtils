@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtils
         Func<TRow, TRow> CreateRowMapper<TRow>()
             where TRow : IWrittenImplicitly;
 
+        public (Func<TId, TId> mapper, bool idNonIdentityMap) CreateIdMapper<TId>();
         Type MappedPropertyType();
     }
 
@@ -67,6 +68,9 @@ namespace ProgressOnderwijsUtils
 
         public Type MappedPropertyType()
             => typeof(TProperty);
+
+        public (Func<TId, TId> mapper, bool idNonIdentityMap) CreateIdMapper<TId>()
+            => mapper is Func<TId, TId> reTyped ? (reTyped, true) : (NoopLambda<TId>.Instance, false);
 
         Func<T, T> IPropertyMapper.CreateRowMapper<T>()
             => Mappers<T>.Instance.Invoke(mapper);
@@ -143,6 +147,10 @@ namespace ProgressOnderwijsUtils
                 return copy;
             };
         }
+
+        public (Func<TId, TId> mapper, bool idNonIdentityMap) GetIdMapper<TId>()
+            where TId : struct, Enum
+            => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>() : (NoopLambda<TId>.Instance, false);
     }
 
     public static class PropertyMappersExtensions
