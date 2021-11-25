@@ -12,6 +12,8 @@ namespace ProgressOnderwijsUtils.Tests
         sealed record TestObject : ICopyable<TestObject>, IWrittenImplicitly
         {
             public DayOfWeek EnumIntProperty { get; set; }
+            public DateTimeKind Kind { get; set; }
+            public string? Unused { get; set; }
         }
 
         [Fact]
@@ -60,7 +62,40 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_niet_voor_multiple_mapper()
+        public void MapProperties_Identity_map_doet_niks()
+        {
+            var objects = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Wednesday,
+                },
+            };
+
+            var mapped = PropertyMapper.CreateForIdentityMap<DayOfWeek>().Map(objects);
+
+            PAssert.That(() => objects.SequenceEqual(mapped));
+        }
+
+        [Fact]
+        public void MapProperties_CreateForValue_ignores_input()
+        {
+            var objects = new[] {
+                new TestObject { Kind = DateTimeKind.Utc, EnumIntProperty = DayOfWeek.Thursday },
+                new TestObject { Kind = DateTimeKind.Local, EnumIntProperty = DayOfWeek.Friday, },
+                new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Monday, },
+            };
+            var expected = new[] {
+                new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Thursday },
+                new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Friday, },
+                new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Monday, },
+            };
+
+            var mapped = PropertyMapper.CreateForValue(DateTimeKind.Unspecified).Map(objects);
+
+            PAssert.That(() => mapped.SequenceEqual(expected));
+        }
+
+        [Fact]
+        public void MapProperties_werkt_niet_voor_multiple_mappers_van_zelfde_type()
         {
             var mappers = PropertyMapper.CreateForDictionary(new Dictionary<DayOfWeek, DayOfWeek> { [DayOfWeek.Wednesday] = DayOfWeek.Thursday, });
 
@@ -113,6 +148,106 @@ namespace ProgressOnderwijsUtils.Tests
             var mapped = mappers.Map(objects);
 
             PAssert.That(() => mapped.Single().NullableProperty == null);
+        }
+
+        [Fact]
+        public void MapProperties_werkt_voor_multiple_types()
+        {
+            var objects = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Wednesday,
+                    Unused = "as",
+                    Kind = DateTimeKind.Local,
+                },
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Monday,
+                    Unused = "X",
+                    Kind = DateTimeKind.Unspecified,
+                },
+            };
+            var copy = objects.ArraySelect(o => o with { });
+
+            var mapped = PropertyMapper
+                .CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7))
+                .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)))
+                .Map(objects);
+
+            PAssert.That(() => objects.SequenceEqual(copy), "Original objects should not be changed");
+
+            var expected = new[] {
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Thursday,
+                    Unused = "as",
+                    Kind = DateTimeKind.Utc,
+                },
+                new TestObject {
+                    EnumIntProperty = DayOfWeek.Tuesday,
+                    Unused = "X",
+                    Kind = DateTimeKind.Local,
+                },
+            };
+
+            PAssert.That(() => mapped.SequenceEqual(expected));
+        }
+
+        [Fact]
+        public void AddToPropertyMappers_werkt()
+        {
+            var objects = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Unspecified, },
+            };
+            var original = objects.ArraySelect(o => o with { });
+            var firstMap = new SingleIdMapping<DayOfWeek>[] { new(DayOfWeek.Wednesday, DayOfWeek.Monday), new(DayOfWeek.Monday, DayOfWeek.Wednesday), };
+            var secondMap = new SingleIdMapping<DateTimeKind>[] { new(DateTimeKind.Local, DateTimeKind.Unspecified), new(DateTimeKind.Unspecified, DateTimeKind.Local), };
+
+            var mappers = new PropertyMappers();
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(original), "Empty mapper does nothing");
+
+            _ = firstMap.AddToPropertyMappers(ref mappers);
+
+            var expectedAfterFirstMapper = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Local, },
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Unspecified, },
+            };
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterFirstMapper));
+
+            _ = secondMap.AddToPropertyMappers(ref mappers);
+
+            var expectedAfterSecondMapper = new[] {
+                new TestObject { EnumIntProperty = DayOfWeek.Monday, Kind = DateTimeKind.Unspecified, },
+                new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
+            };
+
+            PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterSecondMapper));
+        }
+
+        [Fact]
+        public void GetIdMapper_returns_identity_for_unmapped()
+        {
+            var dayOfWeekMapper = PropertyMapper.CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7));
+
+            var (func, isMapped) = dayOfWeekMapper.GetIdMapper<DateTimeKind>();
+
+            PAssert.That(() => !isMapped);
+            PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Local);
+            PAssert.That(() => dayOfWeekMapper.MapId(DateTimeKind.Local) == DateTimeKind.Local);
+        }
+
+        [Fact]
+        public void GetIdMapper_returns_relevant_func_for_mapped()
+        {
+            var mapper = PropertyMapper
+                .CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7))
+                .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)));
+
+            var (func, isMapped) = mapper.GetIdMapper<DateTimeKind>();
+
+            PAssert.That(() => isMapped);
+            PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Utc);
+            PAssert.That(() => mapper.MapId(DateTimeKind.Local) == DateTimeKind.Utc);
         }
     }
 }
