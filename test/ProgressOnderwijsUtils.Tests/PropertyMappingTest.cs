@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_voor_single_mapper()
+        public void MapProperties_works_for_single_mapper()
         {
             var objects = new[] {
                 new TestObject {
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_Identity_map_doet_niks()
+        public void MapProperties_Identity_does_nothing()
         {
             var objects = new[] {
                 new TestObject {
@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_niet_voor_multiple_mappers_van_zelfde_type()
+        public void MapProperties_throws_when_given_multiple_mappers_of_same_type()
         {
             var mappers = PropertyMapper.CreateForDictionary(new Dictionary<DayOfWeek, DayOfWeek> { [DayOfWeek.Wednesday] = DayOfWeek.Thursday, });
 
@@ -108,7 +108,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_ook_voor_nullable_property_met_waarde()
+        public void MapProperties_also_works_for_nullable_property_with_nonnull_value()
         {
             var objects = new[] {
                 new NullableTestObject {
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_ook_voor_nullable_property_met_null_waarde()
+        public void MapProperties_supports_nullable_property_with_null_value()
         {
             var objects = new[] {
                 new NullableTestObject {
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MapProperties_werkt_voor_multiple_types()
+        public void MapProperties_works_for_multiple_types()
         {
             var objects = new[] {
                 new TestObject {
@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void AddToPropertyMappers_werkt()
+        public void AddToPropertyMappers_supports_incremental_building()
         {
             var objects = new[] {
                 new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
