@@ -48,7 +48,7 @@ public struct ProcessStartSettings
         var closedParts = 0;
 
         // ReSharper disable once ConvertToLocalFunction - workaround apparent roslyn bug that considers proc to be nullable otherwise.
-        Action MarkOnePartClosed = () => {
+        var MarkOnePartClosed = () => {
             if (Interlocked.Increment(ref closedParts) == 3) {
                 proc.Dispose();
             }

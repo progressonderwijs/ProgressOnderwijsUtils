@@ -10,7 +10,7 @@ public sealed class UnitTests
         PAssert.That(() => Unit.Value.Equals(default(Unit)));
         PAssert.That(() => Unit.Value.Equals(new Unit()));
 
-        Action action = () => { };
+        var action = () => { };
         PAssert.That(() => Unit.Value.Equals(Unit.SideEffect(action)));
     }
 

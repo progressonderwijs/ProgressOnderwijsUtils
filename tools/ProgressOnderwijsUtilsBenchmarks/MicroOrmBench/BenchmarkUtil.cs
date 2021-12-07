@@ -124,7 +124,7 @@ sealed class Benchmarker
         var latencyDistribution = MeanVarianceAccumulator.Empty;
         for (var k = 0L; k < Tries; k++) {
             var i = 0;
-            Func<MeanVarianceAccumulator> ExecuteBenchLoop = () => {
+            var ExecuteBenchLoop = () => {
                 using var conn = connect();
                 var latencies = MeanVarianceAccumulator.Empty;
                 var swInner = new Stopwatch();

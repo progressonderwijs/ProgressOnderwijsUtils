@@ -184,7 +184,7 @@ public sealed class UtilsTest
     {
         var cleanupCalled = 0;
         var value = 0;
-        Action buggyCleanup = () => {
+        var buggyCleanup = () => {
             cleanupCalled++;
             throw new Exception("42");
         };
@@ -202,7 +202,7 @@ public sealed class UtilsTest
         var cleanupCalled = 0;
         var value = 0;
         Action cleanup = () => cleanupCalled++;
-        Func<int> buggyComputation = () => {
+        var buggyComputation = () => {
             try {
                 return 42;
             } finally {
@@ -245,11 +245,11 @@ public sealed class UtilsTest
     {
         var cleanupCalled = 0;
         var value = 0;
-        Action buggyCleanup = () => {
+        var buggyCleanup = () => {
             cleanupCalled++;
             throw new Exception("42");
         };
-        Func<int> buggyComputation = () => {
+        var buggyComputation = () => {
             try {
                 return 42;
             } finally {
@@ -272,7 +272,7 @@ public sealed class UtilsTest
     public void TryWithCleanup_ActionOverload_CleansUpOnceWhenComputationAndCleanupFail()
     {
         var cleanupCalled = 0;
-        Action buggyCleanup = () => {
+        var buggyCleanup = () => {
             cleanupCalled++;
             throw new Exception("42");
         };
