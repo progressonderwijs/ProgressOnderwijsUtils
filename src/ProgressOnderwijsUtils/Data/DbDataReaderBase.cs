@@ -79,7 +79,7 @@ public abstract class DbDataReaderBase : DbDataReader
     public override int Depth
         => 0;
 
-    public override System.Collections.IEnumerator GetEnumerator()
+    public override IEnumerator GetEnumerator()
     {
         while (Read()) {
             yield return this;

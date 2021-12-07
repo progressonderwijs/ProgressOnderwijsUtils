@@ -14,7 +14,7 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void TheEmptyMergeIsEmpty()
     {
-        var mergeResult = System.Array.Empty<IntSet>().MergeSets();
+        var mergeResult = Array.Empty<IntSet>().MergeSets();
         PAssert.That(() => mergeResult.ValuesInOrder.Length == 0);
     }
 

@@ -97,7 +97,7 @@ public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
         }
     }
 
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+    IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable<T>)this).GetEnumerator();
 }
 

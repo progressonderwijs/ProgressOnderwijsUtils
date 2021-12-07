@@ -1,7 +1,5 @@
 namespace ProgressOnderwijsUtils;
 
-using static System.String;
-
 public static class EnumerableOfStringExtension
 {
     /// <summary>
@@ -20,7 +18,8 @@ public static class EnumerableOfStringExtension
     /// <param name="separator">separator string</param>
     /// <returns>a string</returns>
     public static string JoinStrings(this IEnumerable<string?> strings, string separator)
-        => Join(separator, strings);
+        // ReSharper disable once UseJoinStringsExtension
+        => string.Join(separator, strings);
 
     public static string JoinStringsLimitLength(
         this IReadOnlyCollection<string> strings,

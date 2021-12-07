@@ -21,7 +21,7 @@ public sealed class OrderByTopologyTest
     public void NodesWithoutDependenciesAreNotSorted()
     {
         var example = new[] { "a", "b", "d", "c" };
-        var (cycleDetected, ordered) = example.OrderByTopology(_ => System.Array.Empty<string>());
+        var (cycleDetected, ordered) = example.OrderByTopology(_ => Array.Empty<string>());
         PAssert.That(() => cycleDetected == false && ordered.SequenceEqual(example));
     }
 

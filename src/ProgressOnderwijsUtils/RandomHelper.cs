@@ -8,7 +8,7 @@ public sealed class RandomHelper
         => new RandomHelper(new Random(seed).NextBytes);
 
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-        => Insecure(GetNaiveHashCode(System.IO.Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
+        => Insecure(GetNaiveHashCode(Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
     static int GetNaiveHashCode(string str)
         => (int)ColumnOrdering.CaseInsensitiveHash(str);

@@ -7,7 +7,7 @@ public sealed class SortedSetTest
     [Fact]
     public void TheEmptySetIsEmpty()
     {
-        var set = IntSet.FromValues(System.Array.Empty<int>());
+        var set = IntSet.FromValues(Array.Empty<int>());
         PAssert.That(() => set.ValuesInOrder.None());
     }
 
