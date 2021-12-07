@@ -1,15 +1,11 @@
-using System.Data;
-using JetBrains.Annotations;
+namespace ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils
+/// <summary>
+/// Extensions for DataRow
+/// </summary>
+public static class DataRowExtensions
 {
-    /// <summary>
-    /// Extensions for DataRow
-    /// </summary>
-    public static class DataRowExtensions
-    {
-        [Pure]
-        public static T Field<T>(this DataRowView row, string fieldname)
-            => (T)row.Row[fieldname];
-    }
+    [Pure]
+    public static T Field<T>(this DataRowView row, string fieldname)
+        => (T)row.Row[fieldname];
 }

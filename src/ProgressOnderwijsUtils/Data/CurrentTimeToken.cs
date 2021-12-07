@@ -1,18 +1,15 @@
-using System;
+namespace ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils
+public sealed class CurrentTimeToken
 {
-    public sealed class CurrentTimeToken
-    {
-        CurrentTimeToken() { }
-        public static readonly CurrentTimeToken Instance = new CurrentTimeToken();
+    CurrentTimeToken() { }
+    public static readonly CurrentTimeToken Instance = new CurrentTimeToken();
 
-        public static CurrentTimeToken Parse(string s)
-        {
-            if (s != "") {
-                throw new ArgumentException("Can only parse empty string as current time token!");
-            }
-            return Instance;
+    public static CurrentTimeToken Parse(string s)
+    {
+        if (s != "") {
+            throw new ArgumentException("Can only parse empty string as current time token!");
         }
+        return Instance;
     }
 }

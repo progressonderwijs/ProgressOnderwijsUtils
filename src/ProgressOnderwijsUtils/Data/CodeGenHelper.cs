@@ -1,47 +1,40 @@
-using System;
-using System.Data;
-using System.Linq;
-using System.Text.RegularExpressions;
-using ExpressionToCodeLib;
+namespace ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils
+/// <summary>
+///     tooltje om handige type-wrapper te maken: used via LINQPAD
+/// </summary>
+public static class CodeGenHelper
 {
-    /// <summary>
-    ///     tooltje om handige type-wrapper te maken: used via LINQPAD
-    /// </summary>
-    public static class CodeGenHelper
+    public static string GetColumnProperty(ColumnDefinition col, Func<ColumnDefinition, string>? colNameOverride = null)
     {
-        public static string GetColumnProperty(ColumnDefinition col, Func<ColumnDefinition, string>? colNameOverride = null)
-        {
-            var friendlyTypeName = colNameOverride ?? (x => x.DataType.ToCSharpFriendlyTypeName());
+        var friendlyTypeName = colNameOverride ?? (x => x.DataType.ToCSharpFriendlyTypeName());
 
-            return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; init; }\n";
-        }
+        return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; init; }\n";
+    }
 
-        static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+    static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
-        public static string Indent(string str, int indentCount = 1)
-            => newLine.Replace(str, new string(' ', indentCount * 4));
+    public static string Indent(string str, int indentCount = 1)
+        => newLine.Replace(str, new string(' ', indentCount * 4));
 
-        /// <summary>
-        ///     This method makes a "best effort" auto-generated poco class that can replace the current datatable.
-        /// </summary>
-        public static string DataTableToPocoClassDef(this DataTable dt, string? classNameOverride = null, Func<ColumnDefinition, string>? colNameOverride = null)
-        {
-            classNameOverride ??= string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName;
+    /// <summary>
+    ///     This method makes a "best effort" auto-generated poco class that can replace the current datatable.
+    /// </summary>
+    public static string DataTableToPocoClassDef(this DataTable dt, string? classNameOverride = null, Func<ColumnDefinition, string>? colNameOverride = null)
+    {
+        classNameOverride ??= string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName;
 
-            return ("public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
-                    + "{\n"
-                    + Indent(
-                        dt.Columns.Cast<DataColumn>().Select(
-                            dc => {
-                                var columnDefinition = ColumnDefinition.Create(dc);
-                                return GetColumnProperty(columnDefinition, colNameOverride);
-                            }
-                        ).JoinStrings()
-                    )
-                    + "}\n"
-                ).Replace("\n", "\r\n");
-        }
+        return ("public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
+                + "{\n"
+                + Indent(
+                    dt.Columns.Cast<DataColumn>().Select(
+                        dc => {
+                            var columnDefinition = ColumnDefinition.Create(dc);
+                            return GetColumnProperty(columnDefinition, colNameOverride);
+                        }
+                    ).JoinStrings()
+                )
+                + "}\n"
+            ).Replace("\n", "\r\n");
     }
 }

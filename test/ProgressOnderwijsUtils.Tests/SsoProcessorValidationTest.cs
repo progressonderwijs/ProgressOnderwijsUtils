@@ -1,42 +1,39 @@
-using System;
-using System.Xml.Linq;
 using System.Xml.Schema;
-using Xunit;
 using ProgressOnderwijsUtils.SingleSignOn;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests;
+
+public sealed class SsoProcessorValidationTest
 {
-    public sealed class SsoProcessorValidationTest
-    {
-        static readonly XElement VALID = new XElement(
-            SamlNamespaces.SAMLP_NS + "AuthnRequest",
-            new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
-            new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-            new XAttribute("ID", "_" + Guid.NewGuid()),
-            new XAttribute("Version", "2.0"),
-            new XAttribute("IssueInstant", DateTime.UtcNow),
-            new XAttribute("Destination", "Naar"),
-            new XAttribute("ForceAuthn", "false"),
-            new XAttribute("IsPassive", "false"),
-            new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-            new XElement(SamlNamespaces.SAML_NS + "Issuer", "Iemand")
-        );
+    static readonly XElement VALID = new XElement(
+        SamlNamespaces.SAMLP_NS + "AuthnRequest",
+        new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
+        new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
+        new XAttribute("ID", "_" + Guid.NewGuid()),
+        new XAttribute("Version", "2.0"),
+        new XAttribute("IssueInstant", DateTime.UtcNow),
+        new XAttribute("Destination", "Naar"),
+        new XAttribute("ForceAuthn", "false"),
+        new XAttribute("IsPassive", "false"),
+        new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+        new XElement(SamlNamespaces.SAML_NS + "Issuer", "Iemand")
+    );
 
-        static readonly XElement INVALID = new XElement(
-            SamlNamespaces.SAMLP_NS + "AuthnRequest",
-            new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
-            new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-            new XAttribute("ID", "_" + Guid.NewGuid()),
-            new XAttribute("Version", "2.0"),
-            new XAttribute("IssueInstant", DateTime.UtcNow),
-            new XAttribute("Destination", "Naar"),
-            new XAttribute("ForceAuthn", "false"),
-            new XAttribute("IsPassive", "false"),
-            new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-            new XElement(SamlNamespaces.SAML_NS + "Issuers", "Iemand")
-        );
+    static readonly XElement INVALID = new XElement(
+        SamlNamespaces.SAMLP_NS + "AuthnRequest",
+        new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
+        new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
+        new XAttribute("ID", "_" + Guid.NewGuid()),
+        new XAttribute("Version", "2.0"),
+        new XAttribute("IssueInstant", DateTime.UtcNow),
+        new XAttribute("Destination", "Naar"),
+        new XAttribute("ForceAuthn", "false"),
+        new XAttribute("IsPassive", "false"),
+        new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+        new XElement(SamlNamespaces.SAML_NS + "Issuers", "Iemand")
+    );
 
-        const string VALID_NESTED = @"
+    const string VALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
     <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
         <SignedInfo>
@@ -73,7 +70,7 @@ namespace ProgressOnderwijsUtils.Tests
 </EntitiesDescriptor>
 ";
 
-        const string INVALID_NESTED = @"
+    const string INVALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
     <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
         <SignedInfo>
@@ -110,18 +107,17 @@ namespace ProgressOnderwijsUtils.Tests
 </EntitiesDescriptor>
 ";
 
-        [Fact]
-        public void ValidateXDocument()
-        {
-            SsoProcessor.ValidateSchema(VALID); //assert does not throw
-            _ = Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(INVALID));
-        }
+    [Fact]
+    public void ValidateXDocument()
+    {
+        SsoProcessor.ValidateSchema(VALID); //assert does not throw
+        _ = Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(INVALID));
+    }
 
-        [Fact]
-        public void ValidateNested()
-        {
-            SsoProcessor.ValidateSchema(XElement.Parse(VALID_NESTED)); //assert does not throw
-            _ = Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(XElement.Parse(INVALID_NESTED)));
-        }
+    [Fact]
+    public void ValidateNested()
+    {
+        SsoProcessor.ValidateSchema(XElement.Parse(VALID_NESTED)); //assert does not throw
+        _ = Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(XElement.Parse(INVALID_NESTED)));
     }
 }

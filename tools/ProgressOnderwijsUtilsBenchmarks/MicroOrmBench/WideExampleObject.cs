@@ -1,40 +1,35 @@
-using System;
-using System.Runtime.CompilerServices;
-using ProgressOnderwijsUtils;
-using static ProgressOnderwijsUtils.SafeSql;
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
+public sealed class WideExampleObject : IWrittenImplicitly
 {
-    public sealed class WideExampleObject : IWrittenImplicitly
-    {
-        public int SalesOrderId { get; set; }
-        public string? AccountNumber { get; set; }
-        public int BillToAddressId { get; set; }
-        public string? Comment { get; set; }
-        public string? CreditCardApprovalCode { get; set; }
-        public int? CreditCardId { get; set; }
-        public int? CurrencyRateId { get; set; }
-        public int CustomerId { get; set; }
-        public DateTime DueDate { get; set; }
-        public decimal Freight { get; set; }
-        public DateTime ModifiedDate { get; set; }
-        public bool OnlineOrderFlag { get; set; }
-        public DateTime OrderDate { get; set; }
-        public string? PurchaseOrderNumber { get; set; }
-        public byte RevisionNumber { get; set; }
-        public Guid Rowguid { get; set; }
-        public string? SalesOrderNumber { get; set; }
-        public int? SalesPersonId { get; set; }
-        public DateTime? ShipDate { get; set; }
-        public int ShipMethodId { get; set; }
-        public int ShipToAddressId { get; set; }
-        public byte Status { get; set; }
-        public decimal SubTotal { get; set; }
-        public decimal TaxAmt { get; set; }
-        public int? TerritoryId { get; set; }
-        public decimal TotalDue { get; set; }
+    public int SalesOrderId { get; set; }
+    public string? AccountNumber { get; set; }
+    public int BillToAddressId { get; set; }
+    public string? Comment { get; set; }
+    public string? CreditCardApprovalCode { get; set; }
+    public int? CreditCardId { get; set; }
+    public int? CurrencyRateId { get; set; }
+    public int CustomerId { get; set; }
+    public DateTime DueDate { get; set; }
+    public decimal Freight { get; set; }
+    public DateTime ModifiedDate { get; set; }
+    public bool OnlineOrderFlag { get; set; }
+    public DateTime OrderDate { get; set; }
+    public string? PurchaseOrderNumber { get; set; }
+    public byte RevisionNumber { get; set; }
+    public Guid Rowguid { get; set; }
+    public string? SalesOrderNumber { get; set; }
+    public int? SalesPersonId { get; set; }
+    public DateTime? ShipDate { get; set; }
+    public int ShipMethodId { get; set; }
+    public int ShipToAddressId { get; set; }
+    public byte Status { get; set; }
+    public decimal SubTotal { get; set; }
+    public decimal TaxAmt { get; set; }
+    public int? TerritoryId { get; set; }
+    public decimal TotalDue { get; set; }
 
-        static readonly FormattableString formattableQueryString = $@"
+    static readonly FormattableString formattableQueryString = $@"
                 SELECT top ({1})
                     SalesOrderID,RevisionNumber,OrderDate,DueDate,ShipDate,Status,OnlineOrderFlag,SalesOrderNumber,PurchaseOrderNumber,AccountNumber
                     ,CustomerID,SalesPersonID,TerritoryID,BillToAddressID,ShipToAddressID,ShipMethodID,CreditCardID,CreditCardApprovalCode,CurrencyRateID
@@ -67,10 +62,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 cross join(select TotalDue = cast(1.1 as decimal(18,2)) union all select cast(1.1 as decimal(18,2))) a26
             ";
 
-        static readonly string formatString = formattableQueryString.Format;
-        public static readonly string RawQueryString = string.Format(formatString, "@Top");
+    static readonly string formatString = formattableQueryString.Format;
+    public static readonly string RawQueryString = string.Format(formatString, "@Top");
 
-        public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SQL(FormattableStringFactory.Create(formatString, rows));
-    }
+    public static ParameterizedSql ParameterizedSqlForRows(int rows)
+        => SQL(FormattableStringFactory.Create(formatString, rows));
 }
