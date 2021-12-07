@@ -1,13 +1,13 @@
 using Microsoft.Data.SqlClient;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.SchemaReflection
+namespace ProgressOnderwijsUtils.SchemaReflection;
+
+public sealed record CheckConstraintSqlDefinition(DbObjectId TableObjectId, DbObjectId CheckConstraintObjectId, string Name, string Definition, bool IsNotTrusted, bool IsDisabled) : IWrittenImplicitly
 {
-    public sealed record CheckConstraintSqlDefinition(DbObjectId TableObjectId, DbObjectId CheckConstraintObjectId, string Name, string Definition, bool IsNotTrusted, bool IsDisabled) : IWrittenImplicitly
-    {
-        public static CheckConstraintSqlDefinition[] LoadAll(SqlConnection conn)
-            => SQL(
-                $@"
+    public static CheckConstraintSqlDefinition[] LoadAll(SqlConnection conn)
+        => SQL(
+            $@"
                 select 
                     TableObjectId = cc.parent_object_id
                     , CheckConstraintObjectId = cc.object_id
@@ -18,6 +18,5 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
                 from sys.check_constraints cc
             "
-            ).ReadPocos<CheckConstraintSqlDefinition>(conn);
-    }
+        ).ReadPocos<CheckConstraintSqlDefinition>(conn);
 }

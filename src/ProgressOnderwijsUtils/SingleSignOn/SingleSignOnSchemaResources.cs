@@ -1,4 +1,3 @@
-namespace ProgressOnderwijsUtils.SingleSignOn
-{
-    sealed class SingleSignOnSchemaResources : ResourceStore<SingleSignOnSchemaResources> { }
-}
+namespace ProgressOnderwijsUtils.SingleSignOn;
+
+sealed class SingleSignOnSchemaResources : ResourceStore<SingleSignOnSchemaResources> { }

@@ -1,7 +1,6 @@
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils;
+
+public enum BulkCopyFieldMappingMode
 {
-    public enum BulkCopyFieldMappingMode
-    {
-        ExactMatch, AllowExtraPocoProperties, AllowExtraDatabaseColumns,
-    }
+    ExactMatch, AllowExtraPocoProperties, AllowExtraDatabaseColumns,
 }

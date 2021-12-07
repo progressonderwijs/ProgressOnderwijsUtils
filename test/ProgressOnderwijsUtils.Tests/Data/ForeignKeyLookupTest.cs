@@ -5,15 +5,15 @@ using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.Tests.Data
+namespace ProgressOnderwijsUtils.Tests.Data;
+
+public sealed class ForeignKeyLookupTest : TransactedLocalConnection
 {
-    public sealed class ForeignKeyLookupTest : TransactedLocalConnection
+    [Fact]
+    public void AllDependantTables_works_recursively()
     {
-        [Fact]
-        public void AllDependantTables_works_recursively()
-        {
-            SQL(
-                $@"
+        SQL(
+            $@"
                 create table dbo.ForeignKeyLookupRoot (
                     IdRoot int not null primary key
                 );
@@ -28,12 +28,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
                 );
             "
-            ).ExecuteNonQuery(Connection);
-            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        ).ExecuteNonQuery(Connection);
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
-            var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
+        var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
 
-            PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf" }, StringComparer.OrdinalIgnoreCase));
-        }
+        PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf" }, StringComparer.OrdinalIgnoreCase));
     }
 }

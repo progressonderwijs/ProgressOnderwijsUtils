@@ -1,13 +1,13 @@
 using Microsoft.Data.SqlClient;
 using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtils.SchemaReflection
+namespace ProgressOnderwijsUtils.SchemaReflection;
+
+public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
 {
-    public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
-    {
-        public static DmlTableTriggerSqlDefinition[] LoadAll(SqlConnection conn)
-            => SQL(
-                $@"
+    public static DmlTableTriggerSqlDefinition[] LoadAll(SqlConnection conn)
+        => SQL(
+            $@"
                     select
                         ObjectId = tr.object_id
                         , tr.name
@@ -18,6 +18,5 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     where 1=1
                         and tr.parent_class = 1
                 "
-            ).ReadPocos<DmlTableTriggerSqlDefinition>(conn);
-    }
+        ).ReadPocos<DmlTableTriggerSqlDefinition>(conn);
 }

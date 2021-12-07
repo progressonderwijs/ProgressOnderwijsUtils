@@ -2,14 +2,14 @@ using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
 
-namespace ProgressOnderwijsUtils.Analyzers.Tests
+namespace ProgressOnderwijsUtils.Analyzers.Tests;
+
+public sealed class MustUseExpressionResultAnalyzerTest
 {
-    public sealed class MustUseExpressionResultAnalyzerTest
+    [Fact]
+    public void Expression_result_cannot_be_ignored_from_simple_expression()
     {
-        [Fact]
-        public void Expression_result_cannot_be_ignored_from_simple_expression()
-        {
-            var source = @"
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -21,15 +21,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
-            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
+    }
 
-        [Fact]
-        public void Void_expression_is_not_ignored_by_definition()
-        {
-            var source = @"
+    [Fact]
+    public void Void_expression_is_not_ignored_by_definition()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -41,14 +41,14 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.None());
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 
-        [Fact]
-        public void Unit_expression_may_be_ignored()
-        {
-            var source = @"
+    [Fact]
+    public void Unit_expression_may_be_ignored()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -60,14 +60,14 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.None());
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 
-        [Fact]
-        public void Invocation_expression_result_cannot_be_ignored()
-        {
-            var source = @"
+    [Fact]
+    public void Invocation_expression_result_cannot_be_ignored()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -84,15 +84,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
-            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 12);
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 12);
+    }
 
-        [Fact]
-        public void Invocation_expression_can_explicitly_be_ignored()
-        {
-            var source = @"
+    [Fact]
+    public void Invocation_expression_can_explicitly_be_ignored()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -109,14 +109,14 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.None());
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 
-        [Fact]
-        public void Invocation_expression_result_cannot_be_ignored_in_expression_body()
-        {
-            var source = @"
+    [Fact]
+    public void Invocation_expression_result_cannot_be_ignored_in_expression_body()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -131,15 +131,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
-            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
+    }
 
-        [Fact]
-        public void Assignment_expression_result_maybe_ignored_in_expression_body()
-        {
-            var source = @"
+    [Fact]
+    public void Assignment_expression_result_maybe_ignored_in_expression_body()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 static class C
@@ -151,14 +151,14 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.None());
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 
-        [Fact]
-        public void Invocation_expression_result_cannot_be_ignored_in_constructor_lambda_expression()
-        {
-            var source = @"
+    [Fact]
+    public void Invocation_expression_result_cannot_be_ignored_in_constructor_lambda_expression()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 sealed class Test
@@ -173,15 +173,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
-            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
+    }
 
-        [Fact]
-        public void Local_function_result_cannot_be_ignored()
-        {
-            var source = @"
+    [Fact]
+    public void Local_function_result_cannot_be_ignored()
+    {
+        var source = @"
                 using ProgressOnderwijsUtils.Collections;
 
                 sealed class Test
@@ -196,15 +196,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
-            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
+    }
 
-        [Fact]
-        public void All_kinds_of_assignments_are_allowed()
-        {
-            var source = @"
+    [Fact]
+    public void All_kinds_of_assignments_are_allowed()
+    {
+        var source = @"
                 using System.Collections.Generic;
                 using ProgressOnderwijsUtils.Collections;
 
@@ -233,14 +233,14 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.None());
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 
-        [Fact]
-        public void Func_cannot_be_assigned_to_action()
-        {
-            var source = @"
+    [Fact]
+    public void Func_cannot_be_assigned_to_action()
+    {
+        var source = @"
                 using System;
                 using System.Collections.Generic;
                 using ProgressOnderwijsUtils.Collections;
@@ -270,15 +270,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
-            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 7, 12, 17, 18, 20, 25, }));
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
+        PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 7, 12, 17, 18, 20, 25, }));
+    }
 
-        [Fact]
-        public void Func_invocation_cannot_be_ignored()
-        {
-            var source = @"
+    [Fact]
+    public void Func_invocation_cannot_be_ignored()
+    {
+        var source = @"
                 using System;
                 using ProgressOnderwijsUtils.Collections;
                 
@@ -296,9 +296,8 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
                 }
             ";
 
-            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
-            PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
-            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 10, 14, }));
-        }
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+        PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
+        PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 10, 14, }));
     }
 }

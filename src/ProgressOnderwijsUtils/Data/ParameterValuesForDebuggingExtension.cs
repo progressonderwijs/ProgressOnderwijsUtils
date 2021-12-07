@@ -1,33 +1,32 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils;
+
+public static class ParameterValuesForDebuggingExtension
 {
-    public static class ParameterValuesForDebuggingExtension
+    [Pure]
+    public static object[] ParameterValuesForDebugging(this ParameterizedSql sql)
     {
-        [Pure]
-        public static object[] ParameterValuesForDebugging(this ParameterizedSql sql)
+        var collector = EquatableParameterValueCollector.Create();
+        sql.AppendTo(ref collector);
+        return collector.arguments.ToArray();
+    }
+
+    struct EquatableParameterValueCollector : ICommandFactory
+    {
+        public List<object> arguments;
+
+        public string RegisterParameterAndGetName<T>(T o)
+            where T : IQueryParameter
         {
-            var collector = EquatableParameterValueCollector.Create();
-            sql.AppendTo(ref collector);
-            return collector.arguments.ToArray();
+            arguments.Add(o.EquatableValue);
+            return "";
         }
 
-        struct EquatableParameterValueCollector : ICommandFactory
-        {
-            public List<object> arguments;
+        public void AppendSql(string sql, int startIndex, int length) { }
 
-            public string RegisterParameterAndGetName<T>(T o)
-                where T : IQueryParameter
-            {
-                arguments.Add(o.EquatableValue);
-                return "";
-            }
-
-            public void AppendSql(string sql, int startIndex, int length) { }
-
-            public static EquatableParameterValueCollector Create()
-                => new EquatableParameterValueCollector { arguments = new List<object>() };
-        }
+        public static EquatableParameterValueCollector Create()
+            => new EquatableParameterValueCollector { arguments = new List<object>() };
     }
 }

@@ -1,25 +1,24 @@
 using System.IO;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils;
+
+public static class StreamExtensions
 {
-    public static class StreamExtensions
+    /// <summary>
+    /// Reads the specified number of bytes.
+    /// </summary>
+    /// <exception cref="EndOfStreamException">thrown when EOF is reached before the needed number of bytes are read</exception>
+    public static byte[] ReadUntil(this Stream stream, int numberOfBytesToRead)
     {
-        /// <summary>
-        /// Reads the specified number of bytes.
-        /// </summary>
-        /// <exception cref="EndOfStreamException">thrown when EOF is reached before the needed number of bytes are read</exception>
-        public static byte[] ReadUntil(this Stream stream, int numberOfBytesToRead)
-        {
-            var result = new byte[numberOfBytesToRead];
-            var offset = 0;
-            while (offset < result.Length) {
-                var n = stream.Read(result, offset, result.Length - offset);
-                if (n == 0) {
-                    throw new EndOfStreamException();
-                }
-                offset += n;
+        var result = new byte[numberOfBytesToRead];
+        var offset = 0;
+        while (offset < result.Length) {
+            var n = stream.Read(result, offset, result.Length - offset);
+            if (n == 0) {
+                throw new EndOfStreamException();
             }
-            return result;
+            offset += n;
         }
+        return result;
     }
 }

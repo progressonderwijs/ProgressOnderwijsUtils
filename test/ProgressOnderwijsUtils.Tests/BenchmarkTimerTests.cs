@@ -1,12 +1,11 @@
 using System;
 using Xunit;
 
-namespace ProgressOnderwijsUtils.Tests
+namespace ProgressOnderwijsUtils.Tests;
+
+public sealed class BenchmarkTimerTests
 {
-    public sealed class BenchmarkTimerTests
-    {
-        [Fact]
-        public void ArgVerify()
-            => Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
-    }
+    [Fact]
+    public void ArgVerify()
+        => Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
 }
