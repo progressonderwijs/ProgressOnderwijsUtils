@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Data.SQLite;
 using System.Data.SqlTypes;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 

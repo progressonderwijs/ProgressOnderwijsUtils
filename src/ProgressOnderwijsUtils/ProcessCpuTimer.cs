@@ -1,6 +1,3 @@
-using System;
-using System.Diagnostics;
-
 namespace ProgressOnderwijsUtils;
 
 public sealed class ProcessCpuTimer

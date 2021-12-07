@@ -1,11 +1,3 @@
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using ExpressionToCodeLib;
-using Microsoft.Data.SqlClient;
-using Xunit;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class PocoObjectMapperTest : TransactedLocalConnection

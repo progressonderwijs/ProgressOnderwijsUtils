@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using BenchmarkDotNet.Attributes;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtilsBenchmarks;
 
 [MemoryDiagnoser]

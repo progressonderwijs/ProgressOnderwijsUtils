@@ -1,9 +1,3 @@
-using System;
-using System.Xml.Linq;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Html;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class HtmlSanitizerTest

@@ -1,6 +1,3 @@
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly

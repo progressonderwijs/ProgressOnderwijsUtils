@@ -1,8 +1,3 @@
-using System.Text;
-using System.Xml.Linq;
-using ExpressionToCodeLib;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class XmlCompressionTest

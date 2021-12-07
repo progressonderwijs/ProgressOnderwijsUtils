@@ -1,11 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Linq;
-using System;
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtils.Html;
 #pragma warning disable IDE0057 // Use range operator; slower
 

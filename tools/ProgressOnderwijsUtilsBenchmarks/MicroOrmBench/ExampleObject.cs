@@ -1,8 +1,3 @@
-using System;
-using System.Runtime.CompilerServices;
-using ProgressOnderwijsUtils;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 public sealed class ExampleObject : IWrittenImplicitly

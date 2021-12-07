@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ProgressOnderwijsUtils.Html;
 
 public static class LimitLengthExtension

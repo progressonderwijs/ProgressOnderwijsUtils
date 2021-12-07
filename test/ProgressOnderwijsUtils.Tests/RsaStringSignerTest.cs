@@ -1,6 +1,4 @@
 using System.Security.Cryptography.X509Certificates;
-using ExpressionToCodeLib;
-using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests;
 

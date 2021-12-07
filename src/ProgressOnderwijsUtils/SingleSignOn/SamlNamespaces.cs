@@ -1,5 +1,3 @@
-using System.Xml.Linq;
-
 namespace ProgressOnderwijsUtils.SingleSignOn;
 
 public static class SamlNamespaces

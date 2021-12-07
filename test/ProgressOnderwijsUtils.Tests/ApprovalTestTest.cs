@@ -1,8 +1,3 @@
-using System;
-using System.IO;
-using ExpressionToCodeLib;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class ApprovalTestTest

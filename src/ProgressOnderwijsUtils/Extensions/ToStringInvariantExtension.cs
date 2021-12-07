@@ -1,8 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils;
 
 public static class ToStringInvariantExtension

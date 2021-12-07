@@ -1,7 +1,3 @@
-using System.Linq;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
-using Xunit;
 using IntSet = ProgressOnderwijsUtils.Collections.SortedSet<int, ProgressOnderwijsUtils.Tests.Collections.IntOrdering>;
 
 namespace ProgressOnderwijsUtils.Tests.Collections;

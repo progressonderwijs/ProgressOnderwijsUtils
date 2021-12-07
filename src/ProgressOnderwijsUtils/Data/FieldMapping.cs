@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtils;
 
 public readonly struct BulkInsertFieldMapping

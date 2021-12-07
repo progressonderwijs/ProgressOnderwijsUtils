@@ -1,5 +1,3 @@
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtils.Tests.Collections;
 
 //For testing SortedSet.

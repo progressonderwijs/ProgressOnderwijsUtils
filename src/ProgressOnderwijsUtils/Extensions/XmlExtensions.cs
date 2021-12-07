@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Xml;
-
 namespace ProgressOnderwijsUtils;
 
 public static class XmlExtensions

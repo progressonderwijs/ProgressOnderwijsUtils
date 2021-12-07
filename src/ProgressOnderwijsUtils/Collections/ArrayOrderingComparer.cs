@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace ProgressOnderwijsUtils.Collections;
 
 public sealed class ArrayOrderingComparer<T> : IComparer<T[]?>

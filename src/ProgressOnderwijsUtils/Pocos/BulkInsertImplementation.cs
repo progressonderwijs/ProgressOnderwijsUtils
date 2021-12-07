@@ -1,12 +1,4 @@
-using System;
-using System.Data;
 using System.Data.Common;
-using Microsoft.Data.SqlClient;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils;
 

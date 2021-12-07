@@ -1,6 +1,3 @@
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record ComputedColumnSqlDefinition(DbObjectId ObjectId, DbColumnId ColumnId, string Definition, bool IsPersisted) : IWrittenImplicitly

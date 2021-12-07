@@ -1,12 +1,4 @@
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Html;
-using Xunit;
-using static ProgressOnderwijsUtils.Html.Tags;
 
 namespace ProgressOnderwijsUtils.Tests;
 

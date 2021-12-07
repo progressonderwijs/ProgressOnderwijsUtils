@@ -1,16 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
-using JetBrains.Annotations;
 using MoreLinq;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Collections;
 
 // ReSharper disable ClassCanBeSealed.Global  - for Benchmark.NET
 namespace ProgressOnderwijsUtilsBenchmarks;

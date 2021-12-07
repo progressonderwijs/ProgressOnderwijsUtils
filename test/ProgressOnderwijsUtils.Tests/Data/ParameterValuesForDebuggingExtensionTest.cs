@@ -1,9 +1,3 @@
-using System;
-using System.Linq;
-using ExpressionToCodeLib;
-using Xunit;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public static class ParameterValuesForDebuggingExtensionTest

@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Globalization;
-using System.Linq;
-using ExpressionToCodeLib;
-
 namespace ProgressOnderwijsUtils;
 
 public static class SqlCommandDebugStringifier

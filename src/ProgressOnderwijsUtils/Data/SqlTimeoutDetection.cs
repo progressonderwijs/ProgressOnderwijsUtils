@@ -1,6 +1,3 @@
-using System;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils;
 
 public static class SqlTimeoutDetection

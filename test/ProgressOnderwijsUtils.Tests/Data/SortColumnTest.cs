@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class SortColumnTest

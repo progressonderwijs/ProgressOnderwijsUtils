@@ -1,13 +1,6 @@
-using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using System.Xml.Schema;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.SingleSignOn;
 

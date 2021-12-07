@@ -1,6 +1,3 @@
-using System;
-using System.Data;
-
 namespace ProgressOnderwijsUtils;
 
 readonly struct ColumnOrdering : IEquatable<ColumnOrdering>

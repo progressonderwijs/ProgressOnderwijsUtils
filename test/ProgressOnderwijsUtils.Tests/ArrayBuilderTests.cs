@@ -1,7 +1,3 @@
-using System.Linq;
-using ProgressOnderwijsUtils.Collections;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class ArrayBuilderTests

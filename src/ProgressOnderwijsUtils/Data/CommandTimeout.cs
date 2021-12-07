@@ -1,7 +1,3 @@
-using System;
-using Microsoft.Data.SqlClient;
-using System.Threading;
-
 namespace ProgressOnderwijsUtils;
 
 public readonly struct CommandTimeoutDefaults

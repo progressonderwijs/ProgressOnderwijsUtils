@@ -1,6 +1,3 @@
-using ProgressOnderwijsUtils.Html;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 using static Tags;

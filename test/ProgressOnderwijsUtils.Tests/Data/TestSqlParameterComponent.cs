@@ -1,8 +1,3 @@
-using System;
-using ExpressionToCodeLib;
-using Xunit;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class TestSqlParameterComponent : TransactedLocalConnection

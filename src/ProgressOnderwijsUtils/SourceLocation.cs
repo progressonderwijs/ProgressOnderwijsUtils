@@ -1,6 +1,3 @@
-using System.Diagnostics.Contracts;
-using System.Runtime.CompilerServices;
-
 namespace ProgressOnderwijsUtils;
 
 public struct SourceLocation

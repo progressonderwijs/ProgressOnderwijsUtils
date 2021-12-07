@@ -1,6 +1,3 @@
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record CheckConstraintSqlDefinition(DbObjectId TableObjectId, DbObjectId CheckConstraintObjectId, string Name, string Definition, bool IsNotTrusted, bool IsDisabled) : IWrittenImplicitly

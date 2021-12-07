@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Running;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 namespace ProgressOnderwijsUtilsBenchmarks;

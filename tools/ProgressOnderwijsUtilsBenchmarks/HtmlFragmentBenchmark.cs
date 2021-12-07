@@ -1,13 +1,6 @@
-using System.IO;
-using System.Text;
 using AngleSharp;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Html;
 using ProgressOnderwijsUtils.Tests;
 
 namespace ProgressOnderwijsUtilsBenchmarks;

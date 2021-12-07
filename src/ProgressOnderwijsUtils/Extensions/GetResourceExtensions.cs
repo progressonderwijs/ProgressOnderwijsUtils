@@ -1,7 +1,3 @@
-using System;
-using System.IO;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils;
 
 public static class GetResourceExtensions

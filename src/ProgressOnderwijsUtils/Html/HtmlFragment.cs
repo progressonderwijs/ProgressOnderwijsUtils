@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Html;
 

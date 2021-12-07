@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using ExpressionToCodeLib;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class SetEqualsTest

@@ -1,7 +1,4 @@
-using System;
-using System.Xml.Linq;
 using System.Xml.Schema;
-using Xunit;
 using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtils.Tests;

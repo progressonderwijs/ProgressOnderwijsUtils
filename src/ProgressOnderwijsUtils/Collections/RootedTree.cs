@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils.Collections;
 
 public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>, T>

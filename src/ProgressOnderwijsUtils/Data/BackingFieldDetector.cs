@@ -1,7 +1,3 @@
-using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-
 namespace ProgressOnderwijsUtils;
 
 static class BackingFieldDetector

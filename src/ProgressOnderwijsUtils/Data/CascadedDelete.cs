@@ -1,13 +1,4 @@
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SchemaReflection;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 namespace ProgressOnderwijsUtils;

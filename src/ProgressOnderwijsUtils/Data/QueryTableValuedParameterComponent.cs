@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-
 namespace ProgressOnderwijsUtils;
 
 sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, ISqlComponent

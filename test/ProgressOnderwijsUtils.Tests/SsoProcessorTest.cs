@@ -1,14 +1,6 @@
-using System;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Xml;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SingleSignOn;
-using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests;
 

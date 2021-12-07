@@ -1,6 +1,3 @@
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record DefaultValueConstraintSqlDefinition(DbObjectId ParentObjectId, DbColumnId ParentColumnId, string Name, string Definition) : IWrittenImplicitly

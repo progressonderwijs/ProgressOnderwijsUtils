@@ -1,8 +1,3 @@
-using System.Linq;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Html;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 using static Tags;

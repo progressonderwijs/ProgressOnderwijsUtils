@@ -1,8 +1,3 @@
-using System;
-using System.Text;
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record SequenceSqlDefinition(

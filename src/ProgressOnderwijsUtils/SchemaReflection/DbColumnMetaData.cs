@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using System.Text.RegularExpressions;
-using JetBrains.Annotations;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record DbColumnMetaData(

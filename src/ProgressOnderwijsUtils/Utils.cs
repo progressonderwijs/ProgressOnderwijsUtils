@@ -1,15 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net.Mail;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtils;
 
 public static class Utils

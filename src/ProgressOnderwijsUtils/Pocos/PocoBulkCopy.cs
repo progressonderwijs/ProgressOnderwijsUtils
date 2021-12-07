@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;

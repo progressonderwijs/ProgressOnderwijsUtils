@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using JetBrains.Annotations;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class ReferenceEqualityComparerTest

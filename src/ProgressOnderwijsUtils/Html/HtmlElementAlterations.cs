@@ -1,5 +1,3 @@
-using System;
-
 namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlElementAlterations

@@ -1,5 +1,3 @@
-using System;
-
 namespace ProgressOnderwijsUtils;
 
 public static class DisposableExtensions

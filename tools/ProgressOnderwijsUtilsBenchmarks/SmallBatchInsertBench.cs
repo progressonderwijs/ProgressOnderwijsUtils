@@ -1,14 +1,6 @@
-using System;
-using System.Linq;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
-using Microsoft.Data.SqlClient;
 using Perfolizer.Mathematics.OutlierDetection;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Tests.Data;
-using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 

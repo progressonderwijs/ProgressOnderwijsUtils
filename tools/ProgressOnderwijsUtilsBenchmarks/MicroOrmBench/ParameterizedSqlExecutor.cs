@@ -1,7 +1,3 @@
-using System.Linq;
-using ProgressOnderwijsUtils;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 static class ParameterizedSqlExecutor

@@ -1,8 +1,3 @@
-using System;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public enum FkReferentialAction : byte

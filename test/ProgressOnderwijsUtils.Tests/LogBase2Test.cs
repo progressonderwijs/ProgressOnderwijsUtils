@@ -1,7 +1,3 @@
-using System;
-using ExpressionToCodeLib;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class LogBase2Test

@@ -1,6 +1,3 @@
-using Xunit;
-using ProgressOnderwijsUtils.Html;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class WikiPageHtml5Approval

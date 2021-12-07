@@ -1,10 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Threading;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class ActionRetrierTest

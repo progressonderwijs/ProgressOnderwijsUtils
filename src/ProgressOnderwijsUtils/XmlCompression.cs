@@ -1,8 +1,3 @@
-using System;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 using ZlibWithDictionary;
 
 namespace ProgressOnderwijsUtils;

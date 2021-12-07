@@ -1,9 +1,3 @@
-using System;
-using System.Data;
-using System.Linq;
-using System.Text.RegularExpressions;
-using ExpressionToCodeLib;
-
 namespace ProgressOnderwijsUtils;
 
 /// <summary>

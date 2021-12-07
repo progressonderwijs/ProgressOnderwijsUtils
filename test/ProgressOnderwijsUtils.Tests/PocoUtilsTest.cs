@@ -1,9 +1,3 @@
-using System;
-using System.Linq;
-using ExpressionToCodeLib;
-using JetBrains.Annotations;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public interface ISimpleInterface

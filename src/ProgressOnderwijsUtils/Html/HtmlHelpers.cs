@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
-
 namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlHelpers

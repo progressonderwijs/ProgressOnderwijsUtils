@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace ProgressOnderwijsUtils;
 
 public static class StreamExtensions

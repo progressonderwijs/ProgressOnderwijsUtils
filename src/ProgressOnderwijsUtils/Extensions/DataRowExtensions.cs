@@ -1,6 +1,3 @@
-using System.Data;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils;
 
 /// <summary>

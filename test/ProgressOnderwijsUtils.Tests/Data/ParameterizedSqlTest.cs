@@ -1,10 +1,3 @@
-using System;
-using System.Linq;
-using ExpressionToCodeLib;
-using Microsoft.Data.SqlClient;
-using Xunit;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class ParameterizedSqlTest

@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using ExpressionToCodeLib;
-using Microsoft.Data.SqlClient;
-using ProgressOnderwijsUtils.Collections;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils;
 
 public static class SmallBatchInsertImplementation

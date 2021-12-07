@@ -1,9 +1,3 @@
-using System;
-using System.Linq;
-using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests.Collections;
 
 public sealed class SequenceEqualityComparerTest

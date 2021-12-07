@@ -1,11 +1,5 @@
-using System;
-using System.IO;
 using System.IO.Compression;
-using System.Security.Cryptography;
 using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace ProgressOnderwijsUtils.SingleSignOn;
 

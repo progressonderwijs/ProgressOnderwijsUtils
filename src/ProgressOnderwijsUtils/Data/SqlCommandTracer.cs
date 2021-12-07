@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Diagnostics;
-
 namespace ProgressOnderwijsUtils;
 
 public struct SqlTraceEvent

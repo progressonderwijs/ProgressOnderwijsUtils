@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 namespace ProgressOnderwijsUtils;
 
 public sealed class CollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>

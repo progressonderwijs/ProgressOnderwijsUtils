@@ -1,6 +1,3 @@
-using System;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils;
 
 [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Class)]

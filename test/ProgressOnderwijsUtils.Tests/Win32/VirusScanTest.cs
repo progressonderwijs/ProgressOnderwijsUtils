@@ -1,9 +1,4 @@
-using System;
-using System.IO;
-using System.Text;
-using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Win32;
-using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests.Win32;
 

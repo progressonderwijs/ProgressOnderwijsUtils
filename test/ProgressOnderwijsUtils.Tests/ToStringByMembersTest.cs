@@ -1,7 +1,3 @@
-using System;
-using JetBrains.Annotations;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 [UsedImplicitly(ImplicitUseTargetFlags.Members)] // to test valuebase.ToString

@@ -1,16 +1,8 @@
 //#define SINGLETHREADED
 
-using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
 using System.Data.SQLite;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Dapper;
 using IncrementalMeanVarianceAccumulator;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 

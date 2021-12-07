@@ -1,5 +1,3 @@
-using System;
-
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public static class DbQualifiedNameUtils

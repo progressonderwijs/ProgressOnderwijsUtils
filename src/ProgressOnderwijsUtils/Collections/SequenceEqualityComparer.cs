@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
-
 namespace ProgressOnderwijsUtils.Collections;
 
 public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> UnderlyingElementComparer, bool NullCountsAsEmpty) : IEqualityComparer<T[]?>, IEqualityComparer<IEnumerable<T>?>

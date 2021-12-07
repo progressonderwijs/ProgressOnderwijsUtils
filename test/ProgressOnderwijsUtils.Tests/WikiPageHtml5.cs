@@ -1,5 +1,3 @@
-using ProgressOnderwijsUtils.Html;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 using static Tags;

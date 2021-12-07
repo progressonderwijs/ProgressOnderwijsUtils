@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-
 namespace ProgressOnderwijsUtils;
 
 public static class UriExtensions

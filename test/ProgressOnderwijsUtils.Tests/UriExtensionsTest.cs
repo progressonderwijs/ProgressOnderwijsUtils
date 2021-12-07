@@ -1,9 +1,3 @@
-using System;
-using System.IO;
-using System.Reflection;
-using ExpressionToCodeLib;
-using Xunit;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class UriExtensionsTest

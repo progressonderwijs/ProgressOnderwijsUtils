@@ -1,7 +1,3 @@
-using System;
-using Microsoft.Data.SqlClient;
-using static ProgressOnderwijsUtils.SafeSql;
-
 namespace ProgressOnderwijsUtils;
 
 public static class SqlServerUtils
