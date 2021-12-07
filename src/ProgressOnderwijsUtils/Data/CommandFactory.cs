@@ -51,7 +51,7 @@ public struct ReusableCommand : IDisposable
 /// </summary>
 struct CommandFactory : ICommandFactory
 {
-    static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
+    static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new();
     static readonly ArrayPool<SqlParamArgs> sqlParamsArgsPool = ArrayPool<SqlParamArgs>.Shared;
 
     static Dictionary<object, string> GetLookup()
@@ -59,7 +59,7 @@ struct CommandFactory : ICommandFactory
         if (nameLookupBag.TryDequeue(out var lookup)) {
             return lookup;
         }
-        return new Dictionary<object, string>(8);
+        return new(8);
     }
 
     FastShortStringBuilder queryText;
@@ -68,11 +68,11 @@ struct CommandFactory : ICommandFactory
     Dictionary<object, string> lookup;
 
     public static CommandFactory Create()
-        => new CommandFactory {
+        => new() {
             queryText = FastShortStringBuilder.Create(),
             paramObjs = sqlParamsArgsPool.Rent(16),
             paramCount = 0,
-            lookup = GetLookup()
+            lookup = GetLookup(),
         };
 
     public ReusableCommand FinishBuilding(SqlConnection conn, CommandTimeout timeout)
@@ -98,7 +98,7 @@ struct CommandFactory : ICommandFactory
         FreeParamsAndLookup();
 
         var timer = conn.Tracer()?.StartCommandTimer(command);
-        return new ReusableCommand(command, timer);
+        return new(command, timer);
     }
 
     public string FinishBuilding_CommandTextOnly()
@@ -165,7 +165,7 @@ struct FastShortStringBuilder
     public int CurrentLength;
 
     public static FastShortStringBuilder Create()
-        => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(4096) };
+        => new() { CurrentCharacterBuffer = Allocate(4096), };
 
     static char[] Allocate(int length)
         => ArrayPool<char>.Shared.Rent(length);
@@ -174,7 +174,7 @@ struct FastShortStringBuilder
         => ArrayPool<char>.Shared.Return(CurrentCharacterBuffer);
 
     public static FastShortStringBuilder Create(int length)
-        => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(length) };
+        => new() { CurrentCharacterBuffer = Allocate(length), };
 
     public void AppendText(string text)
         => AppendText(text, 0, text.Length);
@@ -219,7 +219,7 @@ struct DebugCommandFactory : ICommandFactory
 
     public static string DebugTextFor(ISqlComponent? impl)
     {
-        var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
+        var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create(), };
         impl?.AppendTo(ref factory);
         return factory.debugText.FinishBuilding();
     }

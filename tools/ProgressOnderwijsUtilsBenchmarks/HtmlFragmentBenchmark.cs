@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsBenchmarks;
 public class HtmlFragmentBenchmark
 {
     static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
-    readonly MemoryStream ms = new MemoryStream();
+    readonly MemoryStream ms = new();
 
     [Benchmark]
     public void SerializeLargeDocument()

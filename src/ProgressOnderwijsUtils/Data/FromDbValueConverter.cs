@@ -136,7 +136,7 @@ public static class DbValueConverter
         } else if (AutomaticValueConverters.GetOrNull(val.GetType()) is { } sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
             return sourceConvertible.ConvertToProvider(val);
         } else {
-            return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
+            return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val, });
         }
     }
 

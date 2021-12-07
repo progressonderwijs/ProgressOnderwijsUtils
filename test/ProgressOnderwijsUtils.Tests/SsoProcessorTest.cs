@@ -11,16 +11,16 @@ public sealed class SsoProcessorTest
     {
         var certificate = new X509Certificate2("testCert.pfx", "testPassword");
         var rawUri = SsoProcessor.GetRedirectUrl(
-            new AuthnRequest(
+            new(
                 "123",
                 "http://example.com",
-                new ServiceProviderConfig {
+                new() {
                     certificate = certificate,
-                    entity = "http://example.com"
+                    entity = "http://example.com",
                 }
             )
         );
-        var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=" }, StringSplitOptions.None);
+        var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=", }, StringSplitOptions.None);
         var signedData = Encoding.UTF8.GetBytes(querySplit[0]);
         var rsaKey = certificate.GetRSAPublicKey().AssertNotNull();
         var signature = Convert.FromBase64String(Uri.UnescapeDataString(querySplit[1]));
@@ -34,9 +34,9 @@ public sealed class SsoProcessorTest
         var base64EncodedRequest = new AuthnRequest(
             "123",
             "http://example.com",
-            new ServiceProviderConfig {
+            new() {
                 certificate = certificate,
-                entity = "http://example.com"
+                entity = "http://example.com",
             }
         ).EncodeAndSignAsFormArgument(certificate.GetRSAPrivateKey().AssertNotNull());
         var rawRequest = Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedRequest));

@@ -21,7 +21,7 @@ public static class StringExtensions
         }
     }
 
-    static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+    static readonly Regex COLLAPSE_WHITESPACE = new(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
     /// <summary>
     /// HTML-alike whitespace collapsing of this string; however, this method also trims.

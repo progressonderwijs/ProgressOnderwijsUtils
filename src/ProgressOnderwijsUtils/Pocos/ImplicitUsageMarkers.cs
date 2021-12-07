@@ -24,9 +24,7 @@ public interface IUsedImplicitly : IReadImplicitly, IWrittenImplicitly { }
 public sealed class UsefulToKeepAttribute : Attribute
 {
     public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason)
-    {
-        Reason = reason;
-    }
+        => Reason = reason;
 
     public string Reason { get; }
 }

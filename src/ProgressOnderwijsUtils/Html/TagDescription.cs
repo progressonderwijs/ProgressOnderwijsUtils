@@ -15,7 +15,7 @@ struct TagDescription
     static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
         typeof(Tags).GetTypeInfo()
             .GetFields(BindingFlags.Static | BindingFlags.Public)
-            .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)! })
+            .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)!, })
             .ToDictionary(
                 field => field.FieldValue.TagName.AssertNotNull(),
                 field => new TagDescription {
@@ -23,7 +23,7 @@ struct TagDescription
                     EmptyValue = field.FieldValue,
                     FieldName = field.FieldName,
                     IsSelfClosing = !(field.FieldValue is IHtmlElementAllowingContent),
-                    AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue)
+                    AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue),
                 },
                 StringComparer.OrdinalIgnoreCase
             );
@@ -43,7 +43,7 @@ struct TagDescription
                 }
             )
             .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })!).Attributes.Last().Name,
+                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", })!).Attributes.Last().Name,
                 method => method.Name,
                 StringComparer.OrdinalIgnoreCase
             );
@@ -51,7 +51,7 @@ struct TagDescription
     public static TagDescription LookupTag(string tagName)
         => ByTagName.TryGetValue(tagName, out var desc)
             ? desc
-            : new TagDescription {
+            : new() {
                 TagName = tagName,
                 FieldName = null,
                 IsSelfClosing = false,

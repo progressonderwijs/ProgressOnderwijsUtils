@@ -24,6 +24,6 @@ public static class ParameterValuesForDebuggingExtension
         public void AppendSql(string sql, int startIndex, int length) { }
 
         public static EquatableParameterValueCollector Create()
-            => new EquatableParameterValueCollector { arguments = new List<object>() };
+            => new() { arguments = new(), };
     }
 }

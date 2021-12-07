@@ -22,5 +22,5 @@ public sealed class ProcessCpuTimer
         => wallclock.Elapsed;
 
     public static ProcessCpuTimer StartNew()
-        => new ProcessCpuTimer();
+        => new();
 }

@@ -31,7 +31,7 @@ public struct ParameterizedSql
     public static ParameterizedSql Empty
         => new();
 
-    public static readonly ParameterizedSql TruthyEmpty = new ParameterizedSql(new StringSqlFragment(""));
+    public static readonly ParameterizedSql TruthyEmpty = new(new StringSqlFragment(""));
 
     public bool IsEmpty
         => impl == TruthyEmpty.impl || this == Empty;
@@ -165,9 +165,7 @@ sealed class StringSqlFragment : ISqlComponent
     readonly string rawSqlString;
 
     public StringSqlFragment(string rawSqlString)
-    {
-        this.rawSqlString = rawSqlString;
-    }
+        => this.rawSqlString = rawSqlString;
 
     public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
         where TCommandFactory : struct, ICommandFactory
@@ -179,9 +177,7 @@ sealed class SingleParameterSqlFragment : ISqlComponent
     readonly object? paramVal;
 
     public SingleParameterSqlFragment(object? paramVal)
-    {
-        this.paramVal = paramVal;
-    }
+        => this.paramVal = paramVal;
 
     public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
         where TCommandFactory : struct, ICommandFactory
@@ -204,7 +200,7 @@ public static class SafeSql
 static class ParameterizedSqlFactory
 {
     public static ParameterizedSql BuildableToQuery(this ISqlComponent? q)
-        => new ParameterizedSql(q);
+        => new(q);
 
     public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery)
         => interpolatedQuery.Format == "" ? ParameterizedSql.Empty : new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
@@ -238,9 +234,7 @@ sealed class SeveralSqlFragments : ISqlComponent
     readonly ISqlComponent[]? kids;
 
     public SeveralSqlFragments(ISqlComponent[]? kids)
-    {
-        this.kids = kids;
-    }
+        => this.kids = kids;
 
     public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
         where TCommandFactory : struct, ICommandFactory
@@ -261,9 +255,7 @@ sealed class InterpolatedSqlFragment : ISqlComponent
     readonly FormattableString interpolatedQuery;
 
     public InterpolatedSqlFragment(FormattableString interpolatedQuery)
-    {
-        this.interpolatedQuery = interpolatedQuery;
-    }
+        => this.interpolatedQuery = interpolatedQuery;
 
     public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
         where TCommandFactory : struct, ICommandFactory
@@ -291,8 +283,7 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         factory.AppendSql(str, pos, str.Length - pos);
     }
 
-    static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
-        = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
+    static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings = new(new ReferenceEqualityComparer<string>());
 
     static ParamRefSubString[] GetFormatStringParamRefs(string formatstring)
         => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
@@ -326,10 +317,10 @@ sealed class InterpolatedSqlFragment : ISqlComponent
                     if (c >= '0' && c <= '9') {
                         num = num * 10 + (c - '0');
                     } else if (c == '}') {
-                        return new ParamRefSubString {
+                        return new() {
                             StartIndex = startPos,
                             EndIndex = pos + 1,
-                            ReferencedParameterIndex = num
+                            ReferencedParameterIndex = num,
                         };
                     } else {
                         throw new ArgumentException("format string invalid: an opening brace must be followed by one or more decimal digits which must be followed by a closing brace", nameof(query));
@@ -349,6 +340,6 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         public bool WasNotFound()
             => ReferencedParameterIndex < 0;
 
-        public static readonly ParamRefSubString NotFound = new ParamRefSubString { ReferencedParameterIndex = -1 };
+        public static readonly ParamRefSubString NotFound = new() { ReferencedParameterIndex = -1, };
     }
 }

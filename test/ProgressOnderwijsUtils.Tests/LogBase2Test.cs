@@ -8,10 +8,10 @@ public sealed class LogBase2Test
         for (uint i = 1; i < uint.MaxValue; i++) {
             var res = Utils.LogBase2RoundedDown(i);
             if (!(i < 1ul << res + 1)) {
-                throw new Exception($"i < (1ul << res + 1) FAILED for i:{i}; res: {res}");
+                throw new($"i < (1ul << res + 1) FAILED for i:{i}; res: {res}");
             }
             if (!(1ul << res <= i)) {
-                throw new Exception($"(1ul << res) <= i FAILED for i:{i}; res: {res}");
+                throw new($"(1ul << res) <= i FAILED for i:{i}; res: {res}");
             }
         }
         PAssert.That(() => Utils.LogBase2RoundedDown(0) == 0);
@@ -24,10 +24,10 @@ public sealed class LogBase2Test
         for (uint i = 2; i < uint.MaxValue; i++) {
             var res = Utils.LogBase2RoundedUp(i);
             if (!(i <= 1ul << res)) {
-                throw new Exception($"i <= (1ul << res) FAILED for i:{i}; res: {res}");
+                throw new($"i <= (1ul << res) FAILED for i:{i}; res: {res}");
             }
             if (!(1ul << res - 1 < i)) {
-                throw new Exception($"(1ul << res - 1) < i FAILED for i:{i}; res: {res}");
+                throw new($"(1ul << res - 1) < i FAILED for i:{i}; res: {res}");
             }
         }
         PAssert.That(() => Utils.LogBase2RoundedUp(0) == 0);

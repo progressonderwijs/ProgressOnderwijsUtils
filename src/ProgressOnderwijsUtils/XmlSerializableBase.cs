@@ -49,7 +49,7 @@ interface IXmlSerializeHelper
 
 public sealed class XmlSerializerHelper<T> : IXmlSerializeHelper
 {
-    public static readonly XmlSerializer serializer = new XmlSerializer(typeof(T));
+    public static readonly XmlSerializer serializer = new(typeof(T));
 
     public static T? Deserialize(XDocument from)
     {

@@ -3,11 +3,11 @@ namespace ProgressOnderwijsUtils.Tests.Data;
 public sealed class PocoBulkCopyTest : TransactedLocalConnection
 {
     static readonly BlaOk[] SampleObjects = {
-        new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
-        new BlaOk { Bla = "bla", Bla2 = "bla2", Id = 0 },
-        new BlaOk { Bla = "dfg", Bla2 = "bla342", Id = 1 },
-        new BlaOk { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2 },
-        new BlaOk { Bla2 = "", Id = 3 }
+        new() { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1, },
+        new() { Bla = "bla", Bla2 = "bla2", Id = 0, },
+        new() { Bla = "dfg", Bla2 = "bla342", Id = 1, },
+        new() { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2, },
+        new() { Bla2 = "", Id = 3, },
     };
 
     public sealed record BlaOk : IWrittenImplicitly, IReadImplicitly
@@ -139,7 +139,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
             = CreateTempTable();
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
+        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2, })));
     }
 
     [Fact]
@@ -159,8 +159,8 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         new[] {
             new ComputedColumnExample {
                 Id = 11,
-                Bla = "Something"
-            }
+                Bla = "Something",
+            },
         }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
         var fromDb = SQL(
@@ -206,8 +206,8 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         new[] {
             new ExcludingIdentityColumn {
                 Id = 11,
-                Bla = "Something"
-            }
+                Bla = "Something",
+            },
         }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
         var fromDb = SQL(
@@ -237,8 +237,8 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
             new IncludingIdentityColumn {
                 Id = 11,
                 AnIdentity = 37,
-                Bla = "Something"
-            }
+                Bla = "Something",
+            },
         }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
         var fromDb = SQL(
@@ -267,8 +267,8 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         new[] {
             new IncludingIdentityColumn {
                 Id = 11,
-                Bla = "Something"
-            }
+                Bla = "Something",
+            },
         }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
 
         var fromDb = SQL(
@@ -305,8 +305,8 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         new[] {
             new ComputedColumnExample {
                 Id = 11,
-                Bla = "Something"
-            }
+                Bla = "Something",
+            },
         }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
         var fromDb = SQL(

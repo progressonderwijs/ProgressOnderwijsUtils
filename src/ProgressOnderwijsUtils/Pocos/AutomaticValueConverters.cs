@@ -52,11 +52,11 @@ public static class AutomaticValueConverters
         } else if (type.IsEnum) {
             var underlyingType = type.GetEnumUnderlyingType();
             if (underlyingType == typeof(ulong)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, ulongConverter.ProviderClrType).Invoke(null, new object[] { ulongConverter }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, ulongConverter.ProviderClrType).Invoke(null, new object[] { ulongConverter, }).AssertNotNull();
             } else if (underlyingType == typeof(uint)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, uintConverter.ProviderClrType).Invoke(null, new object[] { uintConverter }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, uintConverter.ProviderClrType).Invoke(null, new object[] { uintConverter, }).AssertNotNull();
             } else if (underlyingType == typeof(int)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, intPassThroughConverter.ProviderClrType).Invoke(null, new object[] { intPassThroughConverter }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, intPassThroughConverter.ProviderClrType).Invoke(null, new object[] { intPassThroughConverter, }).AssertNotNull();
             }
         }
 

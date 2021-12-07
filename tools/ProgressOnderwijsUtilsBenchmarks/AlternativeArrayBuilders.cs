@@ -204,7 +204,7 @@ static class AlternativeArrayBuilders
         T[][]? segments;
 
         public static WithSegmentsAsArray<T> Create()
-            => new WithSegmentsAsArray<T> { current = new T[InitSize] };
+            => new() { current = new T[InitSize], };
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
@@ -271,7 +271,7 @@ static class AlternativeArrayBuilders
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static WithoutInlineValues<T> Allocate()
-            => new WithoutInlineValues<T> { current = new T[InitSize], };
+            => new() { current = new T[InitSize], };
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         void Expand(T item)

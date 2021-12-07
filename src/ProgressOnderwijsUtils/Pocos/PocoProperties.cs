@@ -1,4 +1,5 @@
 // ReSharper disable once CheckNamespace
+
 namespace ProgressOnderwijsUtils;
 
 public interface IPocoProperties<out T> : IReadOnlyList<T>
@@ -20,7 +21,7 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
     public IReadOnlyDictionary<string, int> IndexByName
         => indexByName;
 
-    public static readonly PocoProperties<T> Instance = new PocoProperties<T>();
+    public static readonly PocoProperties<T> Instance = new();
 
     PocoProperties()
     {

@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
-public enum SortDirection { Asc, Desc }
+public enum SortDirection { Asc, Desc, }
 
 [Serializable]
 public readonly struct ColumnSort : IEquatable<ColumnSort>
@@ -22,11 +22,11 @@ public readonly struct ColumnSort : IEquatable<ColumnSort>
 
     [Pure]
     public ColumnSort WithReverseDirection()
-        => new ColumnSort(ColumnName.AssertNotNull(), SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
+        => new(ColumnName.AssertNotNull(), SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
 
     [Pure]
     public ColumnSort WithDifferentName(string newColumn)
-        => new ColumnSort(newColumn, SortDirection);
+        => new(newColumn, SortDirection);
 
     [Pure]
     public bool Equals(ColumnSort other)

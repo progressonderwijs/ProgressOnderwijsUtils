@@ -12,10 +12,10 @@ public readonly struct CommandTimeoutDefaults
         => ScaledBy(1.0);
 
     public static CommandTimeoutDefaults ScaledBy(double timeoutScalingFactor)
-        => new CommandTimeoutDefaults(0, timeoutScalingFactor);
+        => new(0, timeoutScalingFactor);
 
     public CommandTimeoutDefaults Resolve(CommandTimeout commandTimeout)
-        => new CommandTimeoutDefaults(commandTimeout.ComputeAbsoluteTimeout(this), TimeoutScalingFactor);
+        => new(commandTimeout.ComputeAbsoluteTimeout(this), TimeoutScalingFactor);
 }
 
 public readonly struct CommandTimeout : IEquatable<CommandTimeout>
@@ -41,13 +41,13 @@ public readonly struct CommandTimeout : IEquatable<CommandTimeout>
     /// Represents whatever timeout the connection specifies as default.
     /// </summary>
     public static CommandTimeout DeferToConnectionDefault
-        => new CommandTimeout(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
+        => new(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
 
     /// <summary>
     /// Represents an infinite (or at least very, very long) timeout.
     /// </summary>
     public static CommandTimeout WithoutTimeout
-        => new CommandTimeout(TimeoutKind.NoTimeout, 0);
+        => new(TimeoutKind.NoTimeout, 0);
 
     /// <summary>
     /// Represents a finite timeout in seconds that will NOT be scaled with the connection-specific timeout scaling factor.  If you want to work with scaling factors, use ScaledSeconds.
@@ -55,9 +55,9 @@ public readonly struct CommandTimeout : IEquatable<CommandTimeout>
     public static CommandTimeout AbsoluteSeconds(int timeoutInSeconds)
     {
         if (timeoutInSeconds > 0) {
-            return new CommandTimeout(TimeoutKind.AbsoluteTimeout, timeoutInSeconds);
+            return new(TimeoutKind.AbsoluteTimeout, timeoutInSeconds);
         } else if (timeoutInSeconds == 0) { //TODO: ban.
-            return new CommandTimeout(TimeoutKind.NoTimeout, 0);
+            return new(TimeoutKind.NoTimeout, 0);
         } else {
             throw new ArgumentOutOfRangeException(nameof(timeoutInSeconds), "timeouts must be positive");
         }
@@ -69,9 +69,9 @@ public readonly struct CommandTimeout : IEquatable<CommandTimeout>
     public static CommandTimeout ScaledSeconds(int timeoutInSeconds)
     {
         if (timeoutInSeconds > 0) {
-            return new CommandTimeout(TimeoutKind.ScaledTimeout, timeoutInSeconds);
+            return new(TimeoutKind.ScaledTimeout, timeoutInSeconds);
         } else if (timeoutInSeconds == 0) { //TODO: ban.
-            return new CommandTimeout(TimeoutKind.NoTimeout, 0);
+            return new(TimeoutKind.NoTimeout, 0);
         } else {
             throw new ArgumentOutOfRangeException(nameof(timeoutInSeconds), "timeouts must be positive");
         }
@@ -92,7 +92,7 @@ public readonly struct CommandTimeout : IEquatable<CommandTimeout>
             TimeoutKind.NoTimeout => 0,
             TimeoutKind.AbsoluteTimeout => backingTimeout,
             TimeoutKind.ScaledTimeout => Math.Max(1, (int)(0.5 + backingTimeout * defaults.TimeoutScalingFactor)),
-            _ => throw new InvalidOperationException()
+            _ => throw new InvalidOperationException(),
         };
 
     /// <summary>

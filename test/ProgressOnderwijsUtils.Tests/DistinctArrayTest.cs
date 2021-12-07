@@ -13,7 +13,7 @@ public sealed class DistinctArrayTest
     [Fact]
     public void Created_DistinctArray_from_distinct_is_same()
     {
-        var distinct = new[] { 1, 2 };
+        var distinct = new[] { 1, 2, };
         var sut = distinct.ToDistinctArrayFromDistinct();
 
         PAssert.That(() => sut.SetEqual(distinct));
@@ -22,7 +22,7 @@ public sealed class DistinctArrayTest
     [Fact]
     public void Created_DistinctArray_from_distinct_with_custom_comparer_is_same()
     {
-        var distinct = new[] { 1, 2 };
+        var distinct = new[] { 1, 2, };
         var sut = distinct.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
 
         PAssert.That(() => sut.SetEqual(distinct));
@@ -32,7 +32,7 @@ public sealed class DistinctArrayTest
     public void Creating_DistinctArray_from_not_distinct_gives_error()
         => Assert.ThrowsAny<ArgumentException>(
             () => {
-                var unused = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct();
+                var unused = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct();
             }
         );
 
@@ -40,7 +40,7 @@ public sealed class DistinctArrayTest
     public void Creating_DistinctArray_from_not_disBtinct_with_custom_comparer_gives_error()
         => Assert.ThrowsAny<ArgumentException>(
             () => {
-                var unused = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
+                var unused = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
             }
         );
 
@@ -59,7 +59,7 @@ public sealed class DistinctArrayTest
     [Fact]
     public void UncheckedDistinctArrayReturnsSameInstance()
     {
-        var ints = new[] { 1, 2 };
+        var ints = new[] { 1, 2, };
         var sut = ints.ToDistinctArrayFromDistinct_Unchecked();
 
         PAssert.That(() => sut.UnderlyingArrayThatShouldNeverBeMutated() == ints);
@@ -68,16 +68,16 @@ public sealed class DistinctArrayTest
     [Fact]
     public void Created_DistinctArray_is_distinct()
     {
-        var sut = new[] { 1, 1, 2 }.ToDistinctArray();
+        var sut = new[] { 1, 1, 2, }.ToDistinctArray();
 
         PAssert.That(() => sut.Count == 2);
-        PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
+        PAssert.That(() => sut.SetEqual(new[] { 1, 2, }));
     }
 
     [Fact]
     public void SupportsForeach()
     {
-        var sut = new[] { 1, 2, 3, 2, 1 }.ToDistinctArray();
+        var sut = new[] { 1, 2, 3, 2, 1, }.ToDistinctArray();
         var sum = 0;
         foreach (var n in sut) {
             sum += n;
@@ -91,7 +91,7 @@ public sealed class DistinctArrayTest
     {
         // ReSharper disable once EqualExpressionComparison
         PAssert.That(() => Enumerable.Range(1, 4).ToDistinctArray() != Enumerable.Range(1, 4).ToDistinctArray());
-        var existingArr = new[] { "a", "b", "c" };
+        var existingArr = new[] { "a", "b", "c", };
         var existingDistinctArr = existingArr.ToDistinctArrayFromDistinct_Unchecked();
         var aliasedDistinctArr = existingArr.ToDistinctArrayFromDistinct_Unchecked();
         var nonAliasedCopy = existingArr.ToDistinctArray();
@@ -125,7 +125,7 @@ public sealed class DistinctArrayTest
     [Fact]
     public void OverloadForSetsWorks()
     {
-        var hashSet = new[] { 1, 2, 4, 5 }.ToHashSet();
+        var hashSet = new[] { 1, 2, 4, 5, }.ToHashSet();
         var sut = hashSet.ToDistinctArray();
 
         PAssert.That(() => sut.Count == 4);
@@ -135,26 +135,26 @@ public sealed class DistinctArrayTest
     [Fact]
     public void OverloadForDictionaryKeysWorks()
     {
-        var hashSet = new[] { 1, 2, 4, 5 }.ToDictionary(i => i);
+        var hashSet = new[] { 1, 2, 4, 5, }.ToDictionary(i => i);
         var sut = hashSet.Keys.ToDistinctArray();
 
         PAssert.That(() => sut.Count == 4);
-        PAssert.That(() => sut.SetEqual(new[] { 1, 2, 4, 5 }));
+        PAssert.That(() => sut.SetEqual(new[] { 1, 2, 4, 5, }));
     }
 
     [Fact]
     public void Created_DistinctArray_with_custom_comparer_is_distinct()
     {
-        var sut = new[] { 1, 1, 2 }.ToDistinctArray(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
+        var sut = new[] { 1, 1, 2, }.ToDistinctArray(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
 
         PAssert.That(() => sut.Count == 2);
-        PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
+        PAssert.That(() => sut.SetEqual(new[] { 1, 2, }));
     }
 
     [Fact]
     public void Indexing_all_items_gives_equals_set()
     {
-        var sut = new[] { 1, 1, 2 }.ToDistinctArray();
+        var sut = new[] { 1, 1, 2, }.ToDistinctArray();
 
         PAssert.That(() => sut.Select((item, i) => sut[i]).SetEqual(sut));
     }

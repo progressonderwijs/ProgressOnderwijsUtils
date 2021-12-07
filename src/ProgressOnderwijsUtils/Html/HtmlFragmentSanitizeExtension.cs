@@ -17,7 +17,7 @@ public enum TagSafety
     /// <summary>
     /// This tag is safe even when a hostile hacker controls its contents and white-listed attributes; it can be included in output.
     /// </summary>
-    SafeToKeep
+    SafeToKeep,
 }
 
 public interface IHtmlFilter
@@ -49,7 +49,7 @@ public static class HtmlFilters
             => !attr.Name.EqualsOrdinalCaseInsensitive("style") || SafeStyleRegex.IsMatch(attr.Value);
 
         static readonly Regex
-            SafeStyleRegex = new Regex(
+            SafeStyleRegex = new(
                 @"^
                     \s*margin(-(left|right|top|bottom))?\s*:\s*
                     \d+(px|em|cm|mm|)\s*;?\s*
@@ -146,7 +146,7 @@ public static class HtmlFilters
         }
 
         static HashSet<string> MkSet(IEnumerable<string>? elems)
-            => new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase);
+            => new(elems ?? new string[0], StringComparer.OrdinalIgnoreCase);
 
         public TagSafety AllowTag(IHtmlElement elem)
             => bannedElements.Contains(elem.TagName)

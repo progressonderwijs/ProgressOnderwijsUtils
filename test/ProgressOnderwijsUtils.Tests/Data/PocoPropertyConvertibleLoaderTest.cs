@@ -5,11 +5,11 @@ namespace ProgressOnderwijsUtils.Tests.Data;
 public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnection
 {
     static readonly BlaOk[] SampleObjects = {
-        new() { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
-        new() { Bla = "bla", Bla2 = "bla2", Id = 0 },
-        new() { Bla = "dfg", Bla2 = "bla342", Id = 1 },
-        new() { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2 },
-        new() { Bla2 = "", Id = 3 },
+        new() { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1, },
+        new() { Bla = "bla", Bla2 = "bla2", Id = 0, },
+        new() { Bla = "dfg", Bla2 = "bla342", Id = 1, },
+        new() { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2, },
+        new() { Bla2 = "", Id = 3, },
     };
 
     public sealed record BlaOk : IWrittenImplicitly, IReadImplicitly
@@ -116,7 +116,7 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         SampleObjects.BulkCopyToSqlServer(Connection, target);
 
         var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk4>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
+        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString, })));
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         SampleObjects.BulkCopyToSqlServer(Connection, target);
 
         var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk5>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
+        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString, })));
         PAssert.That(() => fromDb.All(x => x.Bla3 == null));
     }
 
@@ -154,7 +154,7 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         SampleObjects.BulkCopyToSqlServer(Connection, target);
 
         var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.Value })));
+        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.Value, })));
     }
 
     [Fact]
@@ -166,7 +166,7 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         SampleObjects.BulkCopyToSqlServer(Connection, target);
 
         var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_nullable_struct_property>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : null, Bla2 = x.Bla2.Value })));
+        PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : null, Bla2 = x.Bla2.Value, })));
     }
 
     [Fact]

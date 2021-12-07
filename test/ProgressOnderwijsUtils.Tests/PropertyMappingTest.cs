@@ -72,12 +72,12 @@ public sealed class PropertyMappingTest
     public void MapProperties_CreateForValue_ignores_input()
     {
         var objects = new[] {
-            new TestObject { Kind = DateTimeKind.Utc, EnumIntProperty = DayOfWeek.Thursday },
+            new TestObject { Kind = DateTimeKind.Utc, EnumIntProperty = DayOfWeek.Thursday, },
             new TestObject { Kind = DateTimeKind.Local, EnumIntProperty = DayOfWeek.Friday, },
             new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Monday, },
         };
         var expected = new[] {
-            new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Thursday },
+            new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Thursday, },
             new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Friday, },
             new TestObject { Kind = DateTimeKind.Unspecified, EnumIntProperty = DayOfWeek.Monday, },
         };

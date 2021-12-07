@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Collections;
 public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>, T>
 {
     public static RootedTree<T> RootTree(Tree<T> rootNode)
-        => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
+        => new(SList.SingleElement(new TreePathSegment(0, rootNode)));
 
     public IEnumerable<RootedTree<T>> PathSelfToRoot()
         => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
@@ -32,7 +32,7 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
         => !PathSegments.IsEmpty;
 
     public RootedTree<T> Parent
-        => new RootedTree<T>(PathSegments.Tail);
+        => new(PathSegments.Tail);
 
     public RootedTree<T> Root
         => PathSegments.Last().ThisSubTree.RootHere();
@@ -83,7 +83,7 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
             var newSiblings = CopyArrayWithNewValueOnIndex(parentSubTree.Children, myIndex, newSubTree);
             var newParentSubTree = Tree.Node(parentSubTree.NodeValue, newSiblings);
             var newParent = Parent.ReplaceSubTree(newParentSubTree);
-            return new RootedTree<T>(newParent.PathSegments.Prepend(new TreePathSegment(myIndex, newSubTree)));
+            return new(newParent.PathSegments.Prepend(new TreePathSegment(myIndex, newSubTree)));
         }
     }
 

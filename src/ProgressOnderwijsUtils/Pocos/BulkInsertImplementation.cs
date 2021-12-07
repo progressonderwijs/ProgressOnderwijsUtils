@@ -16,7 +16,7 @@ static class BulkInsertImplementation
             throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
         }
 
-        using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null) { BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn), DestinationTableName = target.TableName };
+        using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null) { BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn), DestinationTableName = target.TableName, };
         var mapping = CreateMapping(source, target, sourceNameForTracing);
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
@@ -41,7 +41,7 @@ static class BulkInsertImplementation
             }
         }
 
-        return new Exception($"Received an invalid column length from the bcp client for source field {sourceColumnName} of source {sourceName}.", ex);
+        return new($"Received an invalid column length from the bcp client for source field {sourceColumnName} of source {sourceName}.", ex);
     }
 
     static Exception? HelpfulException(SqlBulkCopy bulkCopy, int destinationColumnIndex, SqlException ex)
@@ -78,7 +78,7 @@ static class BulkInsertImplementation
         }
     }
 
-    static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
+    static readonly Regex colidMessageRegex = new(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 
     static int? ParseDestinationColumnIndexFromMessage(string message)
     {

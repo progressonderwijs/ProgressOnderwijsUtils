@@ -101,7 +101,7 @@ public sealed class RetryDelayChooserTest
             lastDelay = nextDelay;
             errorCountUntilConvergence++;
             if (errorCountUntilConvergence > 10000) {
-                throw new Exception("Convergence is taking too long!");
+                throw new("Convergence is taking too long!");
             }
             nextDelay = retryDelayChooser.RegisterErrorAndGetDelay(currentMoment);
             //assumption: N parallel processes all failing continuously at interval T is roughtly equivalent to one process failing at interval T/N

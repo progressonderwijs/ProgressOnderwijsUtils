@@ -23,7 +23,7 @@ public struct ProcessStartSettings
     public Process CreateProcessObj()
     {
         var proc = new Process {
-            StartInfo = new ProcessStartInfo {
+            StartInfo = new() {
                 CreateNoWindow = true, // we donot need a UI
                 RedirectStandardInput = true,
                 UseShellExecute = false, //required to be able to redirect streams
@@ -112,7 +112,7 @@ public struct ProcessStartSettings
         );
         WriteStdIn(proc);
 
-        return new AsyncProcessResult(exitCodeCompletion.Task, replayableMergedOutput);
+        return new(exitCodeCompletion.Task, replayableMergedOutput);
     }
 
     public int RunProcessWithoutRedirection()

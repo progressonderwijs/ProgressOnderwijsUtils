@@ -13,14 +13,14 @@ public sealed class UtilsTest
             .Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
             .TakeWhile(sample => sample < long.MaxValue)
             .Select(d => (long)d)
-            .Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1 });
+            .Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1, });
 
         foreach (var i in samplePoints) {
             var j = i + 1;
             var a = Utils.ToSortableShortString(i);
             var b = Utils.ToSortableShortString(j);
             if (cmp.Compare(a, b) >= 0) {
-                throw new Exception(
+                throw new(
                     "numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " +
                     b
                 );
@@ -52,10 +52,10 @@ public sealed class UtilsTest
         var combos = (
             from a in samplePoints
             from b in samplePoints
-            select new[] { a, b }
+            select new[] { a, b, }
         ).Concat(
             from a in samplePoints
-            select new[] { a }
+            select new[] { a, }
         ).ToArray();
 
         foreach (var combo1 in combos) {
@@ -71,7 +71,7 @@ public sealed class UtilsTest
                             .FirstOrNullable(x => x != 0) ?? 0L
                     );
                 if (strComparison != seqComparison) {
-                    throw new Exception($"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
+                    throw new($"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
                 }
             }
         }
@@ -98,14 +98,14 @@ public sealed class UtilsTest
     [Fact]
     public void MaandSpanTest()
     {
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)) == 0);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)) == 4);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)) == 12);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)) == 12);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)) == 5);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)) == 7);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)) == 9);
-        PAssert.That(() => Utils.MaandSpan(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)) == 1);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 1, 1), new(2000, 1, 1)) == 0);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 5, 1), new(2000, 1, 1)) == 4);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 1, 1), new(2001, 1, 1)) == 12);
+        PAssert.That(() => Utils.MaandSpan(new(2001, 1, 1), new(2000, 1, 1)) == 12);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 9, 1), new(2001, 2, 1)) == 5);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 9, 1), new(2001, 4, 1)) == 7);
+        PAssert.That(() => Utils.MaandSpan(new(2001, 6, 1), new(2000, 9, 1)) == 9);
+        PAssert.That(() => Utils.MaandSpan(new(2000, 12, 1), new(2001, 1, 1)) == 1);
     }
 
     [Fact]
@@ -146,16 +146,14 @@ public sealed class UtilsTest
 
     [Fact]
     public void ClrDefaultIsSemanticDefault()
-    {
-        PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
-    }
+        => PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
 
     [Fact]
     public void SimpleTransitiveClosureWorks()
     {
         var nodes = new[] { 2, 3, };
 
-        PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6 }).SetEquals(new[] { 2, 4, 0, 3 }));
+        PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6, }).SetEquals(new[] { 2, 4, 0, 3, }));
     }
 
     [Fact]
@@ -166,7 +164,7 @@ public sealed class UtilsTest
         PAssert.That(
             () =>
                 Utils.TransitiveClosure(nodes, nums => nums.Select(num => num * 2 % 6))
-                    .SetEquals(new[] { 2, 4, 0, 3 })
+                    .SetEquals(new[] { 2, 4, 0, 3, })
         );
     }
 
@@ -186,7 +184,7 @@ public sealed class UtilsTest
         var value = 0;
         var buggyCleanup = () => {
             cleanupCalled++;
-            throw new Exception("42");
+            throw new("42");
         };
 
         var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(() => 42, buggyCleanup));
@@ -206,7 +204,7 @@ public sealed class UtilsTest
             try {
                 return 42;
             } finally {
-                throw new Exception("1337");
+                throw new("1337");
             }
         };
 
@@ -226,7 +224,7 @@ public sealed class UtilsTest
             _ = Utils.TryWithCleanup(
                 (Func<int>)(() => {
                     try {
-                        throw new Exception("1337");
+                        throw new("1337");
                     } finally {
                         finallyReached = true;
                     }
@@ -247,13 +245,13 @@ public sealed class UtilsTest
         var value = 0;
         var buggyCleanup = () => {
             cleanupCalled++;
-            throw new Exception("42");
+            throw new("42");
         };
         var buggyComputation = () => {
             try {
                 return 42;
             } finally {
-                throw new Exception("1337");
+                throw new("1337");
             }
         };
 
@@ -274,9 +272,9 @@ public sealed class UtilsTest
         var cleanupCalled = 0;
         var buggyCleanup = () => {
             cleanupCalled++;
-            throw new Exception("42");
+            throw new("42");
         };
-        Action buggyComputation = () => throw new Exception("1337");
+        Action buggyComputation = () => throw new("1337");
 
         var aggEx = Assert.ThrowsAny<AggregateException>(() => Utils.TryWithCleanup(buggyComputation, buggyCleanup));
 

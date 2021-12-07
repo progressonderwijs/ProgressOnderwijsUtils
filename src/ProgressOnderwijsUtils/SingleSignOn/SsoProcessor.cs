@@ -24,7 +24,7 @@ public static class SsoProcessor
         var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey().AssertNotNull();
         var base64Signature = Convert.ToBase64String(rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(samlRequestQueryString), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
         var signedQueryString = samlRequestQueryString + "&" + EncodeQueryParameter("Signature", base64Signature);
-        return new Uri(request.Destination + "?" + signedQueryString);
+        return new(request.Destination + "?" + signedQueryString);
     }
 
     static XElement? GetAssertion(XElement response)
@@ -153,13 +153,13 @@ public static class SsoProcessor
             // ReSharper restore PossibleNullReferenceException
             select attribute.Value).ToArray();
 
-    static readonly XmlSchemaSet schemaSet = new XmlSchemaSet { XmlResolver = null };
+    static readonly XmlSchemaSet schemaSet = new() { XmlResolver = null, };
 
     static SsoProcessor()
     {
         var settings = new XmlReaderSettings {
             XmlResolver = null,
-            DtdProcessing = DtdProcessing.Parse
+            DtdProcessing = DtdProcessing.Parse,
         };
 
         var schemaResources = new SingleSignOnSchemaResources();

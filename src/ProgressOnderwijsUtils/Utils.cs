@@ -227,7 +227,7 @@ public static class Utils
             str[i] = str[j];
             str[j] = tmp;
         }
-        return new string(str.Slice(0, idx));
+        return new(str.Slice(0, idx));
     }
 
     /// <summary>

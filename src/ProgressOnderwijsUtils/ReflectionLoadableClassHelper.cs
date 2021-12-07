@@ -70,7 +70,7 @@ public static class ReflectionLoadableClassHelper
             var constructionExpression = Expression.Lambda<Func<TBaseType>>(Expression.New(constructor), Array.Empty<ParameterExpression>());
             var constructorDelegate = constructionExpression.CompileFast(true);
             if (constructorDelegate == null) {
-                return Maybe.Error(new[] { "Failed to create factory for " + typeof(TBaseType).ToCSharpFriendlyTypeName() });
+                return Maybe.Error(new[] { "Failed to create factory for " + typeof(TBaseType).ToCSharpFriendlyTypeName(), });
             }
             factories.Add(constructorDelegate);
         }

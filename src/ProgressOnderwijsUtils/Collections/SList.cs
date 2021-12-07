@@ -21,7 +21,7 @@ public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
         => this.list = list;
 
     public SList(T head, SList<T> tail)
-        : this(new Impl(head, tail.list)) { }
+        : this(new(head, tail.list)) { }
 
     readonly Impl? list;
 
@@ -35,7 +35,7 @@ public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
         => list.AssertNotNull().Head;
 
     public SList<T> Tail
-        => new SList<T>(list.AssertNotNull().Tail);
+        => new(list.AssertNotNull().Tail);
 
     static readonly int typeHash = typeof(T).GetHashCode();
     static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
@@ -105,7 +105,7 @@ public static class SList
 {
     [Pure]
     public static SList<T> Prepend<T>(this SList<T> self, T head)
-        => new SList<T>(head, self);
+        => new(head, self);
 
     [Pure]
     [UsefulToKeep("library method")]
@@ -200,7 +200,7 @@ public static class SList
 
     [Pure]
     public static SList<T> SingleElement<T>(T element)
-        => new SList<T>(element, new());
+        => new(element, new());
 
     [UsefulToKeep("library method")]
     public static SList<T> Empty<T>()

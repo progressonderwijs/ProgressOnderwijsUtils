@@ -60,7 +60,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
         using (var cmd = q.CreateSqlCommand(Connection, CommandTimeout.WithoutTimeout)) {
             //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
-            PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
+            PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int, }));
         }
         var sum = q.ReadScalar<int>(Connection);
         PAssert.That(() => sum == 1);
@@ -77,7 +77,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlTvpsCanCountDaysOfWeek()
     {
-        var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
+        var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 5);
     }
@@ -85,7 +85,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlTvpsCanCountStrings()
     {
-        var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
+        var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo", }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 2);
     }
@@ -93,8 +93,8 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void PocoReadersCanIncludeNull()
     {
-        var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
-        var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string?> { QueryTableValue = s });
+        var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz", };
+        var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string?> { QueryTableValue = s, });
 
         var tableName = SQL($"#strings");
         SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
@@ -112,7 +112,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
             () => SQL(
                 $@"
                 select sum(datalength(hashes.QueryTableValue))
-                from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
+                from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef"), }} hashes
             "
             ).ReadPlain<long>(Connection).Single() == 16
         );
@@ -129,7 +129,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
     {
-        var testen = new[] { new TestDataPoco { Data = testData } };
+        var testen = new[] { new TestDataPoco { Data = testData, }, };
         using var reader = new PocoDataReader<TestDataPoco>(testen, CancellationToken.None);
         Assert_DataReader_GetBytes_works(reader);
     }

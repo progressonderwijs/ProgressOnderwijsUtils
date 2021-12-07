@@ -196,8 +196,8 @@ public static class PocoProperty
         }
     }
 
-    static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
-    static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
+    static readonly OutCaster<object> outCasterObject = new();
+    static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new();
 
     static IOutCaster GetCaster(Type propType)
         => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)).AssertNotNull());

@@ -117,7 +117,7 @@ public sealed class StringExtensionsTest
         var oldCulture = Thread.CurrentThread.CurrentCulture;
         try {
             var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
-            culture.NumberFormat = new NumberFormatInfo { NegativeSign = "X", };
+            culture.NumberFormat = new() { NegativeSign = "X", };
             Thread.CurrentThread.CurrentCulture = culture;
             PAssert.That(() => (-3000).ToString() == "X3000");
             // ReSharper disable once SpecifyACultureInStringConversionExplicitly
@@ -142,20 +142,20 @@ public sealed class StringExtensionsTest
     public void PrettyPrintCamelCased()
     {
         var translations = new[,] {
-            { "SMMutatie", "SM mutatie", "SM mutatie" },
-            { "XmlReader", "xml reader", "Xml reader" },
-            { "S0Xval", "S 0 xval", "S 0 xval" },
-            { "bla bla bla", "bla bla bla", "bla bla bla" },
-            { "iSXReader0Bla", "i SX reader 0 bla", "i SX reader 0 bla" },
-            { "Channel99", "channel 99", "Channel 99" },
-            { "SM99", "SM 99", "SM 99" },
-            { "is_dit_echtZo", "is dit echt zo", "is dit echt zo" },
-            { "Administratienummer_OWI", "administratienummer OWI", "Administratienummer OWI" },
-            { "Bla_Bla", "bla bla", "Bla bla" },
-            { "MT940Sluit", "MT 940 sluit", "MT 940 sluit" },
-            { "Accoord2Afwijzen", "accoord 2 afwijzen", "Accoord 2 afwijzen" },
-            { "_Multi _Space", " multi space", " multi space" },
-            { "trailing Space\t", "trailing space ", "trailing space " },
+            { "SMMutatie", "SM mutatie", "SM mutatie", },
+            { "XmlReader", "xml reader", "Xml reader", },
+            { "S0Xval", "S 0 xval", "S 0 xval", },
+            { "bla bla bla", "bla bla bla", "bla bla bla", },
+            { "iSXReader0Bla", "i SX reader 0 bla", "i SX reader 0 bla", },
+            { "Channel99", "channel 99", "Channel 99", },
+            { "SM99", "SM 99", "SM 99", },
+            { "is_dit_echtZo", "is dit echt zo", "is dit echt zo", },
+            { "Administratienummer_OWI", "administratienummer OWI", "Administratienummer OWI", },
+            { "Bla_Bla", "bla bla", "Bla bla", },
+            { "MT940Sluit", "MT 940 sluit", "MT 940 sluit", },
+            { "Accoord2Afwijzen", "accoord 2 afwijzen", "Accoord 2 afwijzen", },
+            { "_Multi _Space", " multi space", " multi space", },
+            { "trailing Space\t", "trailing space ", "trailing space ", },
         };
         for (var row = 0; row < translations.GetLength(0); row++) {
             var initial = translations[row, 0];
@@ -169,8 +169,8 @@ public sealed class StringExtensionsTest
     {
         PAssert.That(() => StringUtils.ToFlatDebugString((int[]?)null) == "[]");
         PAssert.That(() => StringUtils.ToFlatDebugString(new string[0]) == "[]");
-        PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "single" }) == "[single]");
-        PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "first", "second" }) == "[first, second]");
-        PAssert.That(() => StringUtils.ToFlatDebugString(new object?[] { 1, "2", null, 3 }) == "[1, 2, , 3]");
+        PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "single", }) == "[single]");
+        PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "first", "second", }) == "[first, second]");
+        PAssert.That(() => StringUtils.ToFlatDebugString(new object?[] { 1, "2", null, 3, }) == "[1, 2, , 3]");
     }
 }

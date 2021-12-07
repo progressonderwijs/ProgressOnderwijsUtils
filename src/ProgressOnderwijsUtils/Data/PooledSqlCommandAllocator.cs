@@ -13,7 +13,7 @@ static class PooledSqlCommandAllocator
     {
         var allBags = new ConcurrentQueue<SqlCommand>[IndexCount];
         for (var i = 0; i < IndexCount; i++) {
-            allBags[i] = new ConcurrentQueue<SqlCommand>();
+            allBags[i] = new();
         }
         return allBags;
     }
@@ -29,7 +29,7 @@ static class PooledSqlCommandAllocator
         var cmd = new SqlCommand { EnableOptimizedParameterBinding = true, };
         var parameters = new SqlParameter[length];
         for (var i = 0; i < length; i++) {
-            parameters[i] = new SqlParameter { ParameterName = CommandFactory.IndexToParameterName(i) };
+            parameters[i] = new() { ParameterName = CommandFactory.IndexToParameterName(i), };
         }
         cmd.Parameters.AddRange(parameters);
         return cmd;

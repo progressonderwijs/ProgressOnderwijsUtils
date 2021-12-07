@@ -47,7 +47,7 @@ public static class XmlCompression
     static readonly XNamespace xsdNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema");
     static readonly XNamespace xsiNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
 
-    static readonly XmlWriterSettings xmlWriterSettings = new XmlWriterSettings {
+    static readonly XmlWriterSettings xmlWriterSettings = new() {
         Encoding = Encoding.UTF8,
         Indent = false,
         NamespaceHandling = NamespaceHandling.OmitDuplicates,

@@ -15,5 +15,5 @@ public struct SourceLocation
 
     [Pure]
     public static SourceLocation Here([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-        => new SourceLocation(membername, filepath, linenumber);
+        => new(membername, filepath, linenumber);
 }

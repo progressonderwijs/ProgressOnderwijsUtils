@@ -158,7 +158,7 @@ public static class XunitFormat
     public enum XunitResult
     {
         // ReSharper disable UnusedMember.Global
-        Pass, Fail, Skip
+        Pass, Fail, Skip,
         // ReSharper restore UnusedMember.Global
     }
 

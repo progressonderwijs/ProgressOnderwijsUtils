@@ -44,7 +44,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         // ReSharper disable once UnusedVariable
         var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithJustSetters>().Execute(Connection);
         PAssert.That(() => bla.Length == 512);
-        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
     public sealed class ExampleWithJustSettersWithExtraProperties : IWrittenImplicitly
@@ -74,7 +74,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var retval = SQL($"select AccountNumber, SalesOrderId from ({query.Sql}) x").ReadPocos<ExampleWithJustSettersWithMissingProperties>(Connection); //implicitly assert does not throw
 
         PAssert.That(() => retval.Length == 512);
-        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
     public sealed class ExampleWithJustSettersWithMissingProperties : IWrittenImplicitly
@@ -92,7 +92,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
 
         PAssert.That(() => retval.Length == 512);
-        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
     public sealed record ExampleWithConstructor(string AccountNumber, byte[] SomeBlob) : IWrittenImplicitly
@@ -115,7 +115,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         // ReSharper disable once UnusedVariable
         var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithConstructor>().Execute(Connection);
         PAssert.That(() => bla.Length == 512);
-        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
     public sealed class ExampleWithMoreConstructor : IWrittenImplicitly
@@ -124,7 +124,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         {
             AccountNumber = accountNumber;
             SomeBlob = someBlob;
-            throw new Exception("This constructor should never be selected, the poco orm should choose the longest constructor");
+            throw new("This constructor should never be selected, the poco orm should choose the longest constructor");
         }
 
         public ExampleWithMoreConstructor(
@@ -158,7 +158,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 #pragma warning restore IDE0060 // Remove unused parameter
             // ReSharper restore UnusedParameter.Local
         {
-            throw new Exception("This constructor should never be selected, the poco orm should not choose a constructor with an unmatchable arg");
+            throw new("This constructor should never be selected, the poco orm should not choose a constructor with an unmatchable arg");
         }
 
         public int SalesOrderId { get; }
@@ -181,8 +181,8 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         // ReSharper disable once UnusedVariable
         var bla = ParameterizedSqlForRows(512).OfPocos<ExampleWithMoreConstructor>().Execute(Connection);
         PAssert.That(() => bla.Length == 512);
-        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
-        PAssert.That(() => bla.Select(o => o.Status).Distinct().SetEqual(new byte[] { 1, 10 }));
+        PAssert.That(() => bla.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
+        PAssert.That(() => bla.Select(o => o.Status).Distinct().SetEqual(new byte[] { 1, 10, }));
         PAssert.That(() => bla.None(o => o.SomeBlob.PretendNullable() == null));
         PAssert.That(() => bla.Any(o => o.SomeNullableBlob == null) && bla.Any(o => o.SomeNullableBlob != null));
     }
@@ -219,7 +219,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var retval = query.WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(Connection); // implicitly assert: does not throw.
 
         PAssert.That(() => retval.Length == 512);
-        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef" }));
+        PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
     public enum Enum64Bit : ulong { }
@@ -269,10 +269,10 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         PAssert.That(() => pocos.Length == 5);
 
         var expected = Enumerable.Range(0, 5)
-            .Select(power => new PocoWithRowVersions(0) { Counter = power + 1, AshorterVersion = 1 * (uint)Math.Pow(100, power), AnotherVersion = 2 * (ulong)Math.Pow(10000, power), AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power)) })
+            .Select(power => new PocoWithRowVersions(0) { Counter = power + 1, AshorterVersion = 1 * (uint)Math.Pow(100, power), AnotherVersion = 2 * (ulong)Math.Pow(10000, power), AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power)), })
             .ToArray();
 
-        var actualWithoutRowversion = pocos.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+        var actualWithoutRowversion = pocos.Select(rec => rec with { Version = 0, }); //can't predict roversion, just its ordering
 
         PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
 
@@ -292,7 +292,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
         var middle = pocos[2];
         var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} and AnotherVersion >= {pocos[3].AnotherVersion} order by Version").ReadPlain<uint>(Connection);
-        PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u }));
+        PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u, }));
     }
 
     [Fact]
@@ -326,12 +326,12 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
                     Counter = power + 1 + initialPocos.Length,
                     AshorterVersion = 1 * (uint)Math.Pow(100, power),
                     AnotherVersion = 2 * (ulong)Math.Pow(10000, power),
-                    AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power))
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)Math.Pow(10000, power)),
                 }
             )
             .ToArray();
 
-        var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+        var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0, }); //can't predict roversion, just its ordering
 
         PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
         PAssert.That(() => !rowsAfterBulkInsert.SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
@@ -347,7 +347,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
                 i => new PocoWithRowVersions(0) {
                     AshorterVersion = 1 * (uint)i,
                     AnotherVersion = 2 * (ulong)i,
-                    AFinalVersion = (Enum64Bit)(3 * (ulong)i)
+                    AFinalVersion = (Enum64Bit)(3 * (ulong)i),
                 }
             )
             .ToArray();
@@ -355,8 +355,8 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         srcData.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
 
         var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
-        var expected = srcData.Select((o, i) => o with { Counter = i + 6 });
-        var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0 }); //can't predict roversion, just its ordering
+        var expected = srcData.Select((o, i) => o with { Counter = i + 6, });
+        var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0, }); //can't predict roversion, just its ordering
         PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
     }
 }

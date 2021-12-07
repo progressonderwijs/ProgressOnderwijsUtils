@@ -97,7 +97,7 @@ public static class HtmlToStringExtensions
             }
         }
         if (className != null) {
-            AppendAttribute(ref stringBuilder, new HtmlAttribute("class", className));
+            AppendAttribute(ref stringBuilder, new("class", className));
         }
     }
 

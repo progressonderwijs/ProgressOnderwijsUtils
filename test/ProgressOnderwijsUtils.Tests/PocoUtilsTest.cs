@@ -86,7 +86,7 @@ public sealed class PocoUtilsTest
     public void IsReadable()
     {
         var readable = PocoUtils.GetProperties<SimpleObject>().Where(pocoProperty => pocoProperty.CanRead);
-        var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "ReadonlyProperty", "PrivateSetter" };
+        var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "ReadonlyProperty", "PrivateSetter", };
         PAssert.That(() => readable.Select(pocoProperty => pocoProperty.Name).SequenceEqual(expected));
     }
 
@@ -101,7 +101,7 @@ public sealed class PocoUtilsTest
     [Fact]
     public void CanSetAndGet()
     {
-        var o = new SimpleObject { Property = "foo", LabelledProperty = "bar" };
+        var o = new SimpleObject { Property = "foo", LabelledProperty = "bar", };
         var moDef = PocoUtils.GetProperties<SimpleObject>();
         PAssert.That(() => (string?)moDef.GetByName("Property").Getter!(o) == "foo");
         PAssert.That(() => (string?)moDef.GetByName("labelledProperty").Getter!(o) == "bar");
@@ -109,7 +109,7 @@ public sealed class PocoUtilsTest
         moDef.GetByName("property").Setter!(ref o, "aha");
         moDef.GetByName("LabelledProperty").Setter!(ref o, "really");
 
-        PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
+        PAssert.That(() => o.Equals(new() { Property = "aha", LabelledProperty = "really", }));
     }
 
     [Fact]

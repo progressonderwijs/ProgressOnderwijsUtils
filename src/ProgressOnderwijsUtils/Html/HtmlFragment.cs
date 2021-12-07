@@ -53,19 +53,19 @@ public struct HtmlFragment : IConvertibleToFragment
 
     [Pure]
     public static HtmlFragment TextContent(string? textContent)
-        => new HtmlFragment(textContent != "" ? textContent : null);
+        => new(textContent != "" ? textContent : null);
 
     [Pure]
     public static HtmlFragment Element(IHtmlElement? element)
-        => new HtmlFragment(element);
+        => new(element);
 
     [Pure]
     public static HtmlFragment Element(CustomHtmlElement element)
-        => new HtmlFragment(element.Canonicalize());
+        => new(element.Canonicalize());
 
     [Pure]
     public static HtmlFragment Element(string tagName, HtmlAttribute[]? attributes, HtmlFragment[]? childNodes)
-        => Element(new CustomHtmlElement(tagName, attributes, childNodes));
+        => Element(new(tagName, attributes, childNodes));
 
     [Pure]
     public static HtmlFragment Fragment()
@@ -89,7 +89,7 @@ public struct HtmlFragment : IConvertibleToFragment
         collector.AddKid(a);
         collector.AddKid(b);
         Debug.Assert(collector.IsFull());
-        return new HtmlFragment(collector.retval);
+        return new(collector.retval);
     }
 
     [Pure]
@@ -105,13 +105,13 @@ public struct HtmlFragment : IConvertibleToFragment
         foreach (var child in htmlEls) {
             kidCounter.CountForKid(child);
             if (kidCounter.TotalKids >= 64) {
-                return new HtmlFragment(htmlEls);
+                return new(htmlEls);
             }
         }
         if (kidCounter.TotalKids == 0) {
             return Empty;
         } else if (!kidCounter.FlattenRelevant) {
-            return new HtmlFragment(htmlEls);
+            return new(htmlEls);
         }
         var collector = new KidCollector(kidCounter.TotalKids);
         foreach (var child in htmlEls) {
@@ -119,7 +119,7 @@ public struct HtmlFragment : IConvertibleToFragment
         }
         Debug.Assert(collector.IsFull());
 
-        return collector.retval.Length == 1 ? collector.retval[0] : new HtmlFragment(collector.retval);
+        return collector.retval.Length == 1 ? collector.retval[0] : new(collector.retval);
     }
 
     struct KidCounter
@@ -181,7 +181,7 @@ public struct HtmlFragment : IConvertibleToFragment
                 retval.Add(htmlFragment);
             }
         }
-        return new HtmlFragment(retval.ToArray());
+        return new(retval.ToArray());
     }
 
     public override string ToString()
@@ -213,7 +213,7 @@ public struct HtmlFragment : IConvertibleToFragment
         => this;
 
     public HtmlFragment[] NodesOfFragment()
-        => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
+        => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this, });
 
     public HtmlFragment[] ChildNodes()
         => Implementation is IHtmlElementAllowingContent elem
@@ -232,7 +232,7 @@ public struct HtmlFragment : IConvertibleToFragment
     /// </summary>
     /// <returns>The html fragment.</returns>
     public static HtmlFragment ParseFragment(string? str)
-        => ParseFragment(str, new HtmlParserOptions());
+        => ParseFragment(str, new());
 
     public static HtmlFragment ParseFragment(string? str, HtmlParserOptions options)
     {

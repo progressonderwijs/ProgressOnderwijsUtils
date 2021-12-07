@@ -60,7 +60,7 @@ public readonly struct Maybe<TOk, TError>
         => okOrError switch {
             Maybe_Ok<TOk> okValue => ifOk(okValue.Value),
             Maybe_Error<TError> errValue => ifError(errValue.Error),
-            _ => throw new("Maybe is neither Ok nor Error.")
+            _ => throw new("Maybe is neither Ok nor Error."),
         };
 
     /// <summary>

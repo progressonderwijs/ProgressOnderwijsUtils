@@ -117,7 +117,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
                         haystack = haystack.Slice(endIdx + 1);
                     }
                     if (head.Length > 0) {
-                        classes.Add(head.Length == attr.Value.Length ? attr.Value : new string(head));
+                        classes.Add(head.Length == attr.Value.Length ? attr.Value : new(head));
                     }
                 }
             }
@@ -132,7 +132,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         if (array != null) {
             if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null! /*null is placeholder*/) == null!) {
                 array[count].Value = val;
-                return new HtmlAttributes(array, count + 1);
+                return new(array, count + 1);
             } else {
                 var oldArray = array;
                 array = new HtmlAttribute[count + 4 + (count >> 2) & ~1 | 2];
@@ -145,7 +145,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         }
         array[count].Name = name;
         array[count].Value = val;
-        return new HtmlAttributes(array, count + 1);
+        return new(array, count + 1);
     }
 
     IEnumerator<HtmlAttribute> IEnumerable<HtmlAttribute>.GetEnumerator()
@@ -155,7 +155,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         => new Enumerator(this);
 
     public Enumerator GetEnumerator()
-        => new Enumerator(this);
+        => new(this);
 
     public struct Enumerator : IEnumerator<HtmlAttribute>
     {
@@ -189,7 +189,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         => new();
 
     public static HtmlAttributes FromArray(HtmlAttribute[] arr)
-        => new HtmlAttributes(arr, arr.Length);
+        => new(arr, arr.Length);
 
     public override string ToString()
         => this.Select(a => a.ToString()).JoinStrings("; ");

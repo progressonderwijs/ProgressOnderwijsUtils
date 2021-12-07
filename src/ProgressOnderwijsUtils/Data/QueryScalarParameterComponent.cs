@@ -46,7 +46,7 @@ struct QueryScalarParameterComponent : IQueryParameter
         if (o == null || o == DBNull.Value) {
             ParameterizedSqlFactory.AppendSql(ref factory, "NULL");
         } else {
-            var param = new QueryScalarParameterComponent { EquatableValue = o };
+            var param = new QueryScalarParameterComponent { EquatableValue = o, };
             ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
         }
     }

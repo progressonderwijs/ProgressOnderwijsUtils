@@ -14,7 +14,7 @@ public class TreeBenchmark
     {
         iters = 1200 / MaxSize;
         var used = new HashSet<int>();
-        tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(n => 0 <= n && n < MaxSize && used.Add(n)));
+        tree = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1, }.Where(n => 0 <= n && n < MaxSize && used.Add(n)));
     }
 
     [Benchmark]
@@ -29,7 +29,7 @@ public class TreeBenchmark
                         ? kids
                         : val % 3 == 0
                             ? null
-                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids) }
+                            : new[] { Tree.Node(val, kids), Tree.Node(val + 1, kids), }
             );
 
             x += b.Sum(o => o.PreorderTraversal().Select(n => n.NodeValue).Sum());
@@ -43,7 +43,7 @@ public class TreeBenchmark
         var used = new HashSet<int>();
         Func<int, bool> predicate = n => 0 <= n && n < MaxSize && used.Add(n);
         for (var iter = 0; iter < iters; iter++) {
-            var tree2 = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1 }.Where(predicate));
+            var tree2 = Tree.BuildRecursively(MaxSize, i => new[] { i - 37, i - 42, i - 3, i + 1, }.Where(predicate));
             used.Clear();
             GC.KeepAlive(tree2);
         }

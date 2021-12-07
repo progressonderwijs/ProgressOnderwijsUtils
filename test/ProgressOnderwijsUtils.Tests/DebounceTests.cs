@@ -8,9 +8,7 @@ public sealed class DebounceTests
     readonly ITestOutputHelper output;
 
     public DebounceTests(ITestOutputHelper output)
-    {
-        this.output = output;
-    }
+        => this.output = output;
 
     [Fact]
     public void DebounceEventuallyCalls()
@@ -113,7 +111,7 @@ public sealed class DebounceTests
         _ = Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
 
         if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire)) {
-            throw new Exception($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
+            throw new($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
         }
 
         var eventFiringTimes = eventFiringTasks.SelectMany(t => t.Result).OrderBy(t => t).ToArray();

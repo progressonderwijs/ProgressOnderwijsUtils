@@ -16,13 +16,13 @@ public sealed class ApprovalTest
     }
 
     public static ApprovalTest CreateHere([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-        => Create(new SourceLocation(membername, filepath, linenumber));
+        => Create(new(membername, filepath, linenumber));
 
     public static ApprovalTest Create(SourceLocation sourceLocation)
         => CreateForApprovedPath(ToApprovalPath(sourceLocation));
 
     public static ApprovalTest CreateForApprovedPath(string path)
-        => new ApprovalTest(path);
+        => new(path);
 
     public void AssertUnchangedAndSave(string[] lines)
         => AssertUnchangedAndSave(lines.Select(line => line + "\r\n").JoinStrings());
@@ -30,7 +30,7 @@ public sealed class ApprovalTest
     public void AssertUnchangedAndSave(string text)
     {
         if (UpdateIfChangedFrom(text)) {
-            throw new Exception("Approval changed: " + Path.GetFileName(ApprovalPath));
+            throw new("Approval changed: " + Path.GetFileName(ApprovalPath));
         }
     }
 

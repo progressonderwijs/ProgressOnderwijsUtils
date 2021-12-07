@@ -103,13 +103,13 @@ public sealed class TreeTest
         var cd = Tree.Node("c", d);
         var b = Tree.Node("b");
         var abcde = Tree.Node("a", b, cd, e);
-        PAssert.That(() => abcde.PreorderTraversal().Select(rooted => rooted.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e" }));
+        PAssert.That(() => abcde.PreorderTraversal().Select(rooted => rooted.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e", }));
         PAssert.That(
             () =>
                 abcde.RootHere()
                     .PreorderTraversal()
                     .Select(rooted => rooted.PathSelfToRoot().Select(node => node.NodeValue).JoinStrings())
-                    .SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" })
+                    .SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea", })
         );
     }
 
@@ -117,10 +117,10 @@ public sealed class TreeTest
     public void BuildWorks()
     {
         var dict = new Dictionary<string, IReadOnlyList<string>> {
-            { "root", new[] { "a", "b", "c" } },
-            { "a", new[] { "b", "c" } },
-            { "b", new[] { "c", "d" } },
-            { "c", new[] { "e", "d" } },
+            { "root", new[] { "a", "b", "c", } },
+            { "a", new[] { "b", "c", } },
+            { "b", new[] { "c", "d", } },
+            { "c", new[] { "e", "d", } },
         };
 
         var tree = Tree.BuildRecursively("root", id => dict.GetOrDefault(id));
@@ -147,7 +147,7 @@ public sealed class TreeTest
     {
         // ReSharper disable once NotAccessedVariable
         Tree<int> ignore;
-        _ = Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
+        _ = Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13, }));
     }
 
     [Fact]
@@ -168,7 +168,7 @@ public sealed class TreeTest
     [Fact]
     public void TreeRebuildSingleNodeToTwo()
     {
-        var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value, newKids) });
+        var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value, newKids), });
         var expected = Enumerable.Repeat(Tree.Node(1L), 2);
         PAssert.That(() => output.SequenceEqual(expected));
     }
@@ -184,10 +184,10 @@ public sealed class TreeTest
     public void TreeRebuildOneChildDoubleEverything()
     {
         var input = Tree.Node(1u, Tree.Node(2u));
-        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) });
+        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), });
         var expected = new[] {
             Tree.Node(2L, Tree.Node(4L), Tree.Node(5L)),
-            Tree.Node(3L, Tree.Node(4L), Tree.Node(5L))
+            Tree.Node(3L, Tree.Node(4L), Tree.Node(5L)),
         };
         PAssert.That(() => output.SequenceEqual(expected));
     }
@@ -196,7 +196,7 @@ public sealed class TreeTest
     public void TreeRebuildCanBeEmptyEvenWhenThereAreDescendants()
     {
         var input = Tree.Node(1u, Tree.Node(2u));
-        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids) }.Where(_ => oldNode.NodeValue != 1).ToArray());
+        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), }.Where(_ => oldNode.NodeValue != 1).ToArray());
         var expected = Array.Empty<Tree<long>>();
         PAssert.That(() => output.SequenceEqual(expected));
     }
@@ -221,7 +221,7 @@ public sealed class TreeTest
         var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(5u)));
         var output = input.Rebuild(node => (long)node.NodeValue, (_, value, newKids) => value == 2 ? null : Tree.Node(value, newKids).AsSingletonArray());
         var expected = new[] {
-            Tree.Node(1L, Tree.Node(3L, Tree.Node(5L)))
+            Tree.Node(1L, Tree.Node(3L, Tree.Node(5L))),
         };
         PAssert.That(() => output.SequenceEqual(expected));
     }
@@ -237,7 +237,7 @@ public sealed class TreeTest
         var n5 = Tree.Node(5L);
         var n3 = Tree.Node(3L, n5, n5);
         var n1 = Tree.Node(1L, n3, n3);
-        var expected = new[] { n1, n1 };
+        var expected = new[] { n1, n1, };
         PAssert.That(() => output.SequenceEqual(expected));
     }
 
@@ -252,7 +252,7 @@ public sealed class TreeTest
         var n5 = Tree.Node(5L);
         var n3 = Tree.Node(3L, n5, n5);
         var n1 = Tree.Node(1L, n3, n3);
-        var expected = new[] { n1, n1 };
+        var expected = new[] { n1, n1, };
         PAssert.That(() => output.SequenceEqual(expected));
     }
 
@@ -313,8 +313,8 @@ public sealed class TreeTest
     public void CanWorkWithDeepTreesWithoutStackoverflow()
     {
         const int targetHeight = 1000_000;
-        var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : Array.Empty<uint>());
-        var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : Array.Empty<long>());
+        var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1, } : Array.Empty<uint>());
+        var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1, } : Array.Empty<long>());
         var mappedInput = input.SelectNodeValue(i => (long)i);
         var areEqual = mappedInput.Equals(output);
         PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");

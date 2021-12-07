@@ -39,7 +39,7 @@ public class ReferenceTypeArrayBuilderBenchmark : ArrayBuilderBenchmark<object?,
 {
     public struct Factory : IFactory<object?>
     {
-        static readonly object?[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
+        static readonly object?[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new(), new(), new(), };
 
         public object? Init(int value)
             => Values[value & 7];
@@ -59,7 +59,7 @@ public class BigStructArrayBuilderBenchmark : ArrayBuilderBenchmark<BigStructArr
     public struct Factory : IFactory<BigStruct>
     {
         public BigStruct Init(int value)
-            => new BigStruct {
+            => new() {
                 A = value,
                 B = value,
                 C = value,
@@ -77,14 +77,12 @@ public class BigStructArrayBuilderBenchmark : ArrayBuilderBenchmark<BigStructArr
 sealed class ArrBenchConfig : ManualConfig
 {
     public ArrBenchConfig()
-    {
-        _ = AddJob(
+        => _ = AddJob(
             new Job {
                 Run = { UnrollFactor = 1, InvocationCount = 1, LaunchCount = 1, WarmupCount = 3, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, MaxIterationCount = 1000, },
                 Accuracy = { MaxRelativeError = 0.01, },
             }.WithGcForce(true)
         );
-    }
 }
 
 [MedianColumn]
@@ -100,7 +98,7 @@ public abstract class ArrayBuilderBenchmark<T, TFactory>
     public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
         =>
             from maxSize in new[] { 3, 17, 98, 561, 18_347, /*104_920,600_000*/ }
-            from threads in new[] { 1, 8 }
+            from threads in new[] { 1, 8, }
             let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 8
             let count = (int)(0.5 + 300_000_000.0 / ((maxSize + 2) * (objCost + 2) + 30))
             select (maxSize, threads, count, Math.Round(GetSizes(count, maxSize).Average(), 2));
@@ -115,7 +113,7 @@ public abstract class ArrayBuilderBenchmark<T, TFactory>
     }
 
     static int[] GetSizes(int count, int maxSize)
-        => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Shuffle(new Random(42)).ToArray();
+        => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Shuffle(new(42)).ToArray();
 
     [Benchmark]
     public void List()

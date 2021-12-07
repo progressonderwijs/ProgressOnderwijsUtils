@@ -36,10 +36,10 @@ public static class DistinctArray
 public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
 {
     public static DistinctArray<T> Empty
-        => new DistinctArray<T>(Array.Empty<T>());
+        => new(Array.Empty<T>());
 
     public static DistinctArray<T> FromDistinct_ClaimDistinctnessWithoutCheck(T[] items)
-        => new DistinctArray<T>(items);
+        => new(items);
 
     public static DistinctArray<T> FromDistinctNonMutatedArray(T[] items, IEqualityComparer<T> comparer)
     {
@@ -47,11 +47,11 @@ public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
         if (set.Count != items.Length) {
             throw new ArgumentException("items are not distinct");
         }
-        return new DistinctArray<T>(items);
+        return new(items);
     }
 
     public static DistinctArray<T> FromPossiblyNotDistinct(IEnumerable<T> items, IEqualityComparer<T> comparer)
-        => new DistinctArray<T>(new HashSet<T>(items, comparer).ToArray());
+        => new(new HashSet<T>(items, comparer).ToArray());
 
     readonly T[]? items;
 
@@ -84,7 +84,7 @@ public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
         => !(a == b);
 
     public Enumerator GetEnumerator()
-        => new Enumerator(UnderlyingArrayThatShouldNeverBeMutated());
+        => new(UnderlyingArrayThatShouldNeverBeMutated());
 
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();

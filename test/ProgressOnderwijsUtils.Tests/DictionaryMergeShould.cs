@@ -7,7 +7,7 @@ public sealed class DictionaryMergeShould
     {
         var original = new Dictionary<int, string> {
             { 1, "foo" },
-            { 2, "bar" }
+            { 2, "bar" },
         };
         var empty = new Dictionary<int, string>();
         PAssert.That(() => original.Merge(empty).SequenceEqual(original));
@@ -20,11 +20,11 @@ public sealed class DictionaryMergeShould
             { 1, "foo" },
         };
         var second = new Dictionary<int, string> {
-            { 2, "bar" }
+            { 2, "bar" },
         };
         var combined = new Dictionary<int, string> {
             { 1, "foo" },
-            { 2, "bar" }
+            { 2, "bar" },
         };
         PAssert.That(() => first.Merge(second).SequenceEqual(combined));
     }
@@ -36,10 +36,10 @@ public sealed class DictionaryMergeShould
             { 2, "foo" },
         };
         var second = new Dictionary<int, string> {
-            { 2, "bar" }
+            { 2, "bar" },
         };
         var combined = new Dictionary<int, string> {
-            { 2, "bar" }
+            { 2, "bar" },
         };
         PAssert.That(() => first.Merge(second).SequenceEqual(combined));
     }
@@ -51,15 +51,15 @@ public sealed class DictionaryMergeShould
             { 1, "foo" },
         };
         var second = new Dictionary<int, string> {
-            { 2, "bar" }
+            { 2, "bar" },
         };
         var third = new Dictionary<int, string> {
-            { 3, "baz" }
+            { 3, "baz" },
         };
         var combined = new Dictionary<int, string> {
             { 1, "foo" },
             { 2, "bar" },
-            { 3, "baz" }
+            { 3, "baz" },
         };
         PAssert.That(() => first.Merge(second, third).SequenceEqual(combined));
     }

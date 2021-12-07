@@ -2,10 +2,10 @@ namespace ProgressOnderwijsUtils;
 
 public sealed class RandomHelper
 {
-    public static readonly RandomHelper Secure = new RandomHelper(bytes => RandomNumberGenerator.Fill(bytes));
+    public static readonly RandomHelper Secure = new(bytes => RandomNumberGenerator.Fill(bytes));
 
     static RandomHelper Insecure(int seed)
-        => new RandomHelper(new Random(seed).NextBytes);
+        => new(new Random(seed).NextBytes);
 
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
         => Insecure(GetNaiveHashCode(Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
@@ -16,9 +16,7 @@ public sealed class RandomHelper
     readonly Action<byte[]> fillWithRandomBytes;
 
     RandomHelper(Action<byte[]> fillWithRandomBytes)
-    {
-        this.fillWithRandomBytes = fillWithRandomBytes;
-    }
+        => this.fillWithRandomBytes = fillWithRandomBytes;
 
     public byte[] GetBytes(int numBytes)
     {
@@ -110,5 +108,5 @@ public sealed class RandomHelper
         Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
 
     public string GetStringOfUriPrintableCharacters(int length)
-        => new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
+        => new(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
 }

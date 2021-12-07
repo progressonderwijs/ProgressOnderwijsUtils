@@ -308,16 +308,16 @@ public sealed class MaybeTests
     public void WhenAllOk_simple_cases_work()
     {
         PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk);
-        PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2 })));
-        PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2 })));
+        PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2, })));
+        PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2, })));
     }
 
     [Fact]
     public void WhereOk_simple_cases_work()
     {
         PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhereOk().None());
-        PAssert.That(() => TwoOkMaybes.WhereOk().SequenceEqual(new[] { 1, 2 }));
-        PAssert.That(() => ThreeMixedMaybes.WhereOk().SequenceEqual(new[] { Unit.Value }));
+        PAssert.That(() => TwoOkMaybes.WhereOk().SequenceEqual(new[] { 1, 2, }));
+        PAssert.That(() => ThreeMixedMaybes.WhereOk().SequenceEqual(new[] { Unit.Value, }));
     }
 
     [Fact]
@@ -336,19 +336,19 @@ public sealed class MaybeTests
         PAssert.That(() => emptyPartitioned.okValues.None());
 
         var twoOkPartitioned = TwoOkMaybes.Partition();
-        PAssert.That(() => twoOkPartitioned.okValues.SequenceEqual(new[] { 1, 2 }));
+        PAssert.That(() => twoOkPartitioned.okValues.SequenceEqual(new[] { 1, 2, }));
         PAssert.That(() => twoOkPartitioned.errorValues.None());
 
         var threeMixedPartitioned = ThreeMixedMaybes.Partition();
-        PAssert.That(() => threeMixedPartitioned.okValues.SequenceEqual(new[] { Unit.Value }));
+        PAssert.That(() => threeMixedPartitioned.okValues.SequenceEqual(new[] { Unit.Value, }));
         PAssert.That(() => threeMixedPartitioned.errorValues.SequenceEqual(new[] { 1, 2, }));
     }
 
     static Maybe<Unit, int>[] ThreeMixedMaybes
-        => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) };
+        => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2), };
 
     static Maybe<int, Unit>[] TwoOkMaybes
-        => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) };
+        => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2), };
 
     [Fact]
     public void WhenOkTry_is_ok_iif_both_input_and_delegate_are_ok()

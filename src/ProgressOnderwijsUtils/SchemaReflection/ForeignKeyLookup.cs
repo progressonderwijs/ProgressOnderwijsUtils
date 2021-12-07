@@ -17,7 +17,7 @@ public static class FkReferentialAction_AsSql
             FkReferentialAction.Cascade => SQL($"cascade"),
             FkReferentialAction.SetNull => SQL($"set null"),
             FkReferentialAction.SetDefault => SQL($"set default"),
-            _ => throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized")
+            _ => throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized"),
         };
 }
 
@@ -73,7 +73,7 @@ struct ForeignKeyColumnEntry : IWrittenImplicitly
                         UpdateReferentialAction = fkColEntry.UpdateReferentialAction,
                         ReferencingChildTable = fkColEntry.ReferencingChildTable,
                         ReferencedParentTable = fkColEntry.ReferencedParentTable,
-                        Columns = fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)).ToArray()
+                        Columns = fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)).ToArray(),
                     };
                 }
             )
