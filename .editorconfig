@@ -89,3 +89,4 @@ dotnet_diagnostic.CA2208.severity = warning
 
 # IDE0058: Expression value is never used
 dotnet_diagnostic.IDE0058.severity = error
+csharp_style_namespace_declarations=file_scoped:warning
