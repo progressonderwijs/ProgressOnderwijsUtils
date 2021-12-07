@@ -17,7 +17,7 @@ public static class HtmlToTextContent
             foreach (var child in childFragments) {
                 AppendTextContent(ref fastStringBuilder, child.Implementation);
             }
-        } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.GetContent().Implementation is object nonNullFragmentContent) {
+        } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.GetContent().Implementation is { } nonNullFragmentContent) {
             AppendTextContent(ref fastStringBuilder, nonNullFragmentContent);
         }
     }

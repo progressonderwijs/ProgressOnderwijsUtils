@@ -166,7 +166,7 @@ public static class Maybe
     [Pure]
     public static Maybe<TOk, Unit> OkWhenNotNull<TOk>(TOk? val)
         where TOk : class
-        => val is TOk notNull ? Ok(notNull).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
+        => val is { } notNull ? Ok(notNull).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
     /// <summary>
     /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
