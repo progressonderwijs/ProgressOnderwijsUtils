@@ -2,11 +2,14 @@ root = true
 
 [*]
 charset = utf-8
+end_of_line=lf
 
 [*.cmd]
 charset = latin1
+end_of_line=crlf
 [*.bat]
 charset = latin1
+end_of_line=crlf
 
 [*.sql]
 indent_style = space
