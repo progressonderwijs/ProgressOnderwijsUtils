@@ -106,19 +106,19 @@ public sealed class ParameterizedSqlTest
         PAssert.That(() => longPar != noPar);
         PAssert.That(() => stringPar != noPar);
 
-        PAssert.That(() => new[] { intPar, intPar2, enumIntPar, enumIntPar2, longPar, stringPar, stringPar2, noPar }.Distinct().Count() == 5);
+        PAssert.That(() => new[] { intPar, intPar2, enumIntPar, enumIntPar2, longPar, stringPar, stringPar2, noPar, }.Distinct().Count() == 5);
     }
 
     [Fact]
     public void EqualsChecksTableValuedParametersInDepth()
     {
         ParameterizedSql
-            withPar_1_2 = SQL($"a param: {new[] { 1, 2 }}"),
-            withPar_1_2b = SQL($"a param: {new[] { 1, 2 }}"),
-            withPar_2_1 = SQL($"a param: {new[] { 2, 1 }}"),
-            withParEnum_1_2 = SQL($"a param: {new[] { (DayOfWeek)1, (DayOfWeek)2 }}"),
-            withParString_1_2 = SQL($"a param: {new[] { "1", "2" }}"),
-            withParString_1_2b = SQL($"a param: {new[] { "1", "2" }}")
+            withPar_1_2 = SQL($"a param: {new[] { 1, 2, }}"),
+            withPar_1_2b = SQL($"a param: {new[] { 1, 2, }}"),
+            withPar_2_1 = SQL($"a param: {new[] { 2, 1, }}"),
+            withParEnum_1_2 = SQL($"a param: {new[] { (DayOfWeek)1, (DayOfWeek)2, }}"),
+            withParString_1_2 = SQL($"a param: {new[] { "1", "2", }}"),
+            withParString_1_2b = SQL($"a param: {new[] { "1", "2", }}")
             ;
 
         PAssert.That(() => withPar_1_2 == withPar_1_2b);
@@ -219,11 +219,11 @@ public sealed class ParameterizedSqlTest
     {
         var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
 
-        var cmd = result.CreateSqlCommand(new SqlConnection(), CommandTimeout.WithoutTimeout);
+        var cmd = result.CreateSqlCommand(new(), CommandTimeout.WithoutTimeout);
 
         var commandText = @"A@par0[@par1@par0]Z";
         PAssert.That(() => cmd.Command.CommandText == commandText);
-        PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 0, 1 }));
+        PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 0, 1, }));
     }
 
     [Fact]

@@ -15,7 +15,7 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteQuery(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn };
+        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn, };
         var argP = new SqlParameter {
             SqlDbType = SqlDbType.BigInt,
             ParameterName = "@Arg",
@@ -48,7 +48,7 @@ static class HandrolledAdoNetExecutor
         var list = new List<ExampleObject>();
         while (reader.Read()) {
             list.Add(
-                new ExampleObject {
+                new() {
                     A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                     B = reader.GetInt32(1),
                     C = reader.GetString(2),
@@ -98,7 +98,7 @@ static class HandrolledAdoNetExecutor
         var list = new List<ExampleObject>();
         while (reader.Read()) {
             list.Add(
-                new ExampleObject {
+                new() {
                     A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                     B = reader.GetInt32(1),
                     C = reader.GetString(2),
@@ -111,7 +111,7 @@ static class HandrolledAdoNetExecutor
         return list.Count;
     }
 
-    static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>>();
+    static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new();
 
     static int ExecuteSqliteQueryCached(SQLiteConnection sqliteConn, int rows)
     {
@@ -120,13 +120,13 @@ static class HandrolledAdoNetExecutor
                 sqliteConn,
                 conn => {
                     conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
-                    return new Dictionary<string, SQLiteCommand>();
+                    return new();
                 }
             );
         }
 
         if (!cmdCache.TryGetValue(ExampleObject.RawSqliteQueryString, out var sqliteCmd)) {
-            cmdCache[ExampleObject.RawSqliteQueryString] = sqliteCmd = new SQLiteCommand { CommandText = ExampleObject.RawSqliteQueryString };
+            cmdCache[ExampleObject.RawSqliteQueryString] = sqliteCmd = new() { CommandText = ExampleObject.RawSqliteQueryString, };
             var topP = new SQLiteParameter {
                 DbType = DbType.Int32,
                 ParameterName = "@Top",
@@ -167,7 +167,7 @@ static class HandrolledAdoNetExecutor
         using (var reader = sqliteCmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
             while (reader.Read()) {
                 list.Add(
-                    new ExampleObject {
+                    new() {
                         A = reader.IsDBNull(0) ? null : reader.GetInt32(0),
                         B = reader.GetInt32(1),
                         C = reader.GetString(2),
@@ -188,7 +188,7 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteQuery2(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn };
+        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn, };
         var argP = new SqlParameter {
             SqlDbType = SqlDbType.BigInt,
             ParameterName = "@Arg",
@@ -221,7 +221,7 @@ static class HandrolledAdoNetExecutor
         var list = new List<ExampleObject>();
         while (reader.Read()) {
             list.Add(
-                new ExampleObject {
+                new() {
                     A = reader.GetSqlInt32(0).ToNullableInt(),
                     B = reader.GetInt32(1),
                     C = reader.GetString(2),
@@ -255,7 +255,7 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteWideQuery2(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn };
+        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn, };
         var topP = new SqlParameter {
             SqlDbType = SqlDbType.Int,
             ParameterName = "@Top",
@@ -267,7 +267,7 @@ static class HandrolledAdoNetExecutor
         var list = new List<WideExampleObject>();
         while (reader.Read()) {
             list.Add(
-                new WideExampleObject {
+                new() {
                     SalesOrderId = reader.GetInt32(0),
                     RevisionNumber = reader.GetByte(1),
                     OrderDate = reader.GetDateTime(2),
@@ -302,7 +302,7 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteWideQuery(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn };
+        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn, };
         var topP = new SqlParameter {
             SqlDbType = SqlDbType.Int,
             ParameterName = "@Top",
@@ -314,7 +314,7 @@ static class HandrolledAdoNetExecutor
         var list = new List<WideExampleObject>();
         while (reader.Read()) {
             list.Add(
-                new WideExampleObject {
+                new() {
                     SalesOrderId = reader.GetInt32(0),
                     RevisionNumber = reader.GetByte(1),
                     OrderDate = reader.GetDateTime(2),

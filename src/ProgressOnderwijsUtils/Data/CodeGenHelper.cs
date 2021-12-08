@@ -12,7 +12,7 @@ public static class CodeGenHelper
         return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; init; }\n";
     }
 
-    static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+    static readonly Regex newLine = new("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
     public static string Indent(string str, int indentCount = 1)
         => newLine.Replace(str, new string(' ', indentCount * 4));

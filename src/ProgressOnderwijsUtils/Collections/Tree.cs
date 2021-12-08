@@ -22,18 +22,18 @@ public static class Tree
 {
     [Pure]
     public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
-        => new Tree<T>(value, children);
+        => new(value, children);
 
     // ReSharper disable MethodOverloadWithOptionalParameter
     [Pure]
     public static Tree<T> Node<T>(T value, params Tree<T>[]? kids)
-        => new Tree<T>(value, kids);
+        => new(value, kids);
 
     // ReSharper restore MethodOverloadWithOptionalParameter
 
     [Pure]
     public static Tree<T> Node<T>(T value)
-        => new Tree<T>(value, null);
+        => new(value, null);
 
     [Pure]
     public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>?> kidLookup)
@@ -80,7 +80,7 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
         kidArray = children ?? Array.Empty<Tree<T>>();
     }
 
-    public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);
+    public static readonly Comparer DefaultComparer = new(EqualityComparer<T>.Default);
 
     public sealed class Comparer : IEqualityComparer<Tree<T>?>
     {
@@ -88,9 +88,7 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
         readonly IEqualityComparer<T> ValueComparer;
 
         public Comparer(IEqualityComparer<T> valueComparer)
-        {
-            ValueComparer = valueComparer;
-        }
+            => ValueComparer = valueComparer;
 
         struct NodePair
         {
@@ -105,12 +103,12 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
             }
 
             var todo = new Stack<NodePair>(16);
-            todo.Push(new NodePair { A = a, B = b });
+            todo.Push(new() { A = a, B = b, });
             while (todo.Count > 0) {
                 var pair = todo.Pop();
                 if (ShallowEquals(pair)) {
                     for (var i = 0; i < pair.A.Children.Count; i++) {
-                        todo.Push(new NodePair { A = pair.A.Children[i], B = pair.B.Children[i] });
+                        todo.Push(new() { A = pair.A.Children[i], B = pair.B.Children[i], });
                     }
                 } else {
                     return false;

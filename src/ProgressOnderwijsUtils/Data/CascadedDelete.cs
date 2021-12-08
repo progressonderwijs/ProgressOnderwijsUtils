@@ -22,7 +22,7 @@ public static class CascadedDelete
             outputAllDeletedRows,
             logger,
             stopCascading,
-            new[] { pkColumn },
+            new[] { pkColumn, },
             SQL(
                 $@"
                 select {pkColumnSql} = q.QueryTableValue 
@@ -238,7 +238,7 @@ public static class CascadedDelete
                     SQL($"drop table {tempTableName};").ExecuteNonQuery(conn);
                     sw.Stop();
                     log($"...took {sw.Elapsed}");
-                    perflog.Add(new() { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                    perflog.Add(new() { Table = table.QualifiedName, DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows, });
                 }
             );
 

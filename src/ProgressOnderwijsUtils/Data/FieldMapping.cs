@@ -31,9 +31,9 @@ public readonly struct BulkInsertFieldMapping
         foreach (var srcColumn in srcColumns) {
             if (dstColumnsByName.TryGetValue(srcColumn.Name, out var dstColumn)) {
                 _ = dstColumnsByName.Remove(dstColumn.Name);
-                list.Add(new Suggestion(srcColumn, dstColumn));
+                list.Add(new(srcColumn, dstColumn));
             } else {
-                list.Add(new Suggestion(srcColumn, null));
+                list.Add(new(srcColumn, null));
             }
         }
         list.AddRange(dstColumnsByName.Values.Select(dstColumn => new Suggestion(null, dstColumn)));
@@ -80,7 +80,7 @@ public struct FieldMappingValidation
                         errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
                 } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly && dst.ColumnAccessibility != ColumnAccessibility.RowVersion) {
-                    throw new Exception("impossible value " + dst.ColumnAccessibility);
+                    throw new("impossible value " + dst.ColumnAccessibility);
                 }
             } else {
                 //src & dst not null
@@ -90,7 +90,7 @@ public struct FieldMappingValidation
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                     errors.Add($"Cannot fill readonly field {dst.Name}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Normal || dst.ColumnAccessibility == ColumnAccessibility.NormalWithDefaultValue || OverwriteAutoIncrement) {
-                    mapped.Add(new BulkInsertFieldMapping(src, dst));
+                    mapped.Add(new(src, dst));
                 }
             }
         }

@@ -13,7 +13,7 @@ public static class PooledSmallBufferAllocator<T>
     {
         var allBags = new ConcurrentQueue<T[]>[IndexCount];
         for (var i = 0; i < IndexCount; i++) {
-            allBags[i] = new ConcurrentQueue<T[]>();
+            allBags[i] = new();
         }
         return allBags;
     }

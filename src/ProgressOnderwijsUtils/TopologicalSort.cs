@@ -35,7 +35,7 @@ public static class TopologicalSort
         {
             if (visitState.TryAdd(r, nextState)) {
                 var thisState = nextState;
-                nextState = new NodeVisitState();
+                nextState = new();
                 foreach (var kid in listChildrenOf(r)) {
                     TopologicalSortVisit(kid);
                 }

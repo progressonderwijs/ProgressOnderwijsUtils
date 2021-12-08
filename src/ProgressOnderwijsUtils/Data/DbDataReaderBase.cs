@@ -35,7 +35,7 @@ public abstract class DbDataReaderBase : DbDataReader
         => throw new NotSupportedException();
 
     public override string GetDataTypeName(int ordinal)
-        => (GetFieldType(ordinal) ?? throw new Exception("column " + ordinal + " untyped")).ToString();
+        => (GetFieldType(ordinal) ?? throw new("column " + ordinal + " untyped")).ToString();
 
     bool hasRows, afterFirstRowPeek;
     protected abstract bool ReadImpl();
@@ -79,7 +79,7 @@ public abstract class DbDataReaderBase : DbDataReader
     public override int Depth
         => 0;
 
-    public override System.Collections.IEnumerator GetEnumerator()
+    public override IEnumerator GetEnumerator()
     {
         while (Read()) {
             yield return this;

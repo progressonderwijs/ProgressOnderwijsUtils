@@ -4,7 +4,7 @@ public static class TreeExtensions
 {
     public static TTree[] AsSingletonArray<TTree>(this IRecursiveStructure<TTree> tree)
         where TTree : IRecursiveStructure<TTree> //to avoid namepsace pollution
-        => new[] { tree.TypedThis };
+        => new[] { tree.TypedThis, };
 
     [Pure]
     public static int Height<TTree, T>(this IRecursiveStructure<TTree, T> tree)

@@ -24,9 +24,7 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     }
 
     public EnumeratePocosTest()
-    {
-        ExampleRow.HackyHackyCounter = 0;
-    }
+        => ExampleRow.HackyHackyCounter = 0;
 
     [Fact]
     public void Executing_ToLazilyEnumeratedCommand_creates_no_row_objects()
@@ -59,7 +57,7 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     {
         var enumerable = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
         var value = enumerable.Skip(1).First();
-        Assert.Equal(new ExampleRow { Id = 37, Content = "hmm" }, value);
+        Assert.Equal(new() { Id = 37, Content = "hmm", }, value);
     }
 
     [Fact]

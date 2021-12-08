@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils;
 public sealed class CurrentTimeToken
 {
     CurrentTimeToken() { }
-    public static readonly CurrentTimeToken Instance = new CurrentTimeToken();
+    public static readonly CurrentTimeToken Instance = new();
 
     public static CurrentTimeToken Parse(string s)
     {

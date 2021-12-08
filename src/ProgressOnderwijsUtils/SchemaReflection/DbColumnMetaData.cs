@@ -65,7 +65,7 @@ public sealed record DbColumnMetaData(
             typeId switch {
                 SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => (38, 2),
                 SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time => (0, 7),
-                _ => (0, 0)
+                _ => (0, 0),
             };
 
         return new(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale) { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
@@ -95,7 +95,7 @@ public sealed record DbColumnMetaData(
             SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength > 0 ? $"({MaxLength / 2})" : "(max)",
             SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength > 0 ? $"({MaxLength})" : "(max)",
             SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
-            _ => ""
+            _ => "",
         };
 
     public string ToSqlTypeName()

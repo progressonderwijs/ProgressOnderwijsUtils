@@ -41,7 +41,7 @@ public sealed class ExponentialDecayEstimator
     {
         Debug.Assert(moment.Kind == DateTimeKind.Utc, "Error:non-UTC DateTime detected; all moments should be in UTC to make reasoning about exponential decays simpler.");
         var halflives = (moment - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
-        return new ExponentialDecayEstimatorValue(currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives)));
+        return new(currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives)));
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public sealed class ExponentialDecayEstimator
     {
         currentValue = ValueAt(timestamp).RawValue + amount;
         timestampOfValue = timestamp;
-        return new ExponentialDecayEstimatorValue(currentValue);
+        return new(currentValue);
     }
 
     public override string ToString()

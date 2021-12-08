@@ -26,6 +26,6 @@ public sealed class ForeignKeyLookupTest : TransactedLocalConnection
 
         var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
 
-        PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf" }, StringComparer.OrdinalIgnoreCase));
+        PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf", }, StringComparer.OrdinalIgnoreCase));
     }
 }

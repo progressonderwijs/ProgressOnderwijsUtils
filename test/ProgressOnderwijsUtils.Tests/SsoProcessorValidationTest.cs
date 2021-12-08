@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class SsoProcessorValidationTest
 {
-    static readonly XElement VALID = new XElement(
+    static readonly XElement VALID = new(
         SamlNamespaces.SAMLP_NS + "AuthnRequest",
         new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
         new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
@@ -19,7 +19,7 @@ public sealed class SsoProcessorValidationTest
         new XElement(SamlNamespaces.SAML_NS + "Issuer", "Iemand")
     );
 
-    static readonly XElement INVALID = new XElement(
+    static readonly XElement INVALID = new(
         SamlNamespaces.SAMLP_NS + "AuthnRequest",
         new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
         new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),

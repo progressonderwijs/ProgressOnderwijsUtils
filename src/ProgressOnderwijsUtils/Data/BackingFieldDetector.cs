@@ -23,7 +23,7 @@ static class BackingFieldDetector
 
     public static FieldInfo? BackingFieldOfPropertyOrNull(PropertyInfo propertyInfo)
         => IsAutoProp(propertyInfo)
-            && propertyInfo.DeclaringType!.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
+            && propertyInfo.DeclaringType!.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is { } backingField
             && IsCompilerGenerated(backingField)
                 ? backingField
                 : null;
@@ -31,8 +31,8 @@ static class BackingFieldDetector
     [UsefulToKeep("for symmetry with BackingFieldOfPropertyOrNull")]
     public static PropertyInfo? AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
         => IsCompilerGenerated(fieldInfo)
-            && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
-            && fieldInfo.DeclaringType!.GetProperty(autoPropertyName, anyInstance) is PropertyInfo autoProperty
+            && AutoPropNameFromBackingField(fieldInfo.Name) is { } autoPropertyName
+            && fieldInfo.DeclaringType!.GetProperty(autoPropertyName, anyInstance) is { } autoProperty
             && IsAutoProp(autoProperty)
                 ? autoProperty
                 : null;

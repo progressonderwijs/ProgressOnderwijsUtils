@@ -23,7 +23,7 @@ public sealed class TestSqlParameterComponent : TransactedLocalConnection
         PAssert.That(() => ParameterizedSql.Param("ab'c").DebugText() == "'ab''c'");
         PAssert.That(() => ParameterizedSql.Param(12345).DebugText() == "12345");
         PAssert.That(() => ParameterizedSql.Param(12345.6m).DebugText() == "12345.6");
-        PAssert.That(() => ParameterizedSql.Param(new object()).DebugText() == "{!System.Object!}");
+        PAssert.That(() => ParameterizedSql.Param(new()).DebugText() == "{!System.Object!}");
 
         var asString = Wrap("Aap");
         PAssert.That(() => asString == ParameterizedSql.Param("Aap"), "TODO: We would like this to be conceptually different parameters");

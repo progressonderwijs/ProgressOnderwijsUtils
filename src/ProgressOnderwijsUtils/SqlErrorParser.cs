@@ -39,25 +39,25 @@ public static class SqlErrorParser
     // Format strings of error messages are available in sys.messages.
 
     // message_id 2627
-    static readonly Regex keyConstraintViolationRegex = new Regex(
+    static readonly Regex keyConstraintViolationRegex = new(
         @"Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\. The duplicate key value is \((?<DuplicateKeyValue>.*)\)\.",
         RegexOptions.Compiled
     );
 
     // message_id 2601
-    static readonly Regex duplicateKeyUniqueIndexRegex = new Regex(
+    static readonly Regex duplicateKeyUniqueIndexRegex = new(
         @"Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\. The duplicate key value is \((?<DuplicateKeyValue>.*)\)\.",
         RegexOptions.Compiled
     );
 
     // message_id 515
-    static readonly Regex cannotInsertNullRegex = new Regex(
+    static readonly Regex cannotInsertNullRegex = new(
         @"Cannot insert the value NULL into column '(?<ColumnName>[^']*)', table '(?<TableName>[^']*)'; column does not allow nulls\. (?<StatementType>.*) fails\.",
         RegexOptions.Compiled
     );
 
     // message_id 547
-    static readonly Regex genericConstraintViolationRegex = new Regex(
+    static readonly Regex genericConstraintViolationRegex = new(
         @"The (?<StatementType>.*) statement conflicted with the (?<ConstraintType>.*) constraint ""(?<ConstraintName>[^""]*)""\.( The conflict occurred in database ""(?<DatabaseName>[^""]+)"", table ""(?<TableName>[^""]+)"", column '(?<ColumnName>[^']+)'\.)?",
         RegexOptions.Compiled
     );
@@ -70,7 +70,7 @@ public static class SqlErrorParser
                 ConstraintType = match.Groups["ConstraintType"].Value,
                 ConstraintName = match.Groups["ConstraintName"].Value,
                 ObjectName = match.Groups["ObjectName"].Value,
-                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", " }, StringSplitOptions.None),
+                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", ", }, StringSplitOptions.None),
             };
         }
         return null;
@@ -83,7 +83,7 @@ public static class SqlErrorParser
             return new DuplicateKeyUniqueIndex {
                 IndexName = match.Groups["IndexName"].Value,
                 ObjectName = match.Groups["ObjectName"].Value,
-                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", " }, StringSplitOptions.None),
+                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", ", }, StringSplitOptions.None),
             };
         }
         return null;

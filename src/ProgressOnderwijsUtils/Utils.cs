@@ -97,7 +97,7 @@ public static class Utils
         } catch (Exception computationEx) when (!completedOk) {
             //Catch(cleanup) is checked with an if and not in the when clause because
             //a function in the when clause causes the exection order to change
-            if (Catch(cleanup) is Exception cleanupEx) {
+            if (Catch(cleanup) is { } cleanupEx) {
                 throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
             }
             throw;
@@ -227,7 +227,7 @@ public static class Utils
             str[i] = str[j];
             str[j] = tmp;
         }
-        return new string(str.Slice(0, idx));
+        return new(str.Slice(0, idx));
     }
 
     /// <summary>

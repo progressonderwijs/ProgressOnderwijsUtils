@@ -106,7 +106,7 @@ public sealed class HtmlToStringApprovals
             ),
             _body.Content(
                 new HtmlFragment[] {
-                    _area, _br, _col, _embed, _hr, _img, _input, _param, _source, _track, _wbr
+                    _area, _br, _col, _embed, _hr, _img, _input, _param, _source, _track, _wbr,
                 }.JoinHtml("\r\n")
             )
         );

@@ -225,7 +225,7 @@ public sealed class DatabaseDescription
 
         public IEnumerable<Table> AllDependantTables
             => Utils.TransitiveClosure(
-                new[] { ObjectId },
+                new[] { ObjectId, },
                 reachable => db.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
             ).Select(id => db.tableById[id]);
 

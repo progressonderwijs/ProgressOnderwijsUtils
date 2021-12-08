@@ -30,7 +30,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
     }
 
     static readonly BulkInsertTestSampleRow[] FourSampleRows = {
-        new BulkInsertTestSampleRow {
+        new() {
             ADateTime = new DateTime(2003, 4, 5).AddHours(17.345),
             AnEnum = DayOfWeek.Saturday,
             LotsOfMoney = -12.34m,
@@ -38,7 +38,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             SomeString = "sdf",
             CustomBla = TrivialConvertibleValue.Create("aap"),
         },
-        new BulkInsertTestSampleRow {
+        new() {
             ADateTime = new DateTime(2013, 8, 7),
             AnEnum = DayOfWeek.Monday,
             LotsOfMoney = null,
@@ -46,7 +46,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             SomeString = null,
             CustomBla = TrivialConvertibleValue.Create("aap"),
         },
-        new BulkInsertTestSampleRow {
+        new() {
             ADateTime = null,
             AnEnum = (DayOfWeek)12345,
             LotsOfMoney = 6543,
@@ -54,7 +54,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             SomeString = "Hello world!",
             CustomBla = TrivialConvertibleValue.Create("aap"),
         },
-        new BulkInsertTestSampleRow {
+        new() {
             ADateTime = DateTime.MaxValue,
             AnEnum = DayOfWeek.Friday,
             LotsOfMoney = 1000_000_000.00m,
@@ -62,7 +62,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             SomeString = "annual income",
             CustomBla = TrivialConvertibleValue.Create("aap"),
             CustomBlaThanCanBeNull = TrivialConvertibleValue.Create("noot"),
-        }
+        },
     };
 
     public static BulkInsertTestSampleRow[] SampleRows(int n)
@@ -142,8 +142,8 @@ public sealed class BulkInsertTest : TransactedLocalConnection
                 "
         ).OfPocos<SampleRow2>();
         var expectedData = new[] {
-            new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2" },
-            new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3" },
+            new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2", },
+            new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3", },
         };
         AssertCollectionsEquivalent(expectedData, query.Execute(conn2)); //sanity check that we're testing consistent data
 
@@ -191,17 +191,17 @@ public sealed class BulkInsertTest : TransactedLocalConnection
                 "
         ).ExecuteNonQuery(Connection);
         var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
-        new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test" }, }
+        new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", }, }
             .BulkCopyToSqlServer(Connection, target);
-        new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test" }, }
+        new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test", }, }
             .BulkCopyToSqlServer(Connection, target.With(target.Options ^ SqlBulkCopyOptions.KeepNulls));
 
         var fromDb = SQL($"select * from #tmp").ReadPocos<SampleRow2>(Connection);
 
         var expected =
             new[] {
-                new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test" },
-                new SampleRow2 { intNonNull = 2, intNull = 37, stringNull = "test", stringNonNull = "test" },
+                new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", },
+                new SampleRow2 { intNonNull = 2, intNull = 37, stringNull = "test", stringNonNull = "test", },
             };
 
         AssertCollectionsEquivalent(expected, fromDb);

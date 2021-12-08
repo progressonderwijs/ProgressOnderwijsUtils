@@ -35,7 +35,7 @@ public sealed class PooledSmallBufferAllocatorTest
                 return;
             }
         }
-        throw new Exception("The released array was not reused even after 10000 attempts!");
+        throw new("The released array was not reused even after 10000 attempts!");
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public sealed class PooledSmallBufferAllocatorTest
         for (var i = 0; i < 10000; i++) {
             var secondArray = PooledSmallBufferAllocator<object>.GetByLength(6);
             if (secondArray == array6) {
-                throw new Exception("The non-released array was reused!");
+                throw new("The non-released array was reused!");
             }
         }
     }

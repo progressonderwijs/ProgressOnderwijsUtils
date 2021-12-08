@@ -32,9 +32,7 @@ public static class HtmlElementAlterations
         readonly HtmlAttributes newAttributes;
 
         public AttributeAlteration(HtmlAttributes newAttributes)
-        {
-            this.newAttributes = newAttributes;
-        }
+            => this.newAttributes = newAttributes;
 
         public TSelf AlterEmptyElement<TSelf>(TSelf typed)
             where TSelf : struct, IHtmlElement<TSelf>

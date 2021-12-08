@@ -28,16 +28,16 @@ public sealed class TypeExtensionTest
     [Fact]
     public void TestBases()
     {
-        PAssert.That(() => typeof(int?).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-        PAssert.That(() => typeof(string).BaseTypes().SequenceEqual(new[] { typeof(object) }));
-        PAssert.That(() => typeof(TypeExtensionTest).BaseTypes().SequenceEqual(new[] { typeof(object) }));
+        PAssert.That(() => typeof(int?).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object), }));
+        PAssert.That(() => typeof(string).BaseTypes().SequenceEqual(new[] { typeof(object), }));
+        PAssert.That(() => typeof(TypeExtensionTest).BaseTypes().SequenceEqual(new[] { typeof(object), }));
         PAssert.That(() => typeof(IEnumerable<int>).BaseTypes().SequenceEqual(new Type[] { }));
-        PAssert.That(() => typeof(int).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-        PAssert.That(() => typeof(TypeExtension).BaseTypes().SequenceEqual(new[] { typeof(object) }));
-        PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-        PAssert.That(() => typeof(DayOfWeek).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
-        PAssert.That(() => typeof(KeyValuePair<int?, string>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-        PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
+        PAssert.That(() => typeof(int).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object), }));
+        PAssert.That(() => typeof(TypeExtension).BaseTypes().SequenceEqual(new[] { typeof(object), }));
+        PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object), }));
+        PAssert.That(() => typeof(DayOfWeek).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object), }));
+        PAssert.That(() => typeof(KeyValuePair<int?, string>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object), }));
+        PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object), }));
     }
 
     enum SampleEnum { }

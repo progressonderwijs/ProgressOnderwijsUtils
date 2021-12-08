@@ -1,4 +1,5 @@
 // ReSharper disable once CheckNamespace
+
 namespace ProgressOnderwijsUtils;
 
 public static class PocoUtils

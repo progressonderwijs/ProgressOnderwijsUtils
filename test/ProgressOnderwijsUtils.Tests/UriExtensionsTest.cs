@@ -28,10 +28,10 @@ public sealed class UriExtensionsTest
     [Fact]
     public void ReplaceRootWith()
     {
-        PAssert.That(() => new Uri(@"c:\file").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\file");
-        PAssert.That(() => new Uri(@"c:\dir\").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\dir\");
-        PAssert.That(() => new Uri(@"\\root\file").ReplaceRootWith(new Uri(@"c:\")).LocalPath == @"c:\file");
-        PAssert.That(() => new Uri(@"\\root\dir\").ReplaceRootWith(new Uri(@"c:\")).LocalPath == @"c:\");
+        PAssert.That(() => new Uri(@"c:\file").ReplaceRootWith(new(@"d:\")).LocalPath == @"d:\file");
+        PAssert.That(() => new Uri(@"c:\dir\").ReplaceRootWith(new(@"d:\")).LocalPath == @"d:\dir\");
+        PAssert.That(() => new Uri(@"\\root\file").ReplaceRootWith(new(@"c:\")).LocalPath == @"c:\file");
+        PAssert.That(() => new Uri(@"\\root\dir\").ReplaceRootWith(new(@"c:\")).LocalPath == @"c:\");
     }
 
     [Fact]

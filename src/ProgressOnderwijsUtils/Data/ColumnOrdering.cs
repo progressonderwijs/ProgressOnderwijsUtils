@@ -19,7 +19,7 @@ readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
             hashCode.Add((int)caseInsensitiveHash);
             hashCode.Add((int)(caseInsensitiveHash >> 32));
         }
-        return new ColumnOrdering(hashCode.ToHashCode(), cols);
+        return new(hashCode.ToHashCode(), cols);
     }
 
     public bool Equals(ColumnOrdering other)

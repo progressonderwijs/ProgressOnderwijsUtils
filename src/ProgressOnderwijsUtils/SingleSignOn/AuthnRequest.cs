@@ -32,10 +32,10 @@ public struct AuthnRequest
 
     public string EncodeAndSignAsFormArgument(RSA key)
     {
-        var doc = new XmlDocument { PreserveWhitespace = false };
+        var doc = new XmlDocument { PreserveWhitespace = false, };
         doc.Load(ToXml().CreateReader());
-        var signedXml = new SignedXml(doc) { SigningKey = key };
-        var reference = new Reference { Uri = "" };
+        var signedXml = new SignedXml(doc) { SigningKey = key, };
+        var reference = new Reference { Uri = "", };
         var env = new XmlDsigEnvelopedSignatureTransform();
         reference.AddTransform(env);
         signedXml.AddReference(reference);
@@ -49,7 +49,7 @@ public struct AuthnRequest
     }
 
     XElement ToXml()
-        => new XElement(
+        => new(
             SamlNamespaces.SAMLP_NS + "AuthnRequest",
             new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
             new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),

@@ -32,7 +32,7 @@ public sealed class SymbolMatcher
         }
     }
 
-    public static readonly SymbolMatcher IsActionDelegate = new SymbolMatcher(TypeKind.Delegate, "System.Action");
-    public static readonly SymbolMatcher IsUnit = new SymbolMatcher(TypeKind.Struct, "ProgressOnderwijsUtils.Collections.Unit");
-    public static readonly SymbolMatcher IsMaybe = new SymbolMatcher(TypeKind.Struct, "ProgressOnderwijsUtils.Collections.Maybe");
+    public static readonly SymbolMatcher IsActionDelegate = new(TypeKind.Delegate, "System.Action");
+    public static readonly SymbolMatcher IsUnit = new(TypeKind.Struct, "ProgressOnderwijsUtils.Collections.Unit");
+    public static readonly SymbolMatcher IsMaybe = new(TypeKind.Struct, "ProgressOnderwijsUtils.Collections.Maybe");
 }

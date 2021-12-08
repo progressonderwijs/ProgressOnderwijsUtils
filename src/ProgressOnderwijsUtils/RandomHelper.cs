@@ -2,13 +2,13 @@ namespace ProgressOnderwijsUtils;
 
 public sealed class RandomHelper
 {
-    public static readonly RandomHelper Secure = new RandomHelper(bytes => RandomNumberGenerator.Fill(bytes));
+    public static readonly RandomHelper Secure = new(bytes => RandomNumberGenerator.Fill(bytes));
 
     static RandomHelper Insecure(int seed)
-        => new RandomHelper(new Random(seed).NextBytes);
+        => new(new Random(seed).NextBytes);
 
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-        => Insecure(GetNaiveHashCode(System.IO.Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
+        => Insecure(GetNaiveHashCode(Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
     static int GetNaiveHashCode(string str)
         => (int)ColumnOrdering.CaseInsensitiveHash(str);
@@ -16,9 +16,7 @@ public sealed class RandomHelper
     readonly Action<byte[]> fillWithRandomBytes;
 
     RandomHelper(Action<byte[]> fillWithRandomBytes)
-    {
-        this.fillWithRandomBytes = fillWithRandomBytes;
-    }
+        => this.fillWithRandomBytes = fillWithRandomBytes;
 
     public byte[] GetBytes(int numBytes)
     {
@@ -48,6 +46,7 @@ public sealed class RandomHelper
     public uint GetUInt32(uint excludedBound)
     {
         // Proved in: http://www.google.com/url?q=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F11758809%2Fwhat-is-the-optimal-algorithm-for-generating-an-unbiased-random-integer-within-a&sa=D&sntz=1&usg=AFQjCNEtQkf0HYEkTn6Npvmyu2TDKPQCxA
+        // ReSharper disable once UselessBinaryOperation Resharper bug: https://youtrack.jetbrains.com/issue/RSRP-486301
         var modErr = (uint.MaxValue % excludedBound + 1) % excludedBound;
         var safeIncBound = uint.MaxValue - modErr;
 
@@ -109,5 +108,5 @@ public sealed class RandomHelper
         Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
 
     public string GetStringOfUriPrintableCharacters(int length)
-        => new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
+        => new(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
 }

@@ -23,7 +23,7 @@ public struct ProcessStartSettings
     public Process CreateProcessObj()
     {
         var proc = new Process {
-            StartInfo = new ProcessStartInfo {
+            StartInfo = new() {
                 CreateNoWindow = true, // we donot need a UI
                 RedirectStandardInput = true,
                 UseShellExecute = false, //required to be able to redirect streams
@@ -48,7 +48,7 @@ public struct ProcessStartSettings
         var closedParts = 0;
 
         // ReSharper disable once ConvertToLocalFunction - workaround apparent roslyn bug that considers proc to be nullable otherwise.
-        Action MarkOnePartClosed = () => {
+        var MarkOnePartClosed = () => {
             if (Interlocked.Increment(ref closedParts) == 3) {
                 proc.Dispose();
             }
@@ -112,7 +112,7 @@ public struct ProcessStartSettings
         );
         WriteStdIn(proc);
 
-        return new AsyncProcessResult(exitCodeCompletion.Task, replayableMergedOutput);
+        return new(exitCodeCompletion.Task, replayableMergedOutput);
     }
 
     public int RunProcessWithoutRedirection()

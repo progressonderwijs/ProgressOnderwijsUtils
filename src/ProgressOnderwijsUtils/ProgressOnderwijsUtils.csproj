@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>83.2.0</Version>
-    <PackageReleaseNotes>Add PropertyMappers.GetIdMapper</PackageReleaseNotes>
+    <Version>83.2.1</Version>
+    <PackageReleaseNotes>Use LF, not CRLF when scripting database schema</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>

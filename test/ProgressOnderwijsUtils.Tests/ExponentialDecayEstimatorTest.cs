@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Tests;
 public sealed class ExponentialDecayEstimatorTest
 {
     readonly TimeSpan halflife = TimeSpan.FromDays(1.0);
-    readonly DateTime someTime = new DateTime(2020, 6, 6, 0, 0, 0, 0, DateTimeKind.Utc);
+    readonly DateTime someTime = new(2020, 6, 6, 0, 0, 0, 0, DateTimeKind.Utc);
 
     [Fact]
     public void LogOfHalfIsCorrect()

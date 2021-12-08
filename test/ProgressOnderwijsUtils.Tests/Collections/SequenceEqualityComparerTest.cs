@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections;
 public sealed class SequenceEqualityComparerTest
 {
     static readonly SequenceEqualityComparer<int> defaultEq = SequenceEqualityComparer<int>.Default;
-    static readonly SequenceEqualityComparer<int> nullIsEmptyEq = defaultEq with { NullCountsAsEmpty = true };
+    static readonly SequenceEqualityComparer<int> nullIsEmptyEq = defaultEq with { NullCountsAsEmpty = true, };
 
     static void AssertEquality(SequenceEqualityComparer<int> eq, int[]? a, int[]? b, bool shouldBeEqual)
     {
@@ -32,25 +32,25 @@ public sealed class SequenceEqualityComparerTest
     [Fact]
     public void SingleElementArraysCompare()
     {
-        AssertEquality(defaultEq, new[] { 1 }, new[] { 2 }, false);
-        AssertEquality(defaultEq, new[] { 2 }, new[] { 2 }, true);
-        var sharedRef = new[] { int.MinValue };
+        AssertEquality(defaultEq, new[] { 1, }, new[] { 2, }, false);
+        AssertEquality(defaultEq, new[] { 2, }, new[] { 2, }, true);
+        var sharedRef = new[] { int.MinValue, };
         AssertEquality(defaultEq, sharedRef, sharedRef, true);
     }
 
     [Fact]
     public void AdditionalElementsArentRelevant()
     {
-        AssertEquality(defaultEq, new[] { 1 }, new[] { 1 }, true);
-        AssertEquality(defaultEq, new[] { 1, 100 }, new[] { 1, 0 }, false);
-        AssertEquality(defaultEq, new[] { 1, 100 }, new[] { 1, 100 }, true);
-        AssertEquality(defaultEq, new[] { 1, 100 }, new[] { 0, 100 }, false);
+        AssertEquality(defaultEq, new[] { 1, }, new[] { 1, }, true);
+        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 1, 0, }, false);
+        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 1, 100, }, true);
+        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 0, 100, }, false);
     }
 
     [Fact]
     public void LengthDifferencesMatter()
     {
-        AssertEquality(defaultEq, new[] { 1, 2, 3 }, new[] { 1, 2, 3, 4 }, false);
-        AssertEquality(defaultEq, new[] { 1, 2, 3, 4 }, new[] { 1, 2, 3 }, false);
+        AssertEquality(defaultEq, new[] { 1, 2, 3, }, new[] { 1, 2, 3, 4, }, false);
+        AssertEquality(defaultEq, new[] { 1, 2, 3, 4, }, new[] { 1, 2, 3, }, false);
     }
 }

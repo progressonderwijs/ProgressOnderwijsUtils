@@ -26,7 +26,7 @@ public sealed class RetryDelayChooser
     public RetryDelayChooser(TimeSpan constantFailureDelayTarget, double halflifeFactor)
     {
         if (halflifeFactor < 1.0) {
-            throw new Exception("For reasonably convergence, the error-rate half-life must exceed the delay target; i.e. halflifeFactor must exceed 1.0.  A reasonable value might be 10.");
+            throw new("For reasonably convergence, the error-rate half-life must exceed the delay target; i.e. halflifeFactor must exceed 1.0.  A reasonable value might be 10.");
         }
         var delaysPerHalflife = 1.0 / halflifeFactor; //so this is at *most* 1, and typically much smaller, therefore...
         var empiracalConvergenceOverestimateRatio = 1 + 0.230 * delaysPerHalflife + 0.09761662037037 * delaysPerHalflife * delaysPerHalflife; //...this is at *most* 1.33
@@ -34,7 +34,7 @@ public sealed class RetryDelayChooser
         //The convergenceOverestimateRatio is irrelevant for long halflives, but it's a "nice" to compensate for unusually small halflives, and a compensation of 1.33 isn't too bad.
 
         var halfLife = TimeSpan.FromSeconds(constantFailureDelayTarget.TotalSeconds * halflifeFactor);
-        errorRateEstimator = new ExponentialDecayEstimator(halfLife);
+        errorRateEstimator = new(halfLife);
         halflivesPerSecond = 1.0 / errorRateEstimator.halflife.TotalSeconds;
 
         var compensatedTargetConvergedDelay = constantFailureDelayTarget.TotalSeconds / empiracalConvergenceOverestimateRatio;

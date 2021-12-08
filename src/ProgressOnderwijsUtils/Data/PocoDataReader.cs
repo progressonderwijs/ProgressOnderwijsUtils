@@ -61,7 +61,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
         _cancellationToken.ThrowIfCancellationRequested();
         var hasnext = pocos.MoveNext();
         if (hasnext) {
-            current = new Optional(pocos.Current);
+            current = new(pocos.Current);
             rowsProcessed++;
         } else {
             current = Optional.Empty;
@@ -169,7 +169,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
     {
         var properties = PocoUtils.GetProperties<T>();
         var columnInfosBuilder = new List<ColumnInfo>(properties.Count);
-        columnIndexByName = new Dictionary<string, int>(properties.Count, StringComparer.OrdinalIgnoreCase);
+        columnIndexByName = new(properties.Count, StringComparer.OrdinalIgnoreCase);
         schemaTable = CreateEmptySchemaTable();
         var i = 0;
         foreach (var pocoProperty in properties) {

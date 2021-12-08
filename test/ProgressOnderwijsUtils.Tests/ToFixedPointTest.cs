@@ -9,7 +9,7 @@ public sealed class ToFixedPointTest
     [Fact]
     public void ToFixedPointWorksLikeFormatter()
     {
-        foreach (var culture in new[] { NL, INV }) {
+        foreach (var culture in new[] { NL, INV, }) {
             foreach (var scale in Enumerable.Range(0, 4).Select(p => Math.Pow(10, -p))) {
                 for (var n = -10000; n < 10000; n++) {
                     if ((n % 10 + 10) % 10 != 5) {

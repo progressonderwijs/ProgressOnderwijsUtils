@@ -236,7 +236,7 @@ public static class ParameterizedSqlObjectMapper
                 _ when underlyingType == typeof(TimeSpan) && isSqlDataReader => getTimeSpan_SqlDataReader,
                 _ when underlyingType == typeof(DateTimeOffset) && isSqlDataReader => getDateTimeOffset_SqlDataReader,
                 _ when getterMethodsByType.TryGetValue(underlyingType, out var interfaceGetter) => InterfaceMap[interfaceGetter],
-                _ => null
+                _ => null,
             };
 
         static Expression GetColValueExpr(ParameterExpression readerParamExpr, ConstantExpression fieldIdxExpr, Type type)
@@ -259,7 +259,7 @@ public static class ParameterizedSqlObjectMapper
             if (GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, nonNullableUnderlyingType) is { } builtin) {
                 return nonNullableUnderlyingType != nonNullableType ? Expression.Convert(builtin, nonNullableType) : builtin;
             } else {
-                var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new Exception($"Type {type.ToCSharpFriendlyTypeName()} is not  built-in and has no PocoPropertyConverter");
+                var converter = AutomaticValueConverters.GetOrNull(nonNullableUnderlyingType) ?? throw new($"Type {type.ToCSharpFriendlyTypeName()} is not  built-in and has no PocoPropertyConverter");
                 var callExpr = GetBuiltInExprOrNull(readerParamExpr, fieldIdxExpr, converter.ProviderClrType) ?? throw new($"The converter for {type.ToCSharpFriendlyTypeName()} produces {converter.ProviderClrType.ToCSharpFriendlyTypeName()} which is not db-mappable");
                 return ReplacingExpressionVisitor.Replace(converter.ConvertFromProviderExpression.Parameters.Single(), callExpr, converter.ConvertFromProviderExpression.Body);
             }
@@ -344,7 +344,7 @@ public static class ParameterizedSqlObjectMapper
             var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
             var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
             var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
-            var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
+            var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr, };
             var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
             return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
         }

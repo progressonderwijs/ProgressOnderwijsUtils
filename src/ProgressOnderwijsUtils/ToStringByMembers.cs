@@ -60,7 +60,7 @@ public static class ToStringByMembers<T>
             concatStringExpressions(
                 new[] { Expression.Constant("new " + type.Name + " {\n"), }
                     .Concat(nonCompilerGeneratedMembers.Select(MemberToStringExpression))
-                    .Concat(new[] { Expression.Constant("}") })
+                    .Concat(new[] { Expression.Constant("}"), })
                     .ToArray()
             );
 

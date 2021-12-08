@@ -12,8 +12,7 @@ public class SmallBatchInsertBench : IDisposable
     sealed class Config : ManualConfig
     {
         public Config()
-        {
-            _ = AddJob(
+            => _ = AddJob(
                 Job.MediumRun
                     .WithLaunchCount(1)
                     .WithWarmupCount(3)
@@ -23,7 +22,6 @@ public class SmallBatchInsertBench : IDisposable
                     .WithToolchain(InProcessNoEmitToolchain.Instance)
                     .WithId("InProcess")
             );
-        }
     }
 
     readonly SqlConnection sqlConn;
@@ -35,7 +33,7 @@ public class SmallBatchInsertBench : IDisposable
 
     public SmallBatchInsertBench()
     {
-        sqlConn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB");
+        sqlConn = new(@"Data Source=(LocalDB)\MSSQLLocalDB");
         sqlConn.Open();
         ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(sqlConn);
         cachedTarget = BulkInsertTestSampleRow.CreateTable(sqlConn, tableName);

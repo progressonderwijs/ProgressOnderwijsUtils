@@ -62,8 +62,8 @@ public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtm
         => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
 
     CustomHtmlElement IHtmlElement<CustomHtmlElement>.ReplaceAttributesWith(HtmlAttributes replacementAttributes)
-        => new CustomHtmlElement(TagName, replacementAttributes, GetContent());
+        => new(TagName, replacementAttributes, GetContent());
 
     CustomHtmlElement IHtmlElementAllowingContent<CustomHtmlElement>.ReplaceContentWith(HtmlFragment replacementContents)
-        => new CustomHtmlElement(TagName, Attributes, replacementContents);
+        => new(TagName, Attributes, replacementContents);
 }

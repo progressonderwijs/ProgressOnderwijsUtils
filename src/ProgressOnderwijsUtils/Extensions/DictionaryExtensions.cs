@@ -141,7 +141,7 @@ public static class DictionaryExtensions
 
     public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> old)
         where TKey : notnull
-        => new Dictionary<TKey, TValue>(old, old.Comparer);
+        => new(old, old.Comparer);
 
     /// <summary>
     /// Merges two dictionaries. When both dictionaries contain the same key, the last value is used
@@ -166,5 +166,5 @@ public static class DictionaryExtensions
 
     public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict)
         where TKey : notnull
-        => new ReadOnlyDictionary<TKey, TValue>(dict);
+        => new(dict);
 }

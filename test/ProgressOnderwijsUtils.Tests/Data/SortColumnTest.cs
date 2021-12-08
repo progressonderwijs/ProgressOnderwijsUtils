@@ -5,14 +5,14 @@ public sealed class SortColumnTest
     [Fact]
     public void CheckEquals()
     {
-        Assert.NotEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc));
-        Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-        Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
+        Assert.NotEqual(new("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc));
+        Assert.Equal(new("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
+        Assert.Equal(new("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
 
-        Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
+        Assert.Equal(new("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
 
-        Assert.NotEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
-        Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
+        Assert.NotEqual(new("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
+        Assert.Equal(new("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
 
         Assert.False(new ColumnSort("abc", SortDirection.Asc).Equals(null));
     }
@@ -30,7 +30,7 @@ public sealed class SortColumnTest
         var col = new ColumnSort("ziggy", SortDirection.Asc);
         // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
         _ = col.WithReverseDirection().WithDifferentName("test"); //to test whether it's really pure.
-        Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc), col);
+        Assert.Equal(new("ziggy", SortDirection.Asc), col);
     }
 
     [Fact]

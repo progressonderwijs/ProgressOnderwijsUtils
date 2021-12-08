@@ -86,6 +86,6 @@ public static class SqlCommandDebugStringifier
     {
         var debugFriendlyCommandText = DebugFriendlyCommandText(failedCommand, SqlTracerAgumentInclusion.IncludingArgumentValues);
         var timeoutMessage = innerException.IsSqlTimeoutException() ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";
-        return new ParameterizedSqlExecutionException(message + timeoutMessage + "\n\nSqlCommandText:\n" + debugFriendlyCommandText, innerException);
+        return new(message + timeoutMessage + "\n\nSqlCommandText:\n" + debugFriendlyCommandText, innerException);
     }
 }

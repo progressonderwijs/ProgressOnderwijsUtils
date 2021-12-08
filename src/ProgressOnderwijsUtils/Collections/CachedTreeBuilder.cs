@@ -30,7 +30,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
             if (kids != null) { //allow null to represent absence of kids
                 var kidIdx = 0;
                 foreach (var kid in kids) {
-                    var builderForKid = new TreeNodeBuilder(kid) { idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids };
+                    var builderForKid = new TreeNodeBuilder(kid) { idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids, };
                     generatedNodes++;
 
                     if (generatedNodes >= 10_000_000) {

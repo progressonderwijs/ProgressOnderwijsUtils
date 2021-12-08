@@ -17,13 +17,13 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
 
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new("expected KeyConstraintViolation");
 
         PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
         PAssert.That(() => violation.ConstraintName == "uc_T_C");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A(1)" }));
+        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A(1)", }));
     }
 
     [Fact]
@@ -42,12 +42,12 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
 
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as DuplicateKeyUniqueIndex? ?? throw new Exception("expected DuplicateKeyUniqueIndex");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as DuplicateKeyUniqueIndex? ?? throw new("expected DuplicateKeyUniqueIndex");
 
         PAssert.That(() => violation.IndexName == "ix_T");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A" }));
+        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A", }));
     }
 
     [Fact]
@@ -63,13 +63,13 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new("expected KeyConstraintViolation");
 
         PAssert.That(() => violation.ConstraintType == "PRIMARY KEY");
         PAssert.That(() => violation.ConstraintName == "pk_T");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "1" }));
+        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "1", }));
     }
 
     [Fact]
@@ -88,13 +88,13 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new("expected KeyConstraintViolation");
 
         PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
         PAssert.That(() => violation.ConstraintName == "uc_T_C1_C2");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A", "B" }));
+        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A", "B", }));
     }
 
     [Fact]
@@ -110,8 +110,8 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T1 (C) values (1)").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new("expected GenericConstraintViolation");
 
         PAssert.That(() => violation.StatementType == "INSERT");
         PAssert.That(() => violation.ConstraintType == "CHECK");
@@ -135,8 +135,8 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         SQL($"insert #T (C) values (2)").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new("expected GenericConstraintViolation");
 
         PAssert.That(() => violation.StatementType == "UPDATE");
         PAssert.That(() => violation.ConstraintType == "CHECK");
@@ -163,8 +163,8 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new("expected GenericConstraintViolation");
 
         PAssert.That(() => violation.StatementType == "INSERT");
         PAssert.That(() => violation.ConstraintType == "FOREIGN KEY");
@@ -187,8 +187,8 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Connection));
 
-        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
-        var violation = exceptionError.Parse() as CannotInsertNull? ?? throw new Exception("expected CannotInsertNull");
+        var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new("Expected an inner SqlException with error");
+        var violation = exceptionError.Parse() as CannotInsertNull? ?? throw new("expected CannotInsertNull");
 
         PAssert.That(() => violation.TableName.StartsWith("tempdb.dbo.#T", StringComparison.Ordinal));
         PAssert.That(() => violation.ColumnName == "C");

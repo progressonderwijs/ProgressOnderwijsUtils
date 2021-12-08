@@ -23,7 +23,7 @@ public sealed class ToStringByMembersTest
                 NullableField = null,
                 AnEnum = ConsoleKey.BrowserBack,
                 MyString = "Hello World!",
-                Nested = new() { AnEnum = ConsoleKey.BrowserRefresh },
+                Nested = new() { AnEnum = ConsoleKey.BrowserRefresh, },
                 SomeValueType = new(),
                 MyInt = 42,
             }.ToString()

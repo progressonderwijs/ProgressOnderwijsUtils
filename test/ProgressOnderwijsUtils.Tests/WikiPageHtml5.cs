@@ -3329,9 +3329,7 @@ public static class WikiPageHtml5
                                                                                             ),
                                                                                         "."
                                                                                     ),
-                                                                                _span._title(
-                                                                                        "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+specification+finalized%2C+squabbling+over+specs+continues&rft.date=2014-10-29&rft.genre=unknown&rft_id=http%3A%2F%2Farstechnica.com%2Finformation-technology%2F2014%2F10%2Fhtml5-specification-finalized-squabbling-over-who-writes-the-specs-continues%2F&rft.pub=Ars+Technica&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
-                                                                                    )
+                                                                                _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+specification+finalized%2C+squabbling+over+specs+continues&rft.date=2014-10-29&rft.genre=unknown&rft_id=http%3A%2F%2Farstechnica.com%2Finformation-technology%2F2014%2F10%2Fhtml5-specification-finalized-squabbling-over-who-writes-the-specs-continues%2F&rft.pub=Ars+Technica&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
                                                                                     ._class("Z3988")
                                                                                     .Content(
                                                                                         _span._style("display:none;")
@@ -6209,9 +6207,7 @@ public static class WikiPageHtml5
                                                                                             ),
                                                                                         "."
                                                                                     ),
-                                                                                _span._title(
-                                                                                        "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=New+Charter+for+the+HTML+Working+Group+from+Philippe+Le+Hegaret+on+2013-09-30+%28public-html-admin%40w3.org+from+September+2013%29&rft.date=2013-09-30&rft.genre=unknown&rft_id=%2F%2Flists.w3.org%2FArchives%2FPublic%2Fpublic-html-admin%2F2013Sep%2F0129.html&rft.pub=Lists.w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
-                                                                                    )
+                                                                                _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=New+Charter+for+the+HTML+Working+Group+from+Philippe+Le+Hegaret+on+2013-09-30+%28public-html-admin%40w3.org+from+September+2013%29&rft.date=2013-09-30&rft.genre=unknown&rft_id=%2F%2Flists.w3.org%2FArchives%2FPublic%2Fpublic-html-admin%2F2013Sep%2F0129.html&rft.pub=Lists.w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
                                                                                     ._class("Z3988")
                                                                                     .Content(
                                                                                         _span._style("display:none;")

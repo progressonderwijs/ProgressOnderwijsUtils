@@ -22,8 +22,8 @@ public static class StringUtils
     {
         //perf: put this in a seperate class so usage of stringutils doesn't imply loading (and compiling) these just yet.
         public static readonly Regex
-            whiteSpaceSequence = new Regex(@"[ \t_]+", CommonOptions),
-            capLetter = new Regex(
+            whiteSpaceSequence = new(@"[ \t_]+", CommonOptions),
+            capLetter = new(
                 @"
                         (?<=[a-zA-Z])[0-9]+
                         |(?<![A-Z])[A-Z][a-z]*
@@ -40,7 +40,7 @@ public static class StringUtils
     {
         //perf: put this in a seperate class so usage of stringutils doesn't imply loading (and compiling) these just yet.
         public static readonly Regex
-            sepaStripper = new Regex(@"[^a-zA-z0-9 /-?:().,'+]+", CommonOptions);
+            sepaStripper = new(@"[^a-zA-z0-9 /-?:().,'+]+", CommonOptions);
     }
 
     [Pure]

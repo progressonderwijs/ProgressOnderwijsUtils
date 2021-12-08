@@ -62,7 +62,7 @@ public class ProgressReporter
             var now = start + elapsed;
             var eta = start + scaled;
             nextReportDueAt = elapsed.Ticks + reportEveryTicks;
-            onReport(new ProgressReport(start, now, eta, newProgressVal, percentProgress, leftOver));
+            onReport(new(start, now, eta, newProgressVal, percentProgress, leftOver));
         }
     }
 
