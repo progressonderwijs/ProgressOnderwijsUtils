@@ -4,7 +4,7 @@ public sealed class RandomHelper
 {
     public static readonly RandomHelper Secure = new(bytes => RandomNumberGenerator.Fill(bytes));
 
-    static RandomHelper Insecure(int seed)
+    public static RandomHelper Insecure(int seed)
         => new(new Random(seed).NextBytes);
 
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")

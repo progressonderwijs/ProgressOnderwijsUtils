@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>83.2.1</Version>
-    <PackageReleaseNotes>Use LF, not CRLF when scripting database schema</PackageReleaseNotes>
+    <Version>83.2.2</Version>
+    <PackageReleaseNotes>Make RandomHelper.Insecure public</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
