@@ -41,7 +41,7 @@ public sealed record SequenceSqlDefinition(
         } else if (CacheSize.HasValue) {
             _ = sb.Append(" cache" + CacheSize.ToString());
         }
-        _ = sb.AppendLine();
+        _ = sb.Append("\n");
     }
 
     public static SequenceSqlDefinition[] LoadAll(SqlConnection conn)
