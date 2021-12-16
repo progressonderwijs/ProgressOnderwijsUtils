@@ -182,18 +182,19 @@ public static class EnumerableExtensions
     }
 
     [Pure]
-    public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
-        where T : class
+    public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", string newline = "\n", bool useQuotesForStrings = false)
+        where T : IReadImplicitly
     {
         var csvBuilder = new StringBuilder();
-        var properties = typeof(T).GetProperties();
+
+        var properties = PocoUtils.GetProperties<T>().Where(p => p.CanRead).ToArray();
 
         if (useHeader) {
-            _ = csvBuilder.AppendLine(properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter));
+            _ = csvBuilder.Append(properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter) + newline);
         }
         foreach (var item in items) {
-            var line = properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter);
-            _ = csvBuilder.AppendLine(line);
+            var line = properties.Select(p => p.Getter.AssertNotNull()(item).ToCsvValue(delimiter, useQuotesForStrings)).JoinStrings(delimiter);
+            _ = csvBuilder.Append(line + newline);
         }
         return csvBuilder.ToString();
     }
