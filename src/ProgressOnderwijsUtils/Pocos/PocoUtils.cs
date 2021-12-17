@@ -30,7 +30,10 @@ public static class PocoUtils
             if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
                 var retval = PocoProperties<TPoco>.Instance.SingleOrNull(pocoProperty => pocoProperty.PropertyInfo == memberInfo);
                 if (retval == null) {
-                    throw new ArgumentException($"To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\nThe argument lambda refers to a property {memberInfo.Name} that is not a poco-property");
+                    throw new ArgumentException(
+                        "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+                        + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property"
+                    );
                 }
                 return retval;
             } else if (typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TPoco))) {
@@ -39,7 +42,7 @@ public static class PocoUtils
                 var interfacemap = typeof(TPoco).GetInterfaceMap(typeof(TParent));
                 var getterIdx = Array.IndexOf(interfacemap.InterfaceMethods, getter);
                 if (getterIdx == -1) {
-                    throw new InvalidOperationException($"The poco {typeof(TPoco)} does not implement method {(getter?.Name ?? "<<NULL>>")}");
+                    throw new InvalidOperationException($"The poco {typeof(TPoco)} does not implement method {getter?.Name ?? "<<NULL>>"}");
                 }
                 var mpGetter = interfacemap.TargetMethods[getterIdx];
                 return PocoProperties<TPoco>.Instance.Single(pocoProperty => pocoProperty.PropertyInfo.GetGetMethod() == mpGetter);
@@ -62,17 +65,26 @@ public static class PocoUtils
             return memberInfo;
         }
 
-        throw new ArgumentException($"To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\nThe passed lambda isn't a simple MemberExpression, but a {innerExpr.NodeType}:  {ExpressionToCode.ToCode(property)}");
+        throw new ArgumentException(
+            "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n"
+            + $"The passed lambda isn't a simple MemberExpression, but a {innerExpr.NodeType}:  {ExpressionToCode.ToCode(property)}"
+        );
     }
 
     static void AssertMemberMightMatchAProperty<TObject, TProperty>(Expression<Func<TObject, TProperty>> property, MemberInfo memberInfo, MemberExpression membExpr)
     {
         if (!memberInfo.DeclaringType!.IsAssignableFrom(typeof(TObject))) {
-            throw new ArgumentException($"To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\nActual input: {ExpressionToCode.ToCode(property)}\n(The type of {ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull())} should be {typeof(TObject).ToCSharpFriendlyTypeName()} or a base type.)");
+            throw new ArgumentException(
+                "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n"
+                + $"Actual input: {ExpressionToCode.ToCode(property)}\n(The type of {ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull())} should be {typeof(TObject).ToCSharpFriendlyTypeName()} or a base type.)"
+            );
         }
 
         if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
-            throw new ArgumentException($"To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\nThe argument lambda refers to a member {membExpr.Member.Name} that is not a property or field");
+            throw new ArgumentException(
+                "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+                + $"The argument lambda refers to a member {membExpr.Member.Name} that is not a property or field"
+            );
         }
     }
 

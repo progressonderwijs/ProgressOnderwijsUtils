@@ -13,7 +13,11 @@ public abstract class ResourceStore<T> : IResourceStore
     protected ResourceStore()
     {
         if (typeof(T) != GetType()) {
-            throw new InvalidOperationException($"Invalid inheritance:\n{GetType().ToCSharpFriendlyTypeName()} inherits from {GetType().BaseType?.ToCSharpFriendlyTypeName()} but it was expected to inherit from {typeof(ResourceStore<T>).ToCSharpFriendlyTypeName()}");
+            throw new InvalidOperationException(
+                "Invalid inheritance:\n"
+                + $"{GetType().ToCSharpFriendlyTypeName()} inherits from {GetType().BaseType?.ToCSharpFriendlyTypeName()} "
+                + $"but it was expected to inherit from {typeof(ResourceStore<T>).ToCSharpFriendlyTypeName()}"
+            );
         }
     }
 
