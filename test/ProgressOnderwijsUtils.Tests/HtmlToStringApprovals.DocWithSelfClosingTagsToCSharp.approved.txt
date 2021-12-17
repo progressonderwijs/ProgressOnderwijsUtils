@@ -9,25 +9,25 @@ _html.Content(
     )
     + _body.Content(
         _area
-        + "\r\n"
+        + "\n"
         + _br
-        + "\r\n"
+        + "\n"
         + _col
-        + "\r\n"
+        + "\n"
         + _embed
-        + "\r\n"
+        + "\n"
         + _hr
-        + "\r\n"
+        + "\n"
         + _img
-        + "\r\n"
+        + "\n"
         + _input
-        + "\r\n"
+        + "\n"
         + _param
-        + "\r\n"
+        + "\n"
         + _source
-        + "\r\n"
+        + "\n"
         + _track
-        + "\r\n"
+        + "\n"
         + _wbr
     )
 )
