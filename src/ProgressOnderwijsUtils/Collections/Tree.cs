@@ -166,7 +166,7 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
             return "<<TOO DEEP>>";
         }
         var nodeString = (nodeValue?.ToString() ?? "<NULL>").Replace("\n", $"\n{indent}");
-        var childrenString = (Children.Count == 0 ? "." : $":\n{Children.Select(t => t.ToString($"{indent}    ")).JoinStrings("\n")}");
+        var childrenString = Children.Count == 0 ? "." : $":\n{Children.Select(t => t.ToString($"{indent}    ")).JoinStrings("\n")}";
         return $"{indent}{nodeString} {childrenString}";
     }
 
