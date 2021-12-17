@@ -42,7 +42,7 @@ public class ProgressReporter
         : this(
             TotalSteps,
             report =>
-                Console.WriteLine(reportNameForConsole + ": " + report.PercentDone + "%, " + report.TimeLeft.TotalSeconds.ToString("f1") + "s left (" + report.Start + " - " + report.Eta + ")"),
+                Console.WriteLine($"{reportNameForConsole}: {report.PercentDone}%, {report.TimeLeft.TotalSeconds:f1}s left ({report.Start} - {report.Eta})"),
             reportEveryFractionOfTotal,
             reportEveryTimeSpan
         ) { }

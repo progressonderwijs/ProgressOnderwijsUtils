@@ -84,7 +84,7 @@ public sealed class ActionRetrierTest
                         () => {
                             count++;
                             if (count < 10) {
-                                throw new ApplicationException("not caught: " + count);
+                                throw new ApplicationException($"not caught: {count}");
                             }
                             return Unit.Value;
                         },

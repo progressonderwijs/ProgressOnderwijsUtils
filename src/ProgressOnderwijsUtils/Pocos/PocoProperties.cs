@@ -26,9 +26,9 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
     PocoProperties()
     {
         if (typeof(T).IsInterface) {
-            throw new ArgumentException("Cannot determine properties on interface type " + typeof(T).ToCSharpFriendlyTypeName());
+            throw new ArgumentException($"Cannot determine properties on interface type {typeof(T).ToCSharpFriendlyTypeName()}");
         } else if (typeof(T).IsAbstract) {
-            throw new ArgumentException("Cannot determine properties on abstract type " + typeof(T).ToCSharpFriendlyTypeName());
+            throw new ArgumentException($"Cannot determine properties on abstract type {typeof(T).ToCSharpFriendlyTypeName()}");
         }
 
         Properties = GetPropertiesImpl();
@@ -67,10 +67,8 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
             }
         }
 
-        throw new ArgumentException(
-            "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-            "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property"
-        );
+        throw new ArgumentException($"To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+            + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property");
     }
 
     public IEnumerator<IPocoProperty<T>> GetEnumerator()

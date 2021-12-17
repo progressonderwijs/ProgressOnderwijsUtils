@@ -112,7 +112,7 @@ public struct ParameterizedSql
 
     //ToString is constructed to be invalid sql, so that accidental string-concat doesn't result in something that looks reasonable to execute.
     public override string ToString()
-        => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
+        => $"*/Pseudo-sql (with parameter values inlined!):/*\r\n{DebugText()}";
 
     public string DebugText()
         => DebugCommandFactory.DebugTextFor(impl);
@@ -261,7 +261,7 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         where TCommandFactory : struct, ICommandFactory
     {
         if (interpolatedQuery == null) {
-            throw new InvalidOperationException(nameof(interpolatedQuery) + " is null");
+            throw new InvalidOperationException($"{nameof(interpolatedQuery)} is null");
         }
 
         var str = interpolatedQuery.Format;

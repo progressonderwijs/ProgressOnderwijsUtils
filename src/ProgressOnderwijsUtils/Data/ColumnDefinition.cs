@@ -40,7 +40,7 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         => new(sqlSystemTypeId.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
 
     public override string ToString()
-        => DataType.ToCSharpFriendlyTypeName() + " " + Name;
+        => $"{DataType.ToCSharpFriendlyTypeName()} {Name}";
 
     public static ColumnDefinition FromDbColumnMetaData(DbColumnMetaData col, int colIdx)
         => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));

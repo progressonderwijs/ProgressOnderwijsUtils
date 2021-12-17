@@ -25,5 +25,5 @@ public static class EnumerableOfStringExtension
         this IReadOnlyCollection<string> strings,
         string separator,
         int maxCount)
-        => JoinStrings(strings.Take(maxCount), separator) + (strings.Count > maxCount ? separator + "..." : "");
+        => JoinStrings(strings.Take(maxCount), separator) + (strings.Count > maxCount ? $"{separator}..." : "");
 }

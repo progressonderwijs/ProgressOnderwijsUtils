@@ -67,7 +67,7 @@ public sealed class HtmlSanitizerTest
         var xEl = new XElement("b", sample3);
         var xElEncoded = xEl.ToString(SaveOptions.None);
 
-        PAssert.That(() => HtmlFragment.ParseFragment("<p>" + xElEncoded + "</p>").Sanitize().ToStringWithoutDoctype() == "<p>" + xElEncoded + "</p>");
+        PAssert.That(() => HtmlFragment.ParseFragment($"<p>{xElEncoded}</p>").Sanitize().ToStringWithoutDoctype() == $"<p>{xElEncoded}</p>");
     }
 
     [Fact]
@@ -253,8 +253,8 @@ xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>"
         => PAssert.That(
             () => HtmlFragment.ParseFragment(
                 @"Test element:<!--[if gte IE 4]>
- <SCRIPT>alert('XSS');</SCRIPT>
- <![endif]-->"
+<SCRIPT>alert('XSS');</SCRIPT>
+<![endif]-->"
             ).Sanitize().ToStringWithoutDoctype() == "Test element:"
         );
 

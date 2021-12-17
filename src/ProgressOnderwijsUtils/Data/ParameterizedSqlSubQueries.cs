@@ -14,7 +14,7 @@ public static class ParameterizedSqlSubQueries
             RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline
         );
         if (Regex.IsMatch(commandTextWithoutComments, @"(?<!count\()\*")) {
-            throw new InvalidOperationException(parameterizedSql.GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
+            throw new InvalidOperationException($"{parameterizedSql.GetType().FullName}: Query may not use * as that might cause runtime exceptions in productie when DB changes:\n{commandText}");
         }
     }
 
@@ -22,5 +22,5 @@ public static class ParameterizedSqlSubQueries
     public static ParameterizedSql CreateOrderByClause(OrderByColumns sortOrder)
         => sortOrder.Columns.None()
             ? ParameterizedSql.Empty
-            : ParameterizedSql.CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
+            : ParameterizedSql.CreateDynamic($"order by {sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", ")}");
 }

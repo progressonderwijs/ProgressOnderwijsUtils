@@ -185,7 +185,7 @@ public struct HtmlFragment : IConvertibleToFragment
     }
 
     public override string ToString()
-        => "HtmlFragment: " + this.ToStringWithoutDoctype();
+        => $"HtmlFragment: {this.ToStringWithoutDoctype()}";
 
     public static HtmlFragment Empty
         => new();

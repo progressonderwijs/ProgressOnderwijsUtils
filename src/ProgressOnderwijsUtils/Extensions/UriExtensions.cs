@@ -15,7 +15,7 @@ public static class UriExtensions
         => uri.IsFile && !uri.RefersToDirectory() && File.Exists(uri.LocalPath);
 
     public static Uri EnsureRefersToDirectory(this Uri uri)
-        => uri.RefersToDirectory() ? uri : new UriBuilder(uri) { Path = uri.AbsolutePath + "/", }.Uri;
+        => uri.RefersToDirectory() ? uri : new UriBuilder(uri) { Path = $"{uri.AbsolutePath}/", }.Uri;
 
     public static Uri ReplaceRootWith(this Uri originalPath, Uri newRoot)
         => new(newRoot, originalPath.PathRelativeToRoot());
@@ -28,6 +28,6 @@ public static class UriExtensions
 
     public static string WindowsFileShareFromUri(this Uri networkUri)
         => !networkUri.IsFile || string.IsNullOrEmpty(networkUri.Host)
-            ? throw new InvalidOperationException("The uri " + networkUri + " is not a windows file share")
+            ? throw new InvalidOperationException($"The uri {networkUri} is not a windows file share")
             : networkUri.Combine("/").LocalPath.TrimEnd('\\');
 }

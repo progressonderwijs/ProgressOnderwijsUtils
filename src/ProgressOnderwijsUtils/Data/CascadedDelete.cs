@@ -245,7 +245,7 @@ public static class CascadedDelete
             foreach (var fk in table.KeysFromReferencingChildren) {
                 var childTable = fk.ReferencingChildTable;
                 var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
-                var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
+                var newDelTable = ParameterizedSql.CreateDynamic($"[#del_{delBatch}]");
                 var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
                     ? SQL($"where 1=1")
                     : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))}");

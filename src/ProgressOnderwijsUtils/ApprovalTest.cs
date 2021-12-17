@@ -11,7 +11,7 @@ public sealed class ApprovalTest
     {
         var filename = Path.GetFileNameWithoutExtension(sourceLocation.FilePath);
         var filedir = Path.GetDirectoryName(sourceLocation.FilePath);
-        var approvalPath = filedir + "\\" + filename + "." + sourceLocation.MemberName + ".approved.txt";
+        var approvalPath = $"{filedir}\\{filename}.{sourceLocation.MemberName}.approved.txt";
         return approvalPath;
     }
 
@@ -25,12 +25,12 @@ public sealed class ApprovalTest
         => new(path);
 
     public void AssertUnchangedAndSave(string[] lines)
-        => AssertUnchangedAndSave(lines.Select(line => line + "\r\n").JoinStrings());
+        => AssertUnchangedAndSave(lines.Select(line => $"{line}\r\n").JoinStrings());
 
     public void AssertUnchangedAndSave(string text)
     {
         if (UpdateIfChangedFrom(text)) {
-            throw new("Approval changed: " + Path.GetFileName(ApprovalPath));
+            throw new($"Approval changed: {Path.GetFileName(ApprovalPath)}");
         }
     }
 

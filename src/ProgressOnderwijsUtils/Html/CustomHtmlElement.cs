@@ -36,10 +36,10 @@ public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtm
         => this;
 
     string IHtmlElement.TagStart
-        => "<" + TagName;
+        => $"<{TagName}";
 
     string IHtmlElement.EndTag
-        => !GetContent().IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
+        => !GetContent().IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? $"</{TagName}>" : "";
 
     /// <summary>
     /// Returns the predefined implementation for non-custom html tags (e.g. HtmlTagKinds.TABLE for a custom-tag with name "table").

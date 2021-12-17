@@ -17,7 +17,7 @@ public static class FkReferentialAction_AsSql
             FkReferentialAction.Cascade => SQL($"cascade"),
             FkReferentialAction.SetNull => SQL($"set null"),
             FkReferentialAction.SetDefault => SQL($"set default"),
-            _ => throw new ArgumentOutOfRangeException(nameof(action), "value " + action + " not recognized"),
+            _ => throw new ArgumentOutOfRangeException(nameof(action), $"value {action} not recognized"),
         };
 }
 

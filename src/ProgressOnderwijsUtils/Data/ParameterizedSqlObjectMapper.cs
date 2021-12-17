@@ -65,7 +65,7 @@ public static class ParameterizedSqlObjectMapper
         var pocoProperty = mps.GetByName(sqlColName);
 
         var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-        var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new("Missing field type for field " + lastColumnRead + " named " + sqlColName);
+        var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new($"Missing field type for field {lastColumnRead} named {sqlColName}");
 
         bool? isValueNull = null;
         try {
@@ -333,7 +333,7 @@ public static class ParameterizedSqlObjectMapper
             public static void VerifyDataReaderShape(TReader reader)
             {
                 if (reader.FieldCount != 1) {
-                    throw new InvalidOperationException("Cannot unpack DbDataReader into type " + type.ToCSharpFriendlyTypeName() + "; column count = " + reader.FieldCount + " != 1");
+                    throw new InvalidOperationException($"Cannot unpack DbDataReader into type {type.ToCSharpFriendlyTypeName()}; column count = {reader.FieldCount} != 1");
                 }
             }
         }
@@ -364,9 +364,9 @@ public static class ParameterizedSqlObjectMapper
                         pocoProperties.IndexByName.TryGetValue(cols[columnIndex], out var propertyIndex)
                         && pocoProperties[propertyIndex] is { } member
                     )) {
-                    errors.Add("Cannot resolve IDataReader column " + cols[columnIndex] + " in type " + FriendlyName());
+                    errors.Add($"Cannot resolve IDataReader column {cols[columnIndex]} in type {FriendlyName()}");
                 } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
-                    errors.Add("The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " has already been mapped; are there two identically names columns?");
+                    errors.Add($"The C# property {pocoProperties.PocoType.ToCSharpFriendlyTypeName()}.{member.Name} has already been mapped; are there two identically names columns?");
                 } else if (!IsSupportedType(member.DataType)) {
                     errors.Add(
                         "The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
@@ -387,7 +387,7 @@ public static class ParameterizedSqlObjectMapper
             }
 
             if (errors.Any()) {
-                throw new InvalidOperationException($"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n" + errors.JoinStrings("\n") + "\n");
+                throw new InvalidOperationException($"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n{errors.JoinStrings("\n")}\n");
             }
 
             ConstructorInfo? bestCtor = null;
@@ -407,7 +407,7 @@ public static class ParameterizedSqlObjectMapper
                         && pocoProperties[propIdx] is { } property
                         && property.DataType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                       ) {
+                    ) {
                         if (propertyFlags[propIdx].viaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }

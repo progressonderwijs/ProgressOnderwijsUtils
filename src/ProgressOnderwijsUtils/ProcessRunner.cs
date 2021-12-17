@@ -15,9 +15,9 @@ public struct ProcessStartSettings
 
     public void PrintProcessArgs(int? exitCode)
     {
-        var env = Environment.EmptyIfNull().Select(kvp => "#SET " + kvp.Key + " = " + kvp.Value + "\r\n").JoinStrings();
+        var env = Environment.EmptyIfNull().Select(kvp => $"#SET {kvp.Key} = {kvp.Value}\r\n").JoinStrings();
 
-        Console.WriteLine(env + ExecutableName + " " + Arguments + (exitCode == null ? "" : " [ret:" + exitCode + "]"));
+        Console.WriteLine($"{env}{ExecutableName} {Arguments}{(exitCode == null ? "" : $" [ret:{exitCode}]")}");
     }
 
     public Process CreateProcessObj()
@@ -155,7 +155,7 @@ public sealed class AsyncProcessResult
 
     public void WriteToConsoleWithPrefix(string prefix)
     {
-        var prefixWithSpace = prefix + " ";
+        var prefixWithSpace = $"{prefix} ";
         var culture = CultureInfo.InvariantCulture;
         _ = Output.Subscribe(
             outputStreamEvent => {

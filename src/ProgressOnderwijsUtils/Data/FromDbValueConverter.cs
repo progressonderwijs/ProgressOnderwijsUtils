@@ -19,7 +19,7 @@ public static class DbValueConverter
             return FromDbHelper<T>.Convert(valueFromDb == DBNull.Value ? null : valueFromDb);
         } catch (Exception e) {
             var valTypeString = valueFromDb?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
-            throw new InvalidCastException("Cannot cast " + valTypeString + " to type " + typeof(T).ToCSharpFriendlyTypeName(), e);
+            throw new InvalidCastException($"Cannot cast {valTypeString} to type {typeof(T).ToCSharpFriendlyTypeName()}", e);
         }
     }
 
@@ -37,7 +37,7 @@ public static class DbValueConverter
             return ToDbHelper<T>.Convert(valueFromCode)!;
         } catch (Exception e) {
             var valTypeString = valueFromCode?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
-            throw new InvalidCastException("Cannot cast " + valTypeString + " to type " + typeof(T).ToCSharpFriendlyTypeName(), e);
+            throw new InvalidCastException($"Cannot cast {valTypeString} to type {typeof(T).ToCSharpFriendlyTypeName()}", e);
         }
     }
 
@@ -79,7 +79,7 @@ public static class DbValueConverter
                         ? alreadyCast
                         : (T?)converter.ConvertFromProvider(obj);
             } else {
-                return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T?)converter.ConvertFromProvider(obj);
+                return obj => obj == null ? throw new InvalidCastException($"Cannot convert null to {type.ToCSharpFriendlyTypeName()}") : (T?)converter.ConvertFromProvider(obj);
             }
         }
     }
@@ -102,7 +102,7 @@ public static class DbValueConverter
             } else {
                 return obj =>
                     obj is null
-                        ? throw new InvalidOperationException("Cannot convert null to non-nullable value type " + typeof(T).ToCSharpFriendlyTypeName())
+                        ? throw new InvalidOperationException($"Cannot convert null to non-nullable value type {typeof(T).ToCSharpFriendlyTypeName()}")
                         : obj is T typed
                             ? typed
                             : AutomaticValueConverters.GetOrNull(obj.GetType()) is { } converter
@@ -128,7 +128,7 @@ public static class DbValueConverter
             return val;
         } else if (val == null || val == DBNull.Value) {
             if (type.IsValueType && !type.IsNullableValueType()) {
-                throw new InvalidCastException("Cannot cast (db)null to " + type.ToCSharpFriendlyTypeName());
+                throw new InvalidCastException($"Cannot cast (db)null to {type.ToCSharpFriendlyTypeName()}");
             }
             return null;
         } else if (AutomaticValueConverters.GetOrNull(type) is { } targetConvertible) {

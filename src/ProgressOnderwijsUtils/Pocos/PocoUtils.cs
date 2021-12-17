@@ -31,8 +31,8 @@ public static class PocoUtils
                 var retval = PocoProperties<TPoco>.Instance.SingleOrNull(pocoProperty => pocoProperty.PropertyInfo == memberInfo);
                 if (retval == null) {
                     throw new ArgumentException(
-                        "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-                        "The argument lambda refers to a property " + memberInfo.Name + " that is not a poco-property"
+                        "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+                        + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property"
                     );
                 }
                 return retval;
@@ -42,15 +42,12 @@ public static class PocoUtils
                 var interfacemap = typeof(TPoco).GetInterfaceMap(typeof(TParent));
                 var getterIdx = Array.IndexOf(interfacemap.InterfaceMethods, getter);
                 if (getterIdx == -1) {
-                    throw new InvalidOperationException("The poco " + typeof(TPoco) + " does not implement method " + (getter?.Name ?? "<<NULL>>"));
+                    throw new InvalidOperationException($"The poco {typeof(TPoco)} does not implement method {getter?.Name ?? "<<NULL>>"}");
                 }
                 var mpGetter = interfacemap.TargetMethods[getterIdx];
                 return PocoProperties<TPoco>.Instance.Single(pocoProperty => pocoProperty.PropertyInfo.GetGetMethod() == mpGetter);
             } else {
-                throw new InvalidOperationException(
-                    "Impossible: parent " + typeof(TParent) + " is neither the poco type " + typeof(TPoco)
-                    + " itself, nor a (base) class, nor a base interface."
-                );
+                throw new InvalidOperationException($"Impossible: parent {typeof(TParent)} is neither the poco type {typeof(TPoco)} itself, nor a (base) class, nor a base interface.");
             }
         }
     }
@@ -69,8 +66,8 @@ public static class PocoUtils
         }
 
         throw new ArgumentException(
-            "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
-            "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property)
+            "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n"
+            + $"The passed lambda isn't a simple MemberExpression, but a {innerExpr.NodeType}:  {ExpressionToCode.ToCode(property)}"
         );
     }
 
@@ -78,16 +75,15 @@ public static class PocoUtils
     {
         if (!memberInfo.DeclaringType!.IsAssignableFrom(typeof(TObject))) {
             throw new ArgumentException(
-                "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                "Actual input: " + ExpressionToCode.ToCode(property) + "\n" +
-                "(The type of " + ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull()) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)"
+                "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n"
+                + $"Actual input: {ExpressionToCode.ToCode(property)}\n(The type of {ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull())} should be {typeof(TObject).ToCSharpFriendlyTypeName()} or a base type.)"
             );
         }
 
         if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
             throw new ArgumentException(
-                "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
-                "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field"
+                "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+                + $"The argument lambda refers to a member {membExpr.Member.Name} that is not a property or field"
             );
         }
     }
@@ -100,7 +96,7 @@ public static class PocoUtils
     public static IReadOnlyList<IPocoProperty> GetProperties(Type t)
     {
         if (!typeof(IPoco).IsAssignableFrom(t)) {
-            throw new InvalidOperationException("Can't get poco-properties from type " + t + ", it's not a " + typeof(IPoco));
+            throw new InvalidOperationException($"Can't get poco-properties from type {t}, it's not a {typeof(IPoco)}");
         }
         while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IPoco).IsAssignableFrom(t.BaseType)) {
             t = t.BaseType;

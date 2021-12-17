@@ -199,7 +199,7 @@ public static class Utils
             if (double.IsInfinity(number)) {
                 return number < 0 ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
             }
-            return number.ToString("f" + precision, culture);
+            return number.ToString($"f{precision}", culture);
         }
         var x = (ulong)rounded;
 
