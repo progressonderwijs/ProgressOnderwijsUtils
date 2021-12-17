@@ -253,8 +253,8 @@ xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>"
         => PAssert.That(
             () => HtmlFragment.ParseFragment(
                 @"Test element:<!--[if gte IE 4]>
- <SCRIPT>alert('XSS');</SCRIPT>
- <![endif]-->"
+<SCRIPT>alert('XSS');</SCRIPT>
+<![endif]-->"
             ).Sanitize().ToStringWithoutDoctype() == "Test element:"
         );
 

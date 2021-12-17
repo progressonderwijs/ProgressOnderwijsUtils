@@ -407,7 +407,7 @@ public static class ParameterizedSqlObjectMapper
                         && pocoProperties[propIdx] is { } property
                         && property.DataType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                       ) {
+                    ) {
                         if (propertyFlags[propIdx].viaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }
