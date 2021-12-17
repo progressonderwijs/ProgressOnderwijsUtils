@@ -9,7 +9,7 @@ public static class CodeGenHelper
     {
         var friendlyTypeName = colNameOverride ?? (x => x.DataType.ToCSharpFriendlyTypeName());
 
-        return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; init; }\n";
+        return $"public {friendlyTypeName(col)} {StringUtils.Capitalize(col.Name)} {{ get; init; }}\n";
     }
 
     static readonly Regex newLine = new("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);

@@ -217,7 +217,7 @@ public static class EnumerableExtensions
         }
 
         if (item is string str) {
-            return "\"" + str.Replace("\"", "\\\"") + "\"";
+            return $"\"{str.Replace("\"", "\\\"")}\"";
         } else {
             return item.ToString();
         }

@@ -95,7 +95,7 @@ public static class TypeExtension
         if (customAttributes.Length == 0) {
             return null! /*return: MaybeNull*/;
         } else if (customAttributes.Length > 1) {
-            throw new InvalidOperationException("Expected zero or one " + typeof(T) + ", found " + customAttributes.Length);
+            throw new InvalidOperationException($"Expected zero or one {typeof(T)}, found {customAttributes.Length}");
         } else {
             return (T)customAttributes[0];
         }

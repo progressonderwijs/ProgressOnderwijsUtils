@@ -80,7 +80,7 @@ public struct FieldMappingValidation
                         errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
                 } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly && dst.ColumnAccessibility != ColumnAccessibility.RowVersion) {
-                    throw new("impossible value " + dst.ColumnAccessibility);
+                    throw new($"impossible value {dst.ColumnAccessibility}");
                 }
             } else {
                 //src & dst not null

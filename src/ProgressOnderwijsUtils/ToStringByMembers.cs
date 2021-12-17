@@ -39,7 +39,7 @@ public static class ToStringByMembers<T>
 
         Expression MemberToStringExpression(MemberInfo fi)
             => concatStringExpressions(
-                Expression.Constant("    " + FriendlyMemberName(fi) + " = "),
+                Expression.Constant($"    {FriendlyMemberName(fi)} = "),
                 Expression.Condition(
                     Expression.Call(refEqMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)), Expression.Default(typeof(object))),
                     Expression.Constant("null"),
@@ -58,7 +58,7 @@ public static class ToStringByMembers<T>
 
         var toStringExpr =
             concatStringExpressions(
-                new[] { Expression.Constant("new " + type.Name + " {\n"), }
+                new[] { Expression.Constant($"new {type.Name} {{\n"), }
                     .Concat(nonCompilerGeneratedMembers.Select(MemberToStringExpression))
                     .Concat(new[] { Expression.Constant("}"), })
                     .ToArray()
@@ -77,6 +77,6 @@ public static class ToStringByMembers<T>
             isPublic = propertyinfo.GetGetMethod(false) != null;
         }
 
-        return isPublic ? fi.Name : "*" + fi.Name;
+        return isPublic ? fi.Name : $"*{fi.Name}";
     }
 }

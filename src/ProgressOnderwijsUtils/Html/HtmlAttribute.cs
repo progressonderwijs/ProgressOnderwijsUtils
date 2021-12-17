@@ -12,7 +12,7 @@ public struct HtmlAttribute : IEquatable<HtmlAttribute>
     }
 
     public override string ToString()
-        => Name + "=" + Value;
+        => $"{Name}={Value}";
 
     public bool Equals(HtmlAttribute other)
         => Name == other.Name && Value == other.Value;
@@ -54,7 +54,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
                 var className = default(string);
                 foreach (var attr in this) {
                     if (attr.Name == "class") {
-                        className = className == null ? attr.Value : className + " " + attr.Value;
+                        className = className == null ? attr.Value : $"{className} {attr.Value}";
                     }
                 }
                 return className;

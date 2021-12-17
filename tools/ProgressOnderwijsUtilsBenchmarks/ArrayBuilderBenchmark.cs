@@ -260,7 +260,7 @@ public abstract class ArrayBuilderBenchmark<T, TFactory>
             var array = builder.ToArray();
 
             if (!SequenceEqualityComparer<T>.Default.Equals(array, Enumerable.Range(0, len).Select(default(TFactory).Init).ToArray())) {
-                Console.WriteLine(len + " buggy");
+                Console.WriteLine($"{len} buggy");
             }
         }
     }

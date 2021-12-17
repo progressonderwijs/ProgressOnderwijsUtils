@@ -91,7 +91,7 @@ public static class SqlSystemTypeIdExtensions
                 return new(sqlSystemTypeId, o.clrType);
             }
         }
-        throw new ArgumentOutOfRangeException(nameof(sqlSystemTypeId), "Could not find a clr-type for the type id " + sqlSystemTypeId);
+        throw new ArgumentOutOfRangeException(nameof(sqlSystemTypeId), $"Could not find a clr-type for the type id {sqlSystemTypeId}");
     }
 
     static readonly ConcurrentDictionary<Type, SqlSystemTypeId?> convertedTypesCache = new();
@@ -112,7 +112,7 @@ public static class SqlSystemTypeIdExtensions
                 return o.typeId;
             }
         }
-        throw new ArgumentOutOfRangeException(nameof(type), "Could not find an sql type id for the clr-type " + underlyingType.ToCSharpFriendlyTypeName() + (type == underlyingType ? "" : ", which is the underlying type of " + type.ToCSharpFriendlyTypeName()));
+        throw new ArgumentOutOfRangeException(nameof(type), $"Could not find an sql type id for the clr-type {underlyingType.ToCSharpFriendlyTypeName()}{(type == underlyingType ? "" : $", which is the underlying type of {type.ToCSharpFriendlyTypeName()}")}");
     }
 
     static SqlSystemTypeId? GetConvertedSqlTypeOrNull(Type underlyingType)

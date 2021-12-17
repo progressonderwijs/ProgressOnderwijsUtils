@@ -9,10 +9,10 @@ public readonly struct ColumnSort : IEquatable<ColumnSort>
     public SortDirection SortDirection { get; }
 
     public string SqlSortString()
-        => ColumnName + " " + SortDirection;
+        => $"{ColumnName} {SortDirection}";
 
     public override string ToString()
-        => "[" + ColumnName + " " + SortDirection + "]";
+        => $"[{ColumnName} {SortDirection}]";
 
     public ColumnSort(string column, SortDirection direction)
     {

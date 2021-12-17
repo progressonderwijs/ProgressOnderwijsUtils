@@ -20,10 +20,7 @@ public sealed class UtilsTest
             var a = Utils.ToSortableShortString(i);
             var b = Utils.ToSortableShortString(j);
             if (cmp.Compare(a, b) >= 0) {
-                throw new(
-                    "numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " +
-                    b
-                );
+                throw new($"numbers {i} and {j} produce out-of-order strings: {a} and {b}");
             }
         }
     }

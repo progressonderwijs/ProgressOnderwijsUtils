@@ -43,7 +43,7 @@ public struct ReusableCommand : IDisposable
 
     internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string? extraMessage = null)
         where TOriginCommand : IWithTimeout<TOriginCommand>
-        => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
+        => SqlCommandDebugStringifier.ExceptionWithTextAndArguments($"{command.GetType().ToCSharpFriendlyTypeName()} failed{(extraMessage == null ? "." : $": {extraMessage}")}", Command, innerException);
 }
 
 /// <summary>
@@ -120,12 +120,12 @@ struct CommandFactory : ICommandFactory
     const int ParameterNameCacheSize = 100;
 
     static readonly string[] CachedParameterNames =
-        Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => "@par" + parameterIndex).ToArray();
+        Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => $"@par{parameterIndex}").ToArray();
 
     public static string IndexToParameterName(int parameterIndex)
         => parameterIndex < CachedParameterNames.Length
             ? CachedParameterNames[parameterIndex]
-            : "@par" + parameterIndex;
+            : $"@par{parameterIndex}";
 
     public string RegisterParameterAndGetName<T>(T o)
         where T : IQueryParameter

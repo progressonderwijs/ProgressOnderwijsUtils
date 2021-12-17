@@ -18,13 +18,13 @@ public static class SsoProcessor
         static string Escape(string str)
             => Uri.EscapeDataString(str).Replace("%3A", ":");
         static string EncodeQueryParameter(string key, string value)
-            => Escape(key) + "=" + Escape(value);
+            => $"{Escape(key)}={Escape(value)}";
 
-        var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.EncodeAsQueryArgument()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+        var samlRequestQueryString = $"{EncodeQueryParameter("SAMLRequest", request.EncodeAsQueryArgument())}&{EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")}";
         var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey().AssertNotNull();
         var base64Signature = Convert.ToBase64String(rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(samlRequestQueryString), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-        var signedQueryString = samlRequestQueryString + "&" + EncodeQueryParameter("Signature", base64Signature);
-        return new(request.Destination + "?" + signedQueryString);
+        var signedQueryString = $"{samlRequestQueryString}&{EncodeQueryParameter("Signature", base64Signature)}";
+        return new($"{request.Destination}?{signedQueryString}");
     }
 
     static XElement? GetAssertion(XElement response)
@@ -96,7 +96,7 @@ public static class SsoProcessor
 
         var uid = GetNullableAttribute(assertion, UID);
         if (uid == null) {
-            return Maybe.Error("Missing attribute " + UID);
+            return Maybe.Error($"Missing attribute {UID}");
         }
 
         var (inresponseTo, notOnOrAfter) = GetSubjectConfirmationData(assertion);

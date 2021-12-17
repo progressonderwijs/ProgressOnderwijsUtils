@@ -14,7 +14,7 @@ public sealed class SelfSanityCheck
                 )
             where method.GetCustomAttributes<FactAttribute>().Any()
             where !type.IsPublic || !method.IsPublic
-            select type.Name + "." + method.Name;
+            select $"{type.Name}.{method.Name}";
 
         PAssert.That(() => problems.None());
     }

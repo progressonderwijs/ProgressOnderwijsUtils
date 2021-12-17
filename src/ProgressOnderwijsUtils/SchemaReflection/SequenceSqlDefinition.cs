@@ -39,7 +39,7 @@ public sealed record SequenceSqlDefinition(
         if (!IsCached) {
             _ = sb.Append(" no cache;");
         } else if (CacheSize.HasValue) {
-            _ = sb.Append(" cache" + CacheSize.ToString());
+            _ = sb.Append($" cache{CacheSize}");
         }
         _ = sb.Append("\n");
     }

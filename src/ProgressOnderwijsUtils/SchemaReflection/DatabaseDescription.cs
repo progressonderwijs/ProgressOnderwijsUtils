@@ -123,7 +123,7 @@ public sealed class DatabaseDescription
         }
 
         public string QualifiedName
-            => ReferencingChildTable.SchemaName + "." + UnqualifiedName;
+            => $"{ReferencingChildTable.SchemaName}.{UnqualifiedName}";
 
         public ParameterizedSql ScriptToAddConstraint()
             => SQL(
@@ -258,7 +258,7 @@ public sealed class DatabaseDescription
                     return col;
                 }
             }
-            throw new ArgumentOutOfRangeException(nameof(columnId), "column index " + columnId + " not found");
+            throw new ArgumentOutOfRangeException(nameof(columnId), $"column index {columnId} not found");
         }
     }
 

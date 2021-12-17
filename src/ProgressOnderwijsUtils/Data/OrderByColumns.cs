@@ -100,7 +100,7 @@ public struct OrderByColumns : IEquatable<OrderByColumns>
         => 12345 + (int)Columns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Sum();
 
     public override string ToString()
-        => "{" + Columns.Select(col => col.ToString()).JoinStrings(", ") + "}";
+        => $"{{{Columns.Select(col => col.ToString()).JoinStrings(", ")}}}";
 
     [Pure]
     public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)

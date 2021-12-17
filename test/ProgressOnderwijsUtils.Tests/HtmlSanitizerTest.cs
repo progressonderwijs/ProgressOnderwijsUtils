@@ -67,7 +67,7 @@ public sealed class HtmlSanitizerTest
         var xEl = new XElement("b", sample3);
         var xElEncoded = xEl.ToString(SaveOptions.None);
 
-        PAssert.That(() => HtmlFragment.ParseFragment("<p>" + xElEncoded + "</p>").Sanitize().ToStringWithoutDoctype() == "<p>" + xElEncoded + "</p>");
+        PAssert.That(() => HtmlFragment.ParseFragment($"<p>{xElEncoded}</p>").Sanitize().ToStringWithoutDoctype() == $"<p>{xElEncoded}</p>");
     }
 
     [Fact]

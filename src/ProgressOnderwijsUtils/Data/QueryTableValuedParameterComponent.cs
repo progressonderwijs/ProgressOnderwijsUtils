@@ -5,7 +5,7 @@ sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IS
 {
     static readonly string columnListClause =
         PocoUtils.GetProperties<TOut>()
-            .Select(pocoProperty => "TVP." + pocoProperty.Name)
+            .Select(pocoProperty => $"TVP.{pocoProperty.Name}")
             .JoinStrings(", ");
 
     readonly string DbTypeName;
@@ -39,7 +39,7 @@ sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IS
                     : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
             if (roundedUpToNearestPowerOfFourOrZeroOrMinusOne >= 0) {
                 if (cachedLength > roundedUpToNearestPowerOfFourOrZeroOrMinusOne) {
-                    throw new("Internal error: " + cachedLength + " > " + roundedUpToNearestPowerOfFourOrZeroOrMinusOne);
+                    throw new($"Internal error: {cachedLength} > {roundedUpToNearestPowerOfFourOrZeroOrMinusOne}");
                 }
                 ParameterizedSqlFactory.AppendSql(ref factory, "top(");
                 ParameterizedSqlFactory.AppendSql(ref factory, roundedUpToNearestPowerOfFourOrZeroOrMinusOne.ToString());

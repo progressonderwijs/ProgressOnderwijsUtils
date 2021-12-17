@@ -91,7 +91,7 @@ public static class HtmlToStringExtensions
         var className = default(string);
         foreach (var htmlAttribute in attributes) {
             if (htmlAttribute.Name == "class") {
-                className = className == null ? htmlAttribute.Value : className + " " + htmlAttribute.Value;
+                className = className == null ? htmlAttribute.Value : $"{className} {htmlAttribute.Value}";
             } else {
                 AppendAttribute(ref stringBuilder, htmlAttribute);
             }
