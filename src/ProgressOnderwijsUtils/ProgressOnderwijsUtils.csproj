@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>84.0.0</Version>
-    <PackageReleaseNotes>Added referenced tables to the views in de db-description.</PackageReleaseNotes>
+    <Version>84.0.1</Version>
+    <PackageReleaseNotes>Take nullable referenced-ids into account.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
