@@ -41,7 +41,7 @@ public sealed class DatabaseDescription
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-    DatabaseDescription(
+    public DatabaseDescription(
         DbNamedObjectId[] tables,
         DbNamedObjectId[] views,
         ILookup<DbObjectId, DbObjectId> dependencies,

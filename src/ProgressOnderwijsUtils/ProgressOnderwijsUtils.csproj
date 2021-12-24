@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>83.3.3</Version>
+    <Version>84.0.0</Version>
     <PackageReleaseNotes>Added referenced tables to the views in de db-description.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
