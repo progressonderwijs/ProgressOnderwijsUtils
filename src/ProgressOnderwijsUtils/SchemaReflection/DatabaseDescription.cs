@@ -41,9 +41,10 @@ public sealed class DatabaseDescription
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-    public DatabaseDescription(
+    DatabaseDescription(
         DbNamedObjectId[] tables,
         DbNamedObjectId[] views,
+        ILookup<DbObjectId, DbObjectId> dependencies,
         Dictionary<DbObjectId, DbColumnMetaData[]> columns,
         ForeignKeySqlDefinition[] foreignKeys,
         CheckConstraintSqlDefinition[] checkConstraints,
@@ -61,7 +62,7 @@ public sealed class DatabaseDescription
         var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
 
         tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull()));
+        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetOrDefaultR(dep)).WhereNotNull().ToArray()));
         var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
@@ -75,12 +76,35 @@ public sealed class DatabaseDescription
         Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
         Dictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers);
 
+    sealed record SqlExpressionDependencies(DbObjectId referencing_id, DbObjectId referenced_id) : IWrittenImplicitly;
+
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
     {
         var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
         var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
-        var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-        return new(tables, views, columnsByTableId, ForeignKeyColumnEntry.LoadAll(conn), CheckConstraintSqlDefinition.LoadAll(conn), DmlTableTriggerSqlDefinition.LoadAll(conn), DefaultValueConstraintSqlDefinition.LoadAll(conn), ComputedColumnSqlDefinition.LoadAll(conn), SequenceSqlDefinition.LoadAll(conn));
+        var dependencies = SQL(
+            $@"
+                select
+                    sed.referencing_id
+                    , sed.referenced_id
+                from sys.sql_expression_dependencies sed
+                where 1=1
+                    and sed.referencing_id in {views.ArraySelect(view => view.ObjectId)}
+            "
+        ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
+
+        return new(
+            tables,
+            views,
+            dependencies,
+            DbColumnMetaData.LoadAll(conn),
+            ForeignKeyColumnEntry.LoadAll(conn),
+            CheckConstraintSqlDefinition.LoadAll(conn),
+            DmlTableTriggerSqlDefinition.LoadAll(conn),
+            DefaultValueConstraintSqlDefinition.LoadAll(conn),
+            ComputedColumnSqlDefinition.LoadAll(conn),
+            SequenceSqlDefinition.LoadAll(conn)
+        );
     }
 
     public IEnumerable<Table> AllTables
@@ -266,11 +290,13 @@ public sealed class DatabaseDescription
     {
         readonly DbNamedObjectId view;
         public readonly DbColumnMetaData[] Columns;
+        public readonly Table[] ReferencedTables;
 
-        public View(DbNamedObjectId view, DbColumnMetaData[] columns)
+        public View(DbNamedObjectId view, DbColumnMetaData[] columns, Table[] referencedTables)
         {
             this.view = view;
             Columns = columns;
+            ReferencedTables = referencedTables;
         }
 
         public DbObjectId ObjectId
