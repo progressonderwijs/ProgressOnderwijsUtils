@@ -88,6 +88,8 @@ public sealed class DatabaseDescription
                     sed.referencing_id
                     , sed.referenced_id
                 from sys.sql_expression_dependencies sed
+                where 1=1
+                    and sed.referenced_id is not null
             "
         ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
 
