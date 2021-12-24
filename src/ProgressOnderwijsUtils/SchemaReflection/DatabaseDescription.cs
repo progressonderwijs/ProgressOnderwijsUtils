@@ -297,9 +297,6 @@ public sealed class DatabaseDescription
             ReferencedTables = referencedTables;
         }
 
-        public DbObjectId ObjectId
-            => view.ObjectId;
-
         public string QualifiedName
             => view.QualifiedName;
 
