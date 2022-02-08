@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>84.0.1</Version>
-    <PackageReleaseNotes>Take nullable referenced-ids into account.</PackageReleaseNotes>
+    <Version>84.0.2</Version>
+    <PackageReleaseNotes>Future-proof ORM implementation details for broader ValueConverter usage.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
