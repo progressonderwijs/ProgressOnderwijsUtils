@@ -317,7 +317,7 @@ public static class ParameterizedSqlObjectMapper
                 VerifyTypeValidity();
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                 var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, Expression.Constant(0), type), dataReaderParamExpr);
-                ReadValue = loadRowsLambda.CompileFast();
+                ReadValue = loadRowsLambda.Compile();
             }
 
             static void VerifyTypeValidity()
