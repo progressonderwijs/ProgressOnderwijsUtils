@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils;
 /// ColumnSortOrder is een struct; zijn default waarde representeerd "geen sorteering".
 /// </summary>
 [Serializable]
-public struct OrderByColumns : IEquatable<OrderByColumns>
+public readonly struct OrderByColumns : IEquatable<OrderByColumns>
 {
     readonly ColumnSort[]? sortColumns;
 
