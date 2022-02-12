@@ -55,7 +55,6 @@ public static class ParameterizedSqlObjectMapper
         => q.OfPocos<T>().Execute(sqlConn);
 
     internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
-        where T : IWrittenImplicitly
     {
         if (reader?.IsClosed != false || lastColumnRead < 0) {
             return "";
