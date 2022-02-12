@@ -13,13 +13,11 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
     where T : IPoco
 {
     readonly IPocoProperty<T>[] Properties;
-    readonly IReadOnlyDictionary<string, int> indexByName;
 
     public Type PocoType
         => typeof(T);
 
-    public IReadOnlyDictionary<string, int> IndexByName
-        => indexByName;
+    public IReadOnlyDictionary<string, int> IndexByName { get; }
 
     public static readonly PocoProperties<T> Instance = new();
 
@@ -36,11 +34,11 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
         foreach (var property in Properties) { //perf:avoid LINQ.
             dictionary.Add(property.Name, property.Index);
         }
-        indexByName = dictionary;
+        IndexByName = dictionary;
     }
 
     public IPocoProperty<T> GetByName(string name)
-        => Properties[indexByName[name]];
+        => Properties[IndexByName[name]];
 
     public int Count
         => Properties.Length;
@@ -60,7 +58,7 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
     public IPocoProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
     {
         var memberInfo = PocoUtils.GetMemberInfo(propertyExpression);
-        if (indexByName.TryGetValue(memberInfo.Name, out var propIdx)) {
+        if (IndexByName.TryGetValue(memberInfo.Name, out var propIdx)) {
             var prop = Properties[propIdx];
             if (prop.PropertyInfo == memberInfo) {
                 return prop;
