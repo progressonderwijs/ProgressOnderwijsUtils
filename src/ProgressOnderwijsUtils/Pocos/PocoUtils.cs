@@ -8,7 +8,6 @@ public static class PocoUtils
     public static IPocoProperties<IPocoProperty> GetProperties(this IPoco poco)
         => GetCache(poco.GetType());
 
-    // ReSharper disable once UnusedParameter.Global
     [Pure]
     public static PocoProperties<T> GetProperties<T>()
         where T : IPoco
