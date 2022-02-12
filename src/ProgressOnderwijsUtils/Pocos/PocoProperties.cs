@@ -10,7 +10,6 @@ public interface IPocoProperties<out T> : IReadOnlyList<T>
 }
 
 public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
-    where T : IPoco
 {
     readonly IPocoProperty<T>[] Properties;
 
