@@ -25,16 +25,10 @@ public interface ITypedSqlCommand<out TQueryReturnValue>
     TQueryReturnValue Execute(SqlConnection conn);
 }
 
-public readonly record struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
+public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<NonQuerySqlCommand>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
     public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
         => new(Sql, timeout);
-
-    public NonQuerySqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout)
-        => (this.Sql, this.CommandTimeout) = (Sql, CommandTimeout);
 
     public void Execute(SqlConnection conn)
         => Execute(conn, out _);
@@ -57,21 +51,14 @@ public readonly record struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlComma
 /// <summary>
 /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
 /// </summary>
-public readonly record struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
+public readonly record struct DataTableSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, MissingSchemaAction MissingSchemaAction) : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public MissingSchemaAction MissingSchemaAction { get; }
-
     public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
         => new(Sql, timeout, MissingSchemaAction);
 
     [UsefulToKeep("lib method")]
     public DataTableSqlCommand WithMissingSchemaAction(MissingSchemaAction missingSchemaAction)
         => new(Sql, CommandTimeout, missingSchemaAction);
-
-    public DataTableSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, MissingSchemaAction MissingSchemaAction)
-        => (this.Sql, this.CommandTimeout, this.MissingSchemaAction) = (Sql, CommandTimeout, MissingSchemaAction);
 
     [MustUseReturnValue]
     public DataTable Execute(SqlConnection conn)
@@ -89,14 +76,8 @@ public readonly record struct DataTableSqlCommand : ITypedSqlCommand<DataTable>,
     }
 }
 
-public readonly record struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
+public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
-    public ScalarSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout)
-        => (this.Sql, this.CommandTimeout) = (Sql, CommandTimeout);
-
     public ScalarSqlCommand<T> WithTimeout(CommandTimeout timeout)
         => new(Sql, timeout);
 
@@ -114,14 +95,8 @@ public readonly record struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithT
     }
 }
 
-public readonly record struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
-    public BuiltinsSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout)
-        => (this.Sql, this.CommandTimeout) = (Sql, CommandTimeout);
-
     public BuiltinsSqlCommand<T> WithTimeout(CommandTimeout timeout)
         => new(Sql, timeout);
 
@@ -139,16 +114,9 @@ public readonly record struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IW
 public readonly record struct PocosSqlCommand<
     [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     T
-> : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
+>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
     where T : IWrittenImplicitly
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public readonly FieldMappingMode FieldMapping;
-
-    public PocosSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping)
-        => (this.Sql, this.CommandTimeout, this.FieldMapping) = (Sql, CommandTimeout, FieldMapping);
-
     [UsefulToKeepAttribute("lib method")]
     public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
         => new(Sql, CommandTimeout, fieldMapping);
@@ -179,16 +147,9 @@ public readonly record struct PocosSqlCommand<
     }
 }
 
-public readonly record struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
+public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
     where T : IWrittenImplicitly
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public readonly FieldMappingMode FieldMapping;
-
-    public EnumeratedObjectsSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping)
-        => (this.Sql, this.CommandTimeout, this.FieldMapping) = (Sql, CommandTimeout, FieldMapping);
-
     public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
         => new(Sql, timeout, FieldMapping);
 
