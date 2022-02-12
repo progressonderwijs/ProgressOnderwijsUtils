@@ -117,7 +117,7 @@ public readonly record struct PocosSqlCommand<
 >(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
     where T : IWrittenImplicitly
 {
-    [UsefulToKeepAttribute("lib method")]
+    [UsefulToKeep("lib method")]
     public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
         => this with { FieldMapping = fieldMapping };
 
