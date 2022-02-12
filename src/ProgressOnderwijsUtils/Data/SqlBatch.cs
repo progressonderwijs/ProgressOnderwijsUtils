@@ -25,7 +25,7 @@ public interface ITypedSqlCommand<out TQueryReturnValue>
     TQueryReturnValue Execute(SqlConnection conn);
 }
 
-public readonly struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
+public readonly record struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
 {
     public ParameterizedSql Sql { get; }
     public CommandTimeout CommandTimeout { get; }
@@ -57,7 +57,7 @@ public readonly struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
 /// <summary>
 /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
 /// </summary>
-public readonly struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
+public readonly record struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
 {
     public ParameterizedSql Sql { get; }
     public CommandTimeout CommandTimeout { get; }
@@ -89,7 +89,7 @@ public readonly struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithT
     }
 }
 
-public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
+public readonly record struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
 {
     public ParameterizedSql Sql { get; }
     public CommandTimeout CommandTimeout { get; }
@@ -114,7 +114,7 @@ public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<
     }
 }
 
-public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+public readonly record struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
 {
     public ParameterizedSql Sql { get; }
     public CommandTimeout CommandTimeout { get; }
@@ -136,7 +136,7 @@ public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTime
     }
 }
 
-public readonly struct PocosSqlCommand<
+public readonly record struct PocosSqlCommand<
     [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     T
 > : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
@@ -179,7 +179,7 @@ public readonly struct PocosSqlCommand<
     }
 }
 
-public readonly struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
+public readonly record struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
     where T : IWrittenImplicitly
 {
     public ParameterizedSql Sql { get; }
