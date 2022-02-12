@@ -6,6 +6,8 @@ namespace ProgressOnderwijsUtils;
 
 public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
 
+public delegate T TRowReader<in TDataReader, out T>(TDataReader reader, out int lastColumnRead);
+
 public static class ParameterizedSqlObjectMapper
 {
     public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
@@ -217,8 +219,6 @@ public static class ParameterizedSqlObjectMapper
     internal static class DataReaderSpecialization<TReader>
         where TReader : IDataReader
     {
-        public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
-
         static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)));
         static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
         static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
@@ -276,9 +276,9 @@ public static class ParameterizedSqlObjectMapper
             where T : IWrittenImplicitly
         {
             static readonly object constructionSync = new();
-            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
+            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
-            public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+            public static TRowReader<TReader, T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
             {
                 var ordering = ColumnOrdering.FromReader(reader);
                 if (rowToPocoByColumnOrdering.TryGetValue(ordering, out var match)) {
@@ -299,9 +299,9 @@ public static class ParameterizedSqlObjectMapper
                 return match.rowToPoco;
             }
 
-            static readonly Func<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
-                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<T>), PocoProperties<T>.Instance);
-                return (rowToPoco: (TRowReader<T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
+            static readonly Func<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
+                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<TReader, T>), PocoProperties<T>.Instance);
+                return (rowToPoco: (TRowReader<TReader, T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
             };
         }
 
@@ -406,7 +406,7 @@ public static class ParameterizedSqlObjectMapper
                         && pocoProperties[propIdx] is { } property
                         && property.DataType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                    ) {
+                       ) {
                         if (propertyFlags[propIdx].viaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }
@@ -458,6 +458,22 @@ public static class ParameterizedSqlObjectMapper
             var constructRowExpr = Expression.Block(pocoProperties.PocoType, variablesByPropIdx.WhereNotNull(), statements);
 
             return (constructRowExpr, unmappedProperties.ToArray());
+        }
+    }
+
+    internal static T[] ReaderToArray<TOriginCommand, T>(in TOriginCommand command, SqlDataReader reader, TRowReader<SqlDataReader, T> unpacker, ReusableCommand cmd)
+        where TOriginCommand : IWithTimeout<TOriginCommand>
+    {
+        var lastColumnRead = -1;
+        try {
+            var builder = new ArrayBuilder<T>();
+            while (reader.Read()) {
+                var nextRow = unpacker(reader, out lastColumnRead);
+                builder.Add(nextRow);
+            }
+            return builder.ToArray();
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, command, UnpackingErrorMessage<T>(reader, lastColumnRead));
         }
     }
 }

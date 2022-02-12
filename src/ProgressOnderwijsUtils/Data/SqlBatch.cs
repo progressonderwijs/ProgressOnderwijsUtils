@@ -162,22 +162,20 @@ public readonly struct PocosSqlCommand<
     public T[] Execute(SqlConnection conn)
     {
         using var cmd = this.ReusableCommand(conn);
-        var lastColumnRead = -1;
-        SqlDataReader? reader = null;
+        SqlDataReader? reader;
         try {
             reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-            var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
-            var builder = new ArrayBuilder<T>();
-            while (reader.Read()) {
-                var nextRow = unpacker(reader, out lastColumnRead);
-                builder.Add(nextRow);
-            }
-            return builder.ToArray();
         } catch (Exception ex) {
-            throw cmd.CreateExceptionWithTextAndArguments(ex, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
-        } finally {
-            reader?.Dispose();
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
     }
 }
 
@@ -204,44 +202,40 @@ public readonly struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumer
 
     public IEnumerable<T> Execute(SqlConnection conn)
     {
-        var cmd = this.ReusableCommand(conn);
-        SqlDataReader? reader = null;
-        var lastColumnRead = -1;
-        ParameterizedSqlExecutionException CreateHelpfulException(Exception ex, EnumeratedObjectsSqlCommand<T> o)
-            => cmd.CreateExceptionWithTextAndArguments(ex, o, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
-
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
         try {
-            ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+
+        while (true) {
+            bool isDone;
             try {
-                reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                isDone = !reader.Read();
             } catch (Exception e) {
-                throw CreateHelpfulException(e, this);
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, "SqlDataReader.Read failed");
             }
 
-            while (true) {
-                bool isDone;
-                try {
-                    isDone = !reader.Read();
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e, this);
-                }
-
-                if (isDone) {
-                    break;
-                }
-                T nextRow;
-                try {
-                    nextRow = unpacker(reader, out lastColumnRead);
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e, this);
-                }
-
-                yield return nextRow; //cannot yield in try-catch block
+            if (isDone) {
+                break;
             }
-        } finally {
-            reader?.Dispose();
-            cmd.Dispose();
+            T nextRow;
+            var lastColumnRead = -1;
+            try {
+                nextRow = unpacker(reader, out lastColumnRead);
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
+            }
+            yield return nextRow; //cannot yield in try-catch block
         }
     }
 }
