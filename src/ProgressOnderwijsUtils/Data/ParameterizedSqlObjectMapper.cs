@@ -364,12 +364,9 @@ public static class ParameterizedSqlObjectMapper
                     )) {
                     errors.Add($"Cannot resolve IDataReader column {cols[columnIndex]} in type {FriendlyName()}");
                 } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
-                    errors.Add($"The C# property {pocoProperties.PocoType.ToCSharpFriendlyTypeName()}.{member.Name} has already been mapped; are there two identically names columns?");
+                    errors.Add($"The C# property {FriendlyName()}.{member.Name} has already been mapped; are there two identically names columns?");
                 } else if (!IsSupportedType(member.DataType)) {
-                    errors.Add(
-                        "The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
-                        + " which has no supported conversion from a DbDataReaderColumn."
-                    );
+                    errors.Add($"The C# property {FriendlyName()}.{member.Name} if of type {member.DataType.ToCSharpFriendlyTypeName()} which has no supported conversion from a DbDataReaderColumn.");
                 } else {
                     propertyFlags[propertyIndex].coveredByReaderColumn = true;
                     var variable = Expression.Variable(member.DataType, member.Name);
