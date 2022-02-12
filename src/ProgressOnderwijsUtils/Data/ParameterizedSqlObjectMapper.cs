@@ -300,7 +300,7 @@ public static class ParameterizedSqlObjectMapper
             }
 
             static readonly Func<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
-                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering, typeof(TRowReader<T>), PocoProperties<T>.Instance);
+                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<T>), PocoProperties<T>.Instance);
                 return (rowToPoco: (TRowReader<T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
             };
         }
@@ -338,12 +338,11 @@ public static class ParameterizedSqlObjectMapper
             }
         }
 
-        public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructPocoTRowReader(ColumnOrdering columnOrdering, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
+        public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructPocoTRowReader(string[] readerFieldOrder, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
         {
-            var cols = columnOrdering.Cols;
             var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
             var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
+            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, readerFieldOrder, lastColumnReadParamExpr, pocoProperties);
             var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr, };
             var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
             return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
