@@ -200,3 +200,85 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
         }
     }
 }
+
+public readonly record struct TuplesSqlCommand<
+    [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+    T
+>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T[]>, IWithTimeout<TuplesSqlCommand<T>>
+    where T : struct, IStructuralEquatable, ITuple
+{
+    public EnumeratedTuplesSqlCommand<T> ToLazilyEnumeratedCommand()
+        => new(Sql, CommandTimeout);
+
+    public TuplesSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
+        => this with { CommandTimeout = commandTimeout };
+
+    public T[] Execute(SqlConnection conn)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.Tuples<T>.GetRowReader(reader);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+    }
+}
+
+public readonly record struct EnumeratedTuplesSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedTuplesSqlCommand<T>>
+    where T : struct, IStructuralEquatable, ITuple
+{
+    public EnumeratedTuplesSqlCommand<T> WithTimeout(CommandTimeout timeout)
+        => this with { CommandTimeout = timeout };
+
+    [UsefulToKeep("lib method")]
+    public TuplesSqlCommand<T> ToEagerlyEnumeratedCommand()
+        => new(Sql, CommandTimeout);
+
+    public IEnumerable<T> Execute(SqlConnection conn)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.Tuples<T>.GetRowReader(reader);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+
+        while (true) {
+            bool isDone;
+            try {
+                isDone = !reader.Read();
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, "SqlDataReader.Read failed");
+            }
+
+            if (isDone) {
+                break;
+            }
+            T nextRow;
+            var lastColumnRead = -1;
+            try {
+                nextRow = unpacker(reader, out lastColumnRead);
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
+            }
+            yield return nextRow; //cannot yield in try-catch block
+        }
+    }
+}
