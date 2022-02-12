@@ -115,7 +115,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
         //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
         public readonly Delegate TypedNonNullableGetter;
 
-        public ColumnInfo(IReadonlyPocoProperty<T> pocoProperty)
+        public ColumnInfo(IPocoProperty<T> pocoProperty)
         {
             var propertyType = pocoProperty.DataType;
             var pocoParameter = Expression.Parameter(typeof(T));

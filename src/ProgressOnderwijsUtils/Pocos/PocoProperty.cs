@@ -29,13 +29,11 @@ public interface IPocoProperty
     int Index { get; }
 }
 
-public interface IReadonlyPocoProperty<in TOwner> : IPocoProperty
+
+public interface IPocoProperty<TOwner> : IPocoProperty
 {
     Func<TOwner, object?>? Getter { get; }
-}
 
-public interface IPocoProperty<TOwner> : IReadonlyPocoProperty<TOwner>
-{
     Setter<TOwner>? Setter { get; }
 }
 

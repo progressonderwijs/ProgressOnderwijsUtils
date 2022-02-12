@@ -24,7 +24,7 @@ public static class PocoUtils
     {
         [UsefulToKeep("library method for getting base-class poco-property")]
         [Pure]
-        public static IReadonlyPocoProperty<TPoco> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+        public static IPocoProperty<TPoco> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
         {
             var memberInfo = GetMemberInfo(propertyExpression);
             if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
