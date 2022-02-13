@@ -8,18 +8,19 @@ public sealed class UtilsTest
     [Fact]
     public void ToSortableString_MaintainsOrder()
     {
-        var cmp = StringComparer.Ordinal;
-        var samplePoints = MoreEnumerable
-            .Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
-            .TakeWhile(sample => sample < long.MaxValue)
-            .Select(d => (long)d)
-            .Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1, });
+        static IEnumerable<long> Nums()
+        {
+            for (var sample = (double)long.MinValue; sample < long.MaxValue; sample += 1.0 + Math.Abs(sample) / 1000.0) {
+                yield return (long)sample;
+            }
+            yield return long.MaxValue - 1;
+        }
 
-        foreach (var i in samplePoints) {
+        foreach (var i in Nums()) {
             var j = i + 1;
             var a = Utils.ToSortableShortString(i);
             var b = Utils.ToSortableShortString(j);
-            if (cmp.Compare(a, b) >= 0) {
+            if (StringComparer.Ordinal.Compare(a, b) >= 0) {
                 throw new($"numbers {i} and {j} produce out-of-order strings: {a} and {b}");
             }
         }
