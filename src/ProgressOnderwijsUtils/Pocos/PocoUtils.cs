@@ -6,25 +6,21 @@ public static class PocoUtils
 {
     [Pure]
     public static IPocoProperties<IPocoProperty> GetProperties(this IPoco poco)
-        => GetCache(poco.GetType());
+        => GetProperties(poco.GetType());
 
-    // ReSharper disable once UnusedParameter.Global
     [Pure]
     public static PocoProperties<T> GetProperties<T>()
-        where T : IPoco
         => PocoProperties<T>.Instance;
 
     [Pure]
     public static IPocoProperty<TPoco> GetByExpression<TPoco, T>(Expression<Func<TPoco, T>> propertyExpression)
-        where TPoco : IPoco
         => PocoProperties<TPoco>.Instance.GetByExpression(propertyExpression);
 
     public static class GetByInheritedExpression<TPoco>
-        where TPoco : IPoco
     {
         [UsefulToKeep("library method for getting base-class poco-property")]
         [Pure]
-        public static IReadonlyPocoProperty<TPoco> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+        public static IPocoProperty<TPoco> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
         {
             var memberInfo = GetMemberInfo(propertyExpression);
             if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
@@ -93,20 +89,9 @@ public static class PocoUtils
         => bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
 
     [Pure]
-    public static IReadOnlyList<IPocoProperty> GetProperties(Type t)
-    {
-        if (!typeof(IPoco).IsAssignableFrom(t)) {
-            throw new InvalidOperationException($"Can't get poco-properties from type {t}, it's not a {typeof(IPoco)}");
-        }
-        while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IPoco).IsAssignableFrom(t.BaseType)) {
-            t = t.BaseType;
-        }
-        return GetCache(t);
-    }
+    public static IPocoProperties<IPocoProperty> GetProperties(Type t)
+        => memoizedGetProperties(t);
 
-    static readonly MethodInfo genGetCache = Utils.F(GetProperties<IPoco>).Method.GetGenericMethodDefinition();
-
-    [Pure]
-    static IPocoProperties<IPocoProperty> GetCache(Type t)
-        => (IPocoProperties<IPocoProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null)!;
+    static readonly MethodInfo genericMethodInfo_GetProperties = Utils.F(GetProperties<object>).Method.GetGenericMethodDefinition();
+    static readonly Func<Type, IPocoProperties<IPocoProperty>> memoizedGetProperties = Utils.F((Type t) => (IPocoProperties<IPocoProperty>)genericMethodInfo_GetProperties.MakeGenericMethod(t).Invoke(null, null)!).ThreadSafeMemoize();
 }

@@ -30,8 +30,7 @@ public readonly struct ColumnSort : IEquatable<ColumnSort>
 
     [Pure]
     public bool Equals(ColumnSort other)
-        => string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) &&
-            SortDirection == other.SortDirection;
+        => string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) && SortDirection == other.SortDirection;
 
     [Pure]
     public override bool Equals(object? obj)
