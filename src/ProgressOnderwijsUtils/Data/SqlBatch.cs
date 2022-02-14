@@ -25,16 +25,10 @@ public interface ITypedSqlCommand<out TQueryReturnValue>
     TQueryReturnValue Execute(SqlConnection conn);
 }
 
-public readonly struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
+public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<NonQuerySqlCommand>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
     public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
-        => new(Sql, timeout);
-
-    public NonQuerySqlCommand(ParameterizedSql sql, CommandTimeout timeout)
-        => (Sql, CommandTimeout) = (sql, timeout);
+        => this with { CommandTimeout = timeout };
 
     public void Execute(SqlConnection conn)
         => Execute(conn, out _);
@@ -57,21 +51,14 @@ public readonly struct NonQuerySqlCommand : IWithTimeout<NonQuerySqlCommand>
 /// <summary>
 /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
 /// </summary>
-public readonly struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
+public readonly record struct DataTableSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, MissingSchemaAction MissingSchemaAction) : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public MissingSchemaAction MissingSchemaAction { get; }
-
     public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
-        => new(Sql, timeout, MissingSchemaAction);
+        => this with { CommandTimeout = timeout };
 
     [UsefulToKeep("lib method")]
     public DataTableSqlCommand WithMissingSchemaAction(MissingSchemaAction missingSchemaAction)
-        => new(Sql, CommandTimeout, missingSchemaAction);
-
-    public DataTableSqlCommand(ParameterizedSql sql, CommandTimeout timeout, MissingSchemaAction missingSchemaAction)
-        => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
+        => this with { MissingSchemaAction = missingSchemaAction };
 
     [MustUseReturnValue]
     public DataTable Execute(SqlConnection conn)
@@ -89,16 +76,10 @@ public readonly struct DataTableSqlCommand : ITypedSqlCommand<DataTable>, IWithT
     }
 }
 
-public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
+public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
-    public ScalarSqlCommand(ParameterizedSql sql, CommandTimeout timeout)
-        => (Sql, CommandTimeout) = (sql, timeout);
-
     public ScalarSqlCommand<T> WithTimeout(CommandTimeout timeout)
-        => new(Sql, timeout);
+        => this with { CommandTimeout = timeout };
 
     [MustUseReturnValue]
     public T? Execute(SqlConnection conn)
@@ -114,16 +95,10 @@ public readonly struct ScalarSqlCommand<T> : ITypedSqlCommand<T?>, IWithTimeout<
     }
 }
 
-public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-
-    public BuiltinsSqlCommand(ParameterizedSql sql, CommandTimeout timeout)
-        => (Sql, CommandTimeout) = (sql, timeout);
-
     public BuiltinsSqlCommand<T> WithTimeout(CommandTimeout timeout)
-        => new(Sql, timeout);
+        => this with { CommandTimeout = timeout };
 
     public T?[] Execute(SqlConnection conn)
     {
@@ -136,67 +111,51 @@ public readonly struct BuiltinsSqlCommand<T> : ITypedSqlCommand<T?[]>, IWithTime
     }
 }
 
-public readonly struct PocosSqlCommand<
+public readonly record struct PocosSqlCommand<
     [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     T
-> : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
+>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
     where T : IWrittenImplicitly
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public readonly FieldMappingMode FieldMapping;
-
-    public PocosSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
-        => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
-
-    [UsefulToKeepAttribute("lib method")]
+    [UsefulToKeep("lib method")]
     public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-        => new(Sql, CommandTimeout, fieldMapping);
+        => this with { FieldMapping = fieldMapping };
 
     public EnumeratedObjectsSqlCommand<T> ToLazilyEnumeratedCommand()
         => new(Sql, CommandTimeout, FieldMapping);
 
     public PocosSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
-        => new(Sql, commandTimeout, FieldMapping);
+        => this with { CommandTimeout = commandTimeout };
 
     public T[] Execute(SqlConnection conn)
     {
         using var cmd = this.ReusableCommand(conn);
-        var lastColumnRead = -1;
-        SqlDataReader? reader = null;
+        SqlDataReader? reader;
         try {
             reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-            var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
-            var builder = new ArrayBuilder<T>();
-            while (reader.Read()) {
-                var nextRow = unpacker(reader, out lastColumnRead);
-                builder.Add(nextRow);
-            }
-            return builder.ToArray();
         } catch (Exception ex) {
-            throw cmd.CreateExceptionWithTextAndArguments(ex, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
-        } finally {
-            reader?.Dispose();
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
     }
 }
 
-public readonly struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
+public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
     where T : IWrittenImplicitly
 {
-    public ParameterizedSql Sql { get; }
-    public CommandTimeout CommandTimeout { get; }
-    public readonly FieldMappingMode FieldMapping;
-
-    public EnumeratedObjectsSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
-        => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
-
     public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
-        => new(Sql, timeout, FieldMapping);
+        => this with { CommandTimeout = timeout };
 
     [UsefulToKeep("lib method")]
     public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-        => new(Sql, CommandTimeout, fieldMapping);
+        => this with { FieldMapping = fieldMapping };
 
     [UsefulToKeep("lib method")]
     public PocosSqlCommand<T> ToEagerlyEnumeratedCommand()
@@ -204,44 +163,40 @@ public readonly struct EnumeratedObjectsSqlCommand<T> : ITypedSqlCommand<IEnumer
 
     public IEnumerable<T> Execute(SqlConnection conn)
     {
-        var cmd = this.ReusableCommand(conn);
-        SqlDataReader? reader = null;
-        var lastColumnRead = -1;
-        ParameterizedSqlExecutionException CreateHelpfulException(Exception ex, EnumeratedObjectsSqlCommand<T> o)
-            => cmd.CreateExceptionWithTextAndArguments(ex, o, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
-
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
         try {
-            ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+
+        while (true) {
+            bool isDone;
             try {
-                reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                isDone = !reader.Read();
             } catch (Exception e) {
-                throw CreateHelpfulException(e, this);
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, "SqlDataReader.Read failed");
             }
 
-            while (true) {
-                bool isDone;
-                try {
-                    isDone = !reader.Read();
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e, this);
-                }
-
-                if (isDone) {
-                    break;
-                }
-                T nextRow;
-                try {
-                    nextRow = unpacker(reader, out lastColumnRead);
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e, this);
-                }
-
-                yield return nextRow; //cannot yield in try-catch block
+            if (isDone) {
+                break;
             }
-        } finally {
-            reader?.Dispose();
-            cmd.Dispose();
+            T nextRow;
+            var lastColumnRead = -1;
+            try {
+                nextRow = unpacker(reader, out lastColumnRead);
+            } catch (Exception e) {
+                throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
+            }
+            yield return nextRow; //cannot yield in try-catch block
         }
     }
 }

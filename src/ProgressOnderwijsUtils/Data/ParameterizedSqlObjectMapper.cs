@@ -6,6 +6,8 @@ namespace ProgressOnderwijsUtils;
 
 public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoProperties, }
 
+public delegate T TRowReader<in TDataReader, out T>(TDataReader reader, out int lastColumnRead);
+
 public static class ParameterizedSqlObjectMapper
 {
     public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
@@ -53,7 +55,6 @@ public static class ParameterizedSqlObjectMapper
         => q.OfPocos<T>().Execute(sqlConn);
 
     internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
-        where T : IWrittenImplicitly
     {
         if (reader?.IsClosed != false || lastColumnRead < 0) {
             return "";
@@ -217,8 +218,6 @@ public static class ParameterizedSqlObjectMapper
     internal static class DataReaderSpecialization<TReader>
         where TReader : IDataReader
     {
-        public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
-
         static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)));
         static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
         static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
@@ -276,9 +275,9 @@ public static class ParameterizedSqlObjectMapper
             where T : IWrittenImplicitly
         {
             static readonly object constructionSync = new();
-            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
+            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
-            public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+            public static TRowReader<TReader, T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
             {
                 var ordering = ColumnOrdering.FromReader(reader);
                 if (rowToPocoByColumnOrdering.TryGetValue(ordering, out var match)) {
@@ -299,9 +298,9 @@ public static class ParameterizedSqlObjectMapper
                 return match.rowToPoco;
             }
 
-            static readonly Func<ColumnOrdering, (TRowReader<T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
-                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering, typeof(TRowReader<T>), PocoProperties<T>.Instance);
-                return (rowToPoco: (TRowReader<T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
+            static readonly Func<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
+                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<TReader, T>), PocoProperties<T>.Instance);
+                return (rowToPoco: (TRowReader<TReader, T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
             };
         }
 
@@ -338,12 +337,11 @@ public static class ParameterizedSqlObjectMapper
             }
         }
 
-        public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructPocoTRowReader(ColumnOrdering columnOrdering, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
+        public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructPocoTRowReader(string[] readerFieldOrder, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
         {
-            var cols = columnOrdering.Cols;
             var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
             var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, cols, lastColumnReadParamExpr, pocoProperties);
+            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, readerFieldOrder, lastColumnReadParamExpr, pocoProperties);
             var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr, };
             var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
             return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
@@ -366,12 +364,9 @@ public static class ParameterizedSqlObjectMapper
                     )) {
                     errors.Add($"Cannot resolve IDataReader column {cols[columnIndex]} in type {FriendlyName()}");
                 } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
-                    errors.Add($"The C# property {pocoProperties.PocoType.ToCSharpFriendlyTypeName()}.{member.Name} has already been mapped; are there two identically names columns?");
+                    errors.Add($"The C# property {FriendlyName()}.{member.Name} has already been mapped; are there two identically names columns?");
                 } else if (!IsSupportedType(member.DataType)) {
-                    errors.Add(
-                        "The C# property " + pocoProperties.PocoType.ToCSharpFriendlyTypeName() + "." + member.Name + " if of type " + member.DataType.ToCSharpFriendlyTypeName()
-                        + " which has no supported conversion from a DbDataReaderColumn."
-                    );
+                    errors.Add($"The C# property {FriendlyName()}.{member.Name} if of type {member.DataType.ToCSharpFriendlyTypeName()} which has no supported conversion from a DbDataReaderColumn.");
                 } else {
                     propertyFlags[propertyIndex].coveredByReaderColumn = true;
                     var variable = Expression.Variable(member.DataType, member.Name);
@@ -407,7 +402,7 @@ public static class ParameterizedSqlObjectMapper
                         && pocoProperties[propIdx] is { } property
                         && property.DataType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                    ) {
+                       ) {
                         if (propertyFlags[propIdx].viaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }
@@ -459,6 +454,22 @@ public static class ParameterizedSqlObjectMapper
             var constructRowExpr = Expression.Block(pocoProperties.PocoType, variablesByPropIdx.WhereNotNull(), statements);
 
             return (constructRowExpr, unmappedProperties.ToArray());
+        }
+    }
+
+    internal static T[] ReaderToArray<TOriginCommand, T>(in TOriginCommand command, SqlDataReader reader, TRowReader<SqlDataReader, T> unpacker, ReusableCommand cmd)
+        where TOriginCommand : IWithTimeout<TOriginCommand>
+    {
+        var lastColumnRead = -1;
+        try {
+            var builder = new ArrayBuilder<T>();
+            while (reader.Read()) {
+                var nextRow = unpacker(reader, out lastColumnRead);
+                builder.Add(nextRow);
+            }
+            return builder.ToArray();
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, command, UnpackingErrorMessage<T>(reader, lastColumnRead));
         }
     }
 }
