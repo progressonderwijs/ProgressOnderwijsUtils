@@ -36,14 +36,14 @@ public abstract class ReflectionLoadedBaseClass<T>
     {
         var maybeInstances = ReflectionLoadableClassHelper.AllInstancesOfType<T>();
 
-        if (maybeInstances.IsError) {
-            initializationError = maybeInstances.AssertError();
+        if (!maybeInstances.TryGet(out var okInstances, out var error)) {
+            initializationError = error;
             return;
         }
 
         var instantiableSubTypes = new Dictionary<Type, T>();
         var problems = new List<string>();
-        foreach (var instance in maybeInstances.AssertOk()) {
+        foreach (var instance in okInstances) {
             if (instance is { } typedInstance) {
                 instantiableSubTypes.Add(typedInstance.GetType(), typedInstance);
             } else {

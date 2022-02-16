@@ -43,14 +43,40 @@ public readonly struct Maybe<TOk, TError>
     /// <summary>
     /// Value: whether this Maybe is in the OK state.
     /// </summary>
-    public bool IsOk
-        => okOrError is Maybe_Ok<TOk>;
+    public bool IsOk()
+        => IsOk(out _);
+
+    /// <summary>
+    /// Value: whether this Maybe is in the OK state.
+    /// </summary>
+    public bool IsOk([MaybeNullWhen(false)] out TOk okValueIfOk)
+    {
+        if (okOrError is Maybe_Ok<TOk> okValue) {
+            okValueIfOk = okValue.Value;
+            return true;
+        }
+        okValueIfOk = default(TOk);
+        return false;
+    }
 
     /// <summary>
     /// Value: whether this Maybe is in the Error state.
     /// </summary>
-    public bool IsError
-        => !IsOk;
+    public bool IsError()
+        => IsError(out _);
+
+    /// <summary>
+    /// Value: whether this Maybe is in the Error state.
+    /// </summary>
+    public bool IsError([MaybeNullWhen(false)] out TError errorValueIfError)
+    {
+        if (okOrError is Maybe_Error<TError> errValue) {
+            errorValueIfError = errValue.Error;
+            return true;
+        }
+        errorValueIfError = default(TError);
+        return false;
+    }
 
     /// <summary>
     /// Extracts a value from the Maybe by calling either the ifOk function or the ifError function, depending on the state of the Maybe.
