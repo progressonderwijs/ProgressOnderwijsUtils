@@ -30,10 +30,9 @@ public static class SmallBatchInsertImplementation
             .Select(o => new ColumnDefinition(TypeThatWillBeActuallyInserted(o.DataType), o.Name, o.Index, ColumnAccessibility.Readonly))
             .ToArray();
         var maybeMapping = target.CreateValidatedMapping(srcFields);
-        if (maybeMapping.IsError) {
-            throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{maybeMapping.AssertError()}");
+        if (!maybeMapping.TryGet(out var mapping, out var error)) {
+            throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{error}");
         }
-        var mapping = maybeMapping.AssertOk();
         foreach (var row in rows) {
             var destinationColumns = mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name));
             var sourceValues = mapping.Select(

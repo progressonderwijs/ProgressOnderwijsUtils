@@ -275,6 +275,13 @@ public static class MaybeExtensions
     }
 
     [Pure]
+    public static Maybe<Unit, TError[]> WhenAllOk<TError>(this IEnumerable<Maybe<Unit, TError>> maybes)
+    {
+        var (_, errValues) = maybes.Partition();
+        return errValues.Any() ? Maybe.Error(errValues) : Maybe.Ok();
+    }
+
+    [Pure]
     public static IEnumerable<TOk> WhereOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
     {
         foreach (var state in maybes) {

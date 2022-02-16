@@ -43,14 +43,40 @@ public readonly struct Maybe<TOk, TError>
     /// <summary>
     /// Value: whether this Maybe is in the OK state.
     /// </summary>
-    public bool IsOk
-        => okOrError is Maybe_Ok<TOk>;
+    public bool IsOk()
+        => IsOk(out _);
+
+    /// <summary>
+    /// Value: whether this Maybe is in the OK state.
+    /// </summary>
+    public bool IsOk([MaybeNullWhen(false)] out TOk okValueIfOk)
+    {
+        if (okOrError is Maybe_Ok<TOk> okValue) {
+            okValueIfOk = okValue.Value;
+            return true;
+        }
+        okValueIfOk = default(TOk);
+        return false;
+    }
 
     /// <summary>
     /// Value: whether this Maybe is in the Error state.
     /// </summary>
-    public bool IsError
-        => !IsOk;
+    public bool IsError()
+        => IsError(out _);
+
+    /// <summary>
+    /// Value: whether this Maybe is in the Error state.
+    /// </summary>
+    public bool IsError([MaybeNullWhen(false)] out TError errorValueIfError)
+    {
+        if (okOrError is Maybe_Error<TError> errValue) {
+            errorValueIfError = errValue.Error;
+            return true;
+        }
+        errorValueIfError = default(TError);
+        return false;
+    }
 
     /// <summary>
     /// Extracts a value from the Maybe by calling either the ifOk function or the ifError function, depending on the state of the Maybe.
@@ -81,8 +107,8 @@ public readonly struct Maybe<TOk, TError>
     /// Allow discarding the return value. A lot of methods only need to return whether they succeeded, but a lot of sources of maybe return a result
     /// </summary>
     [Pure]
-    public static implicit operator Maybe<Unit, TError>(Maybe<TOk, TError> maybe)
-        => maybe.WhenOk(_ => { });
+    public Maybe<Unit, TError> DiscardValue()
+        => TryGet(out _, out var error) ? Maybe.Ok() : Maybe.Error(error);
 
     public bool TryGet([MaybeNullWhen(false)] out TOk okValueIfOk, [MaybeNullWhen(true)] out TError errorValueIfError)
     {

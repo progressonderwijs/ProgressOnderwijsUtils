@@ -61,10 +61,9 @@ public static class ReflectionLoadableClassHelper
     public static Maybe<Func<TBaseType>[], string[]> AllSubclassConstructorsForType<TBaseType>()
     {
         var safelyReflectionLoadableTypes = AllSubclassConstructorsForType(typeof(TBaseType));
-        if (safelyReflectionLoadableTypes.IsError) {
-            return Maybe.Error(safelyReflectionLoadableTypes.AssertError());
+        if (!safelyReflectionLoadableTypes.TryGet(out var constructors, out var error)) {
+            return Maybe.Error(error);
         }
-        var constructors = safelyReflectionLoadableTypes.AssertOk();
         var factories = new List<Func<TBaseType>>();
         foreach (var constructor in constructors) {
             var constructionExpression = Expression.Lambda<Func<TBaseType>>(Expression.New(constructor), Array.Empty<ParameterExpression>());

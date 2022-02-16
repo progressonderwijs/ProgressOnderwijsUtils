@@ -19,13 +19,13 @@ public sealed class MaybeTests
     [Fact]
     public void IsOk_is_true_iif_maybe_is_ok()
     {
-        PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().IsOk);
-        PAssert.That(() => Maybe.Error("42").AsMaybeWithoutValue<int>().IsOk == false);
+        PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().IsOk());
+        PAssert.That(() => Maybe.Error("42").AsMaybeWithoutValue<int>().IsOk() == false);
     }
 
     [Fact]
     public void Maybe_default_is_not_ok()
-        => PAssert.That(() => default(Maybe<int, string>).IsOk == false);
+        => PAssert.That(() => default(Maybe<int, string>).IsOk() == false);
 
     [Fact]
     public void Extract_calls_first_function_when_ok()
@@ -53,9 +53,9 @@ public sealed class MaybeTests
     [Fact]
     public void Maybe_check_returns_Unit_or_error()
     {
-        PAssert.That(() => Maybe.Verify(true, "an error").IsOk);
+        PAssert.That(() => Maybe.Verify(true, "an error").IsOk());
         PAssert.That(() => Maybe.Verify(false, "an error").ContainsError(err => err == "an error"));
-        PAssert.That(() => Maybe.Verify(true, () => "an error").IsOk);
+        PAssert.That(() => Maybe.Verify(true, () => "an error").IsOk());
         PAssert.That(() => Maybe.Verify(false, () => "an error").ContainsError(err => err == "an error"));
     }
 
@@ -114,17 +114,17 @@ public sealed class MaybeTests
     [Fact]
     public void ErrorWhenNotNull_is_error_for_nonnull()
     {
-        PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsError);
-        PAssert.That(() => Maybe.ErrorWhenNotNull(default(object)).IsOk);
-        PAssert.That(() => Maybe.ErrorWhenNotNull(default(int?)).IsOk);
+        PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsError());
+        PAssert.That(() => Maybe.ErrorWhenNotNull(default(object)).IsOk());
+        PAssert.That(() => Maybe.ErrorWhenNotNull(default(int?)).IsOk());
     }
 
     [Fact]
     public void OkWhenNotNull_is_ok_for_nonnull()
     {
-        PAssert.That(() => Maybe.OkWhenNotNull("asd").IsOk);
-        PAssert.That(() => Maybe.OkWhenNotNull(default(object)).IsError);
-        PAssert.That(() => Maybe.OkWhenNotNull(default(int?)).IsError);
+        PAssert.That(() => Maybe.OkWhenNotNull("asd").IsOk());
+        PAssert.That(() => Maybe.OkWhenNotNull(default(object)).IsError());
+        PAssert.That(() => Maybe.OkWhenNotNull(default(int?)).IsError());
     }
 
     [Fact]
@@ -189,7 +189,7 @@ public sealed class MaybeTests
     {
         var notOkExample = Maybe.ErrorWhenNotNull("asd");
 
-        var okExample = Maybe.OkWhenNotNull((int?)3).WhenError(() => "asd").WhenOk(_ => { });
+        var okExample = Maybe.OkWhenNotNull((int?)3).WhenError(() => "asd").DiscardValue();
 
         PAssert.That(() => okExample.Contains(Unit.Value));
         PAssert.That(() => notOkExample.ContainsError("asd"));
@@ -307,7 +307,7 @@ public sealed class MaybeTests
     [Fact]
     public void WhenAllOk_simple_cases_work()
     {
-        PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk);
+        PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk());
         PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2, })));
         PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2, })));
     }
@@ -356,15 +356,15 @@ public sealed class MaybeTests
         var okExample = Maybe.Ok().AsMaybeWithoutError<Unit>();
         var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
-        PAssert.That(() => okExample.WhenOkTry(_ => okExample).IsOk);
-        PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsError);
-        PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsError);
-        PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsError);
+        PAssert.That(() => okExample.WhenOkTry(_ => okExample).IsOk());
+        PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsError());
+        PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsError());
+        PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsError());
 
-        PAssert.That(() => okExample.WhenOkTry(() => okExample).IsOk);
-        PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsError);
-        PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsError);
-        PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsError);
+        PAssert.That(() => okExample.WhenOkTry(() => okExample).IsOk());
+        PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsError());
+        PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsError());
+        PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsError());
     }
 
     [Fact]
@@ -373,15 +373,15 @@ public sealed class MaybeTests
         var okExample = Maybe.Ok().AsMaybeWithoutError<Unit>();
         var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
-        PAssert.That(() => okExample.WhenErrorTry(_ => okExample).IsOk);
-        PAssert.That(() => okExample.WhenErrorTry(_ => notOkExample).IsOk);
-        PAssert.That(() => notOkExample.WhenErrorTry(_ => okExample).IsOk);
-        PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsError);
+        PAssert.That(() => okExample.WhenErrorTry(_ => okExample).IsOk());
+        PAssert.That(() => okExample.WhenErrorTry(_ => notOkExample).IsOk());
+        PAssert.That(() => notOkExample.WhenErrorTry(_ => okExample).IsOk());
+        PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsError());
 
-        PAssert.That(() => okExample.WhenErrorTry(() => okExample).IsOk);
-        PAssert.That(() => okExample.WhenErrorTry(() => notOkExample).IsOk);
-        PAssert.That(() => notOkExample.WhenErrorTry(() => okExample).IsOk);
-        PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsError);
+        PAssert.That(() => okExample.WhenErrorTry(() => okExample).IsOk());
+        PAssert.That(() => okExample.WhenErrorTry(() => notOkExample).IsOk());
+        PAssert.That(() => notOkExample.WhenErrorTry(() => okExample).IsOk());
+        PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsError());
     }
 
     [Fact]
@@ -404,7 +404,7 @@ public sealed class MaybeTests
                 let v = 1
                 from b in notOkExample
                 select v
-            ).IsError
+            ).IsError()
         );
         PAssert.That(
             () => (
@@ -412,7 +412,7 @@ public sealed class MaybeTests
                 let v = 1
                 from b in okExample
                 select v
-            ).IsError
+            ).IsError()
         );
         PAssert.That(
             () => (
@@ -420,7 +420,7 @@ public sealed class MaybeTests
                 let v = 1
                 from b in notOkExample
                 select v
-            ).IsOk == false
+            ).IsOk() == false
         );
     }
 
