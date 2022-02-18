@@ -19,11 +19,9 @@ public sealed class SecurityHeadersMiddleware
         if (options.ContentSecurityPolicy != null) {
             context.Response.Headers["Content-Security-Policy"] = options.ContentSecurityPolicy;
         }
-
         if (options.ReferrerPolicy != null) {
             context.Response.Headers["Referrer-Policy"] = options.ReferrerPolicy;
         }
-
         if (options.XContentTypeOptions != null) {
             context.Response.Headers["X-Content-Type-Options"] = options.XContentTypeOptions;
         }
