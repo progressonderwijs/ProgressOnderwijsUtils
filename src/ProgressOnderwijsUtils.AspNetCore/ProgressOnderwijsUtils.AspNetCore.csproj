@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>6.0.0</Version>
+    <Version>7.0.0</Version>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
-    <Description>ProgressOnderwijs utility methods+classes for asp.net core.</Description>
+    <Description>Add Cross-Origin-Embedder-Policy and Cross-Origin-Opener-Policy to the default set of headers set.</Description>
     <PackageReleaseNotes>Bump dependency version to .net 6</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFramework>net6.0</TargetFramework>
