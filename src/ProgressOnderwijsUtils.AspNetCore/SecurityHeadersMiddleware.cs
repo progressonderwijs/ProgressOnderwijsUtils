@@ -26,6 +26,12 @@ public sealed class SecurityHeadersMiddleware
         if (options.XContentTypeOptions != null) {
             context.Response.Headers[HeaderNames.XContentTypeOptions] = options.XContentTypeOptions;
         }
+        if (options.ReferrerPolicy != null) {
+            context.Response.Headers["Cross-Origin-Embedder-Policy"] = options.CrossOriginEmbedderPolicy;
+        }
+        if (options.ReferrerPolicy != null) {
+            context.Response.Headers["Cross-Origin-Opener-Policy"] = options.CrossOriginOpenerPolicy;
+        }
 
         return next(context);
     }
