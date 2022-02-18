@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace ProgressOnderwijsUtils.AspNetCore;
 
@@ -17,15 +18,19 @@ public sealed class SecurityHeadersMiddleware
     public Task Invoke(HttpContext context)
     {
         if (options.ContentSecurityPolicy != null) {
-            context.Response.Headers["Content-Security-Policy"] = options.ContentSecurityPolicy;
+            context.Response.Headers[HeaderNames.ContentSecurityPolicy] = options.ContentSecurityPolicy;
         }
-
         if (options.ReferrerPolicy != null) {
             context.Response.Headers["Referrer-Policy"] = options.ReferrerPolicy;
         }
-
         if (options.XContentTypeOptions != null) {
-            context.Response.Headers["X-Content-Type-Options"] = options.XContentTypeOptions;
+            context.Response.Headers[HeaderNames.XContentTypeOptions] = options.XContentTypeOptions;
+        }
+        if (options.ReferrerPolicy != null) {
+            context.Response.Headers["Cross-Origin-Embedder-Policy"] = options.CrossOriginEmbedderPolicy;
+        }
+        if (options.ReferrerPolicy != null) {
+            context.Response.Headers["Cross-Origin-Opener-Policy"] = options.CrossOriginOpenerPolicy;
         }
 
         return next(context);
