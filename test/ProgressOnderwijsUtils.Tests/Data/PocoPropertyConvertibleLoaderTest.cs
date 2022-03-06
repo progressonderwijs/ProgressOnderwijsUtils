@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
@@ -47,6 +48,14 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
     public sealed record BlaOk3 : IWrittenImplicitly, IReadImplicitly
     {
         public CustomBla Bla2 { get; set; }
+    }
+
+    public sealed record BlaOk3_with_unmapped : IWrittenImplicitly, IReadImplicitly
+    {
+        public CustomBla Bla2 { get; set; }
+
+        [NotMapped]
+        public int SomeUnmappedValue { get; set; }
     }
 
     public sealed record BlaOk4 : IWrittenImplicitly, IReadImplicitly
@@ -106,6 +115,19 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadPocos<BlaOk3>(Connection);
         PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
     }
+
+    [Fact]
+    public void PocoMapperIgnores_NotMapped_marked_properties()
+    {
+        PAssert.That(() => new CustomBla("aap").AsString == "aap");
+
+        var target = CreateTempTable();
+        SampleObjects.BulkCopyToSqlServer(Connection, target);
+
+        var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadPocos<BlaOk3_with_unmapped>(Connection);
+        PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
+    }
+
 
     [Fact]
     public void PocoSupportsCustomObject_multiple_properties()
