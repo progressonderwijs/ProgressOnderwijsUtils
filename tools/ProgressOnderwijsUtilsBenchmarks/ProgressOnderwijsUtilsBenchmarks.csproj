@@ -12,5 +12,6 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.115.5" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
     <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
   </ItemGroup>
 </Project>

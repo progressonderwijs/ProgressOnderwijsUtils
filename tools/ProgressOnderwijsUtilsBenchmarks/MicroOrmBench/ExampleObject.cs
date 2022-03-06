@@ -30,7 +30,10 @@ public sealed class ExampleObject : IWrittenImplicitly
     public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Arg", "@Hehe");
 
     public static ParameterizedSql ParameterizedSqlForRows(int rows)
-        => SQL(FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe"));
+        => SQL(InterpolatedQuery(rows));
+
+    public static FormattableString InterpolatedQuery(int rows)
+        => FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe");
 
     static readonly FormattableString formattableSqliteQueryString = $@"
             select
