@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -275,7 +276,7 @@ public static class ParameterizedSqlObjectMapper
             where T : IWrittenImplicitly
         {
             static readonly object constructionSync = new();
-            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> rowToPocoByColumnOrdering = new();
+            static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, string[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
             public static TRowReader<TReader, T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
             {
@@ -288,19 +289,17 @@ public static class ParameterizedSqlObjectMapper
                     }
                 }
                 if (fieldMappingMode == FieldMappingMode.RequireExactColumnMatches && match.unmappedProperties.Length > 0) {
-                    throw new(
-                        "Some properties were unmapped: "
-                        + match.unmappedProperties
-                            .Select(prop => $"{prop.DataType.ToCSharpFriendlyTypeName()} {prop.Name}")
-                            .JoinStrings("; ")
-                    );
+                    throw new("Some properties were unmapped:\n" + match.unmappedProperties.JoinStrings("\n"));
                 }
                 return match.rowToPoco;
             }
 
-            static readonly Func<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, IPocoProperty<T>[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
-                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<TReader, T>), PocoProperties<T>.Instance);
-                return (rowToPoco: (TRowReader<TReader, T>)rowToPoco, unmappedProperties.ArraySelect(o => (IPocoProperty<T>)o));
+            static readonly Func<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, string[] unmappedProperties)> constructTRowReaderWithCols = columnOrdering => {
+                var mappedMembers = PocoProperties<T>.Instance.Where(o => o.CustomAttributes.OfType<NotMappedAttribute>().None())
+                    .ToDictionary(o => o.Name, o => ((MemberInfo)o.PropertyInfo, o.DataType), StringComparer.OrdinalIgnoreCase);
+
+                var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<TReader, T>), mappedMembers, typeof(T));
+                return (rowToPoco: (TRowReader<TReader, T>)rowToPoco, unmappedProperties);
             };
         }
 
@@ -337,58 +336,60 @@ public static class ParameterizedSqlObjectMapper
             }
         }
 
-        public static (Delegate rowToPoco, IPocoProperty[] unmappedProperties) ConstructPocoTRowReader(string[] readerFieldOrder, Type constructedTRowReaderType, IPocoProperties<IPocoProperty> pocoProperties)
+        public static (Delegate rowToPoco, string[] unmappedProperties) ConstructPocoTRowReader(string[] readerFieldOrder, Type constructedTRowReaderType, Dictionary<string, (MemberInfo, Type DataType)> pocoProperties, Type rowType)
         {
             var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
             var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, readerFieldOrder, lastColumnReadParamExpr, pocoProperties);
+            var (constructRowExpr, unmappedProperties) = ReadAllFieldsExpression(dataReaderParamExpr, readerFieldOrder, lastColumnReadParamExpr, pocoProperties, rowType);
             var rowToPocoParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr, };
             var rowToPocoLambda = Expression.Lambda(constructedTRowReaderType, constructRowExpr, "RowToPoco", rowToPocoParamExprs);
             return (rowToPoco: rowToPocoLambda.Compile(), unmappedProperties);
         }
 
-        public static (BlockExpression constructRowExpr, IPocoProperty[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, IPocoProperties<IPocoProperty> pocoProperties)
+        sealed record MemberMapping(ParameterExpression Variable)
         {
-            string FriendlyName()
-                => pocoProperties.PocoType.ToCSharpFriendlyTypeName();
+            public bool ViaConstructor;
+        }
+
+        public static (BlockExpression constructRowExpr, string[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, Dictionary<string, (MemberInfo Member, Type DataType)> pocoProperties, Type rowType)
+        {
+            static bool CanWrite(MemberInfo member)
+                => member is not PropertyInfo { CanWrite: false, };
             var statements = new List<Expression>(2 + cols.Length * 2);
 
-            var propertyFlags = new (bool coveredByReaderColumn, bool viaConstructor)[pocoProperties.Count];
-            var variablesByPropIdx = new ParameterExpression[pocoProperties.Count];
+            var propertyFlags = new Dictionary<MemberInfo, MemberMapping>();
             var errors = new List<string>();
             var minimalViaConstructorCount = 0;
             for (var columnIndex = 0; columnIndex < cols.Length; columnIndex++) {
                 if (!(
-                        pocoProperties.IndexByName.TryGetValue(cols[columnIndex], out var propertyIndex)
-                        && pocoProperties[propertyIndex] is { } member
+                        pocoProperties.TryGetValue(cols[columnIndex], out var memberTuple) && memberTuple is var (member, memberType)
                     )) {
-                    errors.Add($"Cannot resolve IDataReader column {cols[columnIndex]} in type {FriendlyName()}");
-                } else if (propertyFlags[propertyIndex].coveredByReaderColumn) {
-                    errors.Add($"The C# property {FriendlyName()}.{member.Name} has already been mapped; are there two identically names columns?");
-                } else if (!IsSupportedType(member.DataType)) {
-                    errors.Add($"The C# property {FriendlyName()}.{member.Name} if of type {member.DataType.ToCSharpFriendlyTypeName()} which has no supported conversion from a DbDataReaderColumn.");
+                    errors.Add($"Cannot resolve IDataReader column {cols[columnIndex]} in type {rowType.ToCSharpFriendlyTypeName()}");
+                } else if (propertyFlags.ContainsKey(member)) {
+                    errors.Add($"The C# property {rowType.ToCSharpFriendlyTypeName()}.{member.Name} has already been mapped; are there two identically names columns?");
+                } else if (!IsSupportedType(memberType)) {
+                    errors.Add($"The C# property {rowType.ToCSharpFriendlyTypeName()}.{member.Name} if of type {memberType.ToCSharpFriendlyTypeName()} which has no supported conversion from a DbDataReaderColumn.");
                 } else {
-                    propertyFlags[propertyIndex].coveredByReaderColumn = true;
-                    var variable = Expression.Variable(member.DataType, member.Name);
-                    variablesByPropIdx[propertyIndex] = variable;
+                    var variable = Expression.Variable(memberType, member.Name);
+                    var viaConstructor = !CanWrite(member);
+                    propertyFlags.Add(member, new(variable) { ViaConstructor = viaConstructor, });
                     var fieldIdxExpr = Expression.Constant(columnIndex);
                     statements.Add(Expression.Assign(lastColumnReadParamExpr, fieldIdxExpr));
-                    statements.Add(Expression.Assign(variablesByPropIdx[propertyIndex], GetColValueExpr(dataReaderParamExpr, fieldIdxExpr, member.DataType)));
-                    if (!member.CanWrite) {
+                    statements.Add(Expression.Assign(variable, GetColValueExpr(dataReaderParamExpr, fieldIdxExpr, memberType)));
+                    if (viaConstructor) {
                         minimalViaConstructorCount++;
-                        propertyFlags[propertyIndex].viaConstructor = true;
                     }
                 }
             }
 
             if (errors.Any()) {
-                throw new InvalidOperationException($"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n{errors.JoinStrings("\n")}\n");
+                throw new InvalidOperationException($"Cannot unpack DbDataReader ({cols.Length} columns) into type {rowType.ToCSharpFriendlyTypeName()} ({pocoProperties.Count} properties)\n{errors.JoinStrings("\n")}\n");
             }
 
             ConstructorInfo? bestCtor = null;
             ParameterInfo[]? bestCtorParameters = null;
 
-            foreach (var ctorInfo in pocoProperties.PocoType.GetConstructors()) {
+            foreach (var ctorInfo in rowType.GetConstructors()) {
                 var ctorParameters = ctorInfo.GetParameters();
                 if (bestCtorParameters != null && ctorParameters.Length <= bestCtorParameters.Length) {
                     continue;
@@ -398,12 +399,12 @@ public static class ParameterizedSqlObjectMapper
                 var propsWithoutSetterWithoutConstructorArg = minimalViaConstructorCount;
                 foreach (var parameter in ctorParameters) {
                     if (parameter.Name is { } paramName
-                        && pocoProperties.IndexByName.TryGetValue(paramName, out var propIdx)
-                        && pocoProperties[propIdx] is { } property
-                        && property.DataType == parameter.ParameterType
+                        && pocoProperties.TryGetValue(paramName, out var memberTuple)
+                        && memberTuple is var (property, propType)
+                        && propType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
                        ) {
-                        if (propertyFlags[propIdx].viaConstructor) {
+                        if (propertyFlags.TryGetValue(property, out var mapping) && mapping.ViaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }
                     } else {
@@ -419,39 +420,41 @@ public static class ParameterizedSqlObjectMapper
                 bestCtorParameters = ctorParameters;
             }
 
-            if (bestCtor == null && minimalViaConstructorCount == 0 && pocoProperties.PocoType.IsValueType) {
+            if (bestCtor == null && minimalViaConstructorCount == 0 && rowType.IsValueType) {
                 bestCtorParameters = Array.Empty<ParameterInfo>(); // use implied parameterless pseudo-constructor for value types
             }
 
             if (bestCtorParameters == null) {
                 throw new(
-                    $"Cannot unpack DbDataReader ({cols.Length} columns) into type {FriendlyName()} ({pocoProperties.Count} properties)\n"
+                    $"Cannot unpack DbDataReader ({cols.Length} columns) into type {rowType.ToCSharpFriendlyTypeName()} ({pocoProperties.Count} properties)\n"
                     + "No applicable constructor found. The type must have at least one public contructor for which all parameters have an identically named and typed public property.\n"
-                    + "Since they have no setter, the constructor must at least have parameters covering " + pocoProperties.Select((prop, idx) => (prop, propertyFlags[idx].viaConstructor)).Where(o => o.viaConstructor).Select(o => o.prop.Name).JoinStrings(", ")
+                    + "Since they have no setter, the constructor must at least have parameters covering " + pocoProperties.Values.Where(o => propertyFlags.TryGetValue(o.Member, out var mapping) && mapping.ViaConstructor).Select(o => o.Member.Name).JoinStrings(", ")
                 );
             }
             var ctorArguments = new ParameterExpression[bestCtorParameters.Length];
             for (var ctorIdx = 0; ctorIdx < ctorArguments.Length; ctorIdx++) {
                 var ctorArg = bestCtorParameters[ctorIdx];
-                var propIdx = pocoProperties.IndexByName[ctorArg.Name.AssertNotNull()];
-                propertyFlags[propIdx].viaConstructor = true;
-                ctorArguments[ctorIdx] = variablesByPropIdx[propIdx];
+                var propIdx = pocoProperties[ctorArg.Name.AssertNotNull()].Member;
+                var memberMapping = propertyFlags[propIdx];
+                memberMapping.ViaConstructor = true;
+                ctorArguments[ctorIdx] = memberMapping.Variable;
             }
 
-            var newExpression = bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(pocoProperties.PocoType);
+            var newExpression = bestCtor != null ? Expression.New(bestCtor, ctorArguments) : Expression.New(rowType);
             var memberInits = new List<MemberAssignment>();
 
-            var unmappedProperties = new List<IPocoProperty>();
-            foreach (var prop in pocoProperties) {
-                if (!propertyFlags[prop.Index].coveredByReaderColumn && prop.CanWrite) {
-                    unmappedProperties.Add(prop);
-                }
-                if (propertyFlags[prop.Index].coveredByReaderColumn && !propertyFlags[prop.Index].viaConstructor) {
-                    memberInits.Add(Expression.Bind(prop.PropertyInfo, variablesByPropIdx[prop.Index]));
+            var unmappedProperties = new List<string>();
+            foreach (var prop in pocoProperties.Values) {
+                if (propertyFlags.TryGetValue(prop.Member, out var mapping)) {
+                    if (!mapping.ViaConstructor) {
+                        memberInits.Add(Expression.Bind(prop.Member, mapping.Variable));
+                    }
+                } else if (CanWrite(prop.Member)) {
+                    unmappedProperties.Add($"{prop.DataType.ToCSharpFriendlyTypeName()} {prop.Member.Name}");
                 }
             }
             statements.Add(Expression.MemberInit(newExpression, memberInits));
-            var constructRowExpr = Expression.Block(pocoProperties.PocoType, variablesByPropIdx.WhereNotNull(), statements);
+            var constructRowExpr = Expression.Block(rowType, propertyFlags.Values.Select(o => o.Variable), statements);
 
             return (constructRowExpr, unmappedProperties.ToArray());
         }
