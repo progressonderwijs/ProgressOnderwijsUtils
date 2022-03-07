@@ -77,6 +77,29 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
+    [Fact]
+    public void TuplesCanBeRead()
+    {
+        // ReSharper disable once UnusedVariable
+        var rawQuery = ParameterizedSqlForRows(512);
+        var retval = SQL($"select AccountNumber, SalesOrderId from ({rawQuery}) x").ReadTuples<(string acct, int id)>(Connection);
+
+        PAssert.That(() => retval.Length == 512);
+        PAssert.That(() => retval.Select(o => o.acct).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
+    }
+
+    [Fact]
+    public void TuplesReadersSupportValueConverters()
+    {
+        // ReSharper disable once UnusedVariable
+        var rawQuery = ParameterizedSqlForRows(512);
+        var retval = SQL($"select Comment, SalesOrderId from ({rawQuery}) x").ReadTuples<(TrivialValue<string>? comment, int id)>(Connection);
+
+        PAssert.That(() => retval.Length == 512);
+        var readComments = retval.Select(o => o.comment?.Value).Distinct();
+        PAssert.That(() => readComments.SetEqual(new[] { "abracadabra fee fi fo fum", null, }));
+    }
+
     public sealed class ExampleWithJustSettersWithMissingProperties : IWrittenImplicitly
     {
         public string AccountNumber { get; set; } = null!;

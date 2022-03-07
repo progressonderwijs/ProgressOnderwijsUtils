@@ -27,6 +27,10 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => new(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
+    public static TuplesSqlCommand<T> OfTuples<T>(this ParameterizedSql sql)
+        where T : struct, IStructuralEquatable, ITuple
+        => new(sql, CommandTimeout.DeferToConnectionDefault);
+
     [return: MaybeNull]
     [MustUseReturnValue]
     public static T ReadScalar<T>(this ParameterizedSql sql, SqlConnection sqlConn)
@@ -54,6 +58,19 @@ public static class ParameterizedSqlObjectMapper
     public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, SqlConnection sqlConn)
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
+
+    /// <summary>
+    /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order
+    /// The arity of the tuple T must be the same as the number of columns
+    /// </summary>
+    /// <typeparam name="T">The tuple type to unpack each record into</typeparam>
+    /// <param name="q">The query to execute</param>
+    /// <param name="sqlConn">The database connection</param>
+    /// <returns>An array of strongly-typed tuples; never null</returns>
+    [MustUseReturnValue]
+    public static T[] ReadTuples<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, SqlConnection sqlConn)
+        where T : struct, IStructuralEquatable, ITuple
+        => q.OfTuples<T>().Execute(sqlConn);
 
     internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
     {
@@ -301,6 +318,39 @@ public static class ParameterizedSqlObjectMapper
                 var (rowToPoco, unmappedProperties) = ConstructPocoTRowReader(columnOrdering.Cols, typeof(TRowReader<TReader, T>), mappedMembers, typeof(T));
                 return (rowToPoco: (TRowReader<TReader, T>)rowToPoco, unmappedProperties);
             };
+        }
+
+        public static class Tuples<T>
+            where T : struct, IStructuralEquatable, ITuple
+        {
+            static TRowReader<TReader, T>? cachedRowReader;
+            static int tupleArity;
+            static readonly object sync = new();
+
+            static TRowReader<TReader, T> Init()
+            {
+                lock (sync) {
+                    if (cachedRowReader == null) {
+                        var tupleType = typeof(T);
+                        var fieldInfos = tupleType.GetFields(BindingFlags.Instance | BindingFlags.Public);
+                        var fakeOrdering = fieldInfos.OrderBy(o => o.Name).Select(o => o.Name).ToArray();
+                        var members = fieldInfos.ToDictionary(fi => fi.Name, fi => ((MemberInfo)fi, fi.FieldType), StringComparer.OrdinalIgnoreCase);
+                        var (rowToPoco, _) = ConstructPocoTRowReader(fakeOrdering, typeof(TRowReader<TReader, T>), members, tupleType);
+
+                        tupleArity = fakeOrdering.Length;
+                        cachedRowReader = (TRowReader<TReader, T>)rowToPoco;
+                    }
+                    return cachedRowReader;
+                }
+            }
+
+            public static TRowReader<TReader, T> GetRowReader(TReader reader)
+            {
+                var rowReader = cachedRowReader ?? Init();
+                return reader.FieldCount == tupleArity
+                    ? rowReader
+                    : throw new($"Expected {tupleArity} data reader fields for tuple type {typeof(T).ToCSharpFriendlyTypeName()}, but received {reader.FieldCount}");
+            }
         }
 
         public static class PlainImpl<T>
