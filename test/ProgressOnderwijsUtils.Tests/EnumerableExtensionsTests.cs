@@ -76,7 +76,7 @@ public sealed class EnumerableExtensionsTests
         PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().SequenceEqual(new[] { 0, 1, 2, }));
         PAssert.That(() => default(int[]).EmptyIfNull().SequenceEqual(new int[] { }));
         PAssert.That(() => default(int[]) == null);
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         PAssert.That(() => default(int[]) != default(int[]).EmptyIfNull());
         var arr = new[] { 0, 1, 2, };
         PAssert.That(() => arr.EmptyIfNull() == arr);
