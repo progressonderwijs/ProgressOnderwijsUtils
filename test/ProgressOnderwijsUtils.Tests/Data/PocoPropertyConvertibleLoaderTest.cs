@@ -64,6 +64,15 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         public int SomeUnmappedValue { get; internal set; }
     }
 
+    public sealed class BlaOk3_partially_constructor_mapped : IWrittenImplicitly, IReadImplicitly
+    {
+        public CustomBla Bla2 { get; set; }
+        public string? Bla { get; internal set; }
+
+        public BlaOk3_partially_constructor_mapped(string? bla)
+            => Bla = bla;
+    }
+
     public sealed record BlaOk4 : IWrittenImplicitly, IReadImplicitly
     {
         public int Id { get; set; }
@@ -134,7 +143,6 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
         PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
     }
 
-    
     [Fact]
     public void PocoMapperIgnores_properties_with_internal_setters()
     {
@@ -145,6 +153,19 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
 
         var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadPocos<BlaOk3_with_unmapped2>(Connection);
         PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
+    }
+
+    [Fact]
+    public void PocoMapper_supports_properties_with_internal_setters_when_initializable_via_constructor()
+    {
+        PAssert.That(() => new CustomBla("aap").AsString == "aap");
+
+        var target = CreateTempTable();
+        SampleObjects.BulkCopyToSqlServer(Connection, target);
+
+        var fromDb = SQL($"select Bla2, Bla from #MyTable order by Id").ReadPocos<BlaOk3_partially_constructor_mapped>(Connection);
+        PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
+        PAssert.That(() => SampleObjects.Select(s => s.Bla).SequenceEqual(fromDb.Select(x => x.Bla)));
     }
 
     [Fact]
