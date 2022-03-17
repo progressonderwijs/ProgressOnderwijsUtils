@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>85.1.0</Version>
-    <PackageReleaseNotes>Added ParameterizedSql.ReadTuples. Ignore [NotMapped] properties in ParameterizedSql.ReadPocos.</PackageReleaseNotes>
+    <Version>85.1.1</Version>
+    <PackageReleaseNotes>Ignore properties with internal setters in ParameterizedSql.ReadPocos (revert unintentional change from 85.1.0).</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
