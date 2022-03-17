@@ -404,7 +404,7 @@ public static class ParameterizedSqlObjectMapper
         public static (BlockExpression constructRowExpr, string[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, Dictionary<string, (MemberInfo Member, Type DataType)> pocoProperties, Type rowType)
         {
             static bool CanWrite(MemberInfo member)
-                => member is not PropertyInfo { CanWrite: false, };
+                => member is not PropertyInfo pi || pi.CanWrite && pi.SetMethod?.IsPublic == true;
             var statements = new List<Expression>(2 + cols.Length * 2);
 
             var propertyFlags = new Dictionary<MemberInfo, MemberMapping>();
