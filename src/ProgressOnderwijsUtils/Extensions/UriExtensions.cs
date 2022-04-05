@@ -1,3 +1,6 @@
+using System.Net.Http;
+using System.Threading.Tasks;
+
 namespace ProgressOnderwijsUtils;
 
 public static class UriExtensions
@@ -30,4 +33,15 @@ public static class UriExtensions
         => !networkUri.IsFile || string.IsNullOrEmpty(networkUri.Host)
             ? throw new InvalidOperationException($"The uri {networkUri} is not a windows file share")
             : networkUri.Combine("/").LocalPath.TrimEnd('\\');
+
+    static readonly HttpClient client = new();
+
+    public static async Task<bool> IsWorkingHttpUri(this Uri uri)
+    {
+        try {
+            return (await client.SendAsync(new(HttpMethod.Head, uri))).IsSuccessStatusCode;
+        } catch {
+            return false;
+        }
+    }
 }

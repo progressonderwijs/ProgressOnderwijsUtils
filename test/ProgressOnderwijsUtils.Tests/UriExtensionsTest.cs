@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class UriExtensionsTest
@@ -52,5 +54,19 @@ public sealed class UriExtensionsTest
     {
         PAssert.That(() => new Uri(MyDllPath()).RefersToExistingLocalFile(), "An existing file should appear thus");
         PAssert.That(() => !new Uri(MyDllFolderPath()).EnsureRefersToDirectory().RefersToExistingLocalFile(), "An existing directory should not appear to be an existing file");
+    }
+
+    [Fact]
+    public async Task IsWorkingUri_valid()
+    {
+        var valid = await new Uri("https://nu.nl").IsWorkingHttpUri();
+        PAssert.That(() => valid);
+    }
+
+    [Fact]
+    public async Task IsWorkingUri_invalid()
+    {
+        var invalid = !await new Uri("https://nu").IsWorkingHttpUri();
+        PAssert.That(() => invalid);
     }
 }
