@@ -59,14 +59,14 @@ public sealed class UriExtensionsTest
     [Fact]
     public async Task IsWorkingUri_valid()
     {
-        var valid = await new Uri("https://nu.nl").IsWorkingHttpUri();
+        var valid = await new Uri("https://nu.nl").IsWorkingHttpUri(CancellationToken.None);
         PAssert.That(() => valid);
     }
 
     [Fact]
     public async Task IsWorkingUri_invalid()
     {
-        var invalid = !await new Uri("https://nu").IsWorkingHttpUri();
+        var invalid = !await new Uri("https://nu").IsWorkingHttpUri(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
         PAssert.That(() => invalid);
     }
 }
