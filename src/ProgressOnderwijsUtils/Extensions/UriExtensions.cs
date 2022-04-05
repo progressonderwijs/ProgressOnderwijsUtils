@@ -36,10 +36,10 @@ public static class UriExtensions
 
     static readonly HttpClient client = new();
 
-    public static async Task<bool> IsWorkingHttpUri(this Uri uri)
+    public static async Task<bool> IsWorkingHttpUri(this Uri uri, CancellationToken cancel)
     {
         try {
-            return (await client.SendAsync(new(HttpMethod.Head, uri))).IsSuccessStatusCode;
+            return (await client.SendAsync(new(HttpMethod.Head, uri), cancel)).IsSuccessStatusCode;
         } catch {
             return false;
         }

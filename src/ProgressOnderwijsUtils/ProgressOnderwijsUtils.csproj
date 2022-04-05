@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>85.2.1</Version>
-    <PackageReleaseNotes>IsWorkingHttpUri function added</PackageReleaseNotes>
+    <Version>86.0.0</Version>
+    <PackageReleaseNotes>CancellationToken parm added to IsWorkingHttpUri function</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
