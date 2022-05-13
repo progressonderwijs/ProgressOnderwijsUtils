@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;
@@ -6,8 +7,7 @@ public enum ColumnAccessibility
 {
     Normal,
     NormalWithDefaultValue,
-    AutoIncrement,
-    RowVersion,
+    AutoIncrementIdentity,
     Readonly,
 }
 
@@ -18,7 +18,7 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     static ColumnAccessibility DataColumnAccessibility(DataColumn col)
         => col switch {
-            { AutoIncrement: true, } => ColumnAccessibility.AutoIncrement,
+            { AutoIncrement: true, } => ColumnAccessibility.AutoIncrementIdentity,
             { ReadOnly: true, } => ColumnAccessibility.Readonly,
             { DefaultValue : DBNull, } => ColumnAccessibility.Normal,
             _ => ColumnAccessibility.NormalWithDefaultValue,
@@ -47,10 +47,13 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
         => col switch {
-            { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrement,
-            { IsRowVersion : true, } => ColumnAccessibility.RowVersion,
+            { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrementIdentity,
+            { IsRowVersion : true, } => ColumnAccessibility.Readonly,
             { IsComputed : true, } => ColumnAccessibility.Readonly,
             { HasDefaultValue : true, } => ColumnAccessibility.NormalWithDefaultValue,
             _ => ColumnAccessibility.Normal,
         };
+
+    public static bool ShouldIncludePropertyInSqlInsert(IPocoProperty o)
+        => o.CanRead && o.PropertyInfo.Attr<DatabaseGeneratedAttribute>() is not { DatabaseGeneratedOption: not DatabaseGeneratedOption.None, };
 }

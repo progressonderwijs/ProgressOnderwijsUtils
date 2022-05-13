@@ -75,11 +75,11 @@ public struct FieldMappingValidation
                     if (!AllowExtraTargetColumns) {
                         errors.Add($"Target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
-                } else if (dst.ColumnAccessibility == ColumnAccessibility.AutoIncrement) {
+                } else if (dst.ColumnAccessibility == ColumnAccessibility.AutoIncrementIdentity) {
                     if (OverwriteAutoIncrement) {
                         errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
-                } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly && dst.ColumnAccessibility != ColumnAccessibility.RowVersion) {
+                } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly) {
                     throw new($"impossible value {dst.ColumnAccessibility}");
                 }
             } else {

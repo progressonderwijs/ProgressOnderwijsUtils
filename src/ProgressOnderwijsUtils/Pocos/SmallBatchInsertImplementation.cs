@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ProgressOnderwijsUtils;
 
 public static class SmallBatchInsertImplementation
@@ -26,7 +28,7 @@ public static class SmallBatchInsertImplementation
             return;
         }
 
-        var srcFields = PocoProperties<T>.Instance.Where(o => o.CanRead)
+        var srcFields = PocoProperties<T>.Instance.Where(ColumnDefinition.ShouldIncludePropertyInSqlInsert)
             .Select(o => new ColumnDefinition(TypeThatWillBeActuallyInserted(o.DataType), o.Name, o.Index, ColumnAccessibility.Readonly))
             .ToArray();
         var maybeMapping = target.CreateValidatedMapping(srcFields);

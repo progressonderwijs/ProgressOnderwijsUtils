@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace ProgressOnderwijsUtils;
@@ -36,7 +37,6 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
     readonly IEnumerator<T> pocos;
     readonly IReadOnlyList<T>? objectsOrNull_ForDebugging;
     Optional current;
-
     public int RowsProcessed { get; private set; }
 
     public PocoDataReader(IEnumerable<T> objects, CancellationToken cancellationToken)
@@ -171,7 +171,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
         schemaTable = CreateEmptySchemaTable();
         var i = 0;
         foreach (var pocoProperty in properties) {
-            if (pocoProperty.CanRead) {
+            if (ColumnDefinition.ShouldIncludePropertyInSqlInsert(pocoProperty)) {
                 var columnInfo = new ColumnInfo(pocoProperty);
                 var isKey = pocoProperty.IsKey;
                 var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;

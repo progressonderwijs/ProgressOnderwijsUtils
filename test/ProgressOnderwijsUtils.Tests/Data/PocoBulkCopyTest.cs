@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class PocoBulkCopyTest : TransactedLocalConnection
@@ -92,6 +94,16 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     sealed record ComputedColumnExample : IWrittenImplicitly, IReadImplicitly
     {
         public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public bool Computed { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
+        public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+    }
+
+    sealed record ComputedColumnViaInternalExample : IWrittenImplicitly, IReadImplicitly
+    {
+        public int Id { get; set; }
         public bool Computed { internal get; set; }
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public string Bla { get; set; }
@@ -170,6 +182,70 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
             "
         ).ReadPocos<ComputedColumnExample>(Connection).Single();
         PAssert.That(() => fromDb.Computed);
+    }
+
+    [Fact]
+    public void BulkCopySupportsCumputedColumn_ViaInternalGetter()
+    {
+        var tableName = SQL($"#MyTable");
+        SQL(
+            $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            "
+        ).ExecuteNonQuery(Connection);
+
+        new[] {
+            new ComputedColumnViaInternalExample {
+                Id = 11,
+                Bla = "Something",
+            },
+        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+
+        var fromDb = SQL(
+            $@"
+                select *
+                from {tableName}
+            "
+        ).ReadPocos<ComputedColumnExample>(Connection).Single();
+        PAssert.That(() => fromDb.Computed);
+    }
+
+    [Fact]
+    public void BulkCopySupportsCumputedColumn_WithoutSmallBatchOptimization()
+    {
+        var tableName = SQL($"#MyTable");
+        SQL(
+            $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            "
+        ).ExecuteNonQuery(Connection);
+
+        var asInserted = Enumerable.Range(0, 2000).Select(
+            id =>
+                new ComputedColumnExample {
+                    Id = id,
+                    Bla = "Something",
+                }
+        ).ToArray();
+        PAssert.That(() => asInserted.None(o => o.Computed));
+        asInserted.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+
+        var fromDb = SQL(
+            $@"
+                select *
+                from {tableName}
+            "
+        ).ReadPocos<ComputedColumnExample>(Connection);
+        PAssert.That(() => fromDb.All(o => o.Computed));
+        PAssert.That(() => fromDb.Length == 2000);
     }
 
     sealed record IncludingIdentityColumn : IWrittenImplicitly, IReadImplicitly
