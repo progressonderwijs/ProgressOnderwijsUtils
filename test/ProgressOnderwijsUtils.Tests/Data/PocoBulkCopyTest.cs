@@ -19,6 +19,21 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         public string Bla2 { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         public string? Bla { get; set; }
+
+        public static BulkInsertTarget CreateTargetTable(SqlConnection conn, ParameterizedSql tableName)
+        {
+            SQL(
+                $@"
+                create table {tableName} (
+                    id int not null primary key
+                    , bla nvarchar(max) null
+                    , bla2 nvarchar(max) not null
+                )
+            "
+            ).ExecuteNonQuery(conn);
+
+            return BulkInsertTarget.LoadFromTable(conn, tableName);
+        }
     }
 
     public sealed record BlaOk2 : IWrittenImplicitly, IReadImplicitly
@@ -75,30 +90,35 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
     }
 
-    BulkInsertTarget CreateTempTable()
-    {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    id int not null primary key
-                    , bla nvarchar(max) null
-                    , bla2 nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
-
-        return BulkInsertTarget.LoadFromTable(Connection, tableName);
-    }
-
     sealed record ComputedColumnExample : IWrittenImplicitly, IReadImplicitly
     {
         public int Id { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public bool Computed { get; set; }
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
-        public string Bla { get; set; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+
+        public string? Bla { get; set; }
+
+        public static BulkInsertTarget CreateTargetTable(SqlConnection conn, ParameterizedSql tableName)
+        {
+            SQL(
+                $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            "
+            ).ExecuteNonQuery(conn);
+            return BulkInsertTarget.LoadFromTable(conn, tableName);
+        }
+    }
+
+    sealed record ComputedColumnExample_LackingAnnotation : IWrittenImplicitly, IReadImplicitly
+    {
+        public int Id { get; set; }
+        public bool Computed { get; set; }
+        public string? Bla { get; set; }
     }
 
     sealed record ComputedColumnViaInternalExample : IWrittenImplicitly, IReadImplicitly
@@ -113,72 +133,66 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyAllowsExactMatch()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         SampleObjects.BulkCopyToSqlServer(Connection, target);
-        var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk>(Connection);
+        var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
     }
 
     [Fact]
     public void BulkCopyChecksNames()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
+    }
+
+    [Fact]
+    public void BulkCopyWontInsertComputedColumns()
+    {
+        var target = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#tmp"));
+
+        _ = Assert.ThrowsAny<Exception>(() => new ComputedColumnExample_LackingAnnotation[] { new() { Bla = "ja", Computed = true, Id = 13, } }.BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopyChecksTypes()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopyChecksTypes2()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopySupportsColumnReordering()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         SampleObjects.BulkCopyToSqlServer(Connection, target);
-        var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
+        var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk2>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2, })));
     }
 
     [Fact]
     public void BulkCopySupportsCumputedColumn()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        var bulkInsertTarget = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new ComputedColumnExample {
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<ComputedColumnExample>(Connection).Single();
         PAssert.That(() => fromDb.Computed);
@@ -187,28 +201,18 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopySupportsCumputedColumn_ViaInternalGetter()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
-
+        var bulkInsertTarget = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#MyTable"));
         new[] {
             new ComputedColumnViaInternalExample {
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<ComputedColumnExample>(Connection).Single();
         PAssert.That(() => fromDb.Computed);
@@ -217,16 +221,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopySupportsCumputedColumn_WithoutSmallBatchOptimization()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        var bulkInsertTarget = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         var asInserted = Enumerable.Range(0, 2000).Select(
             id =>
@@ -236,12 +231,12 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 }
         ).ToArray();
         PAssert.That(() => asInserted.None(o => o.Computed));
-        asInserted.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        asInserted.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<ComputedColumnExample>(Connection);
         PAssert.That(() => fromDb.All(o => o.Computed));
@@ -255,6 +250,19 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public string Bla { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
+        public static BulkInsertTarget CreateTargetTable(SqlConnection conn, ParameterizedSql tableName)
+        {
+            SQL(
+                $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
+                    , Bla nvarchar(max) not null
+                )
+            "
+            ).ExecuteNonQuery(conn);
+            return BulkInsertTarget.LoadFromTable(conn, tableName);
+        }
     }
 
     sealed record ExcludingIdentityColumn : IWrittenImplicitly, IReadImplicitly
@@ -268,28 +276,19 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyAllowsOmittingSourcePropertiesForIdentityColumns()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new ExcludingIdentityColumn {
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
         PAssert.That(() => fromDb.AnIdentity == 1);
@@ -298,16 +297,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyIgnoresPropertiesCorrespondingIdentityColumns()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new IncludingIdentityColumn {
@@ -315,12 +305,12 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 AnIdentity = 37,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
         PAssert.That(() => fromDb.AnIdentity == 1);
@@ -329,28 +319,19 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopySupportsKeepIdentity()
     {
-        var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new IncludingIdentityColumn {
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget.With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<IncludingIdentityColumn>(Connection).Single();
         PAssert.That(() => fromDb.AnIdentity == 0);
@@ -378,17 +359,19 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
+        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName);
+
         new[] {
             new ComputedColumnExample {
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget);
 
         var fromDb = SQL(
             $@"
                 select *
-                from {tableName}
+                from {bulkInsertTarget.TableNameSql}
             "
         ).ReadPocos<ComputedColumnExample>(Connection).Single();
         PAssert.That(() => fromDb.Computed);
@@ -397,8 +380,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyVerifiesExistanceOfDestinationColumns()
     {
-        var target
-            = CreateTempTable();
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[1].BulkCopyToSqlServer(Connection, target));
     }
 }
