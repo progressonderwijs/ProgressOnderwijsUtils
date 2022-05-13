@@ -341,14 +341,26 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopySupportsCumputedColumnEvenAfterDropTable()
     {
-        var bulkInsertTarget = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#MyTable"));
+        var tableName = SQL($"#MyTable");
+        SQL(
+            $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , ToDrop int null
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            "
+        ).ExecuteNonQuery(Connection);
 
         SQL(
             $@"
-                alter table {bulkInsertTarget.TableNameSql}
+                alter table {tableName}
                 drop column ToDrop;
             "
         ).ExecuteNonQuery(Connection);
+
+        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName);
 
         new[] {
             new ComputedColumnExample {
