@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class PocoObjectMapperTest : TransactedLocalConnection
@@ -247,7 +249,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
     public enum Enum64Bit : ulong { }
 
-    public sealed record PocoWithRowVersions(ulong Version) : IWrittenImplicitly, IReadImplicitly
+    public sealed record PocoWithRowVersions([property: DatabaseGenerated(DatabaseGeneratedOption.Computed)] ulong Version) : IWrittenImplicitly, IReadImplicitly
     {
         public ulong AnotherVersion { get; init; }
         public uint? AshorterVersion { get; init; }
