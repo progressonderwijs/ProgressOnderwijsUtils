@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>86.1.0</Version>
-    <PackageReleaseNotes>Add support for skipping [DatabaseGenerated] properties on insert.</PackageReleaseNotes>
+    <Version>87.0.0</Version>
+    <PackageReleaseNotes>Remove ZlibWithDictionary dependency from XmlCompression; rename to XmlMinimizer to match leftover functionality.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -29,6 +29,5 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.6.0" />
   </ItemGroup>
 </Project>
