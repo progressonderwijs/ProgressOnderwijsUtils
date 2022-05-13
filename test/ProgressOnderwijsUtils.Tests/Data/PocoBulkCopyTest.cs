@@ -99,6 +99,16 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public string Bla { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
+        public static void CreateTargetTable(SqlConnection sqlConnection, ParameterizedSql tableName)
+            => SQL(
+                $@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            "
+            ).ExecuteNonQuery(sqlConnection);
     }
 
     sealed record ComputedColumnViaInternalExample : IWrittenImplicitly, IReadImplicitly
@@ -158,15 +168,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     public void BulkCopySupportsCumputedColumn()
     {
         var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        ComputedColumnExample.CreateTargetTable(Connection, tableName);
 
         new[] {
             new ComputedColumnExample {
@@ -188,15 +190,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     public void BulkCopySupportsCumputedColumn_ViaInternalGetter()
     {
         var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        ComputedColumnExample.CreateTargetTable(Connection, tableName);
 
         new[] {
             new ComputedColumnViaInternalExample {
@@ -218,15 +212,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     public void BulkCopySupportsCumputedColumn_WithoutSmallBatchOptimization()
     {
         var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        ComputedColumnExample.CreateTargetTable(Connection, tableName);
 
         var asInserted = Enumerable.Range(0, 2000).Select(
             id =>
@@ -360,16 +346,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     public void BulkCopySupportsCumputedColumnEvenAfterDropTable()
     {
         var tableName = SQL($"#MyTable");
-        SQL(
-            $@"
-                create table {tableName} (
-                    Id int not null primary key
-                    , ToDrop int null
-                    , Computed as convert(bit, 1) -- deliberately not placed at the end
-                    , Bla nvarchar(max) not null
-                )
-            "
-        ).ExecuteNonQuery(Connection);
+        ComputedColumnExample.CreateTargetTable(Connection, tableName);
 
         SQL(
             $@"
