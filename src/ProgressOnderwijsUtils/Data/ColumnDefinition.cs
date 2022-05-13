@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;
@@ -52,4 +53,7 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
             { HasDefaultValue : true, } => ColumnAccessibility.NormalWithDefaultValue,
             _ => ColumnAccessibility.Normal,
         };
+
+    public static bool ShouldIncludePropertyInSqlInsert(IPocoProperty o)
+        => o.CanRead && o.PropertyInfo.Attr<DatabaseGeneratedAttribute>() is not { DatabaseGeneratedOption: not DatabaseGeneratedOption.None, };
 }
