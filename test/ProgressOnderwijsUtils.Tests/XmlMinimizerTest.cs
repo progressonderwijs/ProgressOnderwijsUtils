@@ -12,7 +12,7 @@ public sealed class XmlMinimizerTest
     }
 
     [Fact]
-    public void CommentsCanBeRemoves()
+    public void CommentsCanBeRemoved()
     {
         var doc = XDocument.Parse("<test><!--This is a comment --></test>");
         XmlMinimizer.RemoveComments(doc);
