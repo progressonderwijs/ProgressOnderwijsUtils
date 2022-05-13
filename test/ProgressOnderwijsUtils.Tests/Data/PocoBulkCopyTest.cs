@@ -123,8 +123,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyAllowsExactMatch()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
@@ -133,32 +132,28 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyChecksNames()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopyChecksTypes()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopyChecksTypes2()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopySupportsColumnReordering()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2, })));
@@ -374,8 +369,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyVerifiesExistanceOfDestinationColumns()
     {
-        var target
-            = CreateTempTable();
+        var target = CreateTempTable();
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[1].BulkCopyToSqlServer(Connection, target));
     }
 }
