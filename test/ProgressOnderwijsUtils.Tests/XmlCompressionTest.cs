@@ -161,42 +161,4 @@ public sealed class XmlCompressionTest
             </here></elements></nested></test>".Replace("\r", "")
         );
     }
-
-    [Fact]
-    public void SaveUsingDeflateWithDictionaryWithoutDictionaryRoundTrips()
-    {
-        var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
-        AssertCompressionCompressesAndRoundTrips(docString, null);
-    }
-
-    static void AssertCompressionCompressesAndRoundTrips(string docString, byte[]? dictionary)
-    {
-        var doc = XDocument.Parse(docString);
-        var compressedBytes = XmlCompression.ToCompressedUtf8(doc, dictionary);
-        PAssert.That(() => compressedBytes.Length < UTF8.GetByteCount(docString));
-        var decompressedDoc = XmlCompression.FromCompressedUtf8(compressedBytes, dictionary);
-        PAssert.That(() => !ReferenceEquals(doc, decompressedDoc), "Using the same reference would be cheating!");
-        PAssert.That(() => XNode.DeepEquals(doc, decompressedDoc));
-        PAssert.That(() => decompressedDoc.ToString(SaveOptions.DisableFormatting) == docString);
-    }
-
-    [Fact]
-    public void SaveUsingDeflateWithDictionaryRoundTrips()
-    {
-        var dictionary = UTF8.GetBytes("documentesthis");
-        var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
-        AssertCompressionCompressesAndRoundTrips(docString, dictionary);
-    }
-
-    [Fact]
-    public void SaveUsingDeflateWithDictionaryIsSmaller()
-    {
-        var dictionary = UTF8.GetBytes("documentesthis");
-        var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
-        var doc = XDocument.Parse(docString);
-        var uncompressedBytes = UTF8.GetBytes(docString).Length;
-        var withoutDictionary = XmlCompression.ToCompressedUtf8(doc, null).Length;
-        var withDictionary = XmlCompression.ToCompressedUtf8(doc, dictionary).Length;
-        PAssert.That(() => withDictionary < withoutDictionary && withoutDictionary < uncompressedBytes);
-    }
 }
