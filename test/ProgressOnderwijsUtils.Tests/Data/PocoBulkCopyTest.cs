@@ -115,6 +115,13 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         }
     }
 
+    sealed record ComputedColumnExample_LackingAnnotation : IWrittenImplicitly, IReadImplicitly
+    {
+        public int Id { get; set; }
+        public bool Computed { get; set; }
+        public string? Bla { get; set; }
+    }
+
     sealed record ComputedColumnViaInternalExample : IWrittenImplicitly, IReadImplicitly
     {
         public int Id { get; set; }
@@ -138,6 +145,14 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         var target = CreateTempTable();
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
+    }
+
+    [Fact]
+    public void BulkCopyWontInsertComputedColumns()
+    {
+        var target = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#tmp"));
+
+        _ = Assert.ThrowsAny<Exception>(() => new ComputedColumnExample_LackingAnnotation[] { new() { Bla = "ja", Computed = true, Id = 13, } }.BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
