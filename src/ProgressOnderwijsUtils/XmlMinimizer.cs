@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
-public static class XmlCompression
+public static class XmlMinimizer
 {
     /// <summary>
     /// Removes unused namespaces and makes sure the XMLSchema and XMLSchema-instance namespaces are mapped to the conventional prefix.
