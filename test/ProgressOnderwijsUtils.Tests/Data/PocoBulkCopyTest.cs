@@ -20,7 +20,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         public string? Bla { get; set; }
 
-        public static BulkInsertTarget CreateTempTable(SqlConnection conn, ParameterizedSql tableName)
+        public static BulkInsertTarget CreateTargetTable(SqlConnection conn, ParameterizedSql tableName)
         {
             SQL(
                 $@"
@@ -133,7 +133,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyAllowsExactMatch()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
@@ -142,7 +142,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyChecksNames()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[1].BulkCopyToSqlServer(Connection, target));
     }
 
@@ -157,21 +157,21 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyChecksTypes()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopyChecksTypes2()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[1].BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]
     public void BulkCopySupportsColumnReordering()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk2>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2, })));
@@ -250,7 +250,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public string Bla { get; set; }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
-        public static BulkInsertTarget CreateTable(SqlConnection conn, ParameterizedSql tableName)
+        public static BulkInsertTarget CreateTargetTable(SqlConnection conn, ParameterizedSql tableName)
         {
             SQL(
                 $@"
@@ -276,7 +276,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyAllowsOmittingSourcePropertiesForIdentityColumns()
     {
-        var bulkInsertTarget = IncludingIdentityColumn.CreateTable(Connection, SQL($"#MyTable"));
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new ExcludingIdentityColumn {
@@ -297,7 +297,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyIgnoresPropertiesCorrespondingIdentityColumns()
     {
-        var bulkInsertTarget = IncludingIdentityColumn.CreateTable(Connection, SQL($"#MyTable"));
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new IncludingIdentityColumn {
@@ -319,7 +319,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopySupportsKeepIdentity()
     {
-        var bulkInsertTarget = IncludingIdentityColumn.CreateTable(Connection, SQL($"#MyTable"));
+        var bulkInsertTarget = IncludingIdentityColumn.CreateTargetTable(Connection, SQL($"#MyTable"));
 
         new[] {
             new IncludingIdentityColumn {
@@ -380,7 +380,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyVerifiesExistanceOfDestinationColumns()
     {
-        var target = BlaOk.CreateTempTable(Connection, SQL($"#MyTable"));
+        var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         _ = Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[1].BulkCopyToSqlServer(Connection, target));
     }
 }
