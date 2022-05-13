@@ -12,6 +12,15 @@ public sealed class XmlCompressionTest
     }
 
     [Fact]
+    public void CommentsCanBeRemoves()
+    {
+        var doc = XDocument.Parse("<test><!--This is a comment --></test>");
+        XmlCompression.RemoveComments(doc);
+        var output = doc.ToString(SaveOptions.DisableFormatting);
+        PAssert.That(() => output == "<test />");
+    }
+
+    [Fact]
     public void DocumentWithUnusedRootNamespaceHasNamespaceRemoved()
     {
         var doc = XDocument.Parse("<test xmlns:bla='bla'/>");
