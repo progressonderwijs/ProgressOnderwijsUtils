@@ -136,7 +136,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         var target = CreateTempTable();
         SampleObjects.BulkCopyToSqlServer(Connection, target);
-        var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk>(Connection);
+        var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
     }
 
@@ -174,7 +174,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         var target = CreateTempTable();
         SampleObjects.BulkCopyToSqlServer(Connection, target);
-        var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
+        var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk2>(Connection);
         PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2, })));
     }
 
