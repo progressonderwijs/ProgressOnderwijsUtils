@@ -11,6 +11,9 @@ public sealed class BulkInsertTarget
     public readonly BulkCopyFieldMappingMode Mode;
     public readonly SqlBulkCopyOptions Options;
 
+    public ParameterizedSql TableNameSql
+        => ParameterizedSql.CreateDynamic(TableName);
+
     public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
         : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }
 
