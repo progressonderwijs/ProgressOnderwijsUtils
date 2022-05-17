@@ -42,10 +42,6 @@ public static class StringExtensions
         => StringComparer.OrdinalIgnoreCase.Equals(a, b);
 
     [Pure]
-    public static bool Contains(this string str, string value, StringComparison compare)
-        => str.IndexOf(value, compare) >= 0;
-
-    [Pure]
     [return: NotNullIfNotNull("s")]
     public static string? TrimToLength(this string? s, int maxlength)
     {
@@ -81,7 +77,7 @@ public static class StringExtensions
             @"\p{Lu}\w+",
             match => {
                 var v = match.ToString();
-                return char.ToUpper(v[0]) + v.Substring(1).ToLowerInvariant();
+                return char.ToUpper(v[0]) + v[1..].ToLowerInvariant();
             }
         );
         // ... maar letters voorafgegaan door ' ('s, 't etc.) naar lowercase

@@ -222,12 +222,4 @@ public static class EnumerableExtensions
             return item.ToString();
         }
     }
-
-    public static void ForEach<T>(this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
-    {
-        foreach (var item in list) {
-            cancel.ThrowIfCancellationRequested();
-            action(item);
-        }
-    }
 }
