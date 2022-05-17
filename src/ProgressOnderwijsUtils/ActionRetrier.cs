@@ -27,7 +27,7 @@ public sealed record ActionRetrier(Func<Exception, int, TimeSpan?> retryDelayCho
                     RetriableFailureLogger?.Invoke(ex, attempt, retryAfter);
                     _ = retryCancellation.WaitHandle.WaitOne(retryAfter);
                 } else {
-                    throw new($"Failed {attempt} attempts.\r\nGiving up after {sw.Elapsed} elapsed time.\r\nLast exception included as inner exception", ex);
+                    throw new($"Failed {attempt} attempts.\nGiving up after {sw.Elapsed} elapsed time.\nLast exception included as inner exception", ex);
                 }
             }
         }

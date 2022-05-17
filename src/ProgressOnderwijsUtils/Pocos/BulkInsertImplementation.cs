@@ -88,5 +88,5 @@ static class BulkInsertImplementation
 
     static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
         => target.CreateValidatedMapping(ColumnDefinition.GetFromReader(source))
-            .AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\r\n{error}"));
+            .AssertOk(error => new InvalidOperationException($"Failed to map source {sourceName} to the table {target.TableName}. Errors:\n{error}"));
 }

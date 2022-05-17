@@ -201,12 +201,12 @@ public static class DbColumnMetaDataExtensions
         var columnDefinitionSql = ParameterizedSql.CreateDynamic(
             columns
                 .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
-                .JoinStrings("\r\n    , ")
+                .JoinStrings("\n    , ")
         );
         var primaryKeyDefinitionSql = keyColumns.Length > 1
-            ? SQL($"\r\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
+            ? SQL($"\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
             : ParameterizedSql.Empty;
 
-        return SQL($"create table {tableName} (\r\n    {columnDefinitionSql}{primaryKeyDefinitionSql}\r\n);");
+        return SQL($"create table {tableName} (\n    {columnDefinitionSql}{primaryKeyDefinitionSql}\n);");
     }
 }

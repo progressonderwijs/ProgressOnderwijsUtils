@@ -6,7 +6,7 @@ public sealed class ApprovalTestTest
     public void ApprovalWithLinesIsEquivalentToJoinedLines()
     {
         var approval = ApprovalTest.CreateHere();
-        File.WriteAllText(approval.ApprovalPath, "test\r\nthis\r\n");
+        File.WriteAllText(approval.ApprovalPath, "test\nthis\n");
         Utils.TryWithCleanup(
             () => approval.AssertUnchangedAndSave(new[] { "test", "this", }),
             () => File.Delete(approval.ApprovalPath)

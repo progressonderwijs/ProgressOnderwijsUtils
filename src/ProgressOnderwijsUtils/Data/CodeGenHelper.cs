@@ -35,6 +35,6 @@ public static class CodeGenHelper
                     ).JoinStrings()
                 )
                 + "}\n"
-            ).Replace("\n", "\r\n");
+            );
     }
 }

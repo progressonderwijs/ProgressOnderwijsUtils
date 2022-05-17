@@ -163,7 +163,7 @@ public sealed class DatabaseDescription
             );
 
         public ParameterizedSql ScriptToDropConstraint()
-            => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\r\n");
+            => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
     }
 
     public sealed class TableColumn

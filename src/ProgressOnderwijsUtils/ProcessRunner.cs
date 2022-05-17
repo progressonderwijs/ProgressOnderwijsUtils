@@ -15,7 +15,7 @@ public struct ProcessStartSettings
 
     public void PrintProcessArgs(int? exitCode)
     {
-        var env = Environment.EmptyIfNull().Select(kvp => $"#SET {kvp.Key} = {kvp.Value}\r\n").JoinStrings();
+        var env = Environment.EmptyIfNull().Select(kvp => $"#SET {kvp.Key} = {kvp.Value}\n").JoinStrings();
 
         Console.WriteLine($"{env}{ExecutableName} {Arguments}{(exitCode == null ? "" : $" [ret:{exitCode}]")}");
     }
