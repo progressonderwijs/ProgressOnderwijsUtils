@@ -71,11 +71,11 @@ public static class HtmlHelpers
     public static HtmlFragment AsFragment(this string? textContent)
         => string.IsNullOrEmpty(textContent) ? HtmlFragment.Empty : HtmlFragment.TextContent(textContent);
 
-    public static HtmlFragment Append<T>([AllowNull] this T head, HtmlFragment tail)
+    public static HtmlFragment Append<T>(this T? head, HtmlFragment tail)
         where T : IConvertibleToFragment
         => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
 
-    public static HtmlFragment Append<T>([AllowNull] this T head, params HtmlFragment[]? longTail)
+    public static HtmlFragment Append<T>(this T? head, params HtmlFragment[]? longTail)
         where T : IConvertibleToFragment
         => (head?.AsFragment() ?? HtmlFragment.Empty).Append(longTail);
 

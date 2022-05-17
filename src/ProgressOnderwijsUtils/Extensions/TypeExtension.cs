@@ -87,8 +87,7 @@ public static class TypeExtension
     }
 
     [Pure]
-    [return: MaybeNull]
-    public static T Attr<T>(this MemberInfo mi)
+    public static T? Attr<T>(this MemberInfo mi)
         where T : Attribute
     {
         var customAttributes = mi.GetCustomAttributes(typeof(T), true);

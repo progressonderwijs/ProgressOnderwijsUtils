@@ -8,16 +8,14 @@ public static class DictionaryExtensions
     /// <summary>
     /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
     /// </summary>
-    [return: MaybeNull]
-    public static T Field<T>(this IDictionary<string, object?> dict, string key)
+    public static T? Field<T>(this IDictionary<string, object?> dict, string key)
         => DbValueConverter.FromDb<T>(dict[key]);
 
     /// <summary>
     /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
     /// </summary>
-    [return: MaybeNull]
     [UsefulToKeep("library method; interface is used, since method above is used")]
-    public static T Field<T>(this IReadOnlyDictionary<string, object?> dict, string key)
+    public static T? Field<T>(this IReadOnlyDictionary<string, object?> dict, string key)
         => DbValueConverter.FromDb<T>(dict[key]);
 
     /// <summary>
@@ -47,13 +45,11 @@ public static class DictionaryExtensions
     /// <param name="dict">The dictionary to extract  from</param>
     /// <param name="key">The key whose value to get.</param>
     /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    [return: MaybeNull]
-    public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
+    public static TValue? GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
         where TKey : notnull
         => GetOrDefaultR(dict, key, default(TValue?)!);
 
-    [return: MaybeNull]
-    public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
+    public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
         where TKey : notnull
         => GetOrDefault(dict, key, default(TValue?)!);
 

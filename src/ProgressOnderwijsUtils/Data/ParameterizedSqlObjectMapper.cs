@@ -31,9 +31,8 @@ public static class ParameterizedSqlObjectMapper
         where T : struct, IStructuralEquatable, ITuple
         => new(sql, CommandTimeout.DeferToConnectionDefault);
 
-    [return: MaybeNull]
     [MustUseReturnValue]
-    public static T ReadScalar<T>(this ParameterizedSql sql, SqlConnection sqlConn)
+    public static T? ReadScalar<T>(this ParameterizedSql sql, SqlConnection sqlConn)
         => sql.OfScalar<T>().Execute(sqlConn);
 
     /// <summary>Executes an sql statement</summary>

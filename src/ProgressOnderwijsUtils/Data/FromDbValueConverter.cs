@@ -12,8 +12,7 @@ public static class DbValueConverter
     /// - it supports casting fromDb when the target type is <see cref="IHasValueConverter"/>
     /// </summary>
     [Pure]
-    [return: MaybeNull]
-    public static T FromDb<T>(object? valueFromDb)
+    public static T? FromDb<T>(object? valueFromDb)
     {
         try {
             return FromDbHelper<T>.Convert(valueFromDb == DBNull.Value ? null : valueFromDb);

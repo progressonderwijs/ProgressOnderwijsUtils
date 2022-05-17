@@ -200,7 +200,7 @@ public static class EnumerableExtensions
     }
 
     [Pure]
-    static string? ToCsvValue<T>([AllowNull] this T item, string delimiter, bool useQuotesForStrings)
+    static string? ToCsvValue<T>(this T? item, string delimiter, bool useQuotesForStrings)
     {
         var csvValueWithoutQuotes = item?.ToString() ?? "";
 
