@@ -223,9 +223,7 @@ public static class Utils
             str[idx++] = fI.NegativeSign[0];
         }
         for (int i = 0, j = idx - 1; i < j; i++, j--) {
-            var tmp = str[i];
-            str[i] = str[j];
-            str[j] = tmp;
+            (str[i], str[j]) = (str[j], str[i]);
         }
         return new(str.Slice(0, idx));
     }
