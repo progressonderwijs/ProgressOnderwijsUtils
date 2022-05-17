@@ -39,4 +39,10 @@ public readonly struct ColumnSort : IEquatable<ColumnSort>
     [Pure]
     public override int GetHashCode()
         => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName ?? "") + 51 * (int)SortDirection;
+
+    public static bool operator ==(ColumnSort left, ColumnSort right)
+        => left.Equals(right);
+
+    public static bool operator !=(ColumnSort left, ColumnSort right)
+        => !(left == right);
 }
