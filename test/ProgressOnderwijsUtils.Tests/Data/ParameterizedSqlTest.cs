@@ -248,4 +248,5 @@ public sealed class ParameterizedSqlTest
     enum ExampleNonLiteralEnum { SomeValue = 1, }
 }
 
+[AttributeUsage(AttributeTargets.Enum)]
 sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
