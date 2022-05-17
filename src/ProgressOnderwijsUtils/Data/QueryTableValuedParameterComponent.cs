@@ -77,7 +77,7 @@ sealed class SingletonQueryTableValuedParameterComponent<TOut> : ISqlComponent
         var isFirst = true;
         ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
         foreach (var property in PocoUtils.GetProperties<TOut>()) {
-            if (property.Getter is var getter && getter != null) {
+            if (property.Getter is { } getter) {
                 if (!isFirst) {
                     ParameterizedSqlFactory.AppendSql(ref factory, ", ");
                 } else {

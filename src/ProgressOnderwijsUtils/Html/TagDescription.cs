@@ -22,7 +22,7 @@ struct TagDescription
                     TagName = field.FieldValue.TagName,
                     EmptyValue = field.FieldValue,
                     FieldName = field.FieldName,
-                    IsSelfClosing = !(field.FieldValue is IHtmlElementAllowingContent),
+                    IsSelfClosing = field.FieldValue is not IHtmlElementAllowingContent,
                     AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue),
                 },
                 StringComparer.OrdinalIgnoreCase
