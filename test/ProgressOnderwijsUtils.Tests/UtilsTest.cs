@@ -202,7 +202,9 @@ public sealed class UtilsTest
             try {
                 return 42;
             } finally {
+#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
                 throw new("1337");
+#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
             }
         };
 
@@ -249,7 +251,9 @@ public sealed class UtilsTest
             try {
                 return 42;
             } finally {
+#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
                 throw new("1337");
+#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
             }
         };
 
