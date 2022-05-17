@@ -137,10 +137,8 @@ public sealed class ParameterizedSqlTest
             b = SQL($"b"),
             c = SQL($"c");
 
-        // ReSharper disable ArrangeRedundantParentheses
-        PAssert.That(() => (a + (a + c)) + b == (a + a) + (c + b));
-        PAssert.That(() => (a + ((a + a) + c)) + b != a + a + c + b);
-        // ReSharper restore ArrangeRedundantParentheses
+        PAssert.That(() => a + (a + c) + b == a + a + (c + b));
+        PAssert.That(() => a + (a + a + c) + b != a + a + c + b);
     }
 
     [Fact]
