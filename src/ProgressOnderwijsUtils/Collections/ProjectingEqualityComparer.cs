@@ -18,29 +18,29 @@ public sealed class ProjectingEqualityComparer<T>
     public ProjectingEqualityComparer() : this(Array.Empty<EqualsComparer>(), Array.Empty<HashComputation>()) { }
 
     public ProjectingEqualityComparer<T> AddKeyColumn<TPart>(Func<T, TPart> part, IEqualityComparer<TPart> partComparer)
-        => AddKey_WithoutColumn((a, b) => partComparer.Equals(part(a), part(b)), o => part(o) is { } nonNull ? partComparer.GetHashCode(nonNull) : 0);
+        => AddKey_WithoutColumn(([DisallowNull] a, [DisallowNull] b) => partComparer.Equals(part(a), part(b)), ([DisallowNull] o) => part(o) is { } nonNull ? partComparer.GetHashCode(nonNull) : 0);
 
     public ProjectingEqualityComparer<T> AddKey_WithoutColumn(EqualsComparer compare, HashComputation hash)
         => new(Equality.Append(compare).ToArray(), Hash.Append(hash).ToArray());
 
     public ProjectingEqualityComparer<T> AddKeyColumn<TPart>(Func<T, TPart> part)
         where TPart : IEquatable<TPart>
-        => AddKey_WithoutColumn((a, b) => part(a).Equals(part(b)), o => part(o).GetHashCode());
+        => AddKey_WithoutColumn(([DisallowNull] a, [DisallowNull] b) => part(a).Equals(part(b)), ([DisallowNull] o) => part(o).GetHashCode());
 
     public ProjectingEqualityComparer<T> AddKeyColumn_ViaObjectEquals<TPart>(Func<T, TPart> part)
-        => AddKey_WithoutColumn((a, b) => Equals(part(a), part(b)), o => part(o)?.GetHashCode() ?? 0);
+        => AddKey_WithoutColumn(([DisallowNull] a, [DisallowNull] b) => Equals(part(a), part(b)), ([DisallowNull] o) => part(o)?.GetHashCode() ?? 0);
 
     public ProjectingEqualityComparer<T> AddKeyColumn<TPart>(Func<T, TPart?> part)
         where TPart : struct, IEquatable<TPart>
         => AddKey_WithoutColumn(
-            (a, b) =>
+            ([DisallowNull] a, [DisallowNull] b) =>
                 part(a) is var partAorNull
                 && part(b) is var partBorNull
                 && partAorNull is { } partA
                 && partBorNull is { } partB
                     ? partA.Equals(partB)
                     : partAorNull is null && partBorNull is null,
-            o => part(o) is { } nonNull ? nonNull.GetHashCode() : 37
+            ([DisallowNull] o) => part(o) is { } nonNull ? nonNull.GetHashCode() : 37
         );
 
     public IEqualityComparer<T> Finish()

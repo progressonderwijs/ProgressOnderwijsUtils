@@ -22,7 +22,7 @@ struct TagDescription
                     TagName = field.FieldValue.TagName,
                     EmptyValue = field.FieldValue,
                     FieldName = field.FieldName,
-                    IsSelfClosing = !(field.FieldValue is IHtmlElementAllowingContent),
+                    IsSelfClosing = field.FieldValue is not IHtmlElementAllowingContent,
                     AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue),
                 },
                 StringComparer.OrdinalIgnoreCase
@@ -43,7 +43,7 @@ struct TagDescription
                 }
             )
             .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", })!).Attributes.Last().Name,
+                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", })!).Attributes[^1].Name,
                 method => method.Name,
                 StringComparer.OrdinalIgnoreCase
             );

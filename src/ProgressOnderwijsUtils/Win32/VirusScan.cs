@@ -29,7 +29,7 @@ public static class VirusScan
             return false;
         } else if (result == AMSI_RESULT.AMSI_RESULT_NOT_DETECTED) {
             return false;
-        } else if (result >= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_START && result <= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END) {
+        } else if (result is >= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_START and <= AMSI_RESULT.AMSI_RESULT_BLOCKED_BY_ADMIN_END) {
             throw new($"Scannen is geblokkeerd: AMSI_RESULT is: {result}");
         }
         return true;

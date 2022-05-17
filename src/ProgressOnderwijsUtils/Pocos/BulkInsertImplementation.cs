@@ -72,7 +72,7 @@ static class BulkInsertImplementation
 
     static void TraceBulkInsertDuration(ISqlCommandTracer? tracerOrNull, string destinationTableName, Stopwatch sw, SqlBulkCopy sqlBulkCopy, string sourceNameForTracing)
     {
-        if (tracerOrNull != null && tracerOrNull.IsTracing) {
+        if (tracerOrNull is { IsTracing: true }) {
             var rowsInserted = GetRowsCopied(sqlBulkCopy);
             tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
         }

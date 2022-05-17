@@ -29,7 +29,7 @@ public static class ExceptionExtensions
         || ex is DBConcurrencyException && ex.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal)
         || ex is DataException && ex.Message == "The underlying provider failed on Open.";
 
-    static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException sqlE && sqlE.Number == -2;
+    static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException { Number: -2 };
 
     static bool IsRetriableSqlException(SqlException sqlException)
     { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx

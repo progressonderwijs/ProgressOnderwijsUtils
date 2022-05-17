@@ -28,7 +28,7 @@ public sealed class SymbolMatcher
                 currentSymbol = currentSymbol.ContainingNamespace;
             }
 
-            return currentSymbol is INamespaceSymbol global && global.IsGlobalNamespace;
+            return currentSymbol is INamespaceSymbol { IsGlobalNamespace: true };
         }
     }
 

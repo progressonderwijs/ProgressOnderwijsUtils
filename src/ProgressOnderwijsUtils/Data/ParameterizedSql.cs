@@ -314,7 +314,7 @@ sealed class InterpolatedSqlFragment : ISqlComponent
                 var num = 0;
                 for (pos++; pos < length; pos++) {
                     c = query[pos];
-                    if (c >= '0' && c <= '9') {
+                    if (c is >= '0' and <= '9') {
                         num = num * 10 + (c - '0');
                     } else if (c == '}') {
                         return new() {

@@ -83,12 +83,11 @@ public static class TypeExtension
     {
         var typename = type.FullName ?? throw new ArgumentException("Only types with full names allowed.");
         var backtickIdx = typename.IndexOf('`');
-        return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
+        return backtickIdx == -1 ? typename : typename[..backtickIdx];
     }
 
     [Pure]
-    [return: MaybeNull]
-    public static T Attr<T>(this MemberInfo mi)
+    public static T? Attr<T>(this MemberInfo mi)
         where T : Attribute
     {
         var customAttributes = mi.GetCustomAttributes(typeof(T), true);

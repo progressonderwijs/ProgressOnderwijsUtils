@@ -200,7 +200,7 @@ public static class EnumerableExtensions
     }
 
     [Pure]
-    static string? ToCsvValue<T>([AllowNull] this T item, string delimiter, bool useQuotesForStrings)
+    static string? ToCsvValue<T>(this T? item, string delimiter, bool useQuotesForStrings)
     {
         var csvValueWithoutQuotes = item?.ToString() ?? "";
 
@@ -220,14 +220,6 @@ public static class EnumerableExtensions
             return $"\"{str.Replace("\"", "\\\"")}\"";
         } else {
             return item.ToString();
-        }
-    }
-
-    public static void ForEach<T>(this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
-    {
-        foreach (var item in list) {
-            cancel.ThrowIfCancellationRequested();
-            action(item);
         }
     }
 }

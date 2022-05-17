@@ -33,7 +33,7 @@ public sealed class ParameterizedSqlTest
     {
         ParameterizedSql
             a1 = ParameterizedSql.CreateDynamic("a"),
-            a2 = ParameterizedSql.CreateDynamic("aa".Substring(1)); //substring to avoid reference equality
+            a2 = ParameterizedSql.CreateDynamic("aa"[1..]); //substring to avoid reference equality
 
         PAssert.That(() => a1 == a2);
         PAssert.That(() => !(a1 != a2));
@@ -137,10 +137,8 @@ public sealed class ParameterizedSqlTest
             b = SQL($"b"),
             c = SQL($"c");
 
-        // ReSharper disable ArrangeRedundantParentheses
-        PAssert.That(() => (a + (a + c)) + b == (a + a) + (c + b));
-        PAssert.That(() => (a + ((a + a) + c)) + b != a + a + c + b);
-        // ReSharper restore ArrangeRedundantParentheses
+        PAssert.That(() => a + (a + c) + b == a + a + (c + b));
+        PAssert.That(() => a + (a + a + c) + b != a + a + c + b);
     }
 
     [Fact]
@@ -250,4 +248,5 @@ public sealed class ParameterizedSqlTest
     enum ExampleNonLiteralEnum { SomeValue = 1, }
 }
 
+[AttributeUsage(AttributeTargets.Enum)]
 sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
