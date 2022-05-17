@@ -2,8 +2,6 @@ namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlHelpers
 {
-#pragma warning disable IDE1006 //Naming rule violation: Prefix '_' is not expected
-
     public static THtmlTag _class<THtmlTag>(this THtmlTag inlineElement, params string?[]? classes)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
     {

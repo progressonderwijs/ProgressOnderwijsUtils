@@ -60,7 +60,6 @@ public static class SmallBatchInsertImplementation
                 var forRefOrNonNullable => forRefOrNonNullable,
             };
 
-    [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public static (T[] head, IEnumerable<T> fullSequence) PeekAtPrefix<T>(IEnumerable<T> enumerable, int firstN)
     {
         //Waarom bestaat deze method?  Zodat wij een mogelijke lazy enumerable gedeeltelijks kunnen evalueren, zonder *meermaals* te hoeven evalueren.
