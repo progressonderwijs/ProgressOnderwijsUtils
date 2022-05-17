@@ -33,7 +33,7 @@ public sealed class ParameterizedSqlTest
     {
         ParameterizedSql
             a1 = ParameterizedSql.CreateDynamic("a"),
-            a2 = ParameterizedSql.CreateDynamic("aa".Substring(1)); //substring to avoid reference equality
+            a2 = ParameterizedSql.CreateDynamic("aa"[1..]); //substring to avoid reference equality
 
         PAssert.That(() => a1 == a2);
         PAssert.That(() => !(a1 != a2));
