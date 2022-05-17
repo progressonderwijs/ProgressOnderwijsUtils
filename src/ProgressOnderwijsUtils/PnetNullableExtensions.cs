@@ -12,13 +12,11 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.FirstOrDefault(test);
 
-    [return: MaybeNull]
-    public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values)
+    public static TVal? FirstOrNull<TVal>(this IEnumerable<TVal> values)
         where TVal : class?
         => values.FirstOrDefault();
 
-    [return: MaybeNull]
-    public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
+    public static TVal? FirstOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
         where TVal : class?
         => values.FirstOrDefault(test);
 
@@ -43,8 +41,7 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.SingleOrDefault();
 
-    [return: MaybeNull]
-    public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values)
+    public static TVal? SingleOrNull<TVal>(this IEnumerable<TVal> values)
         where TVal : class?
         => values.SingleOrDefault();
 
@@ -53,8 +50,7 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.SingleOrDefault(test);
 
-    [return: MaybeNull]
-    public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
+    public static TVal? SingleOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
         where TVal : class?
         => values.SingleOrDefault(test);
 
@@ -83,15 +79,13 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.FirstOrDefault(test);
 
-    [return: MaybeNull]
     [UsefulToKeep("library function")]
-    public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values)
+    public static TVal? FirstOrNull<TVal>(this IQueryable<TVal> values)
         where TVal : class?
         => values.FirstOrDefault();
 
-    [return: MaybeNull]
     [UsefulToKeep("library function")]
-    public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
+    public static TVal? FirstOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
         where TVal : class?
         => values.FirstOrDefault(test);
 
@@ -117,9 +111,8 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.SingleOrDefault();
 
-    [return: MaybeNull]
     [UsefulToKeep("library function")]
-    public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values)
+    public static TVal? SingleOrNull<TVal>(this IQueryable<TVal> values)
         where TVal : class?
         => values.SingleOrDefault();
 
@@ -128,9 +121,8 @@ public static class PnetNullableExtensions
         where TVal : struct
         => values.SingleOrDefault(test);
 
-    [return: MaybeNull]
     [UsefulToKeep("library function")]
-    public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
+    public static TVal? SingleOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
         where TVal : class?
         => values.SingleOrDefault(test);
 

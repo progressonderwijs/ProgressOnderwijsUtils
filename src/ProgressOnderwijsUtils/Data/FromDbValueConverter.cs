@@ -12,8 +12,7 @@ public static class DbValueConverter
     /// - it supports casting fromDb when the target type is <see cref="IHasValueConverter"/>
     /// </summary>
     [Pure]
-    [return: MaybeNull]
-    public static T FromDb<T>(object? valueFromDb)
+    public static T? FromDb<T>(object? valueFromDb)
     {
         try {
             return FromDbHelper<T>.Convert(valueFromDb == DBNull.Value ? null : valueFromDb);
@@ -143,10 +142,10 @@ public static class DbValueConverter
     [Pure]
     public static bool EqualsConvertingIntToEnum(object? val1, object? val2)
     {
-        if (val1 is Enum && val2 != null && !(val2 is Enum)) {
+        if (val1 is Enum && val2 is not null and not Enum) {
             return Equals(val1, Enum.ToObject(val1.GetType(), val2));
         }
-        if (val1 != null && !(val1 is Enum) && val2 is Enum) {
+        if (val1 is not null and not Enum && val2 is Enum) {
             return Equals(Enum.ToObject(val2.GetType(), val1), val2);
         }
         return Equals(val1, val2);

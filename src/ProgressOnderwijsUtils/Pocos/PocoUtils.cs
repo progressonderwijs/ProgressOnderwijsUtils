@@ -76,7 +76,7 @@ public static class PocoUtils
             );
         }
 
-        if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
+        if (memberInfo is not PropertyInfo && memberInfo is not FieldInfo) {
             throw new ArgumentException(
                 "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
                 + $"The argument lambda refers to a member {membExpr.Member.Name} that is not a property or field"
@@ -86,7 +86,7 @@ public static class PocoUtils
 
     [Pure]
     static Expression UnwrapCast(Expression bodyExpr)
-        => bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
+        => bodyExpr is UnaryExpression { NodeType: ExpressionType.Convert } unaryExpression ? unaryExpression.Operand : bodyExpr;
 
     [Pure]
     public static IPocoProperties<IPocoProperty> GetProperties(Type t)

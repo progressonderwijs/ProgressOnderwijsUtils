@@ -51,11 +51,9 @@ public static class Tree
 
 public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
 {
-    readonly T nodeValue;
     readonly Tree<T>[] kidArray;
 
-    public T NodeValue
-        => nodeValue;
+    public T NodeValue { get; }
 
     public IReadOnlyList<Tree<T>> Children
         => kidArray;
@@ -76,7 +74,7 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
     /// <param name="children">The children of this node, (null is allowed and means none).</param>
     public Tree(T value, Tree<T>[]? children)
     {
-        nodeValue = value;
+        NodeValue = value;
         kidArray = children ?? Array.Empty<Tree<T>>();
     }
 
@@ -165,7 +163,7 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
         if (indent.Length > 80) {
             return "<<TOO DEEP>>";
         }
-        var nodeString = (nodeValue?.ToString() ?? "<NULL>").Replace("\n", $"\n{indent}");
+        var nodeString = (NodeValue?.ToString() ?? "<NULL>").Replace("\n", $"\n{indent}");
         var childrenString = Children.Count == 0 ? "." : $":\n{Children.Select(t => t.ToString($"{indent}    ")).JoinStrings("\n")}";
         return $"{indent}{nodeString} {childrenString}";
     }

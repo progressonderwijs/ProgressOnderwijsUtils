@@ -58,7 +58,7 @@ public static class StringUtils
     static string DecapitalizeAscii(string str)
     {
         if (str[0] >= 'A' && str[0] <= 'Z') {
-            return (char)(str[0] + ('a' - 'A')) + str.Substring(1);
+            return (char)(str[0] + ('a' - 'A')) + str[1..];
         } else {
             return str;
         }
@@ -98,7 +98,7 @@ public static class StringUtils
 
     [Pure]
     public static string Capitalize(string name)
-        => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+        => name[..1].ToUpperInvariant() + name[1..];
 
     [Pure]
     public static int LevenshteinDistance(string s, string t)
@@ -151,9 +151,9 @@ public static class StringUtils
             return pluralstring.Remove(pluralstring.Length - 1);
         }
         if (pluralstring.EndsWith("en", StringComparison.Ordinal)) {
-            if (pluralstring.Length >= 4 && IsVowel(pluralstring[pluralstring.Length - 4]) && (pluralstring.Length < 5 || !IsVowel(pluralstring[pluralstring.Length - 5]))) {
+            if (pluralstring.Length >= 4 && IsVowel(pluralstring[^4]) && (pluralstring.Length < 5 || !IsVowel(pluralstring[^5]))) {
                 return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2).ToLowerInvariant();
-            } else if (pluralstring.Length >= 4 && pluralstring[pluralstring.Length - 4] == pluralstring[pluralstring.Length - 3]) {
+            } else if (pluralstring.Length >= 4 && pluralstring[^4] == pluralstring[^3]) {
                 return pluralstring.Remove(pluralstring.Length - 3);
             } else {
                 return pluralstring.Remove(pluralstring.Length - 2);

@@ -97,4 +97,10 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
 
     RootedTree<T> IRecursiveStructure<RootedTree<T>>.TypedThis
         => this;
+
+    public static bool operator ==(RootedTree<T> left, RootedTree<T> right)
+        => left.Equals(right);
+
+    public static bool operator !=(RootedTree<T> left, RootedTree<T> right)
+        => !(left == right);
 }

@@ -158,10 +158,7 @@ public sealed class AsyncProcessResult
         var prefixWithSpace = $"{prefix} ";
         var culture = CultureInfo.InvariantCulture;
         _ = Output.Subscribe(
-            outputStreamEvent => {
-                Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line);
-            }
-        );
+            outputStreamEvent => Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line));
     }
 
     public Task<string[]> StdOutput()

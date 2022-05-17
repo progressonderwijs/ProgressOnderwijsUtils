@@ -223,9 +223,7 @@ public static class Utils
             str[idx++] = fI.NegativeSign[0];
         }
         for (int i = 0, j = idx - 1; i < j; i++, j--) {
-            var tmp = str[i];
-            str[i] = str[j];
-            str[j] = tmp;
+            (str[i], str[j]) = (str[j], str[i]);
         }
         return new(str.Slice(0, idx));
     }
@@ -282,7 +280,7 @@ public sealed class ComparisonComparer<T> : IComparer<T>
     public ComparisonComparer(Comparison<T> comparer)
         => this.comparer = comparer;
 
-    public int Compare([AllowNull] T x, [AllowNull] T y)
+    public int Compare(T? x, T? y)
         => comparer(x!, y!);
 }
 
@@ -298,7 +296,7 @@ public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool Equals([AllowNull] T x, [AllowNull] T y)
+    public bool Equals(T? x, T? y)
         => x == null ? y == null : y != null && equals(x, y);
 
     public int GetHashCode(T obj)

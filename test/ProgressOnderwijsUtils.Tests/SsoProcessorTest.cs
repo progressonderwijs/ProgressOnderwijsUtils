@@ -20,7 +20,7 @@ public sealed class SsoProcessorTest
                 }
             )
         );
-        var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=", }, StringSplitOptions.None);
+        var querySplit = rawUri.Query[1..].Split(new[] { "&Signature=", }, StringSplitOptions.None);
         var signedData = Encoding.UTF8.GetBytes(querySplit[0]);
         var rsaKey = certificate.GetRSAPublicKey().AssertNotNull();
         var signature = Convert.FromBase64String(Uri.UnescapeDataString(querySplit[1]));

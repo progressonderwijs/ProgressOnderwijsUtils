@@ -173,7 +173,7 @@ public struct HtmlFragment : IConvertibleToFragment
         var retval = new ArrayBuilder<HtmlFragment>();
         foreach (var el in htmlEls) {
             var htmlFragment = el.AsFragment();
-            if (htmlFragment.Implementation is HtmlFragment[] kids && kids.Length < 64) {
+            if (htmlFragment.Implementation is HtmlFragment[] { Length: < 64 } kids) {
                 foreach (var grandchild in kids) {
                     retval.Add(grandchild);
                 }

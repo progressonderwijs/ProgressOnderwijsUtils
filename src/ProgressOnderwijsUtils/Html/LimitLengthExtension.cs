@@ -32,7 +32,7 @@ public static class LimitLengthExtension
                 length -= charlen;
                 limitedLength++;
             }
-            return (HtmlFragment.TextContent(textContent.Substring(0, limitedLength)), length);
+            return (HtmlFragment.TextContent(textContent[..limitedLength]), length);
         } else if (input.Implementation is IHtmlElementAllowingContent tag) {
             var emptyTagLength = tag.ReplaceContentWith(HtmlFragment.Empty).ToStringWithoutDoctype().Length;
             if (emptyTagLength <= length) {
