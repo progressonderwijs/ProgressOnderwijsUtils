@@ -25,12 +25,12 @@ public abstract class ReflectionLoadedBaseClass<T>
     static readonly Dictionary<Type, T>? uncheckedInstancesBySubType;
 
     static Dictionary<Type, T> instancesBySubType
-        => uncheckedInstancesBySubType ?? throw new(initializationError.JoinStrings("\r\n\r\n"));
+        => uncheckedInstancesBySubType ?? throw new(initializationError.JoinStrings("\n\n"));
 
     static readonly T[]? uncheckedInstances;
 
     static T[] instances
-        => uncheckedInstances ?? throw new(initializationError.JoinStrings("\r\n\r\n"));
+        => uncheckedInstances ?? throw new(initializationError.JoinStrings("\n\n"));
 
     static ReflectionLoadedBaseClass()
     {

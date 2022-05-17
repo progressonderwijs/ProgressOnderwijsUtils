@@ -226,7 +226,7 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void ParameterizedSqlToStringIsClearForEnumParams()
-        => PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
+        => PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\nselect 42, 2/*DayOfWeek.Tuesday*/");
 
     [Fact]
     public void ParameterizedSqlUsesLiteralsForValidEnumConstants()

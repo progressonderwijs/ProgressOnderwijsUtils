@@ -84,7 +84,7 @@ public static class ReflectionLoadableClassHelper
                         .Select(
                             f =>
                                 Maybe.Try(f).Catch<Exception>()
-                                    .WhenError(ex => $"Could not execute factory {f.GetType().ToCSharpFriendlyTypeName()}:\r\n{ex}")
+                                    .WhenError(ex => $"Could not execute factory {f.GetType().ToCSharpFriendlyTypeName()}:\n{ex}")
                         )
                         .WhenAllOk()
                         .WhenError(errors => errors.ToArray())

@@ -92,8 +92,9 @@ public sealed class ProcessRunnerTest
         //32 MB streamed; 64MB in UCS2 encoding in .net memory.
         var inputLines = Enumerable.Repeat(inputLine, inputLineCount);
         var result = new ProcessStartSettings {
-            ExecutableName = "findstr", Arguments = "^",
-            Stdlnput = inputLines.JoinStrings("\r\n"),
+            ExecutableName = "findstr",
+            Arguments = "^",
+            Stdlnput = inputLines.JoinStrings("\n"),
         }.StartProcess(token);
         var collected = new List<string>();
         _ = result.Output.Subscribe(o => collected.Add(o.Line));

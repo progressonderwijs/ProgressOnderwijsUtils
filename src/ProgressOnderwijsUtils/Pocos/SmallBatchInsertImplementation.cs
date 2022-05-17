@@ -33,7 +33,7 @@ public static class SmallBatchInsertImplementation
             .ToArray();
         var maybeMapping = target.CreateValidatedMapping(srcFields);
         if (!maybeMapping.TryGet(out var mapping, out var error)) {
-            throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\r\n{error}");
+            throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\n{error}");
         }
         foreach (var row in rows) {
             var destinationColumns = mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name));

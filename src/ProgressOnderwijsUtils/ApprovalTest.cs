@@ -25,7 +25,7 @@ public sealed class ApprovalTest
         => new(path);
 
     public void AssertUnchangedAndSave(string[] lines)
-        => AssertUnchangedAndSave(lines.Select(line => $"{line}\r\n").JoinStrings());
+        => AssertUnchangedAndSave(lines.Select(line => $"{line}\n").JoinStrings());
 
     public void AssertUnchangedAndSave(string text)
     {
