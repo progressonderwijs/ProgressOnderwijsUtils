@@ -1,5 +1,4 @@
 namespace ProgressOnderwijsUtils.Html;
-#pragma warning disable IDE0057 // Use range operator; slower
 
 public struct HtmlAttribute : IEquatable<HtmlAttribute>
 {
@@ -33,16 +32,14 @@ public struct HtmlAttribute : IEquatable<HtmlAttribute>
 public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
 {
     readonly HtmlAttribute[]? attributes;
-    readonly int count;
 
     HtmlAttributes(HtmlAttribute[] attributes, int count)
     {
         this.attributes = attributes;
-        this.count = count;
+        Count = count;
     }
 
-    public int Count
-        => count;
+    public int Count { get; }
 
     public HtmlAttribute this[int i]
         => attributes![i]; //only null if default, but then count is null... so this *should* crash.
@@ -86,8 +83,8 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
                         head = haystack;
                         haystack = new();
                     } else {
-                        head = haystack.Slice(0, endIdx);
-                        haystack = haystack.Slice(endIdx + 1);
+                        head = haystack[..endIdx];
+                        haystack = haystack[(endIdx + 1)..];
                     }
                     if (head.SequenceEqual(classChars) && head.Length > 0) {
                         return true;
@@ -113,8 +110,8 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
                         head = haystack;
                         haystack = new();
                     } else {
-                        head = haystack.Slice(0, endIdx);
-                        haystack = haystack.Slice(endIdx + 1);
+                        head = haystack[..endIdx];
+                        haystack = haystack[(endIdx + 1)..];
                     }
                     if (head.Length > 0) {
                         classes.Add(head.Length == attr.Value.Length ? attr.Value : new(head));
@@ -130,22 +127,22 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         var array = attributes;
         if (array != null) {
-            if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null! /*null is placeholder*/) == null!) {
-                array[count].Value = val;
-                return new(array, count + 1);
+            if (Count < array.Length && Interlocked.CompareExchange(ref array[Count].Name, name, null! /*null is placeholder*/) == null!) {
+                array[Count].Value = val;
+                return new(array, Count + 1);
             } else {
                 var oldArray = array;
-                array = new HtmlAttribute[count + 4 + (count >> 2) & ~1 | 2];
-                for (var i = 0; i < count; i++) {
+                array = new HtmlAttribute[Count + 4 + (Count >> 2) & ~1 | 2];
+                for (var i = 0; i < Count; i++) {
                     array[i] = oldArray[i];
                 }
             }
         } else {
             array = new HtmlAttribute[2];
         }
-        array[count].Name = name;
-        array[count].Value = val;
-        return new(array, count + 1);
+        array[Count].Name = name;
+        array[Count].Value = val;
+        return new(array, Count + 1);
     }
 
     IEnumerator<HtmlAttribute> IEnumerable<HtmlAttribute>.GetEnumerator()
@@ -166,7 +163,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         public Enumerator(HtmlAttributes attrs)
         {
             attributes = attrs.attributes!;
-            count = attrs.count;
+            count = attrs.Count;
             pos = -1;
         }
 

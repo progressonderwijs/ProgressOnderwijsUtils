@@ -104,7 +104,7 @@ public static class ArrayExtensions
             foreach (var kid in arrays) {
                 var replacements = new ReadOnlySpan<T>(kid);
                 replacements.CopyTo(writeCursor);
-                writeCursor = writeCursor.Slice(replacements.Length);
+                writeCursor = writeCursor[replacements.Length..];
             }
         }
         return arr;
