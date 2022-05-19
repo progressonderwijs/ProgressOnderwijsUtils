@@ -6,19 +6,6 @@ namespace ProgressOnderwijsUtils;
 public static class DictionaryExtensions
 {
     /// <summary>
-    /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
-    /// </summary>
-    public static T? Field<T>(this IDictionary<string, object?> dict, string key)
-        => DbValueConverter.FromDb<T>(dict[key]);
-
-    /// <summary>
-    /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
-    /// </summary>
-    [UsefulToKeep("library method; interface is used, since method above is used")]
-    public static T? Field<T>(this IReadOnlyDictionary<string, object?> dict, string key)
-        => DbValueConverter.FromDb<T>(dict[key]);
-
-    /// <summary>
     /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
     /// </summary>
     /// <param name="dict">The dictionary to extract  from</param>
