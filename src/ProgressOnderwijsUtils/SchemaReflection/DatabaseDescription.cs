@@ -61,8 +61,8 @@ public sealed class DatabaseDescription
 
         var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
 
-        tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetOrDefaultR(dep)).WhereNotNull().ToArray()));
+        tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
+        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetOrDefaultR(dep)).WhereNotNull().ToArray()));
         var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
