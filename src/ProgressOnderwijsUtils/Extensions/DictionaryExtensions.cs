@@ -17,10 +17,7 @@ public static class DictionaryExtensions
     /// <param name="key">The key whose value to get.</param>
     /// <param name="defaultFactory">The factory method to call to create a default value if not found.</param>
     /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    public static TValue GetOrLazyDefault<TKey, TValue>(
-        this IDictionary<TKey, TValue> dict,
-        TKey key,
-        Func<TValue> defaultFactory)
+    public static TValue GetOrLazyDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key, Func<TValue> defaultFactory)
         where TKey : notnull
         => dict.TryGetValue(key, out var result) ? result : defaultFactory();
 
