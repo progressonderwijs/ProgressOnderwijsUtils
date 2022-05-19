@@ -31,7 +31,7 @@ public static class DictionaryExtensions
     /// <param name="key">The key whose value to get.</param>
     /// <param name="value">The default value to set if the key does not yet exists.</param>
     /// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+    public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
         where TKey : notnull
     {
         if (!dict.ContainsKey(key)) {
