@@ -225,7 +225,7 @@ public static class Utils
         for (int i = 0, j = idx - 1; i < j; i++, j--) {
             (str[i], str[j]) = (str[j], str[i]);
         }
-        return new(str.Slice(0, idx));
+        return new(str[..idx]);
     }
 
     /// <summary>
