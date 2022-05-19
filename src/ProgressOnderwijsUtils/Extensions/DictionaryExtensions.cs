@@ -5,71 +5,10 @@ namespace ProgressOnderwijsUtils;
 
 public static class DictionaryExtensions
 {
-    /// <summary>
-    /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
-    /// </summary>
-    /// <param name="dict">The dictionary to extract  from</param>
-    /// <param name="key">The key whose value to get.</param>
-    /// <param name="defaultValue">The default value of the key.</param>
-    /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    public static TValue GetOrDefaultR<TKey, TValue>(
-        this IReadOnlyDictionary<TKey, TValue> dict,
-        TKey key,
-        TValue defaultValue)
-        where TKey : notnull
-        => dict.TryGetValue(key, out var result) ? result : defaultValue;
-
-    public static TValue GetOrDefault<TKey, TValue>(
-        this IDictionary<TKey, TValue> dict,
-        TKey key,
-        TValue defaultValue)
-        where TKey : notnull
-        => dict.TryGetValue(key, out var result) ? result : defaultValue;
-
-    /// <summary>
-    /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
-    /// </summary>
-    /// <param name="dict">The dictionary to extract  from</param>
-    /// <param name="key">The key whose value to get.</param>
-    /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    public static TValue? GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
-        where TKey : notnull
-        => GetOrDefaultR(dict, key, default(TValue?)!);
-
-    public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
-        where TKey : notnull
-        => GetOrDefault(dict, key, default(TValue?)!);
-
-    /// <summary>
-    /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
-    /// </summary>
-    /// <param name="dict">The dictionary to extract  from</param>
-    /// <param name="key">The key whose value to get.</param>
-    /// <param name="defaultValue">The default value of the key.</param>
-    /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    public static TValue? GetOrDefaultR<TKey, TValue>(
-        this IReadOnlyDictionary<TKey, TValue> dict,
-        TKey key,
-        TValue? defaultValue)
+    public static TValue? GetOrNull<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
         where TKey : notnull
         where TValue : struct
-        => dict.TryGetValue(key, out var result) ? result : defaultValue;
-
-    /// <summary>
-    /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
-    /// </summary>
-    /// <param name="dict">The dictionary to extract  from</param>
-    /// <param name="key">The key whose value to get.</param>
-    /// <param name="defaultValue">The default value of the key.</param>
-    /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-    [UsefulToKeep("library method; interface is used, since method above is used")]
-    public static TValue? GetOrDefault<TKey, TValue>(
-        this IDictionary<TKey, TValue> dict,
-        TKey key,
-        TValue? defaultValue)
-        where TKey : notnull
-        where TValue : struct
-        => dict.TryGetValue(key, out var result) ? result : defaultValue;
+        => dict.TryGetValue(key, out var result) ? result : null;
 
     /// <summary>
     /// Utility method to retrieve a value with a default from a dictionary.
