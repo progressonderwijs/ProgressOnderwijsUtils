@@ -56,9 +56,9 @@ public static class DictionaryExtensions
         if (dict.TryGetValue(key, out var val)) {
             return val;
         }
-        val = factory(key);
-        dict.Add(key, val);
-        return val;
+        var newValue = factory(key);
+        dict.Add(key, newValue);
+        return newValue;
     }
 
     public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> old)
