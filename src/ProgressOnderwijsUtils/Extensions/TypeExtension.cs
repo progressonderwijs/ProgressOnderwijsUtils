@@ -92,7 +92,7 @@ public static class TypeExtension
     {
         var customAttributes = mi.GetCustomAttributes(typeof(T), true);
         if (customAttributes.Length == 0) {
-            return null! /*return: MaybeNull*/;
+            return null;
         } else if (customAttributes.Length > 1) {
             throw new InvalidOperationException($"Expected zero or one {typeof(T)}, found {customAttributes.Length}");
         } else {

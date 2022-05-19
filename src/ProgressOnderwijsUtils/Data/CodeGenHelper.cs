@@ -24,17 +24,16 @@ public static class CodeGenHelper
     {
         classNameOverride ??= string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName;
 
-        return ("public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
-                + "{\n"
-                + Indent(
-                    dt.Columns.Cast<DataColumn>().Select(
-                        dc => {
-                            var columnDefinition = ColumnDefinition.Create(dc);
-                            return GetColumnProperty(columnDefinition, colNameOverride);
-                        }
-                    ).JoinStrings()
-                )
-                + "}\n"
-            );
+        return "public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
+            + "{\n"
+            + Indent(
+                dt.Columns.Cast<DataColumn>().Select(
+                    dc => {
+                        var columnDefinition = ColumnDefinition.Create(dc);
+                        return GetColumnProperty(columnDefinition, colNameOverride);
+                    }
+                ).JoinStrings()
+            )
+            + "}\n";
     }
 }

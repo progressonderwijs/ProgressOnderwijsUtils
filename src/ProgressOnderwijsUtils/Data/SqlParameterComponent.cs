@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
                 ? null
                 : enumStringRepresentations
                     .GetOrAdd(val.GetType(), enumStringRepresentationValueFactory)
-                    .GetOrDefault(((IConvertible)val).ToInt64(null));
+                    .GetValueOrDefault(((IConvertible)val).ToInt64(null));
 
         static string? GetBooleanStringRepresentationOrNull(bool? val)
             => val == null
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
             var underlyingType = elementType.GetUnderlyingType();
-            var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetOrDefault(underlyingType);
+            var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetValueOrDefault(underlyingType);
             if (sqlTableTypeName == null) {
                 return null;
             }

@@ -123,7 +123,7 @@ public sealed class TreeTest
             { "c", new[] { "e", "d", } },
         };
 
-        var tree = Tree.BuildRecursively("root", id => dict.GetOrDefault(id));
+        var tree = Tree.BuildRecursively("root", id => dict.GetValueOrDefault(id));
 
         var e = Tree.Node("e");
         var d = Tree.Node("d");

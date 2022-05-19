@@ -1,12 +1,12 @@
 namespace ProgressOnderwijsUtils.Tests;
 
-struct DagNode
+readonly struct DagNode
 {
     public readonly string Name;
     readonly IReadOnlyList<string> Dependencies;
 
     public IEnumerable<DagNode> Children(Dictionary<string, DagNode> lookup)
-        => Dependencies.Select(name => lookup.GetOrDefault(name, new(name)));
+        => Dependencies.Select(name => lookup.GetValueOrDefault(name, new(name)));
 
     public DagNode(string name, params string[] dependencies)
     {

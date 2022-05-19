@@ -107,7 +107,7 @@ public sealed class DistinctArrayTest
         PAssert.That(() => existingDistinctArr.GetHashCode() != nonAliasedCopy.GetHashCode());
 
         var defaultValue = default(DistinctArray<string>);
-        var explicitlyEmpty = new string[0].ToDistinctArray();
+        var explicitlyEmpty = Array.Empty<string>().ToDistinctArray();
         PAssert.That(() => defaultValue == explicitlyEmpty);
     }
 
@@ -115,7 +115,10 @@ public sealed class DistinctArrayTest
     public void EmptyCreatedInDifferentWaysAreEqual()
     {
         var defaultValue = default(DistinctArray<string>);
+        // ReSharper disable once UseArrayEmptyMethod
+#pragma warning disable CA1825 // Avoid zero-length array allocations
         var explicitlyEmpty = new string[0].ToDistinctArray();
+#pragma warning restore CA1825 // Avoid zero-length array allocations
         PAssert.That(() => defaultValue == explicitlyEmpty);
         PAssert.That(() => defaultValue.Equals(explicitlyEmpty));
         PAssert.That(() => defaultValue.GetHashCode() == explicitlyEmpty.GetHashCode());
