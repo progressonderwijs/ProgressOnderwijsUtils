@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.Tests;
 
-struct DagNode
+readonly struct DagNode
 {
     public readonly string Name;
     readonly IReadOnlyList<string> Dependencies;
