@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using MoreLinq;
 
 namespace ProgressOnderwijsUtils;
 
@@ -73,14 +72,12 @@ public static class DictionaryExtensions
         params Dictionary<TKey, TValue>[] others)
         where TKey : notnull
     {
-        if (old == null) {
-            throw new ArgumentNullException(nameof(old));
-        }
-
         var merged = old.Clone();
-        others.SelectMany(other => other)
-            .ForEach(kv => merged[kv.Key] = kv.Value);
-
+        foreach (var otherDict in others) {
+            foreach (var kv in otherDict) {
+                merged[kv.Key] = kv.Value;
+            }
+        }
         return merged;
     }
 
