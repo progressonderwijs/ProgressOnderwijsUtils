@@ -22,7 +22,7 @@
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="3.4.0" />
+    <PackageReference Include="ExpressionToCodeLib" version="3.4.1" />
     <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
     <PackageReference Include="Selenium.WebDriver" Version="4.1.1" />
