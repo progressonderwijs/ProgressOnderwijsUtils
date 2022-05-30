@@ -18,7 +18,7 @@ public static class BenchTimer
             .OrderBy(t => t)
             .ToArray();
 
-        return new(times.Min(), times.Max(), times[numRuns / 2], TimeSpan.FromTicks((long)Math.Round(times.Average(time => time.Ticks))));
+        return new(times.First(), times.Last(), times[numRuns / 2], TimeSpan.FromTicks((long)Math.Round(times.Average(time => time.Ticks))));
     }
 
     public static TimeSpan Time(Action a)
