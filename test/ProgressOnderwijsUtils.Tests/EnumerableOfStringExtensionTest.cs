@@ -18,7 +18,7 @@ public sealed class EnumerableOfStringExtensionTest
     public void FastJoin()
     {
         var ints = Enumerable.Range(0, 20000).Select(i => i.ToStringInvariant()).ToArray();
-        var time = BenchTimer.BestTime(() => ints.JoinStrings(), 5);
+        var time = BenchTimer.Time(() => ints.JoinStrings(), 5).Min;
         PAssert.That(() => time.TotalMilliseconds < 5.0);
     }
 
