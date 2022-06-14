@@ -16,10 +16,9 @@ public static class BenchTimer
         var times = Enumerable.Range(0, numRuns)
             .Select(_ => Time(a))
             .OrderBy(t => t)
-            .SkipLast(2)
             .ToArray();
 
-        return new(times.First(), times.Last(), times[numRuns / 2], TimeSpan.FromTicks((long)Math.Round(times.Average(time => time.Ticks))));
+        return new(times.First(), times.Last(), times.SkipLast(2).ToArray()[numRuns / 2], TimeSpan.FromTicks((long)Math.Round(times.SkipLast(2).Average(time => time.Ticks))));
     }
 
     public static TimeSpan Time(Action a)
