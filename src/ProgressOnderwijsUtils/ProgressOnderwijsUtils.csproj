@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>89.1.0</Version>
-    <PackageReleaseNotes>Benchtimer now excludes the two most deviating measurements.
-It therefore requires a minimum of 5 runs.</PackageReleaseNotes>
+    <Version>90.0.0</Version>
+    <PackageReleaseNotes>Benchtimer now excludes a specified number of slowest outliers in its mean and median calculations.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
