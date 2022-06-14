@@ -6,8 +6,8 @@ public static class BenchTimer
 
     public static BenchMark Time(Action a, int numRuns)
     {
-        if (numRuns < 1) {
-            throw new ArgumentException("Need to test for at least 1 run", nameof(numRuns));
+        if (numRuns < 5) {
+            throw new ArgumentException("Need to test for at least 5 runs", nameof(numRuns));
         }
         if (numRuns % 2 == 0) {
             throw new ArgumentException("Need to test an odd number of runs", nameof(numRuns));
@@ -16,6 +16,8 @@ public static class BenchTimer
         var times = Enumerable.Range(0, numRuns)
             .Select(_ => Time(a))
             .OrderBy(t => t)
+            .Skip(1)
+            .SkipLast(1)
             .ToArray();
 
         return new(times.First(), times.Last(), times[numRuns / 2], TimeSpan.FromTicks((long)Math.Round(times.Average(time => time.Ticks))));
