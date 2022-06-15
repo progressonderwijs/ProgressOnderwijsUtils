@@ -4,11 +4,11 @@ public sealed class BenchmarkTimerTests
 {
     [Fact]
     public void ArgVerifyPositive()
-        => Assert.Throws<ArgumentException>(() => BenchTimer.Time(() => { }, 0));
+        => Assert.Throws<ArgumentException>(() => BenchTimer.Time(() => { }, 0, 0));
 
     [Fact]
     public void ArgVerifyOdd()
-        => Assert.Throws<ArgumentException>(() => BenchTimer.Time(() => { }, 8));
+        => Assert.Throws<ArgumentException>(() => BenchTimer.Time(() => { }, 8, 0));
 
     [Fact]
     public void Time_benchmark()
@@ -19,7 +19,8 @@ public sealed class BenchmarkTimerTests
                 Thread.Sleep(period);
                 period = period.Add(TimeSpan.FromMilliseconds(10));
             },
-            7
+            7,
+            2
         );
 
         PAssert.That(() => benchMark.Min < benchMark.Median);
