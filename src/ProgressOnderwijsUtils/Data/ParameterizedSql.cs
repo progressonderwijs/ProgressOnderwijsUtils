@@ -267,9 +267,9 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         var str = interpolatedQuery.Format;
 
 #if DEBUG
-            if (string.IsInterned(str) == null) {
-                throw new Exception("Interpolated SQL statements must be compile time constants (e.g. do not use FormattableStringFactory!)");
-            }
+        if (string.IsInterned(str) == null) {
+            throw new("Interpolated SQL statements must be compile time constants (e.g. do not use FormattableStringFactory!)");
+        }
 #endif
 
         var formatStringTokenization = GetFormatStringParamRefs(str);
