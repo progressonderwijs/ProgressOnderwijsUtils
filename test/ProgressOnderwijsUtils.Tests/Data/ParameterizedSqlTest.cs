@@ -249,7 +249,7 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void In_helper_works_for_empty_set()
-        => PAssert.That(() => SQL($"x.y").In(Array.Empty<int>()).CommandText() == "x.y in (select top(0) TVP.QueryTableValue from @par0 TVP)");
+        => PAssert.That(() => SQL($"x.y").In(Array.Empty<int>()).CommandText() == "x.y in (null)");
 
     [Fact]
     public void In_helper_works_for_single_item()

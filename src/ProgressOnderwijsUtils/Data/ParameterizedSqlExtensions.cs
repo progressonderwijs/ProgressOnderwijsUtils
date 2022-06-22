@@ -55,7 +55,7 @@ public static class ParameterizedSqlExtensions
     public static ParameterizedSql In<T>(this ParameterizedSql query, IEnumerable<T> set)
         => query.Append(
             set.Count() switch {
-                0 => SQL($"in {set}"),
+                0 => SQL($"in (null)"),
                 _ => SQL($"in (").Append(set.Select(item => SQL($"{item}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
             }
         );
