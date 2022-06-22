@@ -56,7 +56,6 @@ public static class ParameterizedSqlExtensions
         => query.Append(
             set.Count() switch {
                 0 => SQL($"in {set}"),
-                1 => SQL($"= {set.Single()}"),
                 _ => SQL($"in (").Append(set.Select(item => SQL($"{item}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
             }
         );

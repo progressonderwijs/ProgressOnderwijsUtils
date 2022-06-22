@@ -253,7 +253,7 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void In_helper_works_for_single_item()
-        => PAssert.That(() => SQL($"x.y").In(new[] { 7, }).CommandText() == "x.y = @par0");
+        => PAssert.That(() => SQL($"x.y").In(new[] { 7, }).CommandText() == "x.y in ( @par0 )");
 
     [Fact]
     public void In_helper_works_for_multiple_items()
