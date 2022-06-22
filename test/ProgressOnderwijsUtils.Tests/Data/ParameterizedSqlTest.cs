@@ -246,18 +246,6 @@ public sealed class ParameterizedSqlTest
 
     [TestNotLiteral]
     enum ExampleNonLiteralEnum { SomeValue = 1, }
-
-    [Fact]
-    public void In_helper_works_for_empty_set()
-        => PAssert.That(() => SQL($"x.y in {Array.Empty<int>().AsSqlInExpression()}").CommandText() == "x.y in (null)");
-
-    [Fact]
-    public void In_helper_works_for_single_item()
-        => PAssert.That(() => SQL($"x.y in {new[] { 7, }.AsSqlInExpression()}").CommandText() == "x.y in ( @par0 )");
-
-    [Fact]
-    public void In_helper_works_for_multiple_items()
-        => PAssert.That(() => SQL($"x.y in {new[] { 7, 11, 13, }.AsSqlInExpression()}").CommandText() == "x.y in ( @par0 , @par1 , @par2 )");
 }
 
 [AttributeUsage(AttributeTargets.Enum)]
