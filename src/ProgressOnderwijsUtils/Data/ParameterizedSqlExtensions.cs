@@ -52,11 +52,11 @@ public static class ParameterizedSqlExtensions
     }
 
     [Pure]
-    public static ParameterizedSql In<T>(this ParameterizedSql query, T[] set)
+    public static ParameterizedSql In<T>(this ParameterizedSql query, IEnumerable<T> set)
         => query.Append(
-            set.Length switch {
+            set.Count() switch {
                 0 => SQL($"in {set}"),
-                1 => SQL($"= {set[0]}"),
+                1 => SQL($"= {set.Single()}"),
                 _ => SQL($"in (").Append(set.Select(item => SQL($"{item}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
             }
         );
