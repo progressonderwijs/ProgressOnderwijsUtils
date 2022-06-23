@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.Tests.Data;
 
-public sealed class AsSqlInExpressionTest : TransactedLocalConnection
+public sealed class AsEnrolledSqlInExpressionTest : TransactedLocalConnection
 {
     [Fact]
     public void In_helper_generates_for_empty_set()
