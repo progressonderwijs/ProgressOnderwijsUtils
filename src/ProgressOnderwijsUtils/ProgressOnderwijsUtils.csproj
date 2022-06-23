@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>90.1.0</Version>
-    <PackageReleaseNotes>IEnumerable&lt;&gt;.AsSqlInExpression extension method added for faster SQL 'in'-statements.</PackageReleaseNotes>
+    <PackageReleaseNotes>IEnumerable&lt;&gt;.AsEnrolledSqlInExpression extension method added for faster SQL 'in'-statements.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
