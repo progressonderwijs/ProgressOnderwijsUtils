@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -59,6 +60,9 @@ public sealed class UseAsEnrolledSqlInExpressionAnalyzer : DiagnosticAnalyzer
     {
         if (ip.Expression is ArrayCreationExpressionSyntax or ImplicitArrayCreationExpressionSyntax) {
             context.ReportDiagnostic(Diagnostic.Create(Rule, ip.GetLocation()));
+        } else if (context.SemanticModel.GetTypeInfo(ip.Expression).Type is { } type
+                   && type.AllInterfaces.Any(i => i.ContainingNamespace.Name == "Generic" && i.Name == "IEnumerable" && i.TypeParameters.Length == 1)) {
+            // TODO: I cannot seem to determine easily for which type the enumerable is instantiated with
         }
     }
 }

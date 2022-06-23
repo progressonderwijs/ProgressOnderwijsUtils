@@ -22,4 +22,24 @@ public sealed class UseAsEnrolledSqlInExpressionAnalyzerTest
         var diagnostics = DiagnosticHelper.GetDiagnostics(new UseAsEnrolledSqlInExpressionAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == UseAsEnrolledSqlInExpressionAnalyzer.Rule.Id);
     }
+
+    [Fact]
+    public void Do_not_use_AsEnrolledInExpression_for_enumerables()
+    {
+        var source = @"
+                using System;
+                using static ProgressOnderwijsUtils.SafeSql;
+
+                enum E { One, Other, Another, };
+
+                static class C
+                {
+                    public static void Test()
+                        => _ = SQL($""select t.column from table t where t.column in {Enum.GetValues<E>()}"");
+                }
+            ";
+
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new UseAsEnrolledSqlInExpressionAnalyzer(), source);
+        PAssert.That(() => diagnostics.None());
+    }
 }
