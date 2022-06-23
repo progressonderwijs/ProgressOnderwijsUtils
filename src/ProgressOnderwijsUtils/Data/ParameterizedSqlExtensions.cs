@@ -52,7 +52,7 @@ public static class ParameterizedSqlExtensions
     }
 
     [Pure]
-    public static ParameterizedSql AsSqlInExpression<T>(this IEnumerable<T> set)
+    public static ParameterizedSql AsUnrolledSqlInExpression<T>(this IEnumerable<T> set)
         => set.Count() switch {
             0 => SQL($"(null)"),
             _ => SQL($"(").Append(set.Select(item => SQL($"{item}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
