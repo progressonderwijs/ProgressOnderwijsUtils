@@ -15,12 +15,37 @@ public sealed class UseAsEnrolledSqlInExpressionAnalyzerTest
                 static class C
                 {
                     public static void Test()
-                        => _ = SQL($""select t.column from table t where t.column in {new[] {1, 2}}"");
+                        => _ = SQL($""select t.column from table t where t.column in {new[] {1, 2, }}"");
                 }
             ";
 
         var diagnostics = DiagnosticHelper.GetDiagnostics(new UseAsEnrolledSqlInExpressionAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == UseAsEnrolledSqlInExpressionAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 6);
+    }
+
+    [Fact]
+    public void Use_multiple_AsEnrolledInExpression_for_literal_arrays()
+    {
+        var source = @"
+                using static ProgressOnderwijsUtils.SafeSql;
+
+                static class C
+                {
+                    public static void Test()
+                        => _ = SQL($@""
+                            select t.column
+                            from table t
+                            where 1=1
+                                and t.column in {new[] {1, 2, }}
+                                and t.other in {new long[] {3, 4, }}
+                        "");
+                }
+            ";
+
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new UseAsEnrolledSqlInExpressionAnalyzer(), source);
+        PAssert.That(() => diagnostics.All(d => d.Id == UseAsEnrolledSqlInExpressionAnalyzer.Rule.Id));
+        PAssert.That(() => diagnostics.Select(d => d.Location.GetLineSpan().StartLinePosition.Line).SequenceEqual(new[] { 10, 11, }));
     }
 
     [Fact]
