@@ -37,21 +37,29 @@ public sealed class UseAsEnrolledSqlInExpressionAnalyzer : DiagnosticAnalyzer
     static void Analyze(SyntaxNodeAnalysisContext context)
     {
         if (context.Node is InvocationExpressionSyntax expr
-            && context.SemanticModel.GetSymbolInfo(expr).Symbol is IMethodSymbol { Name: "SQL" } method
-            && method.ContainingType.Name == "SafeSql"
-            && method.ContainingNamespace.Name == "ProgressOnderwijsUtils"
-            && expr.ArgumentList.Arguments[0].Expression is InterpolatedStringExpressionSyntax arg) {
-            AnalyzeSqlInvocation(context, arg);
-        }
-    }
+            && expr.ArgumentList.Arguments.Count == 1
+            && expr.ArgumentList.Arguments[0].Expression is InterpolatedStringExpressionSyntax arg
+           ) {
+            IMethodSymbol? sql = null;
+            for (var i = 0; i < arg.Contents.Count; i++) {
+                if (arg.Contents[i] is InterpolationSyntax ip
+                    && i > 0 && arg.Contents[i - 1] is InterpolatedStringTextSyntax str
+                    && str.TextToken.Text.TrimEnd().EndsWith(" in", System.StringComparison.OrdinalIgnoreCase)
+                   ) {
+                    // access the semantic-model as late as possible, because it is much more expensive compared to the syntax-model.
+                    if (sql is null
+                        && context.SemanticModel.GetSymbolInfo(expr).Symbol is IMethodSymbol { Name: "SQL" } method
+                        && method.ContainingType.Name == "SafeSql"
+                        && method.ContainingNamespace.Name == "ProgressOnderwijsUtils") {
+                        sql = method;
+                    }
 
-    static void AnalyzeSqlInvocation(SyntaxNodeAnalysisContext context, InterpolatedStringExpressionSyntax expr)
-    {
-        for (var i = 0; i < expr.Contents.Count; i++) {
-            if (expr.Contents[i] is InterpolationSyntax ip
-                && i > 0 && expr.Contents[i - 1] is InterpolatedStringTextSyntax str
-                && str.TextToken.Text.TrimEnd().EndsWith(" in", System.StringComparison.OrdinalIgnoreCase)) {
-                AnalyzeInExpression(context, ip);
+                    if (sql is not null) {
+                        AnalyzeInExpression(context, ip);
+                    } else {
+                        break;
+                    }
+                }
             }
         }
     }
