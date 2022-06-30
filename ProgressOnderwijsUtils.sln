@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Anal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers.Tests", "test\ProgressOnderwijsUtils.Analyzers.Tests\ProgressOnderwijsUtils.Analyzers.Tests.csproj", "{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressOnderwijsUtils.SeleniumWebDriverPool", "src\ProgressOnderwijsUtils.SeleniumWebDriverPool\ProgressOnderwijsUtils.SeleniumWebDriverPool.csproj", "{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +81,7 @@ Global
 		{EADC8263-2782-4682-8F5B-6EAA191DD800} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
 		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
 		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6} = {720DEC45-B36A-4966-819C-128CCA14C255}
+		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}
