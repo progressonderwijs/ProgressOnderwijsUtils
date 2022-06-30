@@ -1,5 +1,3 @@
-using MoreLinq;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class RandomHelperTest
@@ -8,10 +6,11 @@ public sealed class RandomHelperTest
     public void CheckRandomBasic()
     {
         var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
-        PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.Secure.GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
-        PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.Secure.GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
-        PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.Secure.GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
-        PAssert.That(() => numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.Secure.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
+        var nums = Enumerable.Repeat(0, 10000);
+        PAssert.That(() => nums.Select(i => RandomHelper.Secure.GetUInt32()).Any(num => num > int.MaxValue));
+        PAssert.That(() => nums.Select(i => RandomHelper.Secure.GetInt64()).Any(num => num > uint.MaxValue));
+        PAssert.That(() => nums.Select(i => RandomHelper.Secure.GetUInt64()).Any(num => num > long.MaxValue));
+        PAssert.That(() => numTo37.SetEquals(nums.Select(i => RandomHelper.Secure.GetUInt32(37)))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
 
     [Fact]
