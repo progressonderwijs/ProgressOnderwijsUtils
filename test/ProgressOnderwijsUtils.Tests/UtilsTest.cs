@@ -1,4 +1,3 @@
-using MoreLinq;
 using ProgressOnderwijsUtils.Tests.Data;
 
 namespace ProgressOnderwijsUtils.Tests;
@@ -49,25 +48,18 @@ public sealed class UtilsTest
 
         var combos = (
             from a in samplePoints
-            from b in samplePoints
+            from b in samplePoints.Cast<long?>().Append(default(long?))
             select new[] { a, b, }
-        ).Concat(
-            from a in samplePoints
-            select new[] { a, }
         ).ToArray();
 
         foreach (var combo1 in combos) {
             foreach (var combo2 in combos) {
-                var str1 = combo1.Select(Utils.ToSortableShortString).JoinStrings();
-                var str2 = combo2.Select(Utils.ToSortableShortString).JoinStrings();
+                var str1 = combo1.WhereNotNull().Select(Utils.ToSortableShortString).JoinStrings();
+                var str2 = combo2.WhereNotNull().Select(Utils.ToSortableShortString).JoinStrings();
 
                 var strComparison = Math.Sign(StringComparer.Ordinal.Compare(str1, str2));
-                var seqComparison =
-                    Math.Sign(
-                        combo1.Cast<long?>()
-                            .ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare)
-                            .FirstOrNullable(x => x != 0) ?? 0L
-                    );
+                var seqComparison = ArrayOrderingComparer<long?>.Default.Compare(combo1, combo2);
+
                 if (strComparison != seqComparison) {
                     throw new($"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
                 }

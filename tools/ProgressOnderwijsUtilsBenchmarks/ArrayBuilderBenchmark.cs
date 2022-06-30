@@ -1,5 +1,3 @@
-using MoreLinq;
-
 // ReSharper disable ClassCanBeSealed.Global  - for Benchmark.NET
 namespace ProgressOnderwijsUtilsBenchmarks;
 
@@ -113,7 +111,10 @@ public abstract class ArrayBuilderBenchmark<T, TFactory>
     }
 
     static int[] GetSizes(int count, int maxSize)
-        => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Shuffle(new(42)).ToArray();
+    {
+        var r = new Random(42);
+        return Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).OrderBy(_=>r.Next()).ToArray();
+    }
 
     [Benchmark]
     public void List()

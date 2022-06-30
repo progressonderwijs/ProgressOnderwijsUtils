@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>90.1.0</Version>
-    <PackageReleaseNotes>IEnumerable&lt;&gt;.AsEnrolledSqlInExpression extension method added for faster SQL 'in'-statements.</PackageReleaseNotes>
+    <Version>91.0.0</Version>
+    <PackageReleaseNotes>Remove morelinq dependency and split WebDriverPool into its own package.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -23,9 +23,7 @@
     <PackageReference Include="System.Reactive" Version="5.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="3.4.1" />
-    <PackageReference Include="morelinq" version="3.3.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
-    <PackageReference Include="Selenium.WebDriver" Version="4.3.0" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="6.0.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
