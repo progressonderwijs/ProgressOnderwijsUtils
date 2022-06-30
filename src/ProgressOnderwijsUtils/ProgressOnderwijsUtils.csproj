@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>90.1.0</Version>
-    <PackageReleaseNotes>IEnumerable&lt;&gt;.AsEnrolledSqlInExpression extension method added for faster SQL 'in'-statements.</PackageReleaseNotes>
+    <Version>91.0.0</Version>
+    <PackageReleaseNotes>Remove morelinq dependency and split WebDriverPool into its own package.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
