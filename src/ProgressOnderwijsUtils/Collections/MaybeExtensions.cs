@@ -424,4 +424,16 @@ public static class MaybeExtensions
             return Maybe.Error(error);
         }
     }
+
+    /// <summary>
+    /// Allow discarding the return value. A lot of methods only need to return whether they succeeded, but a lot of sources of maybe return a result
+    /// </summary>
+    [Pure]
+    public static Maybe<Unit, TError> DiscardValue<TOk, TError>(this Maybe<TOk,TError> maybe)
+        => maybe.TryGet(out _, out var error) ? Maybe.Ok() : Maybe.Error(error);
+
+    [Pure]
+    [Obsolete("When a nested Maybe is discarded, the error of that nested state can easily be ignored.")]
+    public static Maybe<Unit, TError> DiscardValue<TOk, TError, TIgnoredError>(this Maybe<Maybe<TOk, TIgnoredError>, TError> maybe)
+        => maybe.TryGet(out _, out var error) ? Maybe.Ok() : Maybe.Error(error);
 }
