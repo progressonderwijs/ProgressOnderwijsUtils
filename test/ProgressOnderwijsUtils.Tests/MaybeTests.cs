@@ -437,5 +437,11 @@ public sealed class MaybeTests
         => Maybe.Ok().AsMaybeWithoutError<string>()
             .WhenOk(_ => Maybe.Error("err").AsMaybeWithoutValue<Unit>())
             .AssertOk();
+
+    [Fact]
+    public void DiscardValue_with_nested_maybe_state_gives_compiler_error()
+        => Maybe.Ok(Maybe.Ok().AsMaybeWithoutError<string>()).AsMaybeWithoutError<string>()
+            .DiscardValue()
+            .AssertOk();
 #pragma warning restore 618
 }
