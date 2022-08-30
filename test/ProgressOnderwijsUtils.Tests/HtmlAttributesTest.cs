@@ -182,4 +182,43 @@ public sealed class HtmlAttributesTest
         var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
         PAssert.That(() => !GetAttributes(div).HasClass("D"));
     }
+
+    [Fact]
+    public void HasClassFromObject()
+    {
+        var d = new CssClass("D ");
+        var div = _div._classFromObject(d);
+        PAssert.That(() => GetAttributes(div).HasClass("D"));
+        PAssert.That(() => !GetAttributes(div).HasClass("bla"));
+        PAssert.That(() => !GetAttributes(div).HasClass(""));
+    }
+
+    [Fact]
+    public void ClassFromObjectEmptyClass()
+    {
+        var d = new CssClass(" ");
+        var div = _div._classFromObject(d);
+        PAssert.That(() => !GetAttributes(div).HasClass(""));
+    }
+
+    [Fact]
+    public void ClassFromObjectMultipleClasses()
+    {
+        //these should be made based on the css later
+        var d = new CssClass("D");
+        var a = new CssClass("A  ");
+        var div = _div._classFromObject(d)._classFromObject(a);
+        var div0 = _div._classFromObjects(new [] {d,a,});
+        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
+        PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
+    }
+
+    [Fact]
+    public void CompareFromObjectClassWithClass()
+    {
+        var d = new CssClass("D");
+        var div = _div._classFromObject(d);
+        var div0 = _div._class("D");
+        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
+    }
 }
