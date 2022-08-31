@@ -1,5 +1,6 @@
 namespace ProgressOnderwijsUtils.Tests;
 
+using ProgressOnderwijsUtils.Html;
 using static Tags;
 
 public sealed class HtmlTests
@@ -123,5 +124,12 @@ public sealed class HtmlTests
         PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[] { }).IsEmpty, "params case empty array");
         PAssert.That(() => HtmlFragment.Fragment(new HtmlFragment[] { "", }).IsEmpty, "params case with singleton array of empty string");
         PAssert.That(() => Enumerable.Repeat(HtmlFragment.Empty, 1000).ToArray().AsFragment().IsEmpty, "params case with lots of content");
+    }
+
+    [Fact]
+    public void AppendingMultipleClassesFromObjectsAffectsOutput()
+    {
+        var example = _div._classFromObjects(new [] {new CssClass("A"), new CssClass("B"), new CssClass("D"),}).AsFragment().ToStringWithoutDoctype();
+        PAssert.That(() => example == @"<div class=""A B D""></div>");
     }
 }

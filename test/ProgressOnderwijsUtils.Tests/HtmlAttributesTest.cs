@@ -187,10 +187,12 @@ public sealed class HtmlAttributesTest
     public void HasClassFromObject()
     {
         var d = new CssClass("D ");
-        var div = _div._classFromObject(d);
+        var bla = new CssClass("bla ");
+        var div = _div._classFromObject(d)._classFromObjects(new[]{bla,});
         PAssert.That(() => GetAttributes(div).HasClass("D"));
-        PAssert.That(() => !GetAttributes(div).HasClass("bla"));
+        PAssert.That(() => GetAttributes(div).HasClass("bla"));
         PAssert.That(() => !GetAttributes(div).HasClass(""));
+        PAssert.That(() => !GetAttributes(div).HasClass("d"));
     }
 
     [Fact]
@@ -206,19 +208,33 @@ public sealed class HtmlAttributesTest
     {
         //these should be made based on the css later
         var d = new CssClass("D");
-        var a = new CssClass("A  ");
+        var a = new CssClass(" A  ");
         var div = _div._classFromObject(d)._classFromObject(a);
-        var div0 = _div._classFromObjects(new [] {d,a,});
+        var div0 = _div._classFromObjects(new [] {d, a,});
+        var div1 = _div._classFromObject(a)._classFromObjects(new [] {d,a,});
+        var div2 = _div._classFromObjects(new[] {a,d,})._classFromObjects(new [] {d,a,});
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
+        PAssert.That(() => GetAttributes(div1).Classes().SequenceEqual(new[] { "A", "D", "A", }));
+        PAssert.That(() => GetAttributes(div2).Classes().SequenceEqual(new[] { "A", "D", "D", "A", }));
     }
 
     [Fact]
-    public void CompareFromObjectClassWithClass()
+    public void CompareClassFromObjectWithClass()
     {
         var d = new CssClass("D");
         var div = _div._classFromObject(d);
         var div0 = _div._class("D");
+        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
+    }
+
+    [Fact]
+    public void CompareClassFromObjectWithClassMultipleClasses()
+    {
+        var d = new CssClass(" D  ");
+        var a = new CssClass("A");
+        var div = _div._classFromObjects(new[]{a, d,});
+        var div0 = _div._class("A D");
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
     }
 }
