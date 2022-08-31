@@ -188,7 +188,7 @@ public sealed class HtmlAttributesTest
     {
         var d = new CssClass("D ");
         var bla = new CssClass("bla ");
-        var div = _div._classFromObject(d)._classFromObjects(new[]{bla,});
+        var div = _div._classFromObject(d)._classFromObjects(bla);
         PAssert.That(() => GetAttributes(div).HasClass("D"));
         PAssert.That(() => GetAttributes(div).HasClass("bla"));
         PAssert.That(() => !GetAttributes(div).HasClass(""));
@@ -210,9 +210,9 @@ public sealed class HtmlAttributesTest
         var d = new CssClass("D");
         var a = new CssClass(" A  ");
         var div = _div._classFromObject(d)._classFromObject(a);
-        var div0 = _div._classFromObjects(new [] {d, a,});
-        var div1 = _div._classFromObject(a)._classFromObjects(new [] {d,a,});
-        var div2 = _div._classFromObjects(new[] {a,d,})._classFromObjects(new [] {d,a,});
+        var div0 = _div._classFromObjects(d, a);
+        var div1 = _div._classFromObject(a)._classFromObjects(d,a);
+        var div2 = _div._classFromObjects(a,d)._classFromObjects(d,a);
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div1).Classes().SequenceEqual(new[] { "A", "D", "A", }));
@@ -233,7 +233,7 @@ public sealed class HtmlAttributesTest
     {
         var d = new CssClass(" D  ");
         var a = new CssClass("A");
-        var div = _div._classFromObjects(new[]{a, d,});
+        var div = _div._classFromObjects(a, d);
         var div0 = _div._class("A D");
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
     }
