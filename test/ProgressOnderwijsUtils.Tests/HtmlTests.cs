@@ -129,7 +129,7 @@ public sealed class HtmlTests
     [Fact]
     public void AppendingMultipleClassesFromObjectsAffectsOutput()
     {
-        var example = _div._classFromObjects(new [] {new CssClass("A"), new CssClass("B"), new CssClass("D"),}).AsFragment().ToStringWithoutDoctype();
+        var example = _div._classFromObject(new [] {new CssClass("A"), new CssClass("B"), new CssClass("D"),}).AsFragment().ToStringWithoutDoctype();
         PAssert.That(() => example == @"<div class=""A B D""></div>");
     }
 }

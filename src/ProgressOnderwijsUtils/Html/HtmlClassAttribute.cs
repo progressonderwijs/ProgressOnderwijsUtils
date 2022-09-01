@@ -12,7 +12,7 @@ public static class HtmlClassAttribute
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("class", cssClass.ClassName);
 
-    public static THtmlTag _classFromObjects<THtmlTag>(this THtmlTag htmlTagExpr, params CssClass[] cssClasses)
+    public static THtmlTag _classFromObject<THtmlTag>(this THtmlTag htmlTagExpr, params CssClass[] cssClasses)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
     {
         foreach (var cssClass in cssClasses) {
