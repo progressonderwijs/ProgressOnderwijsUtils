@@ -17,7 +17,7 @@ public static class DistinctArray
 
     [Pure]
     public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
-        => items is HashSet<T> set && set.Comparer == comparer ? set.ToDistinctArray() : DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
+        => items is HashSet<T> set && ReferenceEquals(set.Comparer, comparer) ? set.ToDistinctArray() : DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
 
     [Pure]
     public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items)
