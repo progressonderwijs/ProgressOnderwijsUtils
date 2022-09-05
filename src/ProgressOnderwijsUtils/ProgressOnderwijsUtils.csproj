@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>91.2.0</Version>
-    <PackageReleaseNotes>Add new _class method for staticly typed css classes.</PackageReleaseNotes>
+    <PackageReleaseNotes>Add new _class method for statically typed css classes.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
