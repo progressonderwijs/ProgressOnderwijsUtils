@@ -5,7 +5,7 @@ using static Tags;
 public static class WikiPageHtml5
 {
     public static HtmlFragment MakeHtml()
-        => _html._class("client-nojs")
+        => _html._class(new CssClass("client-nojs"))
             ._lang("en")
             ._dir("ltr")
             .Content(
@@ -83,35 +83,35 @@ public static class WikiPageHtml5
                     "\n"
                 ),
                 "\n",
-                _body._class("mediawiki")._class("ltr")._class("sitedir-ltr")._class("mw-hide-empty-elt")._class("ns-0")._class("ns-subject")._class("page-HTML5")._class("rootpage-HTML5")._class("skin-vector")._class("action-view")
+                _body._class(new CssClass("mediawiki"))._class(new CssClass("ltr"))._class(new CssClass("sitedir-ltr"))._class(new CssClass("mw-hide-empty-elt"))._class(new CssClass("ns-0"))._class(new CssClass("ns-subject"))._class(new CssClass("page-HTML5"))._class(new CssClass("rootpage-HTML5"))._class(new CssClass("skin-vector"))._class(new CssClass("action-view"))
                     .Content(
                         "\t\t",
                         _div._id("mw-page-base")
-                            ._class("noprint"),
+                            ._class(new CssClass("noprint")),
                         "\n\t\t",
                         _div._id("mw-head-base")
-                            ._class("noprint"),
+                            ._class(new CssClass("noprint")),
                         "\n\t\t",
                         _div._id("content")
-                            ._class("mw-body")
+                            ._class(new CssClass("mw-body"))
                             .Attribute("role", "main")
                             .Content(
                                 "\n\t\t\t",
                                 _a._id("top"),
                                 "\n\n\t\t\t\t\t\t\t",
                                 _div._id("siteNotice")
-                                    ._class("mw-body-content"),
+                                    ._class(new CssClass("mw-body-content")),
                                 "\n\t\t\t\t\t\t",
-                                _div._class("mw-indicators")._class("mw-body-content")
+                                _div._class(new CssClass("mw-indicators"))._class(new CssClass("mw-body-content"))
                                     .Content("\n"),
                                 "\n\t\t\t",
                                 _h1._id("firstHeading")
-                                    ._class("firstHeading")
+                                    ._class(new CssClass("firstHeading"))
                                     ._lang("en")
                                     .Content("HTML5"),
                                 "\n\t\t\t\t\t\t\t\t\t",
                                 _div._id("bodyContent")
-                                    ._class("mw-body-content")
+                                    ._class(new CssClass("mw-body-content"))
                                     .Content(
                                         "\n\t\t\t\t\t\t\t\t\t",
                                         _div._id("siteSub")
@@ -120,7 +120,7 @@ public static class WikiPageHtml5
                                         _div._id("contentSub"),
                                         "\n\t\t\t\t\t\t\t\t\t\t\t\t",
                                         _div._id("jump-to-nav")
-                                            ._class("mw-jump")
+                                            ._class(new CssClass("mw-jump"))
                                             .Content(
                                                 "\n\t\t\t\t\tJump to:\t\t\t\t\t",
                                                 _a._href("#mw-head")
@@ -134,9 +134,9 @@ public static class WikiPageHtml5
                                         _div._id("mw-content-text")
                                             ._lang("en")
                                             ._dir("ltr")
-                                            ._class("mw-content-ltr")
+                                            ._class(new CssClass("mw-content-ltr"))
                                             .Content(
-                                                _table._class("infobox")
+                                                _table._class(new CssClass("infobox"))
                                                     ._style("width:22em")
                                                     .Content(
                                                         "\n",
@@ -155,7 +155,7 @@ public static class WikiPageHtml5
                                                                     ._style("text-align:center")
                                                                     .Content(
                                                                         _a._href("/wiki/File:HTML5_logo_and_wordmark.svg")
-                                                                            ._class("image")
+                                                                            ._class(new CssClass("image"))
                                                                             .Content(
                                                                                 _img._alt("HTML5 logo and wordmark.svg")
                                                                                     ._src("//upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/120px-HTML5_logo_and_wordmark.svg.png")
@@ -228,7 +228,7 @@ public static class WikiPageHtml5
                                                                     .Content(
                                                                         "public.html",
                                                                         _sup._id("cite_ref-1")
-                                                                            ._class("reference")
+                                                                            ._class(new CssClass("reference"))
                                                                             .Content(
                                                                                 _a._href("#cite_note-1")
                                                                                     .Content("[1]")
@@ -246,7 +246,7 @@ public static class WikiPageHtml5
                                                                 _td._style("line-height:1.35em;")
                                                                     .Content(
                                                                         "28 October 2014",
-                                                                        _span._class("noprint")
+                                                                        _span._class(new CssClass("noprint"))
                                                                             .Content(
                                                                                 _br,
                                                                                 "\n(2 years ago)"
@@ -254,12 +254,12 @@ public static class WikiPageHtml5
                                                                         _span._style("display:none")
                                                                             .Content(
                                                                                 " (",
-                                                                                _span._class("bday")._class("dtstart")._class("published")._class("updated")
+                                                                                _span._class(new CssClass("bday"))._class(new CssClass("dtstart"))._class(new CssClass("published"))._class(new CssClass("updated"))
                                                                                     .Content("2014-10-28"),
                                                                                 ")"
                                                                             ),
                                                                         _sup._id("cite_ref-finalars_2-0")
-                                                                            ._class("reference")
+                                                                            ._class(new CssClass("reference"))
                                                                             .Content(
                                                                                 _a._href("#cite_note-finalars-2")
                                                                                     .Content("[2]")
@@ -292,7 +292,7 @@ public static class WikiPageHtml5
                                                                 _td._style("line-height:1.35em;")
                                                                     .Content(
                                                                         _a._rel("nofollow")
-                                                                            ._class("external")._class("text")
+                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                             ._href("https://html.spec.whatwg.org/multipage/")
                                                                             .Content("WHATWG HTML")
                                                                     ),
@@ -304,7 +304,7 @@ public static class WikiPageHtml5
                                                                 _th._scope("row")
                                                                     ._style("padding:0.2em 0;line-height:1.2em; padding-right:0.65em;")
                                                                     .Content(
-                                                                        _span._class("nowrap")
+                                                                        _span._class(new CssClass("nowrap"))
                                                                             .Content(
                                                                                 _a._href("/wiki/Open_format")
                                                                                     ._title("Open format")
@@ -321,7 +321,7 @@ public static class WikiPageHtml5
                                                         )
                                                     ),
                                                 "\n",
-                                                _table._class("infobox")
+                                                _table._class(new CssClass("infobox"))
                                                     ._style("width:22em")
                                                     .Content(
                                                         "\n",
@@ -419,7 +419,7 @@ public static class WikiPageHtml5
                                                                 _th._scope("row")
                                                                     ._style("padding:0.2em 0;line-height:1.2em; padding-right:0.65em;")
                                                                     .Content(
-                                                                        _span._class("nowrap")
+                                                                        _span._class(new CssClass("nowrap"))
                                                                             .Content(
                                                                                 _a._href("/wiki/Open_format")
                                                                                     ._title("Open format")
@@ -436,7 +436,7 @@ public static class WikiPageHtml5
                                                         )
                                                     ),
                                                 "\n",
-                                                _table._class("vertical-navbox")._class("nowraplinks")
+                                                _table._class(new CssClass("vertical-navbox"))._class(new CssClass("nowraplinks"))
                                                     ._style("float:right;clear:right;width:22.0em;margin:0 0 1.0em 1.0em;background:#f9f9f9;border:1px solid #aaa;padding:0.2em;border-spacing:0.4em 0;text-align:center;line-height:1.4em;font-size:88%")
                                                     .Content(
                                                         "\n",
@@ -454,7 +454,7 @@ public static class WikiPageHtml5
                                                             "\n",
                                                             _tr.Content(
                                                                 "\n",
-                                                                _td._class("hlist")
+                                                                _td._class(new CssClass("hlist"))
                                                                     ._style("padding:0 0.1em 0.4em")
                                                                     .Content(
                                                                         "\n",
@@ -473,7 +473,7 @@ public static class WikiPageHtml5
                                                                             ),
                                                                             "\n",
                                                                             _li.Content(
-                                                                                _a._class("mw-selflink")._class("selflink")
+                                                                                _a._class(new CssClass("mw-selflink"))._class(new CssClass("selflink"))
                                                                                     .Content("HTML5"),
                                                                                 "\n",
                                                                                 _ul.Content(
@@ -713,7 +713,7 @@ public static class WikiPageHtml5
                                                             "\n",
                                                             _tr.Content(
                                                                 "\n",
-                                                                _td._class("hlist")
+                                                                _td._class(new CssClass("hlist"))
                                                                     ._style("padding:0 0.1em 0.4em")
                                                                     .Content(
                                                                         "\n",
@@ -794,12 +794,12 @@ public static class WikiPageHtml5
                                                                 _td._style("text-align:right;font-size:115%;border-top:1px solid #aaa;")
                                                                     .Content(
                                                                         "\n",
-                                                                        _div._class("plainlinks")._class("hlist")._class("navbar")._class("mini")
+                                                                        _div._class(new CssClass("plainlinks"))._class(new CssClass("hlist"))._class(new CssClass("navbar"))._class(new CssClass("mini"))
                                                                             .Content(
                                                                                 "\n",
                                                                                 _ul.Content(
                                                                                     "\n",
-                                                                                    _li._class("nv-view")
+                                                                                    _li._class(new CssClass("nv-view"))
                                                                                         .Content(
                                                                                             _a._href("/wiki/Template:HTML")
                                                                                                 ._title("Template:HTML")
@@ -809,7 +809,7 @@ public static class WikiPageHtml5
                                                                                                 )
                                                                                         ),
                                                                                     "\n",
-                                                                                    _li._class("nv-talk")
+                                                                                    _li._class(new CssClass("nv-talk"))
                                                                                         .Content(
                                                                                             _a._href("/wiki/Template_talk:HTML")
                                                                                                 ._title("Template talk:HTML")
@@ -819,9 +819,9 @@ public static class WikiPageHtml5
                                                                                                 )
                                                                                         ),
                                                                                     "\n",
-                                                                                    _li._class("nv-edit")
+                                                                                    _li._class(new CssClass("nv-edit"))
                                                                                         .Content(
-                                                                                            _a._class("external")._class("text")
+                                                                                            _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                                 ._href("//en.wikipedia.org/w/index.php?title=Template:HTML&action=edit")
                                                                                                 .Content(
                                                                                                     _abbr._title("Edit this template")
@@ -843,7 +843,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     _b.Content("HTML5"),
                                                     _sup._id("cite_ref-name_4-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-name-4")
                                                                 .Content("[a]")
@@ -870,13 +870,13 @@ public static class WikiPageHtml5
                                                         .Content("World Wide Web Consortium"),
                                                     " (W3C)",
                                                     _sup._id("cite_ref-finalars_2-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-finalars-2")
                                                                 .Content("[2]")
                                                         ),
                                                     _sup._id("cite_ref-5")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-5")
                                                                 .Content("[4]")
@@ -891,7 +891,7 @@ public static class WikiPageHtml5
                                                         .Content("parsers"),
                                                     ", etc. HTML5 is intended to subsume not only ",
                                                     _a._href("/wiki/HTML_4")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("HTML 4")
                                                         .Content("HTML 4"),
                                                     ", but also ",
@@ -904,7 +904,7 @@ public static class WikiPageHtml5
                                                         .Content("DOM Level 2 HTML"),
                                                     ".",
                                                     _sup._id("cite_ref-HTML5-20110405_6-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-HTML5-20110405-6")
                                                                 .Content("[5]")
@@ -914,7 +914,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "HTML5 includes detailed processing models to encourage more interoperable implementations; it extends, improves and rationalizes the markup available for documents, and introduces markup and ",
                                                     _a._href("/wiki/Application_programming_interfaces")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Application programming interfaces")
                                                         .Content("application programming interfaces"),
                                                     " (APIs) for complex ",
@@ -923,7 +923,7 @@ public static class WikiPageHtml5
                                                         .Content("web applications"),
                                                     ".",
                                                     _sup._id("cite_ref-HTML5diffHTML4_7-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-HTML5diffHTML4-7")
                                                                 .Content("[6]")
@@ -980,7 +980,7 @@ public static class WikiPageHtml5
                                                         .Content("MathML"),
                                                     " for mathematical formulas. To enrich the ",
                                                     _a._href("/wiki/Semantic_web")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Semantic web")
                                                         .Content("semantic"),
                                                     " content of documents, new page structure elements such as ",
@@ -1021,14 +1021,14 @@ public static class WikiPageHtml5
                                                         .Content("Document Object Model"),
                                                     " (DOM) are now fundamental parts of the HTML5 specification",
                                                     _sup._id("cite_ref-HTML5diffHTML4_7-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-HTML5diffHTML4-7")
                                                                 .Content("[6]")
                                                         ),
                                                     " and HTML5 also better defines the processing for any invalid documents.",
                                                     _sup._id("cite_ref-:0_8-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-:0-8")
                                                                 .Content("[7]")
@@ -1038,11 +1038,11 @@ public static class WikiPageHtml5
                                                 _p,
                                                 "\n",
                                                 _div._id("toc")
-                                                    ._class("toc")
+                                                    ._class(new CssClass("toc"))
                                                     .Content(
                                                         "\n",
                                                         _div._id("toctitle")
-                                                            ._class("toctitle")
+                                                            ._class(new CssClass("toctitle"))
                                                             .Content(
                                                                 "\n",
                                                                 _h2.Content("Contents"),
@@ -1051,51 +1051,51 @@ public static class WikiPageHtml5
                                                         "\n",
                                                         _ul.Content(
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-1")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-1"))
                                                                 .Content(
                                                                     _a._href("#History")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("1"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("History")
                                                                         ),
                                                                     "\n",
                                                                     _ul.Content(
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-2")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-2"))
                                                                             .Content(
                                                                                 _a._href("#.22Thoughts_on_Flash.22")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("1.1"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("\"Thoughts on Flash\"")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-3")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-3"))
                                                                             .Content(
                                                                                 _a._href("#Last_Call.2C_Candidate_and_Recommendation")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("1.2"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Last Call, Candidate and Recommendation")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-4")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-4"))
                                                                             .Content(
                                                                                 _a._href("#Timeline")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("1.3"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Timeline")
                                                                                     )
                                                                             ),
@@ -1104,99 +1104,99 @@ public static class WikiPageHtml5
                                                                     "\n"
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-5")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-5"))
                                                                 .Content(
                                                                     _a._href("#Features_and_APIs")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("2"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("Features and APIs")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-6")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-6"))
                                                                 .Content(
                                                                     _a._href("#Features")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("3"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("Features")
                                                                         ),
                                                                     "\n",
                                                                     _ul.Content(
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-7")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-7"))
                                                                             .Content(
                                                                                 _a._href("#Markup")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.1"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Markup")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-8")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-8"))
                                                                             .Content(
                                                                                 _a._href("#New_APIs")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.2"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("New APIs")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-9")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-9"))
                                                                             .Content(
                                                                                 _a._href("#XHTML5_.28XML-serialized_HTML5.29")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.3"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("XHTML5 (XML-serialized HTML5)")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-10")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-10"))
                                                                             .Content(
                                                                                 _a._href("#Error_handling")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.4"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Error handling")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-11")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-11"))
                                                                             .Content(
                                                                                 _a._href("#Popularity")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.5"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Popularity")
                                                                                     )
                                                                             ),
                                                                         "\n",
-                                                                        _li._class("toclevel-2")._class("tocsection-12")
+                                                                        _li._class(new CssClass("toclevel-2"))._class(new CssClass("tocsection-12"))
                                                                             .Content(
                                                                                 _a._href("#Differences_from_HTML.C2.A04.01_and_XHTML.C2.A01.x")
                                                                                     .Content(
-                                                                                        _span._class("tocnumber")
+                                                                                        _span._class(new CssClass("tocnumber"))
                                                                                             .Content("3.6"),
                                                                                         " ",
-                                                                                        _span._class("toctext")
+                                                                                        _span._class(new CssClass("toctext"))
                                                                                             .Content("Differences from HTML 4.01 and XHTML 1.x")
                                                                                     )
                                                                             ),
@@ -1205,74 +1205,74 @@ public static class WikiPageHtml5
                                                                     "\n"
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-13")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-13"))
                                                                 .Content(
                                                                     _a._href("#Logo")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("4"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("Logo")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-14")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-14"))
                                                                 .Content(
                                                                     _a._href("#Digital_rights_management")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("5"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("Digital rights management")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-15")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-15"))
                                                                 .Content(
                                                                     _a._href("#See_also")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("6"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("See also")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-16")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-16"))
                                                                 .Content(
                                                                     _a._href("#Notes")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("7"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("Notes")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-17")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-17"))
                                                                 .Content(
                                                                     _a._href("#References")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("8"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("References")
                                                                         )
                                                                 ),
                                                             "\n",
-                                                            _li._class("toclevel-1")._class("tocsection-18")
+                                                            _li._class(new CssClass("toclevel-1"))._class(new CssClass("tocsection-18"))
                                                                 .Content(
                                                                     _a._href("#External_links")
                                                                         .Content(
-                                                                            _span._class("tocnumber")
+                                                                            _span._class(new CssClass("tocnumber"))
                                                                                 .Content("9"),
                                                                             " ",
-                                                                            _span._class("toctext")
+                                                                            _span._class(new CssClass("toctext"))
                                                                                 .Content("External links")
                                                                         )
                                                                 ),
@@ -1284,17 +1284,17 @@ public static class WikiPageHtml5
                                                 _p,
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("History")
                                                         .Content("History"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=1")
                                                                 ._title("Edit section: History")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -1302,12 +1302,12 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "The ",
                                                     _a._href("/wiki/Web_Hypertext_Application_Technology_Working_Group")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Web Hypertext Application Technology Working Group")
                                                         .Content("Web Hypertext Application Technology Working Group"),
                                                     " (WHATWG) began work on the new standard in 2004. At that time, HTML 4.01 had not been updated since 2000,",
                                                     _sup._id("cite_ref-9")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-9")
                                                                 .Content("[8]")
@@ -1318,19 +1318,19 @@ public static class WikiPageHtml5
                                                         .Content("World Wide Web Consortium"),
                                                     " (W3C) was focusing future developments on ",
                                                     _a._href("/wiki/XHTML_2.0")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("XHTML 2.0")
                                                         .Content("XHTML 2.0"),
                                                     ". In 2009, the W3C allowed the XHTML 2.0 Working Group's charter to expire and decided not to renew it.",
                                                     _sup._id("cite_ref-:1_10-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-:1-10")
                                                                 .Content("[9]")
                                                         ),
                                                     " W3C and WHATWG are currently working together on the development of HTML5.",
                                                     _sup._id("cite_ref-:1_10-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-:1-10")
                                                                 .Content("[9]")
@@ -1348,35 +1348,35 @@ public static class WikiPageHtml5
                                                         .Content("Opera Software"),
                                                     " presented a position paper at a World Wide Web Consortium (W3C) workshop in June 2004,",
                                                     _sup._id("cite_ref-11")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-11")
                                                                 .Content("[10]")
                                                         ),
                                                     " focusing on developing technologies that are backward compatible with existing browsers,",
                                                     _sup._id("cite_ref-12")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-12")
                                                                 .Content("[11]")
                                                         ),
                                                     " including an initial draft specification of Web Forms 2.0. The workshop concluded with a vote—8 for, 14 against—for continuing work on HTML.",
                                                     _sup._id("cite_ref-13")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-13")
                                                                 .Content("[12]")
                                                         ),
                                                     " Immediately after the workshop, the Web Hypertext Application Technology Working Group (WHATWG) was formed to start work based upon that position paper, and a second draft, Web Applications 1.0, was also announced.",
                                                     _sup._id("cite_ref-14")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-14")
                                                                 .Content("[13]")
                                                         ),
                                                     " The two specifications were later merged to form HTML5.",
                                                     _sup._id("cite_ref-15")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-15")
                                                                 .Content("[14]")
@@ -1390,7 +1390,7 @@ public static class WikiPageHtml5
                                                         .Content("WHATWG"),
                                                     " published the First Public Working Draft of the specification on 22 January 2008.",
                                                     _sup._id("cite_ref-HTML5_16-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-HTML5-16")
                                                                 .Content("[15]")
@@ -1398,17 +1398,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id(".22Thoughts_on_Flash.22")
                                                         .Content("\"Thoughts on Flash\""),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=2")
                                                                 ._title("Edit section: \"Thoughts on Flash\"")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -1424,7 +1424,7 @@ public static class WikiPageHtml5
                                                         .Content("Scalable Vector Graphics"),
                                                     ". However, HTML5 on its own cannot be used for animation or interactivity – it must be supplemented with ",
                                                     _a._href("/wiki/CSS3")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("CSS3")
                                                         .Content("CSS3"),
                                                     " or ",
@@ -1437,32 +1437,32 @@ public static class WikiPageHtml5
                                                         .Content("Comparison of HTML5 and Flash"),
                                                     ". HTML5’s interactive capabilities became a topic of mainstream media around April 2010",
                                                     _sup._id("cite_ref-17")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-17")
                                                                 .Content("[16]")
                                                         ),
                                                     _sup._id("cite_ref-18")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-18")
                                                                 .Content("[17]")
                                                         ),
                                                     _sup._id("cite_ref-19")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-19")
                                                                 .Content("[18]")
                                                         ),
                                                     _sup._id("cite_ref-20")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-20")
                                                                 .Content("[19]")
                                                         ),
                                                     " after ",
                                                     _a._href("/wiki/Apple_Inc")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Apple Inc")
                                                         .Content("Apple Inc"),
                                                     "'s then-CEO ",
@@ -1475,21 +1475,21 @@ public static class WikiPageHtml5
                                                         .Content("Thoughts on Flash"),
                                                     "\" where he concluded that \"Flash is no longer necessary to watch video or consume any kind of web content\" and that \"new open standards created in the mobile era, such as HTML5, will win\".",
                                                     _sup._id("cite_ref-21")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-21")
                                                                 .Content("[20]")
                                                         ),
                                                     " This sparked a debate in web development circles suggesting that, while HTML5 provides enhanced functionality, developers must consider the varying browser support of the different parts of the standard as well as other functionality differences between HTML5 and Flash.",
                                                     _sup._id("cite_ref-22")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-22")
                                                                 .Content("[21]")
                                                         ),
                                                     " In early November 2011, Adobe announced that it would discontinue development of Flash for mobile devices and reorient its efforts in developing tools using HTML5.",
                                                     _sup._id("cite_ref-23")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-23")
                                                                 .Content("[22]")
@@ -1497,17 +1497,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Last_Call.2C_Candidate_and_Recommendation")
                                                         .Content("Last Call, Candidate and Recommendation"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=3")
                                                                 ._title("Edit section: Last Call, Candidate and Recommendation")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -1515,14 +1515,14 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "On 14 February 2011, the W3C extended the charter of its HTML Working Group with clear milestones for HTML5. In May 2011, the working group advanced HTML5 to \"Last Call\", an invitation to communities inside and outside W3C to confirm the technical soundness of the specification. The W3C developed a comprehensive test suite to achieve broad interoperability for the full specification by 2014, which was the target date for recommendation.",
                                                     _sup._id("cite_ref-w3c2014_24-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-w3c2014-24")
                                                                 .Content("[23]")
                                                         ),
                                                     " In January 2011, the WHATWG renamed its \"HTML5\" living standard to \"HTML\". The W3C nevertheless continued its project to release HTML5.",
                                                     _sup._id("cite_ref-25")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-25")
                                                                 .Content("[24]")
@@ -1532,7 +1532,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "In July 2012, WHATWG and W3C decided on a degree of separation. W3C will continue the HTML5 specification work, focusing on a single definitive standard, which is considered as a \"snapshot\" by WHATWG. The WHATWG organization will continue its work with HTML5 as a \"Living Standard\". The concept of a living standard is that it is never complete and is always being updated and improved. New features can be added but functionality will not be removed.",
                                                     _sup._id("cite_ref-26")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-26")
                                                                 .Content("[25]")
@@ -1542,25 +1542,25 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "In December 2012, W3C designated HTML5 as a Candidate Recommendation.",
                                                     _sup._id("cite_ref-27")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-27")
                                                                 .Content("[26]")
                                                         ),
                                                     " The criterion for advancement to ",
                                                     _a._href("/wiki/W3C_recommendation#W3C_Recommendation_.28REC.29")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("W3C recommendation")
                                                         .Content("W3C Recommendation"),
                                                     " is \"two 100% complete and fully interoperable implementations\".",
                                                     _sup._id("cite_ref-W3Crec_28-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-W3Crec-28")
                                                                 .Content("[27]")
                                                         ),
                                                     _sup._id("cite_ref-29")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-29")
                                                                 .Content("[28]")
@@ -1570,7 +1570,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "On 16 September 2014, W3C moved HTML5 to Proposed Recommendation.",
                                                     _sup._id("cite_ref-30")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-30")
                                                                 .Content("[29]")
@@ -1580,14 +1580,14 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "On 28 October 2014, HTML5 was released as a stable W3C Recommendation,",
                                                     _sup._id("cite_ref-31")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-31")
                                                                 .Content("[30]")
                                                         ),
                                                     " bringing the specification process to completion.",
                                                     _sup._id("cite_ref-finalars_2-2")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-finalars-2")
                                                                 .Content("[2]")
@@ -1597,7 +1597,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "On 1 November 2016, HTML5.1 was released as a stable W3C Recommendation.",
                                                     _sup._id("cite_ref-32")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-32")
                                                                 .Content("[31]")
@@ -1605,24 +1605,24 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Timeline")
                                                         .Content("Timeline"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=4")
                                                                 ._title("Edit section: Timeline")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
                                                 _p.Content("The combined timelines for HTML 5.0, HTML 5.1 and HTML 5.2:"),
                                                 "\n",
-                                                _table._class("wikitable")
+                                                _table._class(new CssClass("wikitable"))
                                                     .Content(
                                                         "\n",
                                                         _tbody.Content(
@@ -1679,7 +1679,7 @@ public static class WikiPageHtml5
                                                                 _td.Content(
                                                                     "HTML 5.2",
                                                                     _sup._id("cite_ref-HTML5-201209_33-0")
-                                                                        ._class("reference")
+                                                                        ._class(new CssClass("reference"))
                                                                         .Content(
                                                                             _a._href("#cite_note-HTML5-201209-33")
                                                                                 .Content("[32]")
@@ -1702,17 +1702,17 @@ public static class WikiPageHtml5
                                                     ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Features_and_APIs")
                                                         .Content("Features and APIs"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=5")
                                                                 ._title("Edit section: Features and APIs")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -1730,12 +1730,12 @@ public static class WikiPageHtml5
                                                             .Content("Web Messaging"),
                                                         ", ",
                                                         _a._href("/wiki/Web_Workers")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("Web Workers")
                                                             .Content("Web Workers"),
                                                         ", ",
                                                         _a._href("/wiki/Web_Storage")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("Web Storage")
                                                             .Content("Web Storage"),
                                                         ", ",
@@ -1751,7 +1751,7 @@ public static class WikiPageHtml5
                                                             ._title("Web Components")
                                                             .Content("Web Components"),
                                                         _sup._id("cite_ref-34")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-34")
                                                                     .Content("[33]")
@@ -1782,14 +1782,14 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "After the standardization of the HTML5 specification in October 2014,",
                                                     _sup._id("cite_ref-35")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-35")
                                                                 .Content("[34]")
                                                         ),
                                                     " the core vocabulary and features are being extended in four ways.",
                                                     _sup._id("cite_ref-36")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-36")
                                                                 .Content("[35]")
@@ -1810,33 +1810,33 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Features")
                                                         .Content("Features"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=6")
                                                                 ._title("Edit section: Features")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Markup")
                                                         .Content("Markup"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=7")
                                                                 ._title("Edit section: Markup")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -1851,71 +1851,71 @@ public static class WikiPageHtml5
                                                         ._title("Website")
                                                         .Content("websites"),
                                                     ". Some of them are semantic replacements for common uses of generic block (",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<div>"),
                                                     ") and inline (",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<span>"),
                                                     ") elements, for example ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<nav>"),
                                                     " (website navigation block), ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<footer>"),
                                                     " (usually referring to bottom of web page or to last lines of HTML code), or ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<audio>"),
                                                     " and ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<video>"),
                                                     " instead of ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<object>"),
                                                     ".",
                                                     _sup._id("cite_ref-37")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-37")
                                                                 .Content("[36]")
                                                         ),
                                                     _sup._id("cite_ref-38")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-38")
                                                                 .Content("[37]")
                                                         ),
                                                     _sup._id("cite_ref-39")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-39")
                                                                 .Content("[38]")
                                                         ),
                                                     " Some deprecated elements from ",
                                                     _a._href("/wiki/HTML_4.01")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("HTML 4.01")
                                                         .Content("HTML 4.01"),
                                                     " have been dropped, including purely presentational elements such as ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<font>"),
                                                     " and ",
-                                                    _code._class("nowrap")
+                                                    _code._class(new CssClass("nowrap"))
                                                         .Content("<center>"),
                                                     ", whose effects have long been superseded by the more capable ",
                                                     _a._href("/wiki/Cascading_Style_Sheet")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Cascading Style Sheet")
                                                         .Content("Cascading Style Sheets"),
                                                     ".",
                                                     _sup._id("cite_ref-40")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-40")
                                                                 .Content("[39]")
                                                         ),
                                                     " There is also a renewed emphasis on the importance of ",
                                                     _a._href("/wiki/DOM_scripting")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("DOM scripting")
                                                         .Content("DOM scripting"),
                                                     " (e.g., JavaScript) in Web behavior."
@@ -1927,13 +1927,13 @@ public static class WikiPageHtml5
                                                         ._title("Standard Generalized Markup Language")
                                                         .Content("SGML"),
                                                     _sup._id("cite_ref-41")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-41")
                                                                 .Content("[40]")
                                                         ),
                                                     _sup._id("cite_ref-42")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-42")
                                                                 .Content("[41]")
@@ -1951,7 +1951,7 @@ public static class WikiPageHtml5
                                                         .Content("rendering mode"),
                                                     ".",
                                                     _sup._id("cite_ref-43")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-43")
                                                                 .Content("[42]")
@@ -1964,13 +1964,13 @@ public static class WikiPageHtml5
                                                         .Content("WHATWG"),
                                                     " specification.",
                                                     _sup._id("cite_ref-44")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-44")
                                                                 .Content("[43]")
                                                         ),
                                                     _sup._id("cite_ref-45")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-45")
                                                                 .Content("[44]")
@@ -1978,52 +1978,52 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("New_APIs")
                                                         .Content("New APIs"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=8")
                                                                 ._title("Edit section: New APIs")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
-                                                _div._class("thumb")._class("tright")
+                                                _div._class(new CssClass("thumb"))._class(new CssClass("tright"))
                                                     .Content(
                                                         "\n",
-                                                        _div._class("thumbinner")
+                                                        _div._class(new CssClass("thumbinner"))
                                                             ._style("width:422px;")
                                                             .Content(
                                                                 _a._href("/wiki/File:HTML5_APIs_and_related_technologies_taxonomy_and_status.svg")
-                                                                    ._class("image")
+                                                                    ._class(new CssClass("image"))
                                                                     .Content(
                                                                         _img._alt("")
                                                                             ._src("//upload.wikimedia.org/wikipedia/commons/thumb/7/7f/HTML5_APIs_and_related_technologies_taxonomy_and_status.svg/420px-HTML5_APIs_and_related_technologies_taxonomy_and_status.svg.png")
                                                                             ._width("420")
                                                                             ._height("291")
-                                                                            ._class("thumbimage")
+                                                                            ._class(new CssClass("thumbimage"))
                                                                             ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/7/7f/HTML5_APIs_and_related_technologies_taxonomy_and_status.svg/630px-HTML5_APIs_and_related_technologies_taxonomy_and_status.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/7/7f/HTML5_APIs_and_related_technologies_taxonomy_and_status.svg/840px-HTML5_APIs_and_related_technologies_taxonomy_and_status.svg.png 2x")
                                                                             .Attribute("data-file-width", "1133")
                                                                             .Attribute("data-file-height", "786")
                                                                     ),
                                                                 "\n",
-                                                                _div._class("thumbcaption")
+                                                                _div._class(new CssClass("thumbcaption"))
                                                                     .Content(
                                                                         "\n",
-                                                                        _div._class("magnify")
+                                                                        _div._class(new CssClass("magnify"))
                                                                             .Content(
                                                                                 _a._href("/wiki/File:HTML5_APIs_and_related_technologies_taxonomy_and_status.svg")
-                                                                                    ._class("internal")
+                                                                                    ._class(new CssClass("internal"))
                                                                                     ._title("Enlarge")
                                                                             ),
                                                                         "\nHTML5 related APIs",
                                                                         _sup._id("cite_ref-46")
-                                                                            ._class("reference")
+                                                                            ._class(new CssClass("reference"))
                                                                             .Content(
                                                                                 _a._href("#cite_note-46")
                                                                                     .Content("[45]")
@@ -2037,7 +2037,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "In addition to specifying markup, HTML5 specifies scripting ",
                                                     _a._href("/wiki/Application_programming_interfaces")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Application programming interfaces")
                                                         .Content("application programming interfaces"),
                                                     " (APIs) that can be used with ",
@@ -2046,14 +2046,14 @@ public static class WikiPageHtml5
                                                         .Content("JavaScript"),
                                                     ".",
                                                     _sup._id("cite_ref-47")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-47")
                                                                 .Content("[46]")
                                                         ),
                                                     " Existing ",
                                                     _a._href("/wiki/Document_object_model")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Document object model")
                                                         .Content("document object model"),
                                                     " (DOM) interfaces are extended and ",
@@ -2073,7 +2073,7 @@ public static class WikiPageHtml5
                                                             .Content("Canvas"),
                                                         ";",
                                                         _sup._id("cite_ref-48")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-48")
                                                                     .Content("[47]")
@@ -2083,7 +2083,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "Timed Media Playback;",
                                                         _sup._id("cite_ref-49")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-49")
                                                                     .Content("[48]")
@@ -2093,7 +2093,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "Offline;",
                                                         _sup._id("cite_ref-50")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-50")
                                                                     .Content("[49]")
@@ -2103,7 +2103,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "Editable content;",
                                                         _sup._id("cite_ref-51")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-51")
                                                                     .Content("[50]")
@@ -2112,12 +2112,12 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/Drag-and-drop")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("Drag-and-drop")
                                                             .Content("Drag-and-drop"),
                                                         ";",
                                                         _sup._id("cite_ref-52")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-52")
                                                                     .Content("[51]")
@@ -2127,7 +2127,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "History;",
                                                         _sup._id("cite_ref-53")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-53")
                                                                     .Content("[52]")
@@ -2136,18 +2136,18 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/MIME_type")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("MIME type")
                                                             .Content("MIME type"),
                                                         " and protocol handler registration;",
                                                         _sup._id("cite_ref-54")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-54")
                                                                     .Content("[53]")
                                                             ),
                                                         _sup._id("cite_ref-55")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-55")
                                                                     .Content("[54]")
@@ -2160,7 +2160,7 @@ public static class WikiPageHtml5
                                                             .Content("Microdata"),
                                                         ";",
                                                         _sup._id("cite_ref-56")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-56")
                                                                     .Content("[55]")
@@ -2173,7 +2173,7 @@ public static class WikiPageHtml5
                                                             .Content("Web Messaging"),
                                                         ";",
                                                         _sup._id("cite_ref-57")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-57")
                                                                     .Content("[56]")
@@ -2182,17 +2182,17 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/Web_Storage")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("Web Storage")
                                                             .Content("Web Storage"),
                                                         " – a key-value pair storage framework that provides behaviour similar to ",
                                                         _a._href("/wiki/HTTP_Cookie")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("HTTP Cookie")
                                                             .Content("cookies"),
                                                         " but with larger storage capacity and improved API.",
                                                         _sup._id("cite_ref-58")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-58")
                                                                     .Content("[57]")
@@ -2204,7 +2204,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "Not all of the above technologies are included in the W3C HTML5 specification, though they are in the WHATWG HTML specification.",
                                                     _sup._id("cite_ref-59")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-59")
                                                                 .Content("[58]")
@@ -2227,7 +2227,7 @@ public static class WikiPageHtml5
                                                             .Content("Web SQL Database"),
                                                         " – a local SQL Database (no longer maintained);",
                                                         _sup._id("cite_ref-60")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-60")
                                                                     .Content("[59]")
@@ -2236,12 +2236,12 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/IndexedDB")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("IndexedDB")
                                                             .Content("IndexedDB"),
                                                         " – an indexed hierarchical key-value store (formerly WebSimpleDB);",
                                                         _sup._id("cite_ref-61")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-61")
                                                                     .Content("[60]")
@@ -2253,14 +2253,14 @@ public static class WikiPageHtml5
                                                             ._title("HTML5 File API")
                                                             .Content("File"),
                                                         _sup._id("cite_ref-62")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-62")
                                                                     .Content("[61]")
                                                             ),
                                                         " – an API intended to handle file uploads and file manipulation;",
                                                         _sup._id("cite_ref-63")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-63")
                                                                     .Content("[62]")
@@ -2270,7 +2270,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "Directories and System – an API intended to satisfy client-side-storage use cases not well served by databases;",
                                                         _sup._id("cite_ref-64")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-64")
                                                                     .Content("[63]")
@@ -2280,7 +2280,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "File Writer – an API for writing to files from web applications;",
                                                         _sup._id("cite_ref-65")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-65")
                                                                     .Content("[64]")
@@ -2292,7 +2292,7 @@ public static class WikiPageHtml5
                                                             ._title("HTML5 Audio")
                                                             .Content("Web Audio"),
                                                         _sup._id("cite_ref-66")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-66")
                                                                     .Content("[65]")
@@ -2303,7 +2303,7 @@ public static class WikiPageHtml5
                                                     _li.Content(
                                                         "ClassList.",
                                                         _sup._id("cite_ref-67")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-67")
                                                                     .Content("[66]")
@@ -2312,11 +2312,11 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/w/index.php?title=Web_Cryptography&action=edit&redlink=1")
-                                                            ._class("new")
+                                                            ._class(new CssClass("new"))
                                                             ._title("Web Cryptography (page does not exist)")
                                                             .Content("Web Cryptography"),
                                                         _sup._id("cite_ref-68")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-68")
                                                                     .Content("[67]")
@@ -2328,7 +2328,7 @@ public static class WikiPageHtml5
                                                             ._title("WebRTC")
                                                             .Content("WebRTC"),
                                                         _sup._id("cite_ref-69")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-69")
                                                                     .Content("[68]")
@@ -2340,17 +2340,17 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "HTML5 cannot provide animation within web pages. Additional JavaScript or ",
                                                     _a._href("/wiki/CSS3")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("CSS3")
                                                         .Content("CSS3"),
                                                     " functionality is necessary for animating HTML elements. Animation is also possible using JavaScript and HTML 4",
                                                     _sup._id("cite_ref-70")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-70")
                                                                 .Content("[69]")
                                                         ),
-                                                    _sup._class("noprint")._class("Inline-Template")
+                                                    _sup._class(new CssClass("noprint"))._class(new CssClass("Inline-Template"))
                                                         ._style("white-space:nowrap;")
                                                         .Content(
                                                             "[",
@@ -2372,17 +2372,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("XHTML5_.28XML-serialized_HTML5.29")
                                                         .Content("XHTML5 (XML-serialized HTML5)"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=9")
                                                                 ._title("Edit section: XHTML5 (XML-serialized HTML5)")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -2390,7 +2390,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "XML documents must be served with an XML ",
                                                     _a._href("/wiki/Internet_media_type")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Internet media type")
                                                         .Content("Internet media type"),
                                                     " (often called \"MIME type\") such as ",
@@ -2399,7 +2399,7 @@ public static class WikiPageHtml5
                                                     _code.Content("application/xml"),
                                                     ",",
                                                     _sup._id("cite_ref-71")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-71")
                                                                 .Content("[70]")
@@ -2410,7 +2410,7 @@ public static class WikiPageHtml5
                                                         .Content("polyglot markup"),
                                                     ".",
                                                     _sup._id("cite_ref-w3c_72-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-w3c-72")
                                                                 .Content("[71]")
@@ -2418,17 +2418,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Error_handling")
                                                         .Content("Error handling"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=10")
                                                                 ._title("Edit section: Error handling")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -2440,14 +2440,14 @@ public static class WikiPageHtml5
                                                         .Content("can safely ignore"),
                                                     " new HTML5 constructs.",
                                                     _sup._id("cite_ref-HTML5diffHTML4_7-2")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-HTML5diffHTML4-7")
                                                                 .Content("[6]")
                                                         ),
                                                     " In contrast to HTML 4.01, the HTML5 specification gives detailed rules for ",
                                                     _a._href("/wiki/Lexing")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Lexing")
                                                         .Content("lexing"),
                                                     " and ",
@@ -2456,7 +2456,7 @@ public static class WikiPageHtml5
                                                         .Content("parsing"),
                                                     ", with the intent that compliant browsers will produce the same results when parsing incorrect syntax.",
                                                     _sup._id("cite_ref-whatfaq_73-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-whatfaq-73")
                                                                 .Content("[72]")
@@ -2467,7 +2467,7 @@ public static class WikiPageHtml5
                                                         .Content("tag soup"),
                                                     "\" documents, those documents are not regarded as conforming to the HTML5 standard.",
                                                     _sup._id("cite_ref-whatfaq_73-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-whatfaq-73")
                                                                 .Content("[72]")
@@ -2475,17 +2475,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Popularity")
                                                         .Content("Popularity"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=11")
                                                                 ._title("Edit section: Popularity")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -2493,7 +2493,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "According to a report released on 30 September 2011, 34 of the world's top 100 Web sites were using HTML5 – the adoption led by ",
                                                     _a._href("/wiki/Search_engine")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Search engine")
                                                         .Content("search engines"),
                                                     " and ",
@@ -2502,7 +2502,7 @@ public static class WikiPageHtml5
                                                         .Content("social networks"),
                                                     ".",
                                                     _sup._id("cite_ref-74")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-74")
                                                                 .Content("[73]")
@@ -2515,7 +2515,7 @@ public static class WikiPageHtml5
                                                     ),
                                                     " U.S. companies implemented HTML5 on their corporate websites.",
                                                     _sup._id("cite_ref-75")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-75")
                                                                 .Content("[74]")
@@ -2531,17 +2531,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h3.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Differences_from_HTML.C2.A04.01_and_XHTML.C2.A01.x")
                                                         .Content("Differences from HTML 4.01 and XHTML 1.x"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=12")
                                                                 ._title("Edit section: Differences from HTML 4.01 and XHTML 1.x")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -2609,7 +2609,7 @@ public static class WikiPageHtml5
                                                         ", ",
                                                         _code.Content(
                                                             _a._href("/wiki/Ruby_(annotation_markup)")
-                                                                ._class("mw-redirect")
+                                                                ._class(new CssClass("mw-redirect"))
                                                                 ._title("Ruby (annotation markup)")
                                                                 .Content("ruby")
                                                         ),
@@ -2647,7 +2647,7 @@ public static class WikiPageHtml5
                                                         ", ",
                                                         _code.Content("color"),
                                                         _sup._id("cite_ref-76")
-                                                            ._class("reference")
+                                                            ._class(new CssClass("reference"))
                                                             .Content(
                                                                 _a._href("#cite_note-76")
                                                                     .Content("[75]")
@@ -2720,7 +2720,7 @@ public static class WikiPageHtml5
                                                     _i.Content("Editors Draft"),
                                                     " of \"HTML5 differences from HTML 4\",",
                                                     _sup._id("cite_ref-77")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-77")
                                                                 .Content("[76]")
@@ -2729,47 +2729,47 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Logo")
                                                         .Content("Logo"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=13")
                                                                 ._title("Edit section: Logo")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
-                                                _div._class("thumb")._class("tright")
+                                                _div._class(new CssClass("thumb"))._class(new CssClass("tright"))
                                                     .Content(
                                                         "\n",
-                                                        _div._class("thumbinner")
+                                                        _div._class(new CssClass("thumbinner"))
                                                             ._style("width:122px;")
                                                             .Content(
                                                                 _a._href("/wiki/File:HTML5_logo_and_wordmark.svg")
-                                                                    ._class("image")
+                                                                    ._class(new CssClass("image"))
                                                                     .Content(
                                                                         _img._alt("")
                                                                             ._src("//upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/120px-HTML5_logo_and_wordmark.svg.png")
                                                                             ._width("120")
                                                                             ._height("120")
-                                                                            ._class("thumbimage")
+                                                                            ._class(new CssClass("thumbimage"))
                                                                             ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/180px-HTML5_logo_and_wordmark.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/6/61/HTML5_logo_and_wordmark.svg/240px-HTML5_logo_and_wordmark.svg.png 2x")
                                                                             .Attribute("data-file-width", "512")
                                                                             .Attribute("data-file-height", "512")
                                                                     ),
                                                                 "\n",
-                                                                _div._class("thumbcaption")
+                                                                _div._class(new CssClass("thumbcaption"))
                                                                     .Content(
                                                                         "\n",
-                                                                        _div._class("magnify")
+                                                                        _div._class(new CssClass("magnify"))
                                                                             .Content(
                                                                                 _a._href("/wiki/File:HTML5_logo_and_wordmark.svg")
-                                                                                    ._class("internal")
+                                                                                    ._class(new CssClass("internal"))
                                                                                     ._title("Enlarge")
                                                                             ),
                                                                         "\nThe W3C HTML5 logo"
@@ -2782,7 +2782,7 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "On 18 January 2011, the W3C introduced a logo to represent the use of or interest in HTML5. Unlike other badges previously issued by the W3C, it does not imply validity or conformance to a certain standard. As of 1 April 2011, this logo is official.",
                                                     _sup._id("cite_ref-logo-faq_78-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-logo-faq-78")
                                                                 .Content("[77]")
@@ -2800,28 +2800,28 @@ public static class WikiPageHtml5
                                                         .Content("WOFF"),
                                                     ", and others\".",
                                                     _sup._id("cite_ref-waspopenletter_79-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-waspopenletter-79")
                                                                 .Content("[78]")
                                                         ),
                                                     " Some web standard advocates, including The Web Standards Project, criticized that definition of \"HTML5\" as an umbrella term, pointing out the blurring of terminology and the potential for miscommunication.",
                                                     _sup._id("cite_ref-waspopenletter_79-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-waspopenletter-79")
                                                                 .Content("[78]")
                                                         ),
                                                     " Three days later, the W3C responded to community feedback and changed the logo's definition, dropping the enumeration of related technologies.",
                                                     _sup._id("cite_ref-80")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-80")
                                                                 .Content("[79]")
                                                         ),
                                                     " The W3C then said the logo \"represents HTML5, the cornerstone for modern Web applications\".",
                                                     _sup._id("cite_ref-logo-faq_78-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-logo-faq-78")
                                                                 .Content("[77]")
@@ -2829,17 +2829,17 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Digital_rights_management")
                                                         .Content("Digital rights management"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=14")
                                                                 ._title("Edit section: Digital rights management")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
@@ -2867,31 +2867,31 @@ public static class WikiPageHtml5
                                                         .Content("Encrypted Media Extensions"),
                                                     " (EME),",
                                                     _sup._id("cite_ref-81")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-81")
                                                                 .Content("[80]")
                                                         ),
                                                     _sup._id("cite_ref-82")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-82")
                                                                 .Content("[81]")
                                                         ),
                                                     _sup._id("cite_ref-83")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-83")
                                                                 .Content("[82]")
                                                         ),
                                                     _sup._id("cite_ref-84")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-84")
                                                                 .Content("[83]")
                                                         ),
                                                     _sup._id("cite_ref-85")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-85")
                                                                 .Content("[84]")
@@ -2902,7 +2902,7 @@ public static class WikiPageHtml5
                                                         .Content("digital rights management"),
                                                     " (DRM), into the HTML5 standard. As of the end of 2012 and the beginning of 2013, 27 organisations",
                                                     _sup._id("cite_ref-86")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-86")
                                                                 .Content("[85]")
@@ -2912,20 +2912,20 @@ public static class WikiPageHtml5
                                                         ._title("Free Software Foundation")
                                                         .Content("Free Software Foundation"),
                                                     _sup._id("cite_ref-87")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-87")
                                                                 .Content("[86]")
                                                         ),
                                                     " have started a campaign against including digital rights management in the HTML5 standard.",
                                                     _sup._id("cite_ref-88")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-88")
                                                                 .Content("[87]")
                                                         ),
                                                     _sup._id("cite_ref-89")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-89")
                                                                 .Content("[88]")
@@ -2936,13 +2936,13 @@ public static class WikiPageHtml5
                                                         .Content("HTML Working Group"),
                                                     " decided that Encrypted Media Extensions, a form of DRM, was \"in scope\" and will potentially be included in the HTML 5.1 standard.",
                                                     _sup._id("cite_ref-90")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-90")
                                                                 .Content("[89]")
                                                         ),
                                                     _sup._id("cite_ref-lowering-your-standards_91-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-lowering-your-standards-91")
                                                                 .Content("[90]")
@@ -2953,7 +2953,7 @@ public static class WikiPageHtml5
                                                         .Content("WHATWG"),
                                                     "'s \"HTML Living Standard\" continued to be developed without DRM-enabled proposals.",
                                                     _sup._id("cite_ref-lowering-your-standards_91-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-lowering-your-standards-91")
                                                                 .Content("[90]")
@@ -2963,19 +2963,19 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "Manu Sporny, a member of the ",
                                                     _a._href("/wiki/W3C")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("W3C")
                                                         .Content("W3C"),
                                                     ", said that EME will not solve the problem it's supposed to address.",
                                                     _sup._id("cite_ref-92")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-92")
                                                                 .Content("[91]")
                                                         ),
                                                     " Opponents point out that EME itself is just an architecture for a DRM plug-in mechanism.",
                                                     _sup._id("cite_ref-93")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-93")
                                                                 .Content("[92]")
@@ -2985,21 +2985,21 @@ public static class WikiPageHtml5
                                                 _p.Content(
                                                     "The initial enablers for DRM in HTML5 were Google",
                                                     _sup._id("cite_ref-94")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-94")
                                                                 .Content("[93]")
                                                         ),
                                                     " and Microsoft.",
                                                     _sup._id("cite_ref-95")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-95")
                                                                 .Content("[94]")
                                                         ),
                                                     " Supporters also include Adobe.",
                                                     _sup._id("cite_ref-96")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-96")
                                                                 .Content("[95]")
@@ -3010,25 +3010,25 @@ public static class WikiPageHtml5
                                                         .Content("Mozilla"),
                                                     " announced plans to support EME in ",
                                                     _a._href("/wiki/Mozilla_Firefox")
-                                                        ._class("mw-redirect")
+                                                        ._class(new CssClass("mw-redirect"))
                                                         ._title("Mozilla Firefox")
                                                         .Content("Firefox"),
                                                     ", the last major browser to avoid DRM.",
                                                     _sup._id("cite_ref-gal_97-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-gal-97")
                                                                 .Content("[96]")
                                                         ),
                                                     _sup._id("cite_ref-baker_98-0")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-baker-98")
                                                                 .Content("[97]")
                                                         ),
                                                     " Calling it \"a difficult and uncomfortable step\", Andreas Gal of Mozilla explained that future versions of Firefox would remain open source but ship with a sandbox designed to run a content decryption module developed by Adobe.",
                                                     _sup._id("cite_ref-gal_97-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-gal-97")
                                                                 .Content("[96]")
@@ -3039,7 +3039,7 @@ public static class WikiPageHtml5
                                                         .Content("Mitchell Baker"),
                                                     " stated that a refusal to implement EME would have accomplished little more than convincing many users to switch browsers.",
                                                     _sup._id("cite_ref-baker_98-1")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-baker-98")
                                                                 .Content("[97]")
@@ -3054,13 +3054,13 @@ public static class WikiPageHtml5
                                                         .Content("Free Software Foundation"),
                                                     ".",
                                                     _sup._id("cite_ref-99")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-99")
                                                                 .Content("[98]")
                                                         ),
                                                     _sup._id("cite_ref-100")
-                                                        ._class("reference")
+                                                        ._class(new CssClass("reference"))
                                                         .Content(
                                                             _a._href("#cite_note-100")
                                                                 .Content("[99]")
@@ -3068,24 +3068,24 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("See_also")
                                                         .Content("See also"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=15")
                                                                 ._title("Edit section: See also")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
                                                 _div.Attribute("role", "navigation")
                                                     .Attribute("aria-label", "Portals")
-                                                    ._class("noprint")._class("portal")._class("plainlist")._class("tright")
+                                                    ._class(new CssClass("noprint"))._class(new CssClass("portal"))._class(new CssClass("plainlist"))._class(new CssClass("tright"))
                                                     ._style("margin:0.5em 0 0.5em 1em;border:solid #aaa 1px")
                                                     .Content(
                                                         "\n",
@@ -3097,13 +3097,13 @@ public static class WikiPageHtml5
                                                                         _span._style("display:table-cell;padding:0.2em;vertical-align:middle;text-align:center")
                                                                             .Content(
                                                                                 _a._href("/wiki/File:Internet_map_1024.jpg")
-                                                                                    ._class("image")
+                                                                                    ._class(new CssClass("image"))
                                                                                     .Content(
                                                                                         _img._alt("icon")
                                                                                             ._src("//upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Internet_map_1024.jpg/28px-Internet_map_1024.jpg")
                                                                                             ._width("28")
                                                                                             ._height("28")
-                                                                                            ._class("noviewer")
+                                                                                            ._class(new CssClass("noviewer"))
                                                                                             ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Internet_map_1024.jpg/42px-Internet_map_1024.jpg 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Internet_map_1024.jpg/56px-Internet_map_1024.jpg 2x")
                                                                                             .Attribute("data-file-width", "1280")
                                                                                             .Attribute("data-file-height", "1280")
@@ -3122,13 +3122,13 @@ public static class WikiPageHtml5
                                                                         _span._style("display:table-cell;padding:0.2em;vertical-align:middle;text-align:center")
                                                                             .Content(
                                                                                 _a._href("/wiki/File:Crystal_Clear_app_linneighborhood.svg")
-                                                                                    ._class("image")
+                                                                                    ._class(new CssClass("image"))
                                                                                     .Content(
                                                                                         _img._alt("icon")
                                                                                             ._src("//upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/28px-Crystal_Clear_app_linneighborhood.svg.png")
                                                                                             ._width("28")
                                                                                             ._height("28")
-                                                                                            ._class("noviewer")
+                                                                                            ._class(new CssClass("noviewer"))
                                                                                             ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/42px-Crystal_Clear_app_linneighborhood.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/56px-Crystal_Clear_app_linneighborhood.svg.png 2x")
                                                                                             .Attribute("data-file-width", "407")
                                                                                             .Attribute("data-file-height", "407")
@@ -3168,7 +3168,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/Polyglot_HTML5")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("Polyglot HTML5")
                                                             .Content("Polyglot HTML5")
                                                     ),
@@ -3182,7 +3182,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._href("/wiki/David_Hyatt")
-                                                            ._class("mw-redirect")
+                                                            ._class(new CssClass("mw-redirect"))
                                                             ._title("David Hyatt")
                                                             .Content("David Hyatt"),
                                                         ", editor of HTML5 specs"
@@ -3191,31 +3191,31 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("Notes")
                                                         .Content("Notes"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=16")
                                                                 ._title("Edit section: Notes")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
-                                                _div._class("reflist")
+                                                _div._class(new CssClass("reflist"))
                                                     ._style("list-style-type: lower-alpha;")
                                                     .Content(
                                                         "\n",
-                                                        _ol._class("references")
+                                                        _ol._class(new CssClass("references"))
                                                             .Content(
                                                                 "\n",
                                                                 _li._id("cite_note-name-4")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-name_4-0")
@@ -3223,11 +3223,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "In the W3C recommendation, there is no space between \"HTML\" and \"5\" in the name.",
                                                                                 _sup._id("cite_ref-3")
-                                                                                    ._class("reference")
+                                                                                    ._class(new CssClass("reference"))
                                                                                     .Content(
                                                                                         _a._href("#cite_note-3")
                                                                                             .Content("[3]")
@@ -3240,31 +3240,31 @@ public static class WikiPageHtml5
                                                     ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("References")
                                                         .Content("References"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=17")
                                                                 ._title("Edit section: References")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
-                                                _div._class("reflist")._class("columns")._class("references-column-width")
+                                                _div._class(new CssClass("reflist"))._class(new CssClass("columns"))._class(new CssClass("references-column-width"))
                                                     ._style("-moz-column-width: 30em; -webkit-column-width: 30em; column-width: 30em; list-style-type: decimal;")
                                                     .Content(
                                                         "\n",
-                                                        _ol._class("references")
+                                                        _ol._class(new CssClass("references"))
                                                             .Content(
                                                                 "\n",
                                                                 _li._id("cite_note-1")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-1")
@@ -3272,12 +3272,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://developer.apple.com/library/mac/#documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html")
                                                                                             .Content("\"Mac Developer Library: System-Declared Uniform Type Identifiers\""),
                                                                                         ". ",
@@ -3289,7 +3289,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Mac+Developer+Library%3A+System-Declared+Uniform+Type+Identifiers&rft.date=2009-11-17&rft.genre=unknown&rft_id=https%3A%2F%2Fdeveloper.apple.com%2Flibrary%2Fmac%2F%23documentation%2FMiscellaneous%2FReference%2FUTIRef%2FArticles%2FSystem-DeclaredUniformTypeIdentifiers.html&rft.pub=Apple&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3299,7 +3299,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-finalars-2")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-finalars_2-0")
@@ -3312,25 +3312,25 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("c"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://arstechnica.com/information-technology/2014/10/html5-specification-finalized-squabbling-over-who-writes-the-specs-continues/")
                                                                                             .Content("\"HTML5 specification finalized, squabbling over specs continues\""),
                                                                                         ". Ars Technica. 2014-10-29",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-10-29")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+specification+finalized%2C+squabbling+over+specs+continues&rft.date=2014-10-29&rft.genre=unknown&rft_id=http%3A%2F%2Farstechnica.com%2Finformation-technology%2F2014%2F10%2Fhtml5-specification-finalized-squabbling-over-who-writes-the-specs-continues%2F&rft.pub=Ars+Technica&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3340,7 +3340,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-3")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-3")
@@ -3348,18 +3348,18 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/2014/REC-html5-20141028/")
                                                                                             .Content("\"A vocabulary and associated APIs for HTML and XHTML\""),
                                                                                         ". 28 October 2014."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=A+vocabulary+and+associated+APIs+for+HTML+and+XHTML&rft.date=2014-10-28&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2F2014%2FREC-html5-20141028%2F&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3369,7 +3369,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-5")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-5")
@@ -3377,28 +3377,28 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/blog/news/archives/4167")
                                                                                             .Content("\"HTML5 is a W3C recommendation\""),
                                                                                         ". ",
                                                                                         _i.Content("W3C Blog"),
                                                                                         ". 28 October 2014",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("28 October"),
                                                                                                 " 2014"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML5+is+a+W3C+recommendation&rft.date=2014-10-28&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2Fblog%2Fnews%2Farchives%2F4167&rft.jtitle=W3C+Blog&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3408,7 +3408,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-HTML5-20110405-6")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-HTML5-20110405_6-0")
@@ -3416,12 +3416,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/2011/WD-html5-diff-20110405/")
                                                                                             .Content("\"HTML5 Differences from HTML4\""),
                                                                                         ". ",
@@ -3431,10 +3431,10 @@ public static class WikiPageHtml5
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
                                                                                         ". 5 April 2011. Introduction",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2011-04-30")
                                                                                             ),
                                                                                         ". ",
@@ -3449,14 +3449,14 @@ public static class WikiPageHtml5
                                                                                                 .Content("JavaScript"),
                                                                                             " ",
                                                                                             _a._href("/wiki/API")
-                                                                                                ._class("mw-redirect")
+                                                                                                ._class(new CssClass("mw-redirect"))
                                                                                                 ._title("API")
                                                                                                 .Content("APIs"),
                                                                                             " for both HTML and XHTML. HTML5 will replace these documents."
                                                                                         )
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML5+Differences+from+HTML4&rft.date=2011-04-05&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2F2011%2FWD-html5-diff-20110405%2F&rft.jtitle=Working+Draft&rft.pages=Introduction&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3466,7 +3466,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-HTML5diffHTML4-7")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-HTML5diffHTML4_7-0")
@@ -3479,12 +3479,12 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("c"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html5-diff/")
                                                                                             .Content("\"HTML5 Differences from HTML4\""),
                                                                                         ". ",
@@ -3492,17 +3492,17 @@ public static class WikiPageHtml5
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
                                                                                         ". 19 October 2010",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("4 December"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+Differences+from+HTML4&rft.date=2010-10-19&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml5-diff%2F&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3512,7 +3512,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-:0-8")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-:0_8-0")
@@ -3520,28 +3520,28 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://dev.w3.org/html5/spec/Overview.html#syntax-errors")
                                                                                             .Content("\"1.9.2 Syntax Errors\""),
                                                                                         ". ",
                                                                                         _i.Content("HTML5"),
                                                                                         ". 16 November 2010",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("4 December"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=1.9.2+Syntax+Errors&rft.date=2010-11-16&rft.genre=unknown&rft_id=http%3A%2F%2Fdev.w3.org%2Fhtml5%2Fspec%2FOverview.html%23syntax-errors&rft.jtitle=HTML5&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3551,7 +3551,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-9")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-9")
@@ -3559,29 +3559,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/MarkUp/html4-updates/errata")
                                                                                             .Content("\"HTML 4 Errata\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("4 December"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML+4+Errata&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FMarkUp%2Fhtml4-updates%2Ferrata&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3591,7 +3591,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-:1-10")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-:1_10-0")
@@ -3601,29 +3601,29 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2009/06/xhtml-faq.html")
                                                                                             .Content("\"Frequently Asked Questions (FAQ) About the Future of XHTML\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("4 December"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Frequently+Asked+Questions+%28FAQ%29+About+the+Future+of+XHTML&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2009%2F06%2Fxhtml-faq.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3633,7 +3633,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-11")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-11")
@@ -3641,29 +3641,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2004/04/webapps-cdf-ws/papers/opera.html")
                                                                                             .Content("\"Position Paper for the W3C Workshop on Web Applications and Compound Documents\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("30 December"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Position+Paper+for+the+W3C+Workshop+on+Web+Applications+and+Compound+Documents&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2004%2F04%2Fwebapps-cdf-ws%2Fpapers%2Fopera.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3673,7 +3673,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-12")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-12")
@@ -3681,29 +3681,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2004/04/webapps-cdf-ws/minutes-20040601.html#topic18.1")
                                                                                             .Content("\"W3C Workshop on Web Applications and Compound Documents (Day 1) Jun 1, 2004\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("30 December"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=W3C+Workshop+on+Web+Applications+and+Compound+Documents+%28Day+1%29+Jun+1%2C+2004&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2004%2F04%2Fwebapps-cdf-ws%2Fminutes-20040601.html%23topic18.1&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3713,7 +3713,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-13")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-13")
@@ -3721,29 +3721,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2004/04/webapps-cdf-ws/minutes-20040602.html#topic28.1")
                                                                                             .Content("\"W3C Workshop on Web Applications and Compound Documents (Day 2) Jun 2, 2004\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("30 December"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=W3C+Workshop+on+Web+Applications+and+Compound+Documents+%28Day+2%29+Jun+2%2C+2004&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2004%2F04%2Fwebapps-cdf-ws%2Fminutes-20040602.html%23topic28.1&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3753,7 +3753,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-14")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-14")
@@ -3761,26 +3761,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://lists.w3.org/Archives/Public/public-whatwg-archive/2004Jun/0000.html")
                                                                                             .Content("\"[whatwg] WHAT open mailing list announcement\""),
                                                                                         ". lists.w3.org Mailing Lists",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("8 December"),
                                                                                                 " 2015"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=%5Bwhatwg%26%2393%3B+WHAT+open+mailing+list+announcement&rft.genre=unknown&rft_id=http%3A%2F%2Flists.w3.org%2FArchives%2FPublic%2Fpublic-whatwg-archive%2F2004Jun%2F0000.html&rft.pub=lists.w3.org+Mailing+Lists&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3790,7 +3790,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-15")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-15")
@@ -3798,26 +3798,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://blog.whatwg.org/this-week-in-html-5-episode-5")
                                                                                             .Content("\"This Week in HTML 5 – Episode 5\""),
                                                                                         ". WHATWG Blog",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("30 December"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=This+Week+in+HTML+5+%93+Episode+5&rft.genre=unknown&rft_id=https%3A%2F%2Fblog.whatwg.org%2Fthis-week-in-html-5-episode-5&rft.pub=WHATWG+Blog&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3827,7 +3827,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-HTML5-16")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-HTML5_16-0")
@@ -3835,29 +3835,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html5/")
                                                                                             .Content("\"HTML5: A vocabulary and associated APIs for HTML and XHTML.\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("28 January"),
                                                                                                 " 2009"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5%3A+A+vocabulary+and+associated+APIs+for+HTML+and+XHTML.&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml5%2F&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3867,7 +3867,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-17")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-17")
@@ -3875,12 +3875,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("news")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("news"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.foxnews.com/scitech/2010/04/29/flash-iphone-apples-steve-jobs-finally-explains/")
                                                                                             .Content("\"FOX News: No Flash on the iPhone? Apple's Steve Jobs Finally Explains Why\""),
                                                                                         ". ",
@@ -3888,7 +3888,7 @@ public static class WikiPageHtml5
                                                                                         ". 29 April 2010."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=FOX+News%3A+No+Flash+on+the+iPhone%3F+Apple%27s+Steve+Jobs+Finally+Explains+Why&rft.date=2010-04-29&rft.genre=article&rft_id=http%3A%2F%2Fwww.foxnews.com%2Fscitech%2F2010%2F04%2F29%2Fflash-iphone-apples-steve-jobs-finally-explains%2F&rft.jtitle=Fox+News&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3898,7 +3898,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-18")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-18")
@@ -3906,12 +3906,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("news")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("news"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://techland.time.com/2010/04/29/steve-jobs-flash-is-no-longer-necessary-and-other-musings/")
                                                                                             .Content("\"TIME: Steve Jobs: 'Flash is No Longer Necessary' and Other Musings\""),
                                                                                         ". ",
@@ -3919,7 +3919,7 @@ public static class WikiPageHtml5
                                                                                         ". 29 April 2010."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=TIME%3A+Steve+Jobs%3A+%98Flash+is+No+Longer+Necessary%99+and+Other+Musings&rft.date=2010-04-29&rft.genre=article&rft_id=http%3A%2F%2Ftechland.time.com%2F2010%2F04%2F29%2Fsteve-jobs-flash-is-no-longer-necessary-and-other-musings%2F&rft.jtitle=Time&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3929,7 +3929,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-19")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-19")
@@ -3937,12 +3937,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("news")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("news"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.cbsnews.com/8301-501465_162-20003744-501465.html")
                                                                                             .Content("\"Steve Jobs: Why Apple Banned Flash\""),
                                                                                         ". ",
@@ -3952,7 +3952,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=Steve+Jobs%3A+Why+Apple+Banned+Flash&rft.genre=article&rft_id=http%3A%2F%2Fwww.cbsnews.com%2F8301-501465_162-20003744-501465.html&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3962,7 +3962,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-20")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-20")
@@ -3970,18 +3970,18 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.fastcompany.com/1633336/steve-jobs-flash-adobe-apple-iphone-os-mac-software-open-standards-proprietary-open-letter")
                                                                                             .Content("\"FastCompany: Steve Jobs: Adobe's Flash Is Old PC History, Open Web Is the Future\""),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=FastCompany%3A+Steve+Jobs%3A+Adobe%27s+Flash+Is+Old+PC+History%2C+Open+Web+Is+the+Future&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.fastcompany.com%2F1633336%2Fsteve-jobs-flash-adobe-apple-iphone-os-mac-software-open-standards-proprietary-open-letter&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -3991,7 +3991,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-21")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-21")
@@ -3999,12 +3999,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.apple.com/hotnews/thoughts-on-flash/")
                                                                                             .Content(
                                                                                                 "\"",
@@ -4013,16 +4013,16 @@ public static class WikiPageHtml5
                                                                                                 "Thoughts on Flash', by Steve Jobs, CEO of Apple, Inc\""
                                                                                             ),
                                                                                         ". Apple.com",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=%27Thoughts+on+Flash%27%2C+by+Steve+Jobs%2C+CEO+of+Apple%2C+Inc&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.apple.com%2Fhotnews%2Fthoughts-on-flash%2F&rft.pub=Apple.com&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4032,7 +4032,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-22")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-22")
@@ -4040,25 +4040,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.lyquix.com/blog/122-is-html5-replacing-flash")
                                                                                             .Content("\"Is HTML5 Replacing Flash?\""),
                                                                                         ". Lyquix.com",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Is+HTML5+Replacing+Flash%3F&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.lyquix.com%2Fblog%2F122-is-html5-replacing-flash&rft.pub=Lyquix.com&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4068,7 +4068,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-23")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-23")
@@ -4076,19 +4076,19 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://blogs.adobe.com/digitalmedia/2011/11/flash-to-focus-on-pc-browsing-and-mobile-apps-adobe-to-more-aggressively-contribute-to-html5/")
                                                                                             .Content("\"Flash to Focus on PC Browsing and Mobile Apps; Adobe to More Aggressively Contribute to HTML5\""),
                                                                                         ". adobe.com",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("26 February"),
                                                                                                 " 2012"
                                                                                             ),
@@ -4097,7 +4097,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Flash+to+Focus+on+PC+Browsing+and+Mobile+Apps%3B+Adobe+to+More+Aggressively+Contribute+to+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fblogs.adobe.com%2Fdigitalmedia%2F2011%2F11%2Fflash-to-focus-on-pc-browsing-and-mobile-apps-adobe-to-more-aggressively-contribute-to-html5%2F&rft.pub=adobe.com&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4107,7 +4107,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-w3c2014-24")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-w3c2014_24-0")
@@ -4115,12 +4115,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2011/02/htmlwg-pr.html")
                                                                                             .Content("\"W3C Confirms May 2011 for HTML5 Last Call, Targets 2014 for HTML5 Standard\""),
                                                                                         ". ",
@@ -4128,17 +4128,17 @@ public static class WikiPageHtml5
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
                                                                                         ". 14 February 2011",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("18 February"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=W3C+Confirms+May+2011+for+HTML5+Last+Call%2C+Targets+2014+for+HTML5+Standard&rft.date=2011-02-14&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2011%2F02%2Fhtmlwg-pr.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4148,7 +4148,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-25")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-25")
@@ -4156,26 +4156,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Hickson, Ian. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://blog.whatwg.org/html-is-the-new-html5")
                                                                                             .Content("\"HTML Is the New HTML5\""),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("21 January"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=Hickson%2C+Ian&rft.btitle=HTML+Is+the+New+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fblog.whatwg.org%2Fhtml-is-the-new-html5&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4185,7 +4185,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-26")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-26")
@@ -4193,26 +4193,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.netmagazine.com/news/html5-gets-splits-122102")
                                                                                             .Content("\"HTML5 gets the splits.\""),
                                                                                         ". netmagazine.com",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("23 July"),
                                                                                                 " 2012"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+gets+the+splits.&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.netmagazine.com%2Fnews%2Fhtml5-gets-splits-122102&rft.pub=netmagazine.com&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4222,7 +4222,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-27")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-27")
@@ -4230,25 +4230,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/2012/CR-html5-20121217/")
                                                                                             .Content("\"HTML5\""),
                                                                                         ". W3.org. 2012-12-17",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2013-06-15")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5&rft.date=2012-12-17&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2F2012%2FCR-html5-20121217%2F&rft.pub=W3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4258,7 +4258,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-W3Crec-28")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-W3Crec_28-0")
@@ -4266,28 +4266,28 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://wiki.whatwg.org/wiki/FAQ#What.27s_this_I_hear_about_2022.3F")
                                                                                             .Content("\"When Will HTML5 Be Finished?\""),
                                                                                         ". ",
                                                                                         _i.Content("FAQ"),
                                                                                         ". WHAT Working Group",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("29 November"),
                                                                                                 " 2009"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=When+Will+HTML5+Be+Finished%3F&rft.genre=unknown&rft_id=http%3A%2F%2Fwiki.whatwg.org%2Fwiki%2FFAQ%23What.27s_this_I_hear_about_2022.3F&rft.jtitle=FAQ&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4297,7 +4297,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-29")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-29")
@@ -4305,29 +4305,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://dev.w3.org/html5/spec/")
                                                                                             .Content("\"HTML5: A vocabulary and associated APIs for HTML and XHTML (Editor's Draft).\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("12 April"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5%3A+A+vocabulary+and+associated+APIs+for+HTML+and+XHTML+%28Editor%27s+Draft%29.&rft.genre=unknown&rft_id=http%3A%2F%2Fdev.w3.org%2Fhtml5%2Fspec%2F&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4337,7 +4337,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-30")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-30")
@@ -4345,25 +4345,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/blog/news/archives/4074")
                                                                                             .Content("\"Call for Review: HTML5 Proposed Recommendation Published W3C News\""),
                                                                                         ". W3.org. 2014-09-16",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-09-27")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Call+for+Review%3A+HTML5+Proposed+Recommendation+Published+W3C+News&rft.date=2014-09-16&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2Fblog%2Fnews%2Farchives%2F4074&rft.pub=W3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4373,7 +4373,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-31")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-31")
@@ -4381,26 +4381,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/2014/10/html5-rec.html.en")
                                                                                             .Content("\"Open Web Platform Milestone Achieved with HTML5 Recommendation\""),
                                                                                         ". W3C. 28 October 2014",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("29 October"),
                                                                                                 " 2014"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Open+Web+Platform+Milestone+Achieved+with+HTML5+Recommendation&rft.date=2014-10-28&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2F2014%2F10%2Fhtml5-rec.html.en&rft.pub=W3C&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4410,7 +4410,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-32")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-32")
@@ -4418,27 +4418,27 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://www.w3.org/TR/2016/REC-html51-20161101/")
                                                                                             .Content("\"HTML 5.1 becomes W3C Recommendation\""),
                                                                                         ". ",
                                                                                         _i.Content("www.w3.org"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("26 February"),
                                                                                                 " 2017"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML+5.1+becomes+W3C+Recommendation&rft.genre=unknown&rft_id=https%3A%2F%2Fwww.w3.org%2FTR%2F2016%2FREC-html51-20161101%2F&rft.jtitle=www.w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4448,7 +4448,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-HTML5-201209-33")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-HTML5-201209_33-0")
@@ -4456,29 +4456,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://dev.w3.org/html5/decision-policy/html5-2014-plan.html#plan")
                                                                                             .Content("\"Plan 2014\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("23 September"),
                                                                                                 " 2012"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Plan+2014&rft.genre=unknown&rft_id=http%3A%2F%2Fdev.w3.org%2Fhtml5%2Fdecision-policy%2Fhtml5-2014-plan.html%23plan&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4488,7 +4488,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-34")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-34")
@@ -4496,10 +4496,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("free")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("free"))
                                                                                     ._href("https://www.w3.org/2008/webapps/wiki/PubStatus")
                                                                                     .Content("https://www.w3.org/2008/webapps/wiki/PubStatus")
                                                                             )
@@ -4507,7 +4507,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-35")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-35")
@@ -4515,25 +4515,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/2014/REC-html5-20141028/")
                                                                                             .Content("\"HTML5, A Vocabulary and Associated APIs for HTML and XHTML\""),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("10 March"),
                                                                                                 " 2015"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5%2C+A+Vocabulary+and+Associated+APIs+for+HTML+and+XHTML&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2F2014%2FREC-html5-20141028%2F&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4543,7 +4543,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-36")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-36")
@@ -4551,26 +4551,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Leslie Sikos. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.lesliesikos.com/html5-became-a-standard-html-5-1-and-html-5-2-on-the-way/")
                                                                                             .Content("\"HTML5 Became a Standard, HTML 5.1 and HTML 5.2 on the Way\""),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("10 March"),
                                                                                                 " 2015"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=Leslie+Sikos&rft.btitle=HTML5+Became+a+Standard%2C+HTML+5.1+and+HTML+5.2+on+the+Way&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.lesliesikos.com%2Fhtml5-became-a-standard-html-5-1-and-html-5-2-on-the-way%2F&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4580,7 +4580,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-37")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-37")
@@ -4588,11 +4588,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "Introduction to HTML5 ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.opera.com/articles/view/introduction-html5-video/")
                                                                                     .Content("video")
                                                                             )
@@ -4600,7 +4600,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-38")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-38")
@@ -4608,11 +4608,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "IBM Developer Works ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.ibm.com/developerworks/library/x-html5/?ca=dgr-lnxw01NewHTML")
                                                                                     .Content("New elements in HTML5: Structure and semantics")
                                                                             )
@@ -4620,7 +4620,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-39")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-39")
@@ -4628,11 +4628,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "ICAMD.org ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.amazon.com/dp/B003H05Q18")
                                                                                     .Content("Finalcut Silverlight Films that Videographers share Quicktime in a Flash : Video on the Web using HTML5 and other Codecs")
                                                                             )
@@ -4640,7 +4640,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-40")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-40")
@@ -4648,25 +4648,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html5/obsolete.html")
                                                                                             .Content("\"11 Obsolete features — HTML5\""),
                                                                                         ". W3C",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-03-11")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=11+Obsolete+features+%94+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml5%2Fobsolete.html&rft.pub=W3C&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4676,7 +4676,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-41")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-41")
@@ -4684,10 +4684,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.cs.tut.fi/~jkorpela/html5-dtd.html")
                                                                                     .Content("HTML5 DTD"),
                                                                                 ": \"HTML5 is not SGML-based, and there will be no official DTD for it.\""
@@ -4696,7 +4696,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-42")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-42")
@@ -4704,10 +4704,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.w3.org/html5/html-author/")
                                                                                     .Content("HTML 5 Reference"),
                                                                                 ": \"Although it is inspired by its SGML origins, in practice, it really only shares minor syntactic similarities.\" \"As HTML5 is no longer formally based upon SGML, the DOCTYPE no longer serves this purpose, and thus no longer needs to refer to a DTD.\""
@@ -4716,7 +4716,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-43")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-43")
@@ -4724,28 +4724,28 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Shannon Suetos (26 April 2010). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.instantshift.com/2010/04/26/html5-worth-the-hype/")
                                                                                             .Content("\"HTML5: Worth the Hype?\""),
                                                                                         ". ",
                                                                                         _i.Content("instantshift.com"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("21 October"),
                                                                                                 " 2012"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML5%3A+Worth+the+Hype%3F&rft.au=Shannon+Suetos&rft.date=2010-04-26&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.instantshift.com%2F2010%2F04%2F26%2Fhtml5-worth-the-hype%2F&rft.jtitle=instantshift.com&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4755,7 +4755,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-44")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-44")
@@ -4763,25 +4763,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.whatwg.org/specs/web-forms/current-work/")
                                                                                             .Content("\"Web Forms 2.0\""),
                                                                                         ". 2009-01-05",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-02-11")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Web+Forms+2.0&rft.date=2009-01-05&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.whatwg.org%2Fspecs%2Fweb-forms%2Fcurrent-work%2F&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4792,7 +4792,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-45")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-45")
@@ -4800,12 +4800,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.whatwg.org/specs/web-apps/current-work/multipage/forms.html")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -4813,7 +4813,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.whatwg.org%2Fspecs%2Fweb-apps%2Fcurrent-work%2Fmultipage%2Fforms.html&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4823,7 +4823,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-46")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-46")
@@ -4831,18 +4831,18 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "Sergey Mavrody \"Sergey's HTML5 & CSS3 Quick Reference. 2nd Edition\". Belisso Corp., 2012. ",
                                                                                 _a._href("/wiki/Special:BookSources/9780983386728")
-                                                                                    ._class("internal")._class("mw-magiclink-isbn")
+                                                                                    ._class(new CssClass("internal"))._class(new CssClass("mw-magiclink-isbn"))
                                                                                     .Content("ISBN 978-0-9833867-2-8")
                                                                             )
                                                                     ),
                                                                 "\n",
                                                                 _li._id("cite_note-47")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-47")
@@ -4850,10 +4850,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.w3.org/html5/html4-differences/#syntax")
                                                                                     .Content("\"HTML5 Differences from HTML4 – APIs\""),
                                                                                 ". ",
@@ -4866,7 +4866,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-48")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-48")
@@ -4874,15 +4874,15 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.syntaxxx.com/get-started-with-html5-canvas/")
                                                                                     .Content("\"Get Started with HTML5 Canvas\""),
                                                                                 ". ",
                                                                                 _a._href("/w/index.php?title=Syntaxxx&action=edit&redlink=1")
-                                                                                    ._class("new")
+                                                                                    ._class(new CssClass("new"))
                                                                                     ._title("Syntaxxx (page does not exist)")
                                                                                     .Content("Syntaxxx"),
                                                                                 "."
@@ -4891,7 +4891,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-49")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-49")
@@ -4899,12 +4899,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/embedded-content.html#media-elements")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -4912,7 +4912,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fembedded-content.html%23media-elements&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4922,7 +4922,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-50")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-50")
@@ -4930,10 +4930,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.w3.org/TR/offline-webapps/")
                                                                                     .Content("\"Offline Web Applications\""),
                                                                                 ". ",
@@ -4946,7 +4946,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-51")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-51")
@@ -4954,12 +4954,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/interaction.html#editing-2")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -4967,7 +4967,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Finteraction.html%23editing-2&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -4977,7 +4977,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-52")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-52")
@@ -4985,12 +4985,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/interaction.html#dnd")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -4998,7 +4998,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Finteraction.html%23dnd&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5008,7 +5008,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-53")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-53")
@@ -5016,12 +5016,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html-markup/elements.html#elements")
                                                                                             .Content("\"HTML elements, HTML5\""),
                                                                                         ". ",
@@ -5029,7 +5029,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML+elements%2C+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml-markup%2Felements.html%23elements&rft.jtitle=w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5039,7 +5039,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-54")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-54")
@@ -5047,12 +5047,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/embedded-content.html#mime-types")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -5060,7 +5060,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fembedded-content.html%23mime-types&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5070,7 +5070,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-55")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-55")
@@ -5078,12 +5078,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/webappapis.html#custom-handlers")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -5091,7 +5091,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fwebappapis.html%23custom-handlers&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5101,7 +5101,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-56")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-56")
@@ -5109,12 +5109,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://html.spec.whatwg.org/multipage/microdata.html#microdata")
                                                                                             .Content("\"HTML\""),
                                                                                         ". ",
@@ -5122,7 +5122,7 @@ public static class WikiPageHtml5
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fmicrodata.html%23microdata&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5132,7 +5132,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-57")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-57")
@@ -5140,10 +5140,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.w3.org/html5/postmsg/")
                                                                                     .Content("\"HTML5 Web Messaging\""),
                                                                                 ". ",
@@ -5156,7 +5156,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-58")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-58")
@@ -5164,10 +5164,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.w3.org/html5/webstorage/")
                                                                                     .Content("\"Web Storage Specification\""),
                                                                                 ". ",
@@ -5180,7 +5180,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-59")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-59")
@@ -5188,26 +5188,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "href. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.whatwg.org/specs/web-apps/current-work/multipage/introduction.html#is-this-html5")
                                                                                             .Content("\"1 Introduction — HTML Standard\""),
                                                                                         ". Whatwg.org",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=href&rft.btitle=1+Introduction+%94+HTML+Standard&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.whatwg.org%2Fspecs%2Fweb-apps%2Fcurrent-work%2Fmultipage%2Fintroduction.html%23is-this-html5&rft.pub=Whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5217,7 +5217,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-60")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-60")
@@ -5225,10 +5225,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://dev.w3.org/html5/webdatabase/")
                                                                                     .Content("\"Web SQL Database\""),
                                                                                 ". ",
@@ -5241,7 +5241,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-61")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-61")
@@ -5249,10 +5249,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.w3.org/TR/IndexedDB/")
                                                                                     .Content("\"Indexed Database\""),
                                                                                 ". ",
@@ -5265,7 +5265,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-62")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-62")
@@ -5273,25 +5273,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/FileAPI/")
                                                                                             .Content("\"File API\""),
                                                                                         ". W3.org",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=File+API&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2FFileAPI%2F&rft.pub=W3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5301,7 +5301,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-63")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-63")
@@ -5309,10 +5309,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.w3.org/TR/FileAPI/")
                                                                                     .Content("\"File API\""),
                                                                                 ". ",
@@ -5325,7 +5325,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-64")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-64")
@@ -5333,10 +5333,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.w3.org/TR/file-system-api/")
                                                                                     .Content("\"Filesystem API\""),
                                                                                 ". ",
@@ -5349,7 +5349,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-65")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-65")
@@ -5357,10 +5357,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.w3.org/TR/file-writer-api/")
                                                                                     .Content("\"File API: Writer\""),
                                                                                 ". ",
@@ -5373,7 +5373,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-66")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-66")
@@ -5381,25 +5381,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html")
                                                                                             .Content("\"Web Audio API\""),
                                                                                         ". Dvcs.w3.org",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Web+Audio+API&rft.genre=unknown&rft_id=https%3A%2F%2Fdvcs.w3.org%2Fhg%2Faudio%2Fraw-file%2Ftip%2Fwebaudio%2Fspecification.html&rft.pub=Dvcs.w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5409,7 +5409,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-67")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-67")
@@ -5417,19 +5417,19 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "MDN. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://developer.mozilla.org/en-US/docs/Web/API/element.classList")
                                                                                             .Content("\"element.classList\""),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=MDN&rft.btitle=element.classList&rft.genre=unknown&rft_id=https%3A%2F%2Fdeveloper.mozilla.org%2Fen-US%2Fdocs%2FWeb%2FAPI%2Felement.classList&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5439,7 +5439,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-68")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-68")
@@ -5447,11 +5447,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "Web Cryptography Candidate Recommendation: ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("free")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("free"))
                                                                                     ._href("https://www.w3.org/TR/WebCryptoAPI/")
                                                                                     .Content("https://www.w3.org/TR/WebCryptoAPI/")
                                                                             )
@@ -5459,7 +5459,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-69")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-69")
@@ -5467,11 +5467,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "WebRTC Working Draft: ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("free")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("free"))
                                                                                     ._href("https://www.w3.org/TR/webrtc/")
                                                                                     .Content("https://www.w3.org/TR/webrtc/")
                                                                             )
@@ -5479,7 +5479,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-70")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-70")
@@ -5487,25 +5487,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Williamson, James (2010). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.lynda.com/home/DisplayCourse.aspx?lpk2=67161")
                                                                                             .Content("\"What HTML5 is (and what it isn't)\""),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-14")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=James&rft.aulast=Williamson&rft.btitle=What+HTML5+is+%28and+what+it+isn%27t%29&rft.date=2010&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.lynda.com%2Fhome%2FDisplayCourse.aspx%3Flpk2%3D67161&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5515,7 +5515,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-71")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-71")
@@ -5523,30 +5523,30 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "van Kesteren, Anne. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://dev.w3.org/html5/html4-differences/#syntax")
                                                                                             .Content("\"HTML5 differences from HTML4 – W3C Working Draft 19 October 2010\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2 November"),
                                                                                                 " 2010"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Anne&rft.aulast=van+Kesteren&rft.btitle=HTML5+differences+from+HTML4+%93+W3C+Working+Draft+19+October+2010&rft.genre=unknown&rft_id=http%3A%2F%2Fdev.w3.org%2Fhtml5%2Fhtml4-differences%2F%23syntax&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5556,7 +5556,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-w3c-72")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-w3c_72-0")
@@ -5564,27 +5564,27 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Graff, Eliot. ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html-polyglot/")
                                                                                             .Content("\"Polyglot Markup: HTML-Compatible XHTML Documents\""),
                                                                                         ". W3C",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("6 July"),
                                                                                                 " 2013"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Eliot&rft.aulast=Graff&rft.btitle=Polyglot+Markup%3A+HTML-Compatible+XHTML+Documents&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml-polyglot%2F&rft.pub=W3C&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5594,7 +5594,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-whatfaq-73")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-whatfaq_73-0")
@@ -5604,27 +5604,27 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://wiki.whatwg.org/wiki/FAQ#Why_does_this_new_HTML_spec_legitimise_tag_soup.3F")
                                                                                             .Content("\"FAQ – WHATWG Wiki\""),
                                                                                         ". ",
                                                                                         _i.Content("WHATWG"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("26 August"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=FAQ+%93+WHATWG+Wiki&rft.genre=unknown&rft_id=http%3A%2F%2Fwiki.whatwg.org%2Fwiki%2FFAQ%23Why_does_this_new_HTML_spec_legitimise_tag_soup.3F&rft.jtitle=WHATWG&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5634,7 +5634,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-74")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-74")
@@ -5642,26 +5642,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.binvisions.com/articles/how-many-percentage-web-sites-using-html5")
                                                                                             .Content("\"Percentage of Web sites Using HTML5\""),
                                                                                         ". binvisions",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("21 October"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Percentage+of+Web+sites+Using+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.binvisions.com%2Farticles%2Fhow-many-percentage-web-sites-using-html5&rft.pub=binvisions&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5671,7 +5671,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-75")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-75")
@@ -5679,11 +5679,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "\"",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("http://www.incore.com/Fortune500HTML5/#infographic")
                                                                                     .Content("HTML5 Popularity Among Fortune 500 Companies"),
                                                                                 "\". INCORE. Retrieved 5 March 2013."
@@ -5692,7 +5692,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-76")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-76")
@@ -5700,29 +5700,29 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("//www.w3.org/wiki/HTML5_form_additions")
                                                                                             .Content("\"HTML5 form additions\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("13 October"),
                                                                                                 " 2014"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+form+additions&rft.genre=unknown&rft_id=%2F%2Fwww.w3.org%2Fwiki%2FHTML5_form_additions&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5732,7 +5732,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-77")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-77")
@@ -5740,12 +5740,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/TR/html5-diff/")
                                                                                             .Content("\"HTML5 Differences from HTML4\""),
                                                                                         ". ",
@@ -5755,17 +5755,17 @@ public static class WikiPageHtml5
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
                                                                                         ". 14 September 2012",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("29 September"),
                                                                                                 " 2012"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML5+Differences+from+HTML4&rft.date=2012-09-14&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml5-diff%2F&rft.jtitle=FAQ&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5775,7 +5775,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-logo-faq-78")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-logo-faq_78-0")
@@ -5785,22 +5785,22 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/html/logo/faq.html")
                                                                                             .Content("\"W3C HTML5 Logo FAQ\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                             ._title("World Wide Web Consortium")
                                                                                             .Content("World Wide Web Consortium"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("21 January"),
                                                                                                 " 2011"
                                                                                             ),
@@ -5808,7 +5808,7 @@ public static class WikiPageHtml5
                                                                                         _q.Content("Is this W3C's \"official\" logo for HTML5? Yes, as of 1 April 2011.")
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=W3C+HTML5+Logo+FAQ&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2Fhtml%2Flogo%2Ffaq.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5818,7 +5818,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-waspopenletter-79")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-waspopenletter_79-0")
@@ -5828,30 +5828,30 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.webstandards.org/2011/01/18/regarding-the-html5-logo")
                                                                                             .Content("\"HTML5 Logo: Be Proud, But Don't Muddy the Waters!\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/The_Web_Standards_Project")
-                                                                                            ._class("mw-redirect")
+                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                             ._title("The Web Standards Project")
                                                                                             .Content("The Web Standards Project"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("22 January"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+Logo%3A+Be+Proud%2C+But+Don%27t+Muddy+the+Waters%21&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.webstandards.org%2F2011%2F01%2F18%2Fregarding-the-html5-logo&rft.pub=The+Web+Standards+Project&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5861,7 +5861,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-80")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-80")
@@ -5869,26 +5869,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.w3.org/QA/2011/01/the_html5_logo_conversation.html")
                                                                                             .Content("\"The HTML5 Logo Conversation\""),
                                                                                         ". World Wide Web Consortium",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("21 January"),
                                                                                                 " 2011"
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=The+HTML5+Logo+Conversation&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FQA%2F2011%2F01%2Fthe_html5_logo_conversation.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5898,7 +5898,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-81")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-81")
@@ -5906,10 +5906,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("https://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html")
                                                                                     .Content("Encrypted Media Extensions"),
                                                                                 " draft specification of the W3C"
@@ -5918,7 +5918,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-82")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-82")
@@ -5926,13 +5926,13 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Peter Bright (16 April 2013). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://arstechnica.com/information-technology/2013/04/netflix-coming-to-html5-just-as-soon-as-the-drm-ducks-are-in-a-row/")
                                                                                             .Content("\"Netflix coming to HTML5 just as soon as the DRM ducks are in a row\""),
                                                                                         ". Ars Technica."
@@ -5940,7 +5940,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=Peter+Bright&rft.btitle=Netflix+coming+to+HTML5+just+as+soon+as+the+DRM+ducks+are+in+a+row&rft.date=2013-04-16&rft.genre=unknown&rft_id=http%3A%2F%2Farstechnica.com%2Finformation-technology%2F2013%2F04%2Fnetflix-coming-to-html5-just-as-soon-as-the-drm-ducks-are-in-a-row%2F&rft.pub=Ars+Technica&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5950,7 +5950,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-83")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-83")
@@ -5958,19 +5958,19 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Manu Sporny (26 January 2013). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://manu.sporny.org/2013/drm-in-html5/")
                                                                                             .Content("\"DRM in HTML5\""),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=Manu+Sporny&rft.btitle=DRM+in+HTML5&rft.date=2013-01-26&rft.genre=unknown&rft_id=http%3A%2F%2Fmanu.sporny.org%2F2013%2Fdrm-in-html5%2F&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -5980,7 +5980,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-84")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-84")
@@ -5988,12 +5988,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://www.defectivebydesign.org/no-drm-in-html5")
                                                                                             .Content("\"Tell W3C: We don't want the Hollyweb\""),
                                                                                         ". ",
@@ -6003,7 +6003,7 @@ public static class WikiPageHtml5
                                                                                         ". May 2013."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Tell+W3C%3A+We+don%27t+want+the+Hollyweb&rft.date=2013-05&rft.genre=unknown&rft_id=https%3A%2F%2Fwww.defectivebydesign.org%2Fno-drm-in-html5&rft.pub=Free+Software+Foundation&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6013,7 +6013,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-85")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-85")
@@ -6021,12 +6021,12 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.bbc.co.uk/news/technology-22714209")
                                                                                             .Content(
                                                                                                 "\"HTML5 webpage locks 'would stifle innovation",
@@ -6041,7 +6041,7 @@ public static class WikiPageHtml5
                                                                                         ". 30 May 2013."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+webpage+locks+%27would+stifle+innovation%27&rft.date=2013-05-30&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.bbc.co.uk%2Fnews%2Ftechnology-22714209&rft.pub=BBC+News+Online&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6051,7 +6051,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-86")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-86")
@@ -6059,19 +6059,19 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.april.org/une-coalition-de-vingt-sept-organisations-demande-au-w3c-de-garder-les-menottes-numeriques-drm-hors")
                                                                                             .Content("\"Une coalition de vingt-sept organisations demande au W3C de garder les menottes numériques (DRM) hors des standards du Web\""),
                                                                                         ". 2013-04-24",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-14")
                                                                                             ),
                                                                                         "."
@@ -6079,7 +6079,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Une+coalition+de+vingt-sept+organisations+demande+au+W3C+de+garder+les+menottes+num%C3%A9riques+%28DRM%29+hors+des+standards+du+Web&rft.date=2013-04-24&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.april.org%2Fune-coalition-de-vingt-sept-organisations-demande-au-w3c-de-garder-les-menottes-numeriques-drm-hors&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6089,7 +6089,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-87")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-87")
@@ -6097,11 +6097,11 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 "Tell W3C: We don't want the Hollyweb ",
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("free")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("free"))
                                                                                     ._href("http://www.defectivebydesign.org/no-drm-in-html5")
                                                                                     .Content("http://www.defectivebydesign.org/no-drm-in-html5")
                                                                             )
@@ -6109,7 +6109,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-88")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-88")
@@ -6117,26 +6117,26 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Stallman, Richard (2013-05-02). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.fsf.org/blogs/rms/w3c-soul-at-stake")
                                                                                             .Content("\"The W3C's Soul at Stake\""),
                                                                                         ". The Free Software Foundation",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-14")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Richard&rft.aulast=Stallman&rft.btitle=The+W3C%27s+Soul+at+Stake&rft.date=2013-05-02&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.fsf.org%2Fblogs%2Frms%2Fw3c-soul-at-stake&rft.pub=The+Free+Software+Foundation&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6146,7 +6146,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-89")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-89")
@@ -6154,25 +6154,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Lord, Timothy (2013-04-16). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://news.slashdot.org/story/13/04/16/1228245/netflix-wants-to-go-html5-but-not-without-drm")
                                                                                             .Content("\"Netflix Wants to Go HTML5, but Not Without DRM\""),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-14")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Timothy&rft.aulast=Lord&rft.btitle=Netflix+Wants+to+Go+HTML5%2C+but+Not+Without+DRM&rft.date=2013-04-16&rft.genre=unknown&rft_id=http%3A%2F%2Fnews.slashdot.org%2Fstory%2F13%2F04%2F16%2F1228245%2Fnetflix-wants-to-go-html5-but-not-without-drm&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6182,7 +6182,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-90")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-90")
@@ -6190,25 +6190,25 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("//lists.w3.org/Archives/Public/public-html-admin/2013Sep/0129.html")
                                                                                             .Content("\"New Charter for the HTML Working Group from Philippe Le Hegaret on 2013-09-30 (public-html-admin@w3.org from September 2013)\""),
                                                                                         ". Lists.w3.org. 2013-09-30",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-01-08")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=New+Charter+for+the+HTML+Working+Group+from+Philippe+Le+Hegaret+on+2013-09-30+%28public-html-admin%40w3.org+from+September+2013%29&rft.date=2013-09-30&rft.genre=unknown&rft_id=%2F%2Flists.w3.org%2FArchives%2FPublic%2Fpublic-html-admin%2F2013Sep%2F0129.html&rft.pub=Lists.w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6218,7 +6218,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-lowering-your-standards-91")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-lowering-your-standards_91-0")
@@ -6228,29 +6228,29 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Danny O'Brien (2013-10-02). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://www.eff.org/deeplinks/2013/10/lowering-your-standards")
                                                                                             .Content("\"Lowering Your Standards: DRM and the Future of the W3C\""),
                                                                                         ". ",
                                                                                         _a._href("/wiki/Electronic_Frontier_Foundation")
                                                                                             ._title("Electronic Frontier Foundation")
                                                                                             .Content("Electronic Frontier Foundation"),
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2013-10-03")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.au=Danny+O%27Brien&rft.btitle=Lowering+Your+Standards%3A+DRM+and+the+Future+of+the+W3C&rft.date=2013-10-02&rft.genre=unknown&rft_id=https%3A%2F%2Fwww.eff.org%2Fdeeplinks%2F2013%2F10%2Flowering-your-standards&rft.pub=Electronic+Frontier+Foundation&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6260,7 +6260,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-92")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-92")
@@ -6268,33 +6268,33 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Manu Sporny (2013-01-26). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://web.archive.org/web/20140425044032/http://manu.sporny.org/2013/drm-in-html5/")
                                                                                             .Content("\"DRM in HTML5\""),
                                                                                         ". ",
                                                                                         _i.Content("The Beautiful, Tormented Machine"),
                                                                                         ". Manu Sporny. Archived from ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://manu.sporny.org/2013/drm-in-html5/")
                                                                                             .Content("the original"),
                                                                                         " on 2014-04-25",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-16")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=DRM+in+HTML5&rft.au=Manu+Sporny&rft.date=2013-01-26&rft.genre=unknown&rft_id=http%3A%2F%2Fmanu.sporny.org%2F2013%2Fdrm-in-html5%2F&rft.jtitle=The+Beautiful%2C+Tormented+Machine&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6304,7 +6304,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-93")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-93")
@@ -6312,13 +6312,13 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Scott Gilbertson (2013-02-12). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.webcitation.org/6FfDz0RS8")
                                                                                             .Content("\"DRM for the Web? Say It Ain't So\""),
                                                                                         ". ",
@@ -6329,20 +6329,20 @@ public static class WikiPageHtml5
                                                                                         ),
                                                                                         ". Condé Nast. Archived from ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://www.webmonkey.com/2013/02/drm-for-the-web-say-it-aint-so/")
                                                                                             .Content("the original"),
                                                                                         " on 2013-04-06",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2013-03-21")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=DRM+for+the+Web%3F+Say+It+Ain%99t+So&rft.au=Scott+Gilbertson&rft.date=2013-02-12&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.webmonkey.com%2F2013%2F02%2Fdrm-for-the-web-say-it-aint-so%2F&rft.jtitle=Webmonkey&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6352,7 +6352,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-94")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-94")
@@ -6360,18 +6360,18 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://googlechromereleases.blogspot.be/2013/02/stable-channel-update-for-chrome-os_21.html")
                                                                                             .Content("\"Releasenotes for Google Chrome 25.0.1364.87\""),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=Releasenotes+for+Google+Chrome+25.0.1364.87&rft.genre=unknown&rft_id=http%3A%2F%2Fgooglechromereleases.blogspot.be%2F2013%2F02%2Fstable-channel-update-for-chrome-os_21.html&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6381,7 +6381,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-95")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-95")
@@ -6389,18 +6389,18 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("http://techblog.netflix.com/2013/06/html5-video-in-ie-11-on-windows-81.html")
                                                                                             .Content("\"HTML5 Video in IE 11 on Windows 8.1\""),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=HTML5+Video+in+IE+11+on+Windows+8.1&rft.genre=unknown&rft_id=http%3A%2F%2Ftechblog.netflix.com%2F2013%2F06%2Fhtml5-video-in-ie-11-on-windows-81.html&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6410,7 +6410,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-96")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-96")
@@ -6418,10 +6418,10 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
                                                                                 _a._rel("nofollow")
-                                                                                    ._class("external")._class("text")
+                                                                                    ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("https://blogs.adobe.com/standards/2013/06/19/adobe-support-for-encrypted-media-extensions/")
                                                                                     .Content("Adobe Support for Encrypted Media Extensions"),
                                                                                 " Adobe.com. 19 June 2013."
@@ -6430,7 +6430,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-gal-97")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-gal_97-0")
@@ -6440,26 +6440,26 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Gal, Andreas (2014-05-14). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://hacks.mozilla.org/2014/05/reconciling-mozillas-mission-and-w3c-eme/")
                                                                                             .Content("\"Reconciling Mozilla's Mission and W3C EME\""),
                                                                                         ". Mozilla",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-20")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Andreas&rft.aulast=Gal&rft.btitle=Reconciling+Mozilla%27s+Mission+and+W3C+EME&rft.date=2014-05-14&rft.genre=unknown&rft_id=https%3A%2F%2Fhacks.mozilla.org%2F2014%2F05%2Freconciling-mozillas-mission-and-w3c-eme%2F&rft.pub=Mozilla&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6469,7 +6469,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-baker-98")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 "^ ",
                                                                                 _a._href("#cite_ref-baker_98-0")
@@ -6479,26 +6479,26 @@ public static class WikiPageHtml5
                                                                                     .Content(_sup.Content(_i.Content(_b.Content("b"))))
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Baker, Mitchell (2014-05-14). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://blog.mozilla.org/blog/2014/05/14/drm-and-the-challenge-of-serving-users/")
                                                                                             .Content("\"DRM and the Challenge of Serving Users\""),
                                                                                         ". Mozilla",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-20")
                                                                                             ),
                                                                                         "."
                                                                                     ),
                                                                                 _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Mitchell&rft.aulast=Baker&rft.btitle=DRM+and+the+Challenge+of+Serving+Users&rft.date=2014-05-14&rft.genre=unknown&rft_id=https%3A%2F%2Fblog.mozilla.org%2Fblog%2F2014%2F05%2F14%2Fdrm-and-the-challenge-of-serving-users%2F&rft.pub=Mozilla&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6508,7 +6508,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-99")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-99")
@@ -6516,20 +6516,20 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         "Doctorow, Cory (2014-05-14). ",
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://www.theguardian.com/technology/2014/may/14/firefox-closed-source-drm-video-browser-cory-doctorow")
                                                                                             .Content("\"Firefox's adoption of closed-source DRM breaks my heart\""),
                                                                                         ". The Guardian",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-20")
                                                                                             ),
                                                                                         "."
@@ -6537,7 +6537,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.aufirst=Cory&rft.aulast=Doctorow&rft.btitle=Firefox%27s+adoption+of+closed-source+DRM+breaks+my+heart&rft.date=2014-05-14&rft.genre=unknown&rft_id=https%3A%2F%2Fwww.theguardian.com%2Ftechnology%2F2014%2Fmay%2F14%2Ffirefox-closed-source-drm-video-browser-cory-doctorow&rft.pub=The+Guardian&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6547,7 +6547,7 @@ public static class WikiPageHtml5
                                                                 "\n",
                                                                 _li._id("cite_note-100")
                                                                     .Content(
-                                                                        _span._class("mw-cite-backlink")
+                                                                        _span._class(new CssClass("mw-cite-backlink"))
                                                                             .Content(
                                                                                 _b.Content(
                                                                                     _a._href("#cite_ref-100")
@@ -6555,19 +6555,19 @@ public static class WikiPageHtml5
                                                                                 )
                                                                             ),
                                                                         " ",
-                                                                        _span._class("reference-text")
+                                                                        _span._class(new CssClass("reference-text"))
                                                                             .Content(
-                                                                                _cite._class("citation")._class("web")
+                                                                                _cite._class(new CssClass("citation"))._class(new CssClass("web"))
                                                                                     .Content(
                                                                                         _a._rel("nofollow")
-                                                                                            ._class("external")._class("text")
+                                                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                             ._href("https://fsf.org/news/fsf-condemns-partnership-between-mozilla-and-adobe-to-support-digital-restrictions-management")
                                                                                             .Content("\"FSF condemns partnership between Mozilla and Adobe to support Digital Rights Management\""),
                                                                                         ". Free Software Foundation. 2014-05-14",
-                                                                                        _span._class("reference-accessdate")
+                                                                                        _span._class(new CssClass("reference-accessdate"))
                                                                                             .Content(
                                                                                                 ". Retrieved ",
-                                                                                                _span._class("nowrap")
+                                                                                                _span._class(new CssClass("nowrap"))
                                                                                                     .Content("2014-05-20")
                                                                                             ),
                                                                                         "."
@@ -6575,7 +6575,7 @@ public static class WikiPageHtml5
                                                                                 _span._title(
                                                                                         "ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=FSF+condemns+partnership+between+Mozilla+and+Adobe+to+support+Digital+Rights+Management&rft.date=2014-05-14&rft.genre=unknown&rft_id=https%3A%2F%2Ffsf.org%2Fnews%2Ffsf-condemns-partnership-between-mozilla-and-adobe-to-support-digital-restrictions-management&rft.pub=Free+Software+Foundation&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook"
                                                                                     )
-                                                                                    ._class("Z3988")
+                                                                                    ._class(new CssClass("Z3988"))
                                                                                     .Content(
                                                                                         _span._style("display:none;")
                                                                                             .Content(" ")
@@ -6588,52 +6588,52 @@ public static class WikiPageHtml5
                                                     ),
                                                 "\n",
                                                 _h2.Content(
-                                                    _span._class("mw-headline")
+                                                    _span._class(new CssClass("mw-headline"))
                                                         ._id("External_links")
                                                         .Content("External links"),
-                                                    _span._class("mw-editsection")
+                                                    _span._class(new CssClass("mw-editsection"))
                                                         .Content(
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("["),
                                                             _a._href("/w/index.php?title=HTML5&action=edit&section=18")
                                                                 ._title("Edit section: External links")
                                                                 .Content("edit"),
-                                                            _span._class("mw-editsection-bracket")
+                                                            _span._class(new CssClass("mw-editsection-bracket"))
                                                                 .Content("]")
                                                         )
                                                 ),
                                                 "\n",
                                                 _table.Attribute("role", "presentation")
-                                                    ._class("mbox-small")._class("plainlinks")._class("sistersitebox")
+                                                    ._class(new CssClass("mbox-small"))._class(new CssClass("plainlinks"))._class(new CssClass("sistersitebox"))
                                                     ._style("background-color:#f9f9f9;border:1px solid #aaa;color:#000")
                                                     .Content(
                                                         "\n",
                                                         _tbody.Content(
                                                             _tr.Content(
                                                                 "\n",
-                                                                _td._class("mbox-image")
+                                                                _td._class(new CssClass("mbox-image"))
                                                                     .Content(
                                                                         _a._href("/wiki/File:Commons-logo.svg")
-                                                                            ._class("image")
+                                                                            ._class(new CssClass("image"))
                                                                             .Content(
                                                                                 _img._alt("")
                                                                                     ._src("//upload.wikimedia.org/wikipedia/en/thumb/4/4a/Commons-logo.svg/30px-Commons-logo.svg.png")
                                                                                     ._width("30")
                                                                                     ._height("40")
-                                                                                    ._class("noviewer")
+                                                                                    ._class(new CssClass("noviewer"))
                                                                                     ._srcset("//upload.wikimedia.org/wikipedia/en/thumb/4/4a/Commons-logo.svg/45px-Commons-logo.svg.png 1.5x, //upload.wikimedia.org/wikipedia/en/thumb/4/4a/Commons-logo.svg/59px-Commons-logo.svg.png 2x")
                                                                                     .Attribute("data-file-width", "1024")
                                                                                     .Attribute("data-file-height", "1376")
                                                                             )
                                                                     ),
                                                                 "\n",
-                                                                _td._class("mbox-text")._class("plainlist")
+                                                                _td._class(new CssClass("mbox-text"))._class(new CssClass("plainlist"))
                                                                     .Content(
                                                                         "Wikimedia Commons has media related to ",
                                                                         _i.Content(
                                                                             _b.Content(
                                                                                 _a._href("https://commons.wikimedia.org/wiki/Category:HTML5")
-                                                                                    ._class("extiw")
+                                                                                    ._class(new CssClass("extiw"))
                                                                                     ._title("commons:Category:HTML5")
                                                                                     .Content("HTML5")
                                                                             )
@@ -6646,7 +6646,7 @@ public static class WikiPageHtml5
                                                         )
                                                     ),
                                                 "\n",
-                                                _table._class("vertical-navbox")._class("nowraplinks")._class("infobox")
+                                                _table._class(new CssClass("vertical-navbox"))._class(new CssClass("nowraplinks"))._class(new CssClass("infobox"))
                                                     ._style("float:right;clear:right;width:auto;margin:0 0 1.0em 1.0em;background:#f9f9f9;border:1px solid #aaa;padding:0.2em;border-spacing:0.4em 0;text-align:center;line-height:1.4em;font-size:88%")
                                                     .Content(
                                                         "\n",
@@ -6656,7 +6656,7 @@ public static class WikiPageHtml5
                                                                 _td._style("padding-top:0.4em;line-height:1.2em")
                                                                     .Content(
                                                                         _a._href("/wiki/Wikipedia:LIBRARY")
-                                                                            ._class("mw-redirect")
+                                                                            ._class(new CssClass("mw-redirect"))
                                                                             ._title("Wikipedia:LIBRARY")
                                                                             .Content("Library resources"),
                                                                         " about",
@@ -6671,20 +6671,20 @@ public static class WikiPageHtml5
                                                             "\n",
                                                             _tr.Content(
                                                                 "\n",
-                                                                _td._class("plainlist")
+                                                                _td._class(new CssClass("plainlist"))
                                                                     ._style("padding:0 0.1em 0.4em;text-align:left;")
                                                                     .Content(
                                                                         "\n",
                                                                         _ul.Content(
                                                                             "\n",
                                                                             _li.Content(
-                                                                                _a._class("external")._class("text")
+                                                                                _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("//tools.wmflabs.org/ftl/cgi-bin/ftl?st=wp&su=HTML5")
                                                                                     .Content("Resources in your library")
                                                                             ),
                                                                             "\n",
                                                                             _li.Content(
-                                                                                _a._class("external")._class("text")
+                                                                                _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                     ._href("//tools.wmflabs.org/ftl/cgi-bin/ftl?st=wp&su=HTML5&library=0CHOOSE0")
                                                                                     .Content("Resources in other libraries")
                                                                             ),
@@ -6702,7 +6702,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._rel("nofollow")
-                                                            ._class("external")._class("text")
+                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                             ._href("http://www.w3.org/html/wg/")
                                                             .Content("HTML Working Group"),
                                                         ", HTML5 publications, specifications, and notes"
@@ -6710,7 +6710,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._rel("nofollow")
-                                                            ._class("external")._class("text")
+                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                             ._href("http://www.html5rocks.com/")
                                                             .Content("HTML5 Rocks"),
                                                         ", A comprehensive HTML5 resource for developers by ",
@@ -6721,7 +6721,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._rel("nofollow")
-                                                            ._class("external")._class("text")
+                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                             ._href("https://developer.mozilla.org/en-US/demos/")
                                                             .Content("Mozilla Demo Studio"),
                                                         ", Demos of HTML5 implementations"
@@ -6729,7 +6729,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._rel("nofollow")
-                                                            ._class("external")._class("text")
+                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                             ._href("http://www.capwell.nl/software-ontwikkeling/ria-html5-specialisten/artikelen/html5-frontend-comparison-58")
                                                             .Content("HTML5 Frontend Comparison"),
                                                         ", Sheet showing HTML5 vs. other main frontend techniques"
@@ -6737,7 +6737,7 @@ public static class WikiPageHtml5
                                                     "\n",
                                                     _li.Content(
                                                         _a._rel("nofollow")
-                                                            ._class("external")._class("text")
+                                                            ._class(new CssClass("external"))._class(new CssClass("text"))
                                                             ._href("https://www.w3.org/Bugs/Public/buglist.cgi?product=HTML.next")
                                                             .Content("HTML.next"),
                                                         ", Feature requests for future versions of HTML"
@@ -6746,12 +6746,12 @@ public static class WikiPageHtml5
                                                 ),
                                                 "\n",
                                                 _div.Attribute("role", "navigation")
-                                                    ._class("navbox")
+                                                    ._class(new CssClass("navbox"))
                                                     .Attribute("aria-labelledby", "Rich_Internet_applications")
                                                     ._style("padding:3px")
                                                     .Content(
                                                         "\n",
-                                                        _table._class("nowraplinks")._class("hlist")._class("collapsible")._class("autocollapse")._class("navbox-inner")
+                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("hlist"))._class(new CssClass("collapsible"))._class(new CssClass("autocollapse"))._class(new CssClass("navbox-inner"))
                                                             ._style("border-spacing:0;background:transparent;color:inherit")
                                                             .Content(
                                                                 "\n",
@@ -6759,16 +6759,16 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("col")
-                                                                            ._class("navbox-title")
+                                                                            ._class(new CssClass("navbox-title"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
-                                                                                _div._class("plainlinks")._class("hlist")._class("navbar")._class("mini")
+                                                                                _div._class(new CssClass("plainlinks"))._class(new CssClass("hlist"))._class(new CssClass("navbar"))._class(new CssClass("mini"))
                                                                                     .Content(
                                                                                         "\n",
                                                                                         _ul.Content(
                                                                                             "\n",
-                                                                                            _li._class("nv-view")
+                                                                                            _li._class(new CssClass("nv-view"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template:Rich_Internet_applications")
                                                                                                         ._title("Template:Rich Internet applications")
@@ -6779,7 +6779,7 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-talk")
+                                                                                            _li._class(new CssClass("nv-talk"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template_talk:Rich_Internet_applications")
                                                                                                         ._title("Template talk:Rich Internet applications")
@@ -6790,9 +6790,9 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-edit")
+                                                                                            _li._class(new CssClass("nv-edit"))
                                                                                                 .Content(
-                                                                                                    _a._class("external")._class("text")
+                                                                                                    _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                                         ._href("//en.wikipedia.org/w/index.php?title=Template:Rich_Internet_applications&action=edit")
                                                                                                         .Content(
                                                                                                             _abbr._title("Edit this template")
@@ -6827,10 +6827,10 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content("Basic frameworks"),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
@@ -6876,7 +6876,7 @@ public static class WikiPageHtml5
                                                                                             ),
                                                                                             "\n",
                                                                                             _li.Content(
-                                                                                                _a._class("mw-selflink")._class("selflink")
+                                                                                                _a._class(new CssClass("mw-selflink"))._class(new CssClass("selflink"))
                                                                                                     .Content("HTML5")
                                                                                             ),
                                                                                             "\n",
@@ -6958,14 +6958,14 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content(
                                                                                 _a._href("/wiki/Site-specific_browser")
                                                                                     ._title("Site-specific browser")
                                                                                     .Content("Site-specific browsers")
                                                                             ),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
@@ -6976,7 +6976,7 @@ public static class WikiPageHtml5
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/Adobe_Integrated_Runtime")
-                                                                                                    ._class("mw-redirect")
+                                                                                                    ._class(new CssClass("mw-redirect"))
                                                                                                     ._title("Adobe Integrated Runtime")
                                                                                                     .Content("Adobe AIR")
                                                                                             ),
@@ -7039,7 +7039,7 @@ public static class WikiPageHtml5
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
-                                                                        _td._class("navbox-abovebelow")
+                                                                        _td._class(new CssClass("navbox-abovebelow"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
@@ -7095,12 +7095,12 @@ public static class WikiPageHtml5
                                                     ),
                                                 "\n",
                                                 _div.Attribute("role", "navigation")
-                                                    ._class("navbox")
+                                                    ._class(new CssClass("navbox"))
                                                     .Attribute("aria-labelledby", "World_Wide_Web_Consortium_.28W3C.29")
                                                     ._style("padding:3px")
                                                     .Content(
                                                         "\n",
-                                                        _table._class("nowraplinks")._class("collapsible")._class("autocollapse")._class("navbox-inner")
+                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("collapsible"))._class(new CssClass("autocollapse"))._class(new CssClass("navbox-inner"))
                                                             ._style("border-spacing:0;background:transparent;color:inherit")
                                                             .Content(
                                                                 "\n",
@@ -7108,16 +7108,16 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("col")
-                                                                            ._class("navbox-title")
+                                                                            ._class(new CssClass("navbox-title"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
-                                                                                _div._class("plainlinks")._class("hlist")._class("navbar")._class("mini")
+                                                                                _div._class(new CssClass("plainlinks"))._class(new CssClass("hlist"))._class(new CssClass("navbar"))._class(new CssClass("mini"))
                                                                                     .Content(
                                                                                         "\n",
                                                                                         _ul.Content(
                                                                                             "\n",
-                                                                                            _li._class("nv-view")
+                                                                                            _li._class(new CssClass("nv-view"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template:W3C_standards")
                                                                                                         ._title("Template:W3C standards")
@@ -7128,7 +7128,7 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-talk")
+                                                                                            _li._class(new CssClass("nv-talk"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template_talk:W3C_standards")
                                                                                                         ._title("Template talk:W3C standards")
@@ -7139,9 +7139,9 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-edit")
+                                                                                            _li._class(new CssClass("nv-edit"))
                                                                                                 .Content(
-                                                                                                    _a._class("external")._class("text")
+                                                                                                    _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                                         ._href("//en.wikipedia.org/w/index.php?title=Template:W3C_standards&action=edit")
                                                                                                         .Content(
                                                                                                             _abbr._title("Edit this template")
@@ -7176,20 +7176,20 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content(
                                                                                 "Products and",
                                                                                 _br,
                                                                                 "\nstandards"
                                                                             ),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-odd")._class("hlist")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))._class(new CssClass("hlist"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -7197,14 +7197,14 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content(
                                                                                                         _a._href("/wiki/World_Wide_Web_Consortium#Specification_maturation")
                                                                                                             ._title("World Wide Web Consortium")
                                                                                                             .Content("Recommendations")
                                                                                                     ),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7254,7 +7254,7 @@ public static class WikiPageHtml5
                                                                                                                             ._title("HTML")
                                                                                                                             .Content("HTML"),
                                                                                                                         " (",
-                                                                                                                        _a._class("mw-selflink")._class("selflink")
+                                                                                                                        _a._class(new CssClass("mw-selflink"))._class(new CssClass("selflink"))
                                                                                                                             .Content("HTML5"),
                                                                                                                         ")"
                                                                                                                     ),
@@ -7546,10 +7546,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Notes"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7594,10 +7594,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Working drafts"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7702,10 +7702,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Guidelines"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7738,10 +7738,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Initiative"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7792,10 +7792,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Deprecated"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7865,16 +7865,16 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content("Organizations"),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-odd")._class("hlist")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))._class(new CssClass("hlist"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -7882,7 +7882,7 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _td._colspan("2")
-                                                                                                    ._class("navbox-list")._class("navbox-odd")
+                                                                                                    ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7893,7 +7893,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Advisory_Committee_(W3C)&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Advisory Committee (W3C) (page does not exist)")
                                                                                                                             .Content("Advisory Committee (AC)")
                                                                                                                     ),
@@ -7922,10 +7922,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Elected groups"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7936,14 +7936,14 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Advisory_Board_(W3C)&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Advisory Board (W3C) (page does not exist)")
                                                                                                                             .Content("Advisory Board (AB)")
                                                                                                                     ),
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Technical_Architecture_Group&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Technical Architecture Group (page does not exist)")
                                                                                                                             .Content("Technical Architecture Group (TAG)")
                                                                                                                     ),
@@ -7966,10 +7966,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Working groups"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -7992,14 +7992,14 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Geolocation_Working_Group&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Geolocation Working Group (page does not exist)")
                                                                                                                             .Content("Geolocation")
                                                                                                                     ),
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Social_Web_Working_Group&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Social Web Working Group (page does not exist)")
                                                                                                                             .Content("Social Web")
                                                                                                                     ),
@@ -8018,7 +8018,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=Web_Platform_Working_Group&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("Web Platform Working Group (page does not exist)")
                                                                                                                             .Content("Web Platform")
                                                                                                                     ),
@@ -8041,10 +8041,10 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content("Closed groups"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8061,7 +8061,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/w/index.php?title=WebOnt&action=edit&redlink=1")
-                                                                                                                            ._class("new")
+                                                                                                                            ._class(new CssClass("new"))
                                                                                                                             ._title("WebOnt (page does not exist)")
                                                                                                                             .Content("WebOnt (Semantic Web Activity)")
                                                                                                                     ),
@@ -8091,16 +8091,16 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content("Software"),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-odd")._class("hlist")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))._class(new CssClass("hlist"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -8108,7 +8108,7 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _td._colspan("2")
-                                                                                                    ._class("navbox-list")._class("navbox-odd")
+                                                                                                    ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8147,14 +8147,14 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     .Content(
                                                                                                         _a._href("/wiki/Web_browser")
                                                                                                             ._title("Web browser")
                                                                                                             .Content("Browsers")
                                                                                                     ),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8238,10 +8238,10 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("row")
-                                                                            ._class("navbox-group")
+                                                                            ._class(new CssClass("navbox-group"))
                                                                             .Content("Conferences"),
                                                                         "\n",
-                                                                        _td._class("navbox-list")._class("navbox-odd")._class("hlist")
+                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))._class(new CssClass("hlist"))
                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
@@ -8259,7 +8259,7 @@ public static class WikiPageHtml5
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/International_World_Wide_Web_Conferences_Steering_Committee")
-                                                                                                            ._class("mw-redirect")
+                                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                                             ._title("International World Wide Web Conferences Steering Committee")
                                                                                                             .Content("Steering Committee (IW3C2)")
                                                                                                     ),
@@ -8288,12 +8288,12 @@ public static class WikiPageHtml5
                                                     ),
                                                 "\n",
                                                 _div.Attribute("role", "navigation")
-                                                    ._class("navbox")
+                                                    ._class(new CssClass("navbox"))
                                                     .Attribute("aria-labelledby", "Web_browsers")
                                                     ._style("padding:3px")
                                                     .Content(
                                                         "\n",
-                                                        _table._class("nowraplinks")._class("hlist")._class("collapsible")._class("autocollapse")._class("navbox-inner")
+                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("hlist"))._class(new CssClass("collapsible"))._class(new CssClass("autocollapse"))._class(new CssClass("navbox-inner"))
                                                             ._style("border-spacing:0;background:transparent;color:inherit")
                                                             .Content(
                                                                 "\n",
@@ -8301,16 +8301,16 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _th._scope("col")
-                                                                            ._class("navbox-title")
+                                                                            ._class(new CssClass("navbox-title"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
-                                                                                _div._class("plainlinks")._class("hlist")._class("navbar")._class("mini")
+                                                                                _div._class(new CssClass("plainlinks"))._class(new CssClass("hlist"))._class(new CssClass("navbar"))._class(new CssClass("mini"))
                                                                                     .Content(
                                                                                         "\n",
                                                                                         _ul.Content(
                                                                                             "\n",
-                                                                                            _li._class("nv-view")
+                                                                                            _li._class(new CssClass("nv-view"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template:Web_browsers")
                                                                                                         ._title("Template:Web browsers")
@@ -8321,7 +8321,7 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-talk")
+                                                                                            _li._class(new CssClass("nv-talk"))
                                                                                                 .Content(
                                                                                                     _a._href("/wiki/Template_talk:Web_browsers")
                                                                                                         ._title("Template talk:Web browsers")
@@ -8332,9 +8332,9 @@ public static class WikiPageHtml5
                                                                                                         )
                                                                                                 ),
                                                                                             "\n",
-                                                                                            _li._class("nv-edit")
+                                                                                            _li._class(new CssClass("nv-edit"))
                                                                                                 .Content(
-                                                                                                    _a._class("external")._class("text")
+                                                                                                    _a._class(new CssClass("external"))._class(new CssClass("text"))
                                                                                                         ._href("//en.wikipedia.org/w/index.php?title=Template:Web_browsers&action=edit")
                                                                                                         .Content(
                                                                                                             _abbr._title("Edit this template")
@@ -8368,7 +8368,7 @@ public static class WikiPageHtml5
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
-                                                                        _td._class("navbox-abovebelow")
+                                                                        _td._class(new CssClass("navbox-abovebelow"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
@@ -8446,13 +8446,13 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td._colspan("2")
-                                                                            ._class("navbox-list")._class("navbox-odd")
+                                                                            ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                             ._style("width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -8460,11 +8460,11 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     ._style("width:10em")
                                                                                                     .Content("Features"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8475,7 +8475,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/wiki/Ad_filtering")
-                                                                                                                            ._class("mw-redirect")
+                                                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                                                             ._title("Ad filtering")
                                                                                                                             .Content("Ad filtering")
                                                                                                                     ),
@@ -8610,11 +8610,11 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     ._style("width:10em")
                                                                                                     .Content("Web standards"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-even")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8642,7 +8642,7 @@ public static class WikiPageHtml5
                                                                                                                     ),
                                                                                                                     "\n",
                                                                                                                     _li.Content(
-                                                                                                                        _a._class("mw-selflink")._class("selflink")
+                                                                                                                        _a._class(new CssClass("mw-selflink"))._class(new CssClass("selflink"))
                                                                                                                             .Content("HTML5")
                                                                                                                     ),
                                                                                                                     "\n",
@@ -8700,11 +8700,11 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("row")
-                                                                                                    ._class("navbox-group")
+                                                                                                    ._class(new CssClass("navbox-group"))
                                                                                                     ._style("width:10em")
                                                                                                     .Content("Related topics"),
                                                                                                 "\n",
-                                                                                                _td._class("navbox-list")._class("navbox-odd")
+                                                                                                _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
@@ -8721,7 +8721,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/wiki/Revocation_list")
-                                                                                                                            ._class("mw-redirect")
+                                                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                                                             ._title("Revocation list")
                                                                                                                             .Content("CRL")
                                                                                                                     ),
@@ -8812,7 +8812,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/wiki/Graphical_control_element")
-                                                                                                                            ._class("mw-redirect")
+                                                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                                                             ._title("Graphical control element")
                                                                                                                             .Content("Widget")
                                                                                                                     ),
@@ -8825,7 +8825,7 @@ public static class WikiPageHtml5
                                                                                                                     "\n",
                                                                                                                     _li.Content(
                                                                                                                         _a._href("/wiki/Web_Proxy_Autodiscovery_Protocol")
-                                                                                                                            ._class("mw-redirect")
+                                                                                                                            ._class(new CssClass("mw-redirect"))
                                                                                                                             ._title("Web Proxy Autodiscovery Protocol")
                                                                                                                             .Content("WPAD")
                                                                                                                     ),
@@ -8861,13 +8861,13 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td._colspan("2")
-                                                                            ._class("navbox-list")._class("navbox-odd")
+                                                                            ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                             ._style("width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("collapsible")._class("collapsed")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("collapsible"))._class(new CssClass("collapsed"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -8875,7 +8875,7 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("col")
-                                                                                                    ._class("navbox-title")
+                                                                                                    ._class(new CssClass("navbox-title"))
                                                                                                     ._colspan("2")
                                                                                                     ._style(";")
                                                                                                     .Content(
@@ -8902,13 +8902,13 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _td._colspan("2")
-                                                                                                    ._class("navbox-list")._class("navbox-odd")
+                                                                                                    ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
                                                                                                         _div._style("padding:0em 0.25em"),
                                                                                                         "\n",
-                                                                                                        _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                                             ._style("border-spacing:0")
                                                                                                             .Content(
                                                                                                                 "\n",
@@ -8916,17 +8916,17 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Blink_(layout_engine)")
-                                                                                                                                    ._class("mw-redirect")
+                                                                                                                                    ._class(new CssClass("mw-redirect"))
                                                                                                                                     ._title("Blink (layout engine)")
                                                                                                                                     .Content("Blink"),
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9036,7 +9036,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Gecko_(software)")
@@ -9045,7 +9045,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9262,7 +9262,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Trident_(layout_engine)")
@@ -9271,7 +9271,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9408,7 +9408,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/WebKit")
@@ -9417,7 +9417,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9608,7 +9608,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Text-based_web_browser")
@@ -9617,7 +9617,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9635,7 +9635,7 @@ public static class WikiPageHtml5
                                                                                                                                             _li.Content(
                                                                                                                                                 _i.Content(
                                                                                                                                                     _a._href("/wiki/Emacs/W3")
-                                                                                                                                                        ._class("mw-redirect")
+                                                                                                                                                        ._class(new CssClass("mw-redirect"))
                                                                                                                                                         ._title("Emacs/W3")
                                                                                                                                                         .Content("Emacs/W3")
                                                                                                                                                 )
@@ -9685,11 +9685,11 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content("Other"),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9799,7 +9799,7 @@ public static class WikiPageHtml5
                                                                                                                                             _li.Content(
                                                                                                                                                 _i.Content(
                                                                                                                                                     _a._href("/wiki/Mothra_(web_browser)")
-                                                                                                                                                        ._class("mw-redirect")
+                                                                                                                                                        ._class(new CssClass("mw-redirect"))
                                                                                                                                                         ._title("Mothra (web browser)")
                                                                                                                                                         .Content("Mothra")
                                                                                                                                                 )
@@ -9857,13 +9857,13 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td._colspan("2")
-                                                                            ._class("navbox-list")._class("navbox-odd")
+                                                                            ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                             ._style("width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("collapsible")._class("collapsed")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("collapsible"))._class(new CssClass("collapsed"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -9871,7 +9871,7 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("col")
-                                                                                                    ._class("navbox-title")
+                                                                                                    ._class(new CssClass("navbox-title"))
                                                                                                     ._colspan("2")
                                                                                                     ._style(";")
                                                                                                     .Content(
@@ -9898,13 +9898,13 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _td._colspan("2")
-                                                                                                    ._class("navbox-list")._class("navbox-odd")
+                                                                                                    ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
                                                                                                         _div._style("padding:0em 0.25em"),
                                                                                                         "\n",
-                                                                                                        _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                                             ._style("border-spacing:0")
                                                                                                             .Content(
                                                                                                                 "\n",
@@ -9912,17 +9912,17 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Blink_(layout_engine)")
-                                                                                                                                    ._class("mw-redirect")
+                                                                                                                                    ._class(new CssClass("mw-redirect"))
                                                                                                                                     ._title("Blink (layout engine)")
                                                                                                                                     .Content("Blink"),
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -9933,7 +9933,7 @@ public static class WikiPageHtml5
                                                                                                                                             "\n",
                                                                                                                                             _li.Content(
                                                                                                                                                 _a._href("/wiki/Android_Browser")
-                                                                                                                                                    ._class("mw-redirect")
+                                                                                                                                                    ._class(new CssClass("mw-redirect"))
                                                                                                                                                     ._title("Android Browser")
                                                                                                                                                     .Content("Android Browser")
                                                                                                                                             ),
@@ -9991,7 +9991,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Gecko_(software)")
@@ -10000,7 +10000,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10049,7 +10049,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Presto_(layout_engine)")
@@ -10058,7 +10058,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10091,7 +10091,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Trident")
@@ -10100,7 +10100,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10133,7 +10133,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/WebKit")
@@ -10142,7 +10142,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10223,11 +10223,11 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content("Other"),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10244,7 +10244,7 @@ public static class WikiPageHtml5
                                                                                                                                             "\n",
                                                                                                                                             _li.Content(
                                                                                                                                                 _a._href("/wiki/CM_Browser")
-                                                                                                                                                    ._class("mw-redirect")
+                                                                                                                                                    ._class(new CssClass("mw-redirect"))
                                                                                                                                                     ._title("CM Browser")
                                                                                                                                                     .Content("CM Browser")
                                                                                                                                             ),
@@ -10387,13 +10387,13 @@ public static class WikiPageHtml5
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td._colspan("2")
-                                                                            ._class("navbox-list")._class("navbox-odd")
+                                                                            ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                             ._style("width:100%;padding:0px")
                                                                             .Content(
                                                                                 "\n",
                                                                                 _div._style("padding:0em 0.25em"),
                                                                                 "\n",
-                                                                                _table._class("nowraplinks")._class("collapsible")._class("collapsed")._class("navbox-subgroup")
+                                                                                _table._class(new CssClass("nowraplinks"))._class(new CssClass("collapsible"))._class(new CssClass("collapsed"))._class(new CssClass("navbox-subgroup"))
                                                                                     ._style("border-spacing:0")
                                                                                     .Content(
                                                                                         "\n",
@@ -10401,7 +10401,7 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _th._scope("col")
-                                                                                                    ._class("navbox-title")
+                                                                                                    ._class(new CssClass("navbox-title"))
                                                                                                     ._colspan("2")
                                                                                                     ._style(";")
                                                                                                     .Content(
@@ -10432,13 +10432,13 @@ public static class WikiPageHtml5
                                                                                             _tr.Content(
                                                                                                 "\n",
                                                                                                 _td._colspan("2")
-                                                                                                    ._class("navbox-list")._class("navbox-odd")
+                                                                                                    ._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                     ._style("width:100%;padding:0px")
                                                                                                     .Content(
                                                                                                         "\n",
                                                                                                         _div._style("padding:0em 0.25em"),
                                                                                                         "\n",
-                                                                                                        _table._class("nowraplinks")._class("navbox-subgroup")
+                                                                                                        _table._class(new CssClass("nowraplinks"))._class(new CssClass("navbox-subgroup"))
                                                                                                             ._style("border-spacing:0")
                                                                                                             .Content(
                                                                                                                 "\n",
@@ -10446,7 +10446,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Gecko_(software)")
@@ -10455,7 +10455,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10488,7 +10488,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/Presto_(layout_engine)")
@@ -10497,7 +10497,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10530,7 +10530,7 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content(
                                                                                                                                 _a._href("/wiki/WebKit")
@@ -10539,7 +10539,7 @@ public static class WikiPageHtml5
                                                                                                                                 "-based"
                                                                                                                             ),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-odd")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-odd"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10602,11 +10602,11 @@ public static class WikiPageHtml5
                                                                                                                     _tr.Content(
                                                                                                                         "\n",
                                                                                                                         _th._scope("row")
-                                                                                                                            ._class("navbox-group")
+                                                                                                                            ._class(new CssClass("navbox-group"))
                                                                                                                             ._style("width:10em")
                                                                                                                             .Content("Other"),
                                                                                                                         "\n",
-                                                                                                                        _td._class("navbox-list")._class("navbox-even")
+                                                                                                                        _td._class(new CssClass("navbox-list"))._class(new CssClass("navbox-even"))
                                                                                                                             ._style("text-align:left;border-left-width:2px;border-left-style:solid;padding:0px")
                                                                                                                             .Content(
                                                                                                                                 "\n",
@@ -10654,7 +10654,7 @@ public static class WikiPageHtml5
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
-                                                                        _td._class("navbox-abovebelow")
+                                                                        _td._class(new CssClass("navbox-abovebelow"))
                                                                             ._colspan("2")
                                                                             .Content(
                                                                                 "\n",
@@ -10697,20 +10697,20 @@ public static class WikiPageHtml5
                                                                                                 .Attribute("data-file-height", "1376"),
                                                                                             " ",
                                                                                             _a._href("https://commons.wikimedia.org/wiki/Category:Web_browsers")
-                                                                                                ._class("extiw")
+                                                                                                ._class(new CssClass("extiw"))
                                                                                                 ._title("commons:Category:Web browsers")
                                                                                                 .Content("Commons")
                                                                                         ),
                                                                                         "\n",
                                                                                         _li.Content(
                                                                                             _a._href("/wiki/File:Crystal_Clear_app_linneighborhood.svg")
-                                                                                                ._class("image")
+                                                                                                ._class(new CssClass("image"))
                                                                                                 .Content(
                                                                                                     _img._alt("Crystal Clear app linneighborhood.svg")
                                                                                                         ._src("//upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/16px-Crystal_Clear_app_linneighborhood.svg.png")
                                                                                                         ._width("16")
                                                                                                         ._height("16")
-                                                                                                        ._class("noviewer")
+                                                                                                        ._class(new CssClass("noviewer"))
                                                                                                         ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/24px-Crystal_Clear_app_linneighborhood.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Crystal_Clear_app_linneighborhood.svg/32px-Crystal_Clear_app_linneighborhood.svg.png 2x")
                                                                                                         .Attribute("data-file-width", "407")
                                                                                                         .Attribute("data-file-height", "407")
@@ -10723,13 +10723,13 @@ public static class WikiPageHtml5
                                                                                         "\n",
                                                                                         _li.Content(
                                                                                             _a._href("/wiki/File:Crystal_Clear_device_cdrom_unmount.png")
-                                                                                                ._class("image")
+                                                                                                ._class(new CssClass("image"))
                                                                                                 .Content(
                                                                                                     _img._alt("Crystal Clear device cdrom unmount.png")
                                                                                                         ._src("//upload.wikimedia.org/wikipedia/commons/thumb/1/10/Crystal_Clear_device_cdrom_unmount.png/16px-Crystal_Clear_device_cdrom_unmount.png")
                                                                                                         ._width("16")
                                                                                                         ._height("16")
-                                                                                                        ._class("noviewer")
+                                                                                                        ._class(new CssClass("noviewer"))
                                                                                                         ._srcset("//upload.wikimedia.org/wikipedia/commons/thumb/1/10/Crystal_Clear_device_cdrom_unmount.png/24px-Crystal_Clear_device_cdrom_unmount.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/1/10/Crystal_Clear_device_cdrom_unmount.png/32px-Crystal_Clear_device_cdrom_unmount.png 2x")
                                                                                                         .Attribute("data-file-width", "128")
                                                                                                         .Attribute("data-file-height", "128")
@@ -10766,7 +10766,7 @@ public static class WikiPageHtml5
                                                 )
                                             ),
                                         "\t\t\t\t\t",
-                                        _div._class("printfooter")
+                                        _div._class(new CssClass("printfooter"))
                                             .Content(
                                                 "\n\t\t\t\t\t\tRetrieved from \"",
                                                 _a._dir("ltr")
@@ -10776,11 +10776,11 @@ public static class WikiPageHtml5
                                             ),
                                         "\n\t\t\t\t",
                                         _div._id("catlinks")
-                                            ._class("catlinks")
+                                            ._class(new CssClass("catlinks"))
                                             .Attribute("data-mw", "interface")
                                             .Content(
                                                 _div._id("mw-normal-catlinks")
-                                                    ._class("mw-normal-catlinks")
+                                                    ._class(new CssClass("mw-normal-catlinks"))
                                                     .Content(
                                                         _a._href("/wiki/Help:Category")
                                                             ._title("Help:Category")
@@ -10825,7 +10825,7 @@ public static class WikiPageHtml5
                                                         )
                                                     ),
                                                 _div._id("mw-hidden-catlinks")
-                                                    ._class("mw-hidden-catlinks")._class("mw-hidden-cats-hidden")
+                                                    ._class(new CssClass("mw-hidden-catlinks"))._class(new CssClass("mw-hidden-cats-hidden"))
                                                     .Content(
                                                         "Hidden categories: ",
                                                         _ul.Content(
@@ -10853,7 +10853,7 @@ public static class WikiPageHtml5
                                                     )
                                             ),
                                         "\t\t\t\t",
-                                        _div._class("visualClear"),
+                                        _div._class(new CssClass("visualClear")),
                                         "\n\t\t\t\t\t\t\t"
                                     ),
                                 "\n\t\t"
@@ -10869,7 +10869,7 @@ public static class WikiPageHtml5
                                         "\n\t\t\t\t\t\t\t\t\t",
                                         _div._id("p-personal")
                                             .Attribute("role", "navigation")
-                                            ._class("")
+                                            ._class(new CssClass(""))
                                             .Attribute("aria-labelledby", "p-personal-label")
                                             .Content(
                                                 "\n\t\t\t\t\t\t",
@@ -10917,7 +10917,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t\t\t\t\t\t\t\t\t",
                                                 _div._id("p-namespaces")
                                                     .Attribute("role", "navigation")
-                                                    ._class("vectorTabs")
+                                                    ._class(new CssClass("vectorTabs"))
                                                     .Attribute("aria-labelledby", "p-namespaces-label")
                                                     .Content(
                                                         "\n\t\t\t\t\t\t",
@@ -10927,7 +10927,7 @@ public static class WikiPageHtml5
                                                         _ul.Content(
                                                             "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                             _li._id("ca-nstab-main")
-                                                                ._class("selected")
+                                                                ._class(new CssClass("selected"))
                                                                 .Content(
                                                                     _span.Content(
                                                                         _a._href("/wiki/HTML5")
@@ -10954,7 +10954,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t\t\t\t\t\t\t\t\t",
                                                 _div._id("p-variants")
                                                     .Attribute("role", "navigation")
-                                                    ._class("vectorMenu")._class("emptyPortlet")
+                                                    ._class(new CssClass("vectorMenu"))._class(new CssClass("emptyPortlet"))
                                                     .Attribute("aria-labelledby", "p-variants-label")
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t\t\t\t",
@@ -10966,7 +10966,7 @@ public static class WikiPageHtml5
                                                                 "\n\t\t\t\t\t\t"
                                                             ),
                                                         "\n\n\t\t\t\t\t\t",
-                                                        _div._class("menu")
+                                                        _div._class(new CssClass("menu"))
                                                             .Content(
                                                                 "\n\t\t\t\t\t\t\t",
                                                                 _ul.Content("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"),
@@ -10982,7 +10982,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t\t\t\t\t\t\t\t\t",
                                                 _div._id("p-views")
                                                     .Attribute("role", "navigation")
-                                                    ._class("vectorTabs")
+                                                    ._class(new CssClass("vectorTabs"))
                                                     .Attribute("aria-labelledby", "p-views-label")
                                                     .Content(
                                                         "\n\t\t\t\t\t\t",
@@ -10992,7 +10992,7 @@ public static class WikiPageHtml5
                                                         _ul.Content(
                                                             "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                             _li._id("ca-view")
-                                                                ._class("selected")
+                                                                ._class(new CssClass("selected"))
                                                                 .Content(
                                                                     _span.Content(
                                                                         _a._href("/wiki/HTML5")
@@ -11011,7 +11011,7 @@ public static class WikiPageHtml5
                                                                 ),
                                                             "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                             _li._id("ca-history")
-                                                                ._class("collapsible")
+                                                                ._class(new CssClass("collapsible"))
                                                                 .Content(
                                                                     _span.Content(
                                                                         _a._href("/w/index.php?title=HTML5&action=history")
@@ -11027,7 +11027,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t\t\t\t\t\t\t\t\t",
                                                 _div._id("p-cactions")
                                                     .Attribute("role", "navigation")
-                                                    ._class("vectorMenu")._class("emptyPortlet")
+                                                    ._class(new CssClass("vectorMenu"))._class(new CssClass("emptyPortlet"))
                                                     .Attribute("aria-labelledby", "p-cactions-label")
                                                     .Content(
                                                         "\n\t\t\t\t\t\t",
@@ -11037,7 +11037,7 @@ public static class WikiPageHtml5
                                                                 _a._href("#")
                                                             ),
                                                         "\n\n\t\t\t\t\t\t",
-                                                        _div._class("menu")
+                                                        _div._class(new CssClass("menu"))
                                                             .Content(
                                                                 "\n\t\t\t\t\t\t\t",
                                                                 _ul.Content("\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"),
@@ -11078,13 +11078,13 @@ public static class WikiPageHtml5
                                                                             ._value("Search")
                                                                             ._title("Search Wikipedia for this text")
                                                                             ._id("mw-searchButton")
-                                                                            ._class("searchButton")._class("mw-fallbackSearchButton"),
+                                                                            ._class(new CssClass("searchButton"))._class(new CssClass("mw-fallbackSearchButton")),
                                                                         _input._type("submit")
                                                                             ._name("go")
                                                                             ._value("Go")
                                                                             ._title("Go to a page with this exact name if it exists")
                                                                             ._id("searchButton")
-                                                                            ._class("searchButton"),
+                                                                            ._class(new CssClass("searchButton")),
                                                                         "\t\t\t\t\t\t\t"
                                                                     ),
                                                                 "\n\t\t\t\t\t\t"
@@ -11102,12 +11102,12 @@ public static class WikiPageHtml5
                                         _div._id("p-logo")
                                             .Attribute("role", "banner")
                                             .Content(
-                                                _a._class("mw-wiki-logo")
+                                                _a._class(new CssClass("mw-wiki-logo"))
                                                     ._href("/wiki/Main_Page")
                                                     ._title("Visit the main page")
                                             ),
                                         "\n\t\t\t\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-navigation")
                                             .Attribute("aria-labelledby", "p-navigation-label")
@@ -11116,7 +11116,7 @@ public static class WikiPageHtml5
                                                 _h3._id("p-navigation-label")
                                                     .Content("Navigation"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
@@ -11172,7 +11172,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t"
                                             ),
                                         "\n\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-interaction")
                                             .Attribute("aria-labelledby", "p-interaction-label")
@@ -11181,7 +11181,7 @@ public static class WikiPageHtml5
                                                 _h3._id("p-interaction-label")
                                                     .Content("Interaction"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
@@ -11224,7 +11224,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t"
                                             ),
                                         "\n\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-tb")
                                             .Attribute("aria-labelledby", "p-tb-label")
@@ -11233,7 +11233,7 @@ public static class WikiPageHtml5
                                                 _h3._id("p-tb-label")
                                                     .Content("Tools"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
@@ -11299,7 +11299,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t"
                                             ),
                                         "\n\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-coll-print_export")
                                             .Attribute("aria-labelledby", "p-coll-print_export-label")
@@ -11308,7 +11308,7 @@ public static class WikiPageHtml5
                                                 _h3._id("p-coll-print_export-label")
                                                     .Content("Print/export"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
@@ -11337,7 +11337,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t"
                                             ),
                                         "\n\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-wikibase-otherprojects")
                                             .Attribute("aria-labelledby", "p-wikibase-otherprojects-label")
@@ -11346,24 +11346,24 @@ public static class WikiPageHtml5
                                                 _h3._id("p-wikibase-otherprojects-label")
                                                     .Content("In other projects"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
                                                             "\n\t\t\t\t\t\t",
-                                                            _li._class("wb-otherproject-link")._class("wb-otherproject-commons")
+                                                            _li._class(new CssClass("wb-otherproject-link"))._class(new CssClass("wb-otherproject-commons"))
                                                                 .Content(
                                                                     _a._href("https://commons.wikimedia.org/wiki/Category:HTML5")
                                                                         ._hreflang("en")
                                                                         .Content("Wikimedia Commons")
                                                                 ),
-                                                            _li._class("wb-otherproject-link")._class("wb-otherproject-wikibooks")
+                                                            _li._class(new CssClass("wb-otherproject-link"))._class(new CssClass("wb-otherproject-wikibooks"))
                                                                 .Content(
                                                                     _a._href("https://en.wikibooks.org/wiki/HTML_5_Programming_and_Web_development")
                                                                         ._hreflang("en")
                                                                         .Content("Wikibooks")
                                                                 ),
-                                                            _li._class("wb-otherproject-link")._class("wb-otherproject-wikiversity")
+                                                            _li._class(new CssClass("wb-otherproject-link"))._class(new CssClass("wb-otherproject-wikiversity"))
                                                                 .Content(
                                                                     _a._href("https://en.wikiversity.org/wiki/HTML5")
                                                                         ._hreflang("en")
@@ -11376,7 +11376,7 @@ public static class WikiPageHtml5
                                                 "\n\t\t"
                                             ),
                                         "\n\t\t\t",
-                                        _div._class("portal")
+                                        _div._class(new CssClass("portal"))
                                             .Attribute("role", "navigation")
                                             ._id("p-lang")
                                             .Attribute("aria-labelledby", "p-lang-label")
@@ -11385,453 +11385,453 @@ public static class WikiPageHtml5
                                                 _h3._id("p-lang-label")
                                                     .Content("Languages"),
                                                 "\n\n\t\t\t",
-                                                _div._class("body")
+                                                _div._class(new CssClass("body"))
                                                     .Content(
                                                         "\n\t\t\t\t\t\t\t\t\t",
                                                         _ul.Content(
                                                             "\n\t\t\t\t\t\t",
-                                                            _li._class("interlanguage-link")._class("interwiki-ar")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ar"))
                                                                 .Content(
                                                                     _a._href("https://ar.wikipedia.org/wiki/%D8%A5%D8%AA%D8%B4_%D8%AA%D9%8A_%D8%A5%D9%85_%D8%A5%D9%84_5")
                                                                         ._title("إتش تي إم إل 5 – Arabic")
                                                                         ._lang("ar")
                                                                         ._hreflang("ar")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("العربية")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-bn")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-bn"))
                                                                 .Content(
                                                                     _a._href("https://bn.wikipedia.org/wiki/%E0%A6%8F%E0%A6%87%E0%A6%9A%E0%A6%9F%E0%A6%BF%E0%A6%8F%E0%A6%AE%E0%A6%8F%E0%A6%B2_%E0%A7%AB")
                                                                         ._title("এইচটিএমএল ৫ – Bangla")
                                                                         ._lang("bn")
                                                                         ._hreflang("bn")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("বাংলা")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-bg")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-bg"))
                                                                 .Content(
                                                                     _a._href("https://bg.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Bulgarian")
                                                                         ._lang("bg")
                                                                         ._hreflang("bg")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Български")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ca")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ca"))
                                                                 .Content(
                                                                     _a._href("https://ca.wikipedia.org/wiki/HTML_5")
                                                                         ._title("HTML 5 – Catalan")
                                                                         ._lang("ca")
                                                                         ._hreflang("ca")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Català")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-cs")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-cs"))
                                                                 .Content(
                                                                     _a._href("https://cs.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Czech")
                                                                         ._lang("cs")
                                                                         ._hreflang("cs")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Čeština")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-da")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-da"))
                                                                 .Content(
                                                                     _a._href("https://da.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Danish")
                                                                         ._lang("da")
                                                                         ._hreflang("da")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Dansk")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-de")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-de"))
                                                                 .Content(
                                                                     _a._href("https://de.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – German")
                                                                         ._lang("de")
                                                                         ._hreflang("de")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Deutsch")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-et")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-et"))
                                                                 .Content(
                                                                     _a._href("https://et.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Estonian")
                                                                         ._lang("et")
                                                                         ._hreflang("et")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Eesti")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-el")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-el"))
                                                                 .Content(
                                                                     _a._href("https://el.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Greek")
                                                                         ._lang("el")
                                                                         ._hreflang("el")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Ελληνικά")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-es")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-es"))
                                                                 .Content(
                                                                     _a._href("https://es.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Spanish")
                                                                         ._lang("es")
                                                                         ._hreflang("es")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Español")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-eo")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-eo"))
                                                                 .Content(
                                                                     _a._href("https://eo.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Esperanto")
                                                                         ._lang("eo")
                                                                         ._hreflang("eo")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Esperanto")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-eu")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-eu"))
                                                                 .Content(
                                                                     _a._href("https://eu.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Basque")
                                                                         ._lang("eu")
                                                                         ._hreflang("eu")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Euskara")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-fa")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-fa"))
                                                                 .Content(
                                                                     _a._href("https://fa.wikipedia.org/wiki/%D8%A7%DA%86%E2%80%8C%D8%AA%DB%8C%E2%80%8C%D8%A7%D9%85%E2%80%8C%D8%A7%D9%84%DB%B5")
                                                                         ._title("اچ‌تی‌ام‌ال۵ – Persian")
                                                                         ._lang("fa")
                                                                         ._hreflang("fa")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("فارسی")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-fr")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-fr"))
                                                                 .Content(
                                                                     _a._href("https://fr.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – French")
                                                                         ._lang("fr")
                                                                         ._hreflang("fr")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Français")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-gl")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-gl"))
                                                                 .Content(
                                                                     _a._href("https://gl.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Galician")
                                                                         ._lang("gl")
                                                                         ._hreflang("gl")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Galego")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ko")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ko"))
                                                                 .Content(
                                                                     _a._href("https://ko.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Korean")
                                                                         ._lang("ko")
                                                                         ._hreflang("ko")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("한국어")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-hy")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-hy"))
                                                                 .Content(
                                                                     _a._href("https://hy.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Armenian")
                                                                         ._lang("hy")
                                                                         ._hreflang("hy")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Հայերեն")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-hi")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-hi"))
                                                                 .Content(
                                                                     _a._href("https://hi.wikipedia.org/wiki/%E0%A4%8F%E0%A4%9A%E0%A4%9F%E0%A5%80%E0%A4%8F%E0%A4%AE%E0%A4%8F%E0%A4%B2_%E0%A4%AB%E0%A4%BE%E0%A4%87%E0%A4%B5")
                                                                         ._title("एचटीएमएल फाइव – Hindi")
                                                                         ._lang("hi")
                                                                         ._hreflang("hi")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("हिन्दी")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-hsb")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-hsb"))
                                                                 .Content(
                                                                     _a._href("https://hsb.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Upper Sorbian")
                                                                         ._lang("hsb")
                                                                         ._hreflang("hsb")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Hornjoserbsce")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-id")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-id"))
                                                                 .Content(
                                                                     _a._href("https://id.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Indonesian")
                                                                         ._lang("id")
                                                                         ._hreflang("id")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Bahasa Indonesia")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-is")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-is"))
                                                                 .Content(
                                                                     _a._href("https://is.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Icelandic")
                                                                         ._lang("is")
                                                                         ._hreflang("is")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Íslenska")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-it")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-it"))
                                                                 .Content(
                                                                     _a._href("https://it.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Italian")
                                                                         ._lang("it")
                                                                         ._hreflang("it")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Italiano")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-he")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-he"))
                                                                 .Content(
                                                                     _a._href("https://he.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Hebrew")
                                                                         ._lang("he")
                                                                         ._hreflang("he")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("עברית")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-lv")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-lv"))
                                                                 .Content(
                                                                     _a._href("https://lv.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Latvian")
                                                                         ._lang("lv")
                                                                         ._hreflang("lv")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Latviešu")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-hu")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-hu"))
                                                                 .Content(
                                                                     _a._href("https://hu.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Hungarian")
                                                                         ._lang("hu")
                                                                         ._hreflang("hu")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Magyar")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-mg")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-mg"))
                                                                 .Content(
                                                                     _a._href("https://mg.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Malagasy")
                                                                         ._lang("mg")
                                                                         ._hreflang("mg")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Malagasy")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ml")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ml"))
                                                                 .Content(
                                                                     _a._href("https://ml.wikipedia.org/wiki/%E0%B4%8E%E0%B4%9A%E0%B5%8D%E0%B4%9A%E0%B5%8D.%E0%B4%9F%E0%B4%BF.%E0%B4%8E%E0%B4%82.%E0%B4%8E%E0%B5%BD._5")
                                                                         ._title("എച്ച്.ടി.എം.എൽ. 5 – Malayalam")
                                                                         ._lang("ml")
                                                                         ._hreflang("ml")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("മലയാളം")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ms")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ms"))
                                                                 .Content(
                                                                     _a._href("https://ms.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Malay")
                                                                         ._lang("ms")
                                                                         ._hreflang("ms")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Bahasa Melayu")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-nl")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-nl"))
                                                                 .Content(
                                                                     _a._href("https://nl.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Dutch")
                                                                         ._lang("nl")
                                                                         ._hreflang("nl")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Nederlands")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ja")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ja"))
                                                                 .Content(
                                                                     _a._href("https://ja.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Japanese")
                                                                         ._lang("ja")
                                                                         ._hreflang("ja")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("日本語")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-km")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-km"))
                                                                 .Content(
                                                                     _a._href("https://km.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Khmer")
                                                                         ._lang("km")
                                                                         ._hreflang("km")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("ភាសាខ្មែរ")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-pl")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-pl"))
                                                                 .Content(
                                                                     _a._href("https://pl.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Polish")
                                                                         ._lang("pl")
                                                                         ._hreflang("pl")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Polski")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-pt")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-pt"))
                                                                 .Content(
                                                                     _a._href("https://pt.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Portuguese")
                                                                         ._lang("pt")
                                                                         ._hreflang("pt")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Português")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ro")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ro"))
                                                                 .Content(
                                                                     _a._href("https://ro.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Romanian")
                                                                         ._lang("ro")
                                                                         ._hreflang("ro")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Română")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-ru")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-ru"))
                                                                 .Content(
                                                                     _a._href("https://ru.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Russian")
                                                                         ._lang("ru")
                                                                         ._hreflang("ru")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Русский")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-sq")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-sq"))
                                                                 .Content(
                                                                     _a._href("https://sq.wikipedia.org/wiki/Html_5")
                                                                         ._title("Html 5 – Albanian")
                                                                         ._lang("sq")
                                                                         ._hreflang("sq")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Shqip")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-sk")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-sk"))
                                                                 .Content(
                                                                     _a._href("https://sk.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Slovak")
                                                                         ._lang("sk")
                                                                         ._hreflang("sk")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Slovenčina")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-sr")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-sr"))
                                                                 .Content(
                                                                     _a._href("https://sr.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Serbian")
                                                                         ._lang("sr")
                                                                         ._hreflang("sr")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Српски / srpski")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-sh")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-sh"))
                                                                 .Content(
                                                                     _a._href("https://sh.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Serbo-Croatian")
                                                                         ._lang("sh")
                                                                         ._hreflang("sh")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Srpskohrvatski / српскохрватски")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-fi")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-fi"))
                                                                 .Content(
                                                                     _a._href("https://fi.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Finnish")
                                                                         ._lang("fi")
                                                                         ._hreflang("fi")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Suomi")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-sv")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-sv"))
                                                                 .Content(
                                                                     _a._href("https://sv.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Swedish")
                                                                         ._lang("sv")
                                                                         ._hreflang("sv")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Svenska")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-te")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-te"))
                                                                 .Content(
                                                                     _a._href("https://te.wikipedia.org/wiki/%E0%B0%B9%E0%B1%86%E0%B0%9A%E0%B1%8D%E2%80%8C%E0%B0%9F%E0%B0%BF%E0%B0%8E%E0%B0%AE%E0%B1%8D%E0%B0%8E%E0%B0%B2%E0%B1%8D5(HTML5)")
                                                                         ._title("హెచ్‌టిఎమ్ఎల్5(HTML5) – Telugu")
                                                                         ._lang("te")
                                                                         ._hreflang("te")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("తెలుగు")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-th")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-th"))
                                                                 .Content(
                                                                     _a._href("https://th.wikipedia.org/wiki/%E0%B9%80%E0%B8%AD%E0%B8%8A%E0%B8%97%E0%B8%B5%E0%B9%80%E0%B8%AD%E0%B9%87%E0%B8%A1%E0%B9%81%E0%B8%AD%E0%B8%A55")
                                                                         ._title("เอชทีเอ็มแอล5 – Thai")
                                                                         ._lang("th")
                                                                         ._hreflang("th")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("ไทย")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-tr")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-tr"))
                                                                 .Content(
                                                                     _a._href("https://tr.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Turkish")
                                                                         ._lang("tr")
                                                                         ._hreflang("tr")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Türkçe")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-uk")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-uk"))
                                                                 .Content(
                                                                     _a._href("https://uk.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Ukrainian")
                                                                         ._lang("uk")
                                                                         ._hreflang("uk")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Українська")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-vi")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-vi"))
                                                                 .Content(
                                                                     _a._href("https://vi.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Vietnamese")
                                                                         ._lang("vi")
                                                                         ._hreflang("vi")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("Tiếng Việt")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-zh-yue")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-zh-yue"))
                                                                 .Content(
                                                                     _a._href("https://zh-yue.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Cantonese")
                                                                         ._lang("zh-yue")
                                                                         ._hreflang("zh-yue")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("粵語")
                                                                 ),
-                                                            _li._class("interlanguage-link")._class("interwiki-zh")
+                                                            _li._class(new CssClass("interlanguage-link"))._class(new CssClass("interwiki-zh"))
                                                                 .Content(
                                                                     _a._href("https://zh.wikipedia.org/wiki/HTML5")
                                                                         ._title("HTML5 – Chinese")
                                                                         ._lang("zh")
                                                                         ._hreflang("zh")
-                                                                        ._class("interlanguage-link-target")
+                                                                        ._class(new CssClass("interlanguage-link-target"))
                                                                         .Content("中文")
                                                                 ),
                                                             "\t\t\t\t\t"
                                                         ),
                                                         "\n\t\t\t\t",
-                                                        _div._class("after-portlet")._class("after-portlet-lang")
+                                                        _div._class(new CssClass("after-portlet"))._class(new CssClass("after-portlet-lang"))
                                                             .Content(
-                                                                _span._class("wb-langlinks-edit")._class("wb-langlinks-link")
+                                                                _span._class(new CssClass("wb-langlinks-edit"))._class(new CssClass("wb-langlinks-link"))
                                                                     .Content(
                                                                         _a._href("https://www.wikidata.org/wiki/Q2053#sitelinks-wikipedia")
                                                                             ._title("Edit interlanguage links")
-                                                                            ._class("wbc-editpage")
+                                                                            ._class(new CssClass("wbc-editpage"))
                                                                             .Content("Edit links")
                                                                     )
                                                             ),
@@ -11883,7 +11883,7 @@ public static class WikiPageHtml5
                                         _li._id("footer-places-privacy")
                                             .Content(
                                                 _a._href("https://wikimediafoundation.org/wiki/Privacy_policy")
-                                                    ._class("extiw")
+                                                    ._class(new CssClass("extiw"))
                                                     ._title("wmf:Privacy policy")
                                                     .Content("Privacy policy")
                                             ),
@@ -11923,14 +11923,14 @@ public static class WikiPageHtml5
                                         _li._id("footer-places-mobileview")
                                             .Content(
                                                 _a._href("//en.m.wikipedia.org/w/index.php?title=HTML5&mobileaction=toggle_view_mobile")
-                                                    ._class("noprint")._class("stopMobileRedirectToggle")
+                                                    ._class(new CssClass("noprint"))._class(new CssClass("stopMobileRedirectToggle"))
                                                     .Content("Mobile view")
                                             ),
                                         "\n\t\t\t\t\t\t\t\t\t"
                                     ),
                                 "\n\t\t\t\t\t\t\t\t\t\t",
                                 _ul._id("footer-icons")
-                                    ._class("noprint")
+                                    ._class(new CssClass("noprint"))
                                     .Content(
                                         "\n\t\t\t\t\t\t\t\t\t\t\t",
                                         _li._id("footer-copyrightico")

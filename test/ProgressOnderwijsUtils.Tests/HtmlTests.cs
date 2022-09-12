@@ -56,7 +56,7 @@ public sealed class HtmlTests
     [Fact]
     public void AppendingMultipleClassesAffectsOutput()
     {
-        var example = _div._class("A", "B", null, "D").AsFragment().ToStringWithoutDoctype();
+        var example = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.B, null, StyleClassesTestsObjects.D).AsFragment().ToStringWithoutDoctype();
         PAssert.That(() => example == @"<div class=""A B D""></div>");
     }
 
