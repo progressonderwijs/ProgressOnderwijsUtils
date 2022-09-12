@@ -11,7 +11,7 @@ public static class StyleClassesTestsObjects
     public static readonly CssClass E = new("E");
     public static readonly CssClass X = new("X");
     public static readonly CssClass Y = new("Y");
-    public static readonly CssClass None = new(" ");
+    public static readonly CssClass None = new(default(string));
     public static readonly CssClass AClass = new("aClass");
     public static readonly CssClass BClass = new("bClass");
     public static readonly CssClass Bla = new("bla ");
@@ -220,8 +220,8 @@ public sealed class HtmlAttributesTest
     {
         var div = _div._class(StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.A);
         var div0 = _div._class(StyleClassesTestsObjects.D, StyleClassesTestsObjects.A);
-        var div1 = _div._class(StyleClassesTestsObjects.A)._class(StyleClassesTestsObjects.D,StyleClassesTestsObjects.A);
-        var div2 = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.D,StyleClassesTestsObjects.A);
+        var div1 = _div._class(StyleClassesTestsObjects.A)._class(StyleClassesTestsObjects.D, StyleClassesTestsObjects.A);
+        var div2 = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.D, StyleClassesTestsObjects.A);
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div1).Classes().SequenceEqual(new[] { "A", "D", "A", }));
