@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils.Tests;
 public static class StyleClassesTestsObjects
 {
     public static readonly CssClass A = new("A");
-    public static readonly CssClass B = new("B ");
+    public static readonly CssClass B = new("B");
     public static readonly CssClass C = new("C");
     public static readonly CssClass D = new("D");
     public static readonly CssClass E = new("E");
