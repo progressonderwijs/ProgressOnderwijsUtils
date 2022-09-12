@@ -2,6 +2,21 @@ using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Tests;
 
+public static class StyleClassesTestsObjects
+{
+    public static readonly CssClass A = new("A");
+    public static readonly CssClass B = new("B ");
+    public static readonly CssClass C = new("C");
+    public static readonly CssClass D = new("D");
+    public static readonly CssClass E = new("E");
+    public static readonly CssClass X = new("X");
+    public static readonly CssClass Y = new("Y");
+    public static readonly CssClass None = new(" ");
+    public static readonly CssClass AClass = new("aClass");
+    public static readonly CssClass BClass = new("bClass");
+    public static readonly CssClass Bla = new("bla ");
+}
+
 public sealed class HtmlAttributesTest
 {
     [Fact]
@@ -83,22 +98,22 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void AttributesCanBeEnumerated()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
-        _ = div._class("X"); //this should not affect the enumeration.
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C")._class(StyleClassesTestsObjects.D);
+        _ = div._class(StyleClassesTestsObjects.X); //this should not affect the enumeration.
         PAssert.That(() => GetAttributes(div).SequenceEqual(new[] { new HtmlAttribute("class", "A"), new HtmlAttribute("id", "B"), new HtmlAttribute("data-xyz", "C"), new HtmlAttribute("class", "D"), }));
     }
 
     [Fact]
     public void ResetReturnsTheSameDataAsInitiallyEvenIfConcurrentlyModified()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C")._class(StyleClassesTestsObjects.D);
         var attributes = GetAttributes(div);
-        div = div._class("X"); //this should not affect the enumeration.
+        div = div._class(StyleClassesTestsObjects.X); //this should not affect the enumeration.
         using var enumerator = attributes.GetEnumerator();
 
         PAssert.That(() => enumerator.MoveNext());
         PAssert.That(() => enumerator.Current == new HtmlAttribute("class", "A"));
-        div = div._class("Y"); //this should not affect the enumeration.
+        div = div._class(StyleClassesTestsObjects.Y); //this should not affect the enumeration.
         PAssert.That(() => enumerator.MoveNext());
         PAssert.That(() => enumerator.Current == new HtmlAttribute("id", "B"));
         enumerator.Reset();
@@ -113,35 +128,35 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void IndexerExtractsUniquelyNamedAttr()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C")._class("D");
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C")._class(StyleClassesTestsObjects.D);
         PAssert.That(() => GetAttributes(div)["id"] == "B");
     }
 
     [Fact]
     public void IndexerExtractsFirstOccurenceWhenAmbiguousLikeTheDom()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class(StyleClassesTestsObjects.D);
         PAssert.That(() => GetAttributes(div)["data-xyz"] == "C");
     }
 
     [Fact]
     public void IndexerSupportsClassNameJoining()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class(StyleClassesTestsObjects.D);
         PAssert.That(() => GetAttributes(div)["class"] == "A D");
     }
 
     [Fact]
     public void ClassesListTwoSeparatelyAppliedAttributes()
     {
-        var div = _div._class("A")._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class("D");
+        var div = _div._class(StyleClassesTestsObjects.A)._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class(StyleClassesTestsObjects.D);
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "D", }));
     }
 
     [Fact]
     public void ClassesCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
     {
-        var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+        var div = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.X)._id("B")._class(StyleClassesTestsObjects.None, StyleClassesTestsObjects.D, null, StyleClassesTestsObjects.C, StyleClassesTestsObjects.E, StyleClassesTestsObjects.None, null)._class(StyleClassesTestsObjects.None)._class(StyleClassesTestsObjects.Y);
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "X", "D", "C", "E", "Y", }));
     }
 
@@ -155,7 +170,7 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void HasClassCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
     {
-        var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+        var div = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.X)._id("B")._class(StyleClassesTestsObjects.None, StyleClassesTestsObjects.D, null, StyleClassesTestsObjects.C, StyleClassesTestsObjects.E, StyleClassesTestsObjects.None, null)._class(StyleClassesTestsObjects.None)._class(StyleClassesTestsObjects.Y);
         PAssert.That(() => GetAttributes(div).HasClass("X"));
         PAssert.That(() => GetAttributes(div).HasClass("Y"));
         PAssert.That(() => !GetAttributes(div).HasClass("bla"));
@@ -165,14 +180,14 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void You_cannot_check_multiple_classes_in_one_call()
     {
-        var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+        var div = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.X)._id("B")._class(StyleClassesTestsObjects.None, StyleClassesTestsObjects.D, StyleClassesTestsObjects.None, StyleClassesTestsObjects.C, StyleClassesTestsObjects.E, null, StyleClassesTestsObjects.None)._class(StyleClassesTestsObjects.None)._class(StyleClassesTestsObjects.Y);
         PAssert.That(() => !GetAttributes(div).HasClass("A X"));
     }
 
     [Fact]
     public void TheEmptyClassIsNotPresent()
     {
-        var div = _div._class("A X")._id("B")._class(" D  C E  ")._class("")._class("Y");
+        var div = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.X)._id("B")._class(null, StyleClassesTestsObjects.D, StyleClassesTestsObjects.None, StyleClassesTestsObjects.C, StyleClassesTestsObjects.E, StyleClassesTestsObjects.None, null)._class(StyleClassesTestsObjects.None)._class(StyleClassesTestsObjects.Y);
         PAssert.That(() => !GetAttributes(div).HasClass(""));
     }
 
@@ -186,9 +201,7 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void HasClassFromObject()
     {
-        var d = new CssClass("D ");
-        var bla = new CssClass("bla ");
-        var div = _div._class(d)._class(bla);
+        var div = _div._class(StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.Bla);
         PAssert.That(() => GetAttributes(div).HasClass("D"));
         PAssert.That(() => GetAttributes(div).HasClass("bla"));
         PAssert.That(() => !GetAttributes(div).HasClass(""));
@@ -198,43 +211,20 @@ public sealed class HtmlAttributesTest
     [Fact]
     public void ClassFromObjectEmptyClass()
     {
-        var d = new CssClass(" ");
-        var div = _div._class(d);
+        var div = _div._class(StyleClassesTestsObjects.None);
         PAssert.That(() => !GetAttributes(div).HasClass(""));
     }
 
     [Fact]
     public void ClassFromObjectMultipleClasses()
     {
-        //these should be made based on the css later
-        var d = new CssClass("D");
-        var a = new CssClass(" A  ");
-        var div = _div._class(d)._class(a);
-        var div0 = _div._class(d, a);
-        var div1 = _div._class(a)._class(d,a);
-        var div2 = _div._class(a,d)._class(d,a);
+        var div = _div._class(StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.A);
+        var div0 = _div._class(StyleClassesTestsObjects.D, StyleClassesTestsObjects.A);
+        var div1 = _div._class(StyleClassesTestsObjects.A)._class(StyleClassesTestsObjects.D,StyleClassesTestsObjects.A);
+        var div2 = _div._class(StyleClassesTestsObjects.A, StyleClassesTestsObjects.D)._class(StyleClassesTestsObjects.D,StyleClassesTestsObjects.A);
         PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
         PAssert.That(() => GetAttributes(div1).Classes().SequenceEqual(new[] { "A", "D", "A", }));
         PAssert.That(() => GetAttributes(div2).Classes().SequenceEqual(new[] { "A", "D", "D", "A", }));
-    }
-
-    [Fact]
-    public void CompareClassFromObjectWithClass()
-    {
-        var d = new CssClass("D");
-        var div = _div._class(d);
-        var div0 = _div._class("D");
-        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
-    }
-
-    [Fact]
-    public void CompareClassFromObjectWithClassMultipleClasses()
-    {
-        var d = new CssClass(" D  ");
-        var a = new CssClass("A");
-        var div = _div._class(a, d);
-        var div0 = _div._class("A D");
-        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(GetAttributes(div0).Classes()));
     }
 }
