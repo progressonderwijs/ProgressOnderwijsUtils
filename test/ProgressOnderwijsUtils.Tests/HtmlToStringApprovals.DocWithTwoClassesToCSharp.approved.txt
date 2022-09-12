@@ -4,8 +4,8 @@ _html.Content(
             "Hello world!"
         )
     )
-    + _body.Attribute("class","aClass")
-        .Attribute("class","bClass")
+    + _body._class("aClass")
+        ._class("bClass")
         .Content(
             _p.Content(
                 "Hello world!"
