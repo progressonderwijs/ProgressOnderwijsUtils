@@ -2,17 +2,6 @@ namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlHelpers
 {
-    public static THtmlTag _class<THtmlTag>(this THtmlTag inlineElement, params string?[]? classes)
-        where THtmlTag : struct, IHtmlElement<THtmlTag>
-    {
-        if (classes != null) {
-            foreach (var className in classes) {
-                inlineElement = inlineElement._class(className);
-            }
-        }
-        return inlineElement;
-    }
-
     [Pure]
     public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
         where THtmlTag : struct, IHtmlElement<THtmlTag>

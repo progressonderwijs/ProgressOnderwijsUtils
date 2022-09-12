@@ -29,7 +29,7 @@ public sealed class HtmlToStringApprovals
     static readonly HtmlTagKinds.HTML docWithEmptyClass =
         _html.Content(
             _head.Content(_title.Content("Hello world!")),
-            _body._class(default(string)).Content(_p.Content("Hello world!"))
+            _body._class(StyleClassesTestsObjects.None).Content(_p.Content("Hello world!"))
         );
 
     [Fact]
@@ -43,7 +43,7 @@ public sealed class HtmlToStringApprovals
     static readonly HtmlTagKinds.HTML docWithOneClass =
         _html.Content(
             _head.Content(_title.Content("Hello world!")),
-            _body._class("aClass").Content(_p.Content("Hello world!"))
+            _body._class(StyleClassesTestsObjects.AClass).Content(_p.Content("Hello world!"))
         );
 
     [Fact]
@@ -57,7 +57,7 @@ public sealed class HtmlToStringApprovals
     static readonly HtmlTagKinds.HTML docWithTwoClasses =
         _html.Content(
             _head.Content(_title.Content("Hello world!")),
-            _body._class("aClass")._class("bClass").Content(_p.Content("Hello world!"))
+            _body._class(StyleClassesTestsObjects.AClass)._class(StyleClassesTestsObjects.BClass).Content(_p.Content("Hello world!"))
         );
 
     [Fact]
