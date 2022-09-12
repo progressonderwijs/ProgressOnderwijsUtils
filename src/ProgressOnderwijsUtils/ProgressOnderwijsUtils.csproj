@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>91.2.2</Version>
-    <PackageReleaseNotes>Change _class(string) method used in tests to _class(CssClass).</PackageReleaseNotes>
+    <Version>91.2.1</Version>
+    <PackageReleaseNotes>Make CssClass as parameter nullable.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
