@@ -96,15 +96,16 @@ using (var client = new HttpClient()) {
             }
         ).ToArray();
 
-    var globalAttributeExtensionMethods = globalAttributes
-        .Select(attrName => $@"
+	var globalAttributeExtensionMethods = globalAttributes
+		.Select(attrName => $@"{(attrName == "class" ? @"
+				[Obsolete]" : "")}
         public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
 
-    var specificAttributes = elements.SelectMany(el => el.attributes).Distinct();
+	var specificAttributes = elements.SelectMany(el => el.attributes).Distinct();
     
     var elAttrInterfaces = specificAttributes
         .Select(attrName => $@"
