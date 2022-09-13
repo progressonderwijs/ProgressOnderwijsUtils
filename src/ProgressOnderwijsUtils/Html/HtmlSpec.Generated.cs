@@ -621,7 +621,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(FOOTER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, FOOTER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FORM : IHtmlElementAllowingContent<FORM>, IHasAttr_accept_charset, IHasAttr_action, IHasAttr_autocomplete, IHasAttr_enctype, IHasAttr_method, IHasAttr_name, IHasAttr_novalidate, IHasAttr_target
+        public struct FORM : IHtmlElementAllowingContent<FORM>, IHasAttr_accept_charset, IHasAttr_action, IHasAttr_autocomplete, IHasAttr_enctype, IHasAttr_method, IHasAttr_name, IHasAttr_novalidate, IHasAttr_rel, IHasAttr_target
         {
             public string TagName => "form";
             string IHtmlElement.TagStart => "<form";
@@ -839,7 +839,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IFRAME : IHtmlElementAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allow, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_loading
+        public struct IFRAME : IHtmlElementAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allow, IHasAttr_allowfullscreen, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_loading
         {
             public string TagName => "iframe";
             string IHtmlElement.TagStart => "<iframe";
@@ -847,7 +847,6 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes attrs;
             IFRAME IHtmlElement<IFRAME>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes, children = children };
             HtmlAttributes IHtmlElement.Attributes => attrs;
-
             HtmlFragment children;
             IFRAME IHtmlElementAllowingContent<IFRAME>.ReplaceContentWith(HtmlFragment replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
             HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
@@ -970,7 +969,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LINK : IHtmlElement<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_imagesrcset, IHasAttr_imagesizes, IHasAttr_referrerpolicy, IHasAttr_integrity, IHasAttr_color, IHasAttr_disabled
+        public struct LINK : IHtmlElement<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_imagesrcset, IHasAttr_imagesizes, IHasAttr_referrerpolicy, IHasAttr_integrity, IHasAttr_blocking, IHasAttr_color, IHasAttr_disabled
         {
             public string TagName => "link";
             string IHtmlElement.TagStart => "<link";
@@ -1052,7 +1051,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(MENU head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, MENU tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct META : IHtmlElement<META>, IHasAttr_name, IHasAttr_http_equiv, IHasAttr_content, IHasAttr_charset
+        public struct META : IHtmlElement<META>, IHasAttr_name, IHasAttr_http_equiv, IHasAttr_content, IHasAttr_charset, IHasAttr_media
         {
             public string TagName => "meta";
             string IHtmlElement.TagStart => "<meta";
@@ -1117,7 +1116,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(NOSCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, NOSCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OBJECT : IHtmlElementAllowingContent<OBJECT>, IHasAttr_data, IHasAttr_type, IHasAttr_name, IHasAttr_usemap, IHasAttr_form, IHasAttr_width, IHasAttr_height
+        public struct OBJECT : IHtmlElementAllowingContent<OBJECT>, IHasAttr_data, IHasAttr_type, IHasAttr_name, IHasAttr_form, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "object";
             string IHtmlElement.TagStart => "<object";
@@ -1218,20 +1217,6 @@ namespace ProgressOnderwijsUtils.Html
             public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
             public static HtmlFragment operator +(P head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, P tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-        }
-        public struct PARAM : IHtmlElement<PARAM>, IHasAttr_name, IHasAttr_value
-        {
-            public string TagName => "param";
-            string IHtmlElement.TagStart => "<param";
-            string IHtmlElement.EndTag => "";
-            HtmlAttributes attrs;
-            PARAM IHtmlElement<PARAM>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new PARAM { attrs = replacementAttributes };
-            HtmlAttributes IHtmlElement.Attributes => attrs;
-            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-            public static implicit operator HtmlFragment(PARAM tag) => tag.AsFragment();
-            public static HtmlFragment operator +(PARAM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-            public static HtmlFragment operator +(string head, PARAM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
         public struct PICTURE : IHtmlElementAllowingContent<PICTURE>
         {
@@ -1386,7 +1371,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy
+        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy, IHasAttr_blocking
         {
             public string TagName => "script";
             string IHtmlElement.TagStart => "<script";
@@ -1471,7 +1456,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(SMALL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, SMALL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SOURCE : IHtmlElement<SOURCE>, IHasAttr_src, IHasAttr_type, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_media
+        public struct SOURCE : IHtmlElement<SOURCE>, IHasAttr_src, IHasAttr_type, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_media, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "source";
             string IHtmlElement.TagStart => "<source";
@@ -1519,7 +1504,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(STRONG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, STRONG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct STYLE : IHtmlElementAllowingContent<STYLE>, IHasAttr_media
+        public struct STYLE : IHtmlElementAllowingContent<STYLE>, IHasAttr_media, IHasAttr_blocking
         {
             public string TagName => "style";
             string IHtmlElement.TagStart => "<style";
@@ -1682,7 +1667,6 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TFOOT IHtmlElementAllowingContent<TFOOT>.ReplaceContentWith(HtmlFragment replacementContents) => new TFOOT { attrs = attrs, children = replacementContents };
-
             HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
             IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
@@ -1990,22 +1974,22 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>User-submittable form. See: <a href="https://html.spec.whatwg.org/#the-form-element">https://html.spec.whatwg.org/#the-form-element</a><br /></summary>
         public static readonly HtmlTagKinds.FORM _form = new HtmlTagKinds.FORM();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H1 _h1 = new HtmlTagKinds.H1();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H2 _h2 = new HtmlTagKinds.H2();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H3 _h3 = new HtmlTagKinds.H3();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H4 _h4 = new HtmlTagKinds.H4();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H5 _h5 = new HtmlTagKinds.H5();
 
-        ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
+        ///<summary>Heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
         public static readonly HtmlTagKinds.H6 _h6 = new HtmlTagKinds.H6();
 
         ///<summary>Container for document metadata. See: <a href="https://html.spec.whatwg.org/#the-head-element">https://html.spec.whatwg.org/#the-head-element</a><br /></summary>
@@ -2014,7 +1998,7 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Introductory or navigational aids for a page or section. See: <a href="https://html.spec.whatwg.org/#the-header-element">https://html.spec.whatwg.org/#the-header-element</a><br /></summary>
         public static readonly HtmlTagKinds.HEADER _header = new HtmlTagKinds.HEADER();
 
-        ///<summary>heading group. See: <a href="https://html.spec.whatwg.org/#the-hgroup-element">https://html.spec.whatwg.org/#the-hgroup-element</a><br /></summary>
+        ///<summary>Heading container. See: <a href="https://html.spec.whatwg.org/#the-hgroup-element">https://html.spec.whatwg.org/#the-hgroup-element</a><br /></summary>
         public static readonly HtmlTagKinds.HGROUP _hgroup = new HtmlTagKinds.HGROUP();
 
         ///<summary>Thematic break. See: <a href="https://html.spec.whatwg.org/#the-hr-element">https://html.spec.whatwg.org/#the-hr-element</a><br /></summary>
@@ -2094,9 +2078,6 @@ namespace ProgressOnderwijsUtils.Html
 
         ///<summary>Paragraph. See: <a href="https://html.spec.whatwg.org/#the-p-element">https://html.spec.whatwg.org/#the-p-element</a><br /></summary>
         public static readonly HtmlTagKinds.P _p = new HtmlTagKinds.P();
-
-        ///<summary>Parameter for object. See: <a href="https://html.spec.whatwg.org/#the-param-element">https://html.spec.whatwg.org/#the-param-element</a><br /></summary>
-        public static readonly HtmlTagKinds.PARAM _param = new HtmlTagKinds.PARAM();
 
         ///<summary>Image. See: <a href="https://html.spec.whatwg.org/#the-picture-element">https://html.spec.whatwg.org/#the-picture-element</a><br /></summary>
         public static readonly HtmlTagKinds.PICTURE _picture = new HtmlTagKinds.PICTURE();
@@ -2275,7 +2256,6 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_sandbox { }
         public interface IHasAttr_allow { }
         public interface IHasAttr_allowfullscreen { }
-        public interface IHasAttr_allowpaymentrequest { }
         public interface IHasAttr_loading { }
         public interface IHasAttr_srcset { }
         public interface IHasAttr_sizes { }
@@ -2303,6 +2283,7 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_imagesrcset { }
         public interface IHasAttr_imagesizes { }
         public interface IHasAttr_integrity { }
+        public interface IHasAttr_blocking { }
         public interface IHasAttr_color { }
         public interface IHasAttr_http_equiv { }
         public interface IHasAttr_content { }
@@ -2364,6 +2345,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _id<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("id", attrValue);
+        public static THtmlTag _inert<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("inert", attrValue);
         public static THtmlTag _inputmode<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("inputmode", attrValue);
@@ -2589,9 +2573,6 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("allowfullscreen", attrValue);
-        public static THtmlTag _allowpaymentrequest<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-            where THtmlTag : struct, IHasAttr_allowpaymentrequest, IHtmlElement<THtmlTag>
-            => htmlTagExpr.Attribute("allowpaymentrequest", attrValue);
         public static THtmlTag _loading<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_loading, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("loading", attrValue);
@@ -2602,7 +2583,6 @@ namespace ProgressOnderwijsUtils.Html
             where THtmlTag : struct, IHasAttr_sizes, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("sizes", attrValue);
         public static THtmlTag _usemap<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-
             where THtmlTag : struct, IHasAttr_usemap, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("usemap", attrValue);
         public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
@@ -2674,6 +2654,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _integrity<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_integrity, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("integrity", attrValue);
+        public static THtmlTag _blocking<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHasAttr_blocking, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("blocking", attrValue);
         public static THtmlTag _color<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_color, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("color", attrValue);

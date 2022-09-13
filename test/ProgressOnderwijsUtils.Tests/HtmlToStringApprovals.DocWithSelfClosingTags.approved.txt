@@ -5,7 +5,6 @@
 <hr>
 <img>
 <input>
-<param>
 <source>
 <track>
 <wbr></body></html>
