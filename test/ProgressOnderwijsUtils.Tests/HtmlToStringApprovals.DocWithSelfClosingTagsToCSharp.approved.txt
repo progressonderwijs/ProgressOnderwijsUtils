@@ -22,8 +22,6 @@ _html.Content(
         + "\n"
         + _input
         + "\n"
-        + _param
-        + "\n"
         + _source
         + "\n"
         + _track
