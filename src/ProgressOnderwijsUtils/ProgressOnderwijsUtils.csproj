@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>91.2.2</Version>
+    <Version>91.3.1</Version>
     <PackageReleaseNotes>Change _class(string) method to Obsolete.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>

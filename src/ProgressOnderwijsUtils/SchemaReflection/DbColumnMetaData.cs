@@ -91,12 +91,28 @@ public sealed record DbColumnMetaData(
 
     string ColumnPrecisionSpecifier()
         => UserTypeId switch {
+            _ when SemanticMaxLength(out var supportMaxLen, out var hasMaxLen) is var maxLen && supportMaxLen => hasMaxLen ? $"({maxLen})" : "(max)",
             SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
-            SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar => MaxLength > 0 ? $"({MaxLength / 2})" : "(max)",
-            SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary => MaxLength > 0 ? $"({MaxLength})" : "(max)",
             SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
             _ => "",
         };
+
+    public short SemanticMaxLength(out bool typeSupportsMaxLength, out bool hasMaxLength)
+    {
+        if (UserTypeId is SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar) { 
+            typeSupportsMaxLength = true;
+            hasMaxLength = MaxLength > 0;
+            return (short)(MaxLength >> 1);
+        } else if (UserTypeId is SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary) { 
+            typeSupportsMaxLength = true;
+            hasMaxLength = MaxLength > 0;
+            return MaxLength;
+        } else {
+            typeSupportsMaxLength = false;
+            hasMaxLength = false;
+            return 0;
+        }
+    }
 
     public string ToSqlTypeName()
         => ToSqlTypeNameWithoutNullability() + NullabilityAnnotation();

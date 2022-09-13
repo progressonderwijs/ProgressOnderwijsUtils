@@ -32,6 +32,15 @@ public enum SqlSystemTypeId
     // ReSharper restore UnusedMember.Global
 }
 
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class SqlSystemTypeIdAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute
+{
+    public SqlSystemTypeId SqlSystemType { get; }
+
+    public SqlSystemTypeIdAttribute(SqlSystemTypeId sqlSystemType)
+        => SqlSystemType = sqlSystemType;
+}
+
 public readonly struct SqlUnderlyingTypeInfo
 {
     public readonly Type ClrType;
