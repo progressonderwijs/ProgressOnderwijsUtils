@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Class)]
+[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Class | AttributeTargets.Enum)]
 [MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Members)]
 public sealed class ReadImplicitlyAttribute : Attribute { }
 

@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>91.3.1</Version>
-    <PackageReleaseNotes>Change _class(string) method to Obsolete.</PackageReleaseNotes>
+    <Version>91.4.0</Version>
+    <PackageReleaseNotes>Allowed ReadImplicitly annotation on enums.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
