@@ -10,18 +10,21 @@
 
 static string PreDefStringWithoutComments = @".umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}";
 static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {background-image: url();}.umcg.login-warning-NL::after {content: ;white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ;white - space: pre - wrap;display: inline - block;}";
-static List<string> PreDefDotStartingWordsList = new List<string>{"umcg","institutionlogo__0", "umcg","login-warning-NL", "umcg","login-warning-EN", };
+static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
+static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
 
 void Main()
 {
 	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
 	TestRegexes(testString);
+	var validList = PreDefDotStartingWordsList.Select(word => IsValidClassName(word) ? word : "").Dump();
+	var classList = parseOriginalCssToClassList(testString).Dump();
 }
 
-public static string removeComments(string fileWithComments) 
+public static string removeComments(string fileWithComments)
 {
 	var commentRegx = new Regex(@"(?<comment>(/\*)(.|\s)*?(\*/))");
-	
+
 	return commentRegx.Replace(fileWithComments, "");
 }
 
@@ -39,13 +42,59 @@ public static List<string> getAllDotStartingWords(string fileWithDotStartingWord
 	//var dotRegx = new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
 
 	var matchCol = dotRegx.Matches(fileWithDotStartingWords);
-	var list = matchCol.Cast<Match>().Select(match =>match.Groups["name"].Value).ToList();
+	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
 	return list;
 }
 
-public void TestRegexes(string baseString)
+public static List<CssObjectContainer> getAllClassObjects(string fileWithDotStartingWords)
 {
-	var noCommentTestString = removeComments(baseString);
+	var dotRegx = new Regex(@"(\.)(?<name>[^0-9][^\u0000-,./:-@\[\]^`{-\u009f]+)");
+	//More complex regex where everthing except '-' still works
+	//var dotRegx = new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
+
+	var matchCollection = dotRegx.Matches(fileWithDotStartingWords);
+	var list = matchCollection.Cast<Match>().Select(m =>
+	{
+		var value = m.Groups["name"].Value;
+		if (IsValidClassName(value))
+		{
+			return new CssObjectContainer(value);
+		}
+		return null;
+	}).ToList();
+	return list;
+}
+
+public static List<CssObjectContainer> parseOriginalCssToClassList(string baseFile)
+{
+	baseFile = removeComments(baseFile);
+	baseFile = removeStrings(baseFile);
+	return getAllClassObjects(baseFile);
+}
+
+public record CssObjectContainer(string className)
+{
+	public string objectName = CreateObjectName(className);
+
+	static string CreateObjectName(string className)
+	{
+		var allSymbols = new Regex(@"[^a-zA-Z0-9_-]");
+		var objectName = allSymbols.Replace(className, "");
+		if (objectName.Length == 0)
+		{
+			throw new($@"Empty objectname for css class '{className}', all symbols except '-' and '_' are removed when generating objectnames. Make sure the css class name contains a non symbol character.");
+		}
+		string[] chars = { "__", "--", "-", "_" };
+		var reformed = objectName.Split(chars, System.StringSplitOptions.TrimEntries).ToList();
+		reformed = reformed.ConvertAll(w => (w.Length <= 0 ? "" : w.Substring(0, 1).ToUpper()) + (w.Length <= 1 ? "" : w.Substring(1)));
+
+		return reformed.JoinStrings("_");
+	}
+}
+
+public void TestRegexes(string testString)
+{
+	var noCommentTestString = removeComments(testString);
 	if (noCommentTestString != PreDefStringWithoutComments)
 	{
 		noCommentTestString.Dump();
@@ -66,5 +115,28 @@ public void TestRegexes(string baseString)
 		PreDefDotStartingWordsList.Dump();
 		throw new("Dot starting words not the same.");
 	}
-	dotStartingWordsList.Dump();
+	var classObjects = getAllClassObjects(noStingAndCommentTestString);
+	if (!classObjects.SequenceEqual(PreDefDotStartingWordsObjectList))
+	{
+		classObjects.Dump();
+		PreDefDotStartingWordsObjectList.Dump();
+		throw new("Class objects not the same.");
+	}
+}
+
+public static bool IsValidClassName(string className)
+{
+	if (className.Contains('\\'))
+	{
+		throw new($@"Css class '{className}' contains invalid symbol '\'.");
+	}
+	if (className.Equals('-'))
+	{
+		throw new($@"Invalid classname '{className}'.");
+	}
+	if (className.First().Equals('-') && char.IsDigit(className[1]))
+	{
+		throw new($@"Invalid classname '{className}', with pattern '-digit'.");
+	}
+	return true;
 }
