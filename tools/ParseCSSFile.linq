@@ -18,7 +18,9 @@ void Main()
 	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
 	TestRegexes(testString);
 	var validList = PreDefDotStartingWordsList.Select(word => IsValidClassName(word) ? word : "").Dump();
-	var classList = parseOriginalCssToClassList(testString).Dump();
+	var classList = parseOriginalCssToClassList(testString);
+	
+	var uniqueClassList = classList.Distinct(new DistinctItemComparer()).Dump();
 }
 
 public static string removeComments(string fileWithComments)
@@ -139,4 +141,21 @@ public static bool IsValidClassName(string className)
 		throw new($@"Invalid classname '{className}', with pattern '-digit'.");
 	}
 	return true;
+}
+
+class DistinctItemComparer : IEqualityComparer<CssObjectContainer>
+{
+	public bool Equals(CssObjectContainer x, CssObjectContainer y)
+	{
+		if (x.objectName == y.objectName && x.className != y.className)
+		{
+			throw new($@"Duplicate object name '{x.objectName}' found from CSS classnames: '{y.className}' and '{x.className}'. Characters:'-', '_', '--' and '__' become '_' and special symbols get removed when generating the object names. Creating possible duplicates, use a different name for one of the two occurances.");
+		}
+		return x.objectName == y.objectName;
+	}
+
+	public int GetHashCode(CssObjectContainer obj)
+	{
+		return obj.objectName.GetHashCode();
+	}
 }
