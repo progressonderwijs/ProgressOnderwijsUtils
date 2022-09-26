@@ -12,16 +12,23 @@ static string PreDefStringWithoutComments = @".umcg .institutionlogo__0 {backgro
 static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {background-image: url();}.umcg.login-warning-NL::after {content: ;white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ;white - space: pre - wrap;display: inline - block;}";
 static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
 static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
+static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
 
 void Main()
 {
 	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
 	TestRegexes(testString);
-	var validList = PreDefDotStartingWordsList.Select(word => IsValidClassName(word) ? word : "").Dump();
 	var classList = parseOriginalCssToClassList(testString);
-	
+	classList.SequenceEqual(PreDefDotStartingWordsObjectList).Dump();
+	//execute this method after all the css classes are extracted to remove duplicates and different css classes with the same object name
 	var uniqueClassList = classList.Distinct(new DistinctItemComparer()).Dump();
+	uniqueClassList.SequenceEqual(PreDefDotStartingUniqueWordsObjectList).Dump();
 }
+
+public static Regex DotRegex
+	=> new Regex(@"(\.)(?<name>[^0-9][^\u0000-,./:-@\[\]^`{-\u009f]+)");
+//More complex regex only '-' still works:
+//	=> new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
 
 public static string removeComments(string fileWithComments)
 {
@@ -39,22 +46,14 @@ public static string removeStrings(string fileWithStrings)
 
 public static List<string> getAllDotStartingWords(string fileWithDotStartingWords)
 {
-	var dotRegx = new Regex(@"(\.)(?<name>[^0-9][^\u0000-,./:-@\[\]^`{-\u009f]+)");
-	//More complex regex only one '-' still works
-	//var dotRegx = new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
-
-	var matchCol = dotRegx.Matches(fileWithDotStartingWords);
+	var matchCol = DotRegex.Matches(fileWithDotStartingWords);
 	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
 	return list;
 }
 
 public static List<CssObjectContainer> getAllClassObjects(string fileWithDotStartingWords)
 {
-	var dotRegx = new Regex(@"(\.)(?<name>[^0-9][^\u0000-,./:-@\[\]^`{-\u009f]+)");
-	//More complex regex where everthing except '-' still works
-	//var dotRegx = new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
-
-	var matchCollection = dotRegx.Matches(fileWithDotStartingWords);
+	var matchCollection = DotRegex.Matches(fileWithDotStartingWords);
 	var list = matchCollection.Cast<Match>().Select(m =>
 	{
 		var value = m.Groups["name"].Value;
