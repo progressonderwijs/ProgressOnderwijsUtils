@@ -85,10 +85,7 @@ public record CssObjectContainer(string className)
 		{
 			throw new($@"Empty objectname for css class '{className}', all symbols except '-' and '_' are removed when generating objectnames. Make sure the css class name contains a non symbol character.");
 		}
-		string[] chars = { "__", "--", "-", "_" };
-		var reformed = objectName.Split(chars, System.StringSplitOptions.TrimEntries).ToList();
-		reformed = reformed.ConvertAll(w => (w.Length <= 0 ? "" : w.Substring(0, 1).ToUpper()) + (w.Length <= 1 ? "" : w.Substring(1)));
-
+		var reformed = objectName.Split('-', System.StringSplitOptions.TrimEntries).ToList();
 		return reformed.JoinStrings("_");
 	}
 }
