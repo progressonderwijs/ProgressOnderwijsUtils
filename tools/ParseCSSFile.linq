@@ -16,7 +16,7 @@ static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssO
 static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
 //
 
-public Dictionary<string, CssFile> classes = new Dictionary<string, CssFile>();
+public Dictionary<string, HashSet<CssFile>> classes = new Dictionary<string, HashSet<CssFile>>();
 public List<CssFile> CssFiles => new List<CssFile>(){
 	new(@"src/Progress.ClientApp/dist/portal.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","PortalStyleClasses"),
 	new(@"src/Progress.ClientApp/dist/catalogue.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","CatalogueStyleClasses"),
@@ -36,7 +36,9 @@ public List<CssFile> CssFiles => new List<CssFile>(){
 
 void Main()
 {
-	foreach (var file in CssFiles) {
+	CssFiles.OrderBy(x=> x.nSpace);
+	foreach (var file in CssFiles) 
+	{
 		var markup3 = StyleClassMarkUpFromFile(file).Dump();
 	}
 }
@@ -58,6 +60,14 @@ public static string RemoveStrings(string fileWithStrings)
 	var stringRegx = new Regex(@"(?<string>(\""[^\""]*\"")|((\')[^\']*(\')))");
 
 	return stringRegx.Replace(fileWithStrings, "");
+}
+
+//not used
+public static List<string> GetAllDotStartingWords(string fileWithDotStartingWords)
+{
+	var matchCol = DotRegex.Matches(fileWithDotStartingWords);
+	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
+	return list;
 }
 
 public static List<CssObjectContainer> GetAllClassObjects(string fileWithDotStartingWords)
@@ -106,9 +116,9 @@ public record CssFile(string inputFile, string outputFolder, string nSpace, stri
 
 	static string getCompleteFilePath(string fP)
 	{
-		var folderpath = Util.CurrentQueryPath;
+		var folderpath = Util.CurrentQueryPath + @"..\..\..\..\progress\";
 		//var folderpath = GetMyPath();
-		return folderpath + @"..\..\..\..\progress\" + fP;
+		return folderpath  + fP;
 	}
 }
 
@@ -129,7 +139,7 @@ public void TestRegexes(string testString)
 		PreDefStringWithoutStrings.Dump();
 		throw new("No strings not the same.");
 	}
-	var dotStartingWordsList = getAllDotStartingWords(noStingAndCommentTestString);
+	var dotStartingWordsList = GetAllDotStartingWords(noStingAndCommentTestString);
 	if (!dotStartingWordsList.SequenceEqual(PreDefDotStartingWordsList))
 	{
 		dotStartingWordsList.Dump();
@@ -190,10 +200,10 @@ public static class {file.className}
 	foreach (var classContainer in uniqueClassList)
 	{
 		//Duplicate objects in the same namespace will get a reference to the first object found in that namespace
-		CssFile f;
-		if (classes.TryGetValue(classContainer.className, out f) && f.nSpace == file.nSpace)
+		HashSet<CssFile> files;
+		if (classes.TryGetValue(classContainer.className, out files) && files.Any(x=> x.nSpace == file.nSpace))
 		{
-			var reference = classes[classContainer.className];
+			CssFile reference = classes[classContainer.className].Where(x => x.nSpace == file.nSpace).FirstOrDefault();
 			fileContent += $@"	public static readonly CssClass {classContainer.objectName} = {reference.className}.{classContainer.objectName};
 ";
 		}
@@ -201,7 +211,14 @@ public static class {file.className}
 		{
 			fileContent += $@"	public static readonly CssClass {classContainer.objectName} = new(""{classContainer.className}"");
 ";
-			classes.TryAdd(classContainer.className, file);
+			if (files == null)
+			{
+				classes.TryAdd(classContainer.className, new HashSet<CssFile>() { file });
+			}
+			else
+			{
+				classes[classContainer.className].Add(file);
+			}
 		}
 	}
 	fileContent += "}";
@@ -212,5 +229,6 @@ public static class {file.className}
 public string StyleClassMarkUpFromFile(CssFile file)
 {
 	var classList = ParseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
+	classList.Add(new("bla"));
 	return StyleClassMarkUpFromClassList(classList, file);
 }
