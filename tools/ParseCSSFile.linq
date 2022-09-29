@@ -37,7 +37,7 @@ public List<CssFile> CssFiles => new List<CssFile>(){
 void Main()
 {
 	CssFiles.OrderBy(x=> x.nSpace);
-	foreach (var file in CssFiles) 
+	foreach (var file in CssFiles)
 	{
 		var markup3 = StyleClassMarkUpFromFile(file).Dump();
 	}
@@ -118,7 +118,7 @@ public record CssFile(string inputFile, string outputFolder, string nSpace, stri
 	{
 		var folderpath = Util.CurrentQueryPath + @"..\..\..\..\progress\";
 		//var folderpath = GetMyPath();
-		return folderpath  + fP;
+		return folderpath + fP;
 	}
 }
 
@@ -229,6 +229,5 @@ public static class {file.className}
 public string StyleClassMarkUpFromFile(CssFile file)
 {
 	var classList = ParseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
-	classList.Add(new("bla"));
 	return StyleClassMarkUpFromClassList(classList, file);
 }
