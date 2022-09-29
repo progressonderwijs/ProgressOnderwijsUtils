@@ -8,14 +8,6 @@
   <IncludeAspNet>true</IncludeAspNet>
 </Query>
 
-//testing purp
-static string PreDefStringWithoutComments = @".umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}";
-static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {background-image: url();}.umcg.login-warning-NL::after {content: ;white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ;white - space: pre - wrap;display: inline - block;}";
-static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
-static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
-static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
-//
-
 public Dictionary<string, HashSet<CssFile>> classes = new Dictionary<string, HashSet<CssFile>>();
 public List<CssFile> CssFiles => new List<CssFile>(){
 	new(@"src/Progress.ClientApp/dist/portal.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","PortalStyleClasses"),
@@ -60,14 +52,6 @@ public static string RemoveStrings(string fileWithStrings)
 	var stringRegx = new Regex(@"(?<string>(\""[^\""]*\"")|((\')[^\']*(\')))");
 
 	return stringRegx.Replace(fileWithStrings, "");
-}
-
-//not used
-public static List<string> GetAllDotStartingWords(string fileWithDotStartingWords)
-{
-	var matchCol = DotRegex.Matches(fileWithDotStartingWords);
-	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
-	return list;
 }
 
 public static List<CssObjectContainer> GetAllClassObjects(string fileWithDotStartingWords)
@@ -119,39 +103,6 @@ public record CssFile(string inputFile, string outputFolder, string nSpace, stri
 		var folderpath = Util.CurrentQueryPath + @"..\..\..\..\progress\";
 		//var folderpath = GetMyPath();
 		return folderpath + fP;
-	}
-}
-
-//tests
-public void TestRegexes(string testString)
-{
-	var noCommentTestString = RemoveComments(testString);
-	if (noCommentTestString != PreDefStringWithoutComments)
-	{
-		noCommentTestString.Dump();
-		PreDefStringWithoutComments.Dump();
-		throw new("No comments not the same.");
-	}
-	var noStingAndCommentTestString = RemoveStrings(noCommentTestString);
-	if (noStingAndCommentTestString != PreDefStringWithoutStrings)
-	{
-		noStingAndCommentTestString.Dump();
-		PreDefStringWithoutStrings.Dump();
-		throw new("No strings not the same.");
-	}
-	var dotStartingWordsList = GetAllDotStartingWords(noStingAndCommentTestString);
-	if (!dotStartingWordsList.SequenceEqual(PreDefDotStartingWordsList))
-	{
-		dotStartingWordsList.Dump();
-		PreDefDotStartingWordsList.Dump();
-		throw new("Dot starting words not the same.");
-	}
-	var classObjects = GetAllClassObjects(noStingAndCommentTestString);
-	if (!classObjects.SequenceEqual(PreDefDotStartingWordsObjectList))
-	{
-		classObjects.Dump();
-		PreDefDotStartingWordsObjectList.Dump();
-		throw new("Class objects not the same.");
 	}
 }
 
@@ -230,4 +181,52 @@ public string StyleClassMarkUpFromFile(CssFile file)
 {
 	var classList = ParseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
 	return StyleClassMarkUpFromClassList(classList, file);
+}
+
+//testing vars
+static string PreDefStringWithoutComments = @".umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}";
+static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {background-image: url();}.umcg.login-warning-NL::after {content: ;white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ;white - space: pre - wrap;display: inline - block;}";
+static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
+static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
+static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
+
+//only used for testing
+public static List<string> GetAllDotStartingWords(string fileWithDotStartingWords)
+{
+	var matchCol = DotRegex.Matches(fileWithDotStartingWords);
+	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
+	return list;
+}
+
+//tests
+public void TestRegexes(string testString)
+{
+	var noCommentTestString = RemoveComments(testString);
+	if (noCommentTestString != PreDefStringWithoutComments)
+	{
+		noCommentTestString.Dump();
+		PreDefStringWithoutComments.Dump();
+		throw new("No comments not the same.");
+	}
+	var noStingAndCommentTestString = RemoveStrings(noCommentTestString);
+	if (noStingAndCommentTestString != PreDefStringWithoutStrings)
+	{
+		noStingAndCommentTestString.Dump();
+		PreDefStringWithoutStrings.Dump();
+		throw new("No strings not the same.");
+	}
+	var dotStartingWordsList = GetAllDotStartingWords(noStingAndCommentTestString);
+	if (!dotStartingWordsList.SequenceEqual(PreDefDotStartingWordsList))
+	{
+		dotStartingWordsList.Dump();
+		PreDefDotStartingWordsList.Dump();
+		throw new("Dot starting words not the same.");
+	}
+	var classObjects = GetAllClassObjects(noStingAndCommentTestString);
+	if (!classObjects.SequenceEqual(PreDefDotStartingWordsObjectList))
+	{
+		classObjects.Dump();
+		PreDefDotStartingWordsObjectList.Dump();
+		throw new("Class objects not the same.");
+	}
 }
