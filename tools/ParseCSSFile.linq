@@ -19,10 +19,10 @@ void Main()
 {
 	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
 	TestRegexes(testString);
-	var markup = StyleClassFileMarkUp(PreDefDotStartingWordsObjectList, new CssFile("", "", "Progress.Businnes.CssClasses", "BusinnessStyleClasses")).Dump();
+	var markup = StyleClassMarkUpFromString(PreDefDotStartingWordsObjectList, new CssFile("", "", "Progress.Businnes.CssClasses", "BusinnessStyleClasses")).Dump();
 	var fooList = PreDefDotStartingWordsObjectList;
 	fooList.Add(new("fooClass"));
-	var markup2 = StyleClassFileMarkUp(fooList, new CssFile("", "", "Progress.Businnes.CssClasses", "fooStyleClasses")).Dump();
+	var markup2 = StyleClassMarkUpFromString(fooList, new CssFile("", "", "Progress.Businnes.CssClasses", "fooStyleClasses")).Dump();
 }
 
 public static Regex DotRegex
@@ -158,7 +158,7 @@ class DistinctICssClassComparer : IEqualityComparer<CssObjectContainer>
 	}
 }
 
-public string StyleClassFileMarkUp(List<CssObjectContainer> cssClasses, CssFile file)
+public string StyleClassMarkUpFromString(List<CssObjectContainer> cssClasses, CssFile file)
 {
 	var uniqueClassList = cssClasses.Distinct(new DistinctICssClassComparer());
 	var fileContent = $@"namespace {file.nSpace}
@@ -186,4 +186,10 @@ public static class {file.className}
 	fileContent += "}";
 
 	return fileContent;
+}
+
+public string StyleClassMarkUpFromFile(CssFile file)
+{
+	var parsedFile = parseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
+	return StyleClassMarkUpFromString(parsedFile, file);
 }
