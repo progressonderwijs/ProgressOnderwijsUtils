@@ -8,21 +8,37 @@
   <IncludeAspNet>true</IncludeAspNet>
 </Query>
 
+//testing purp
 static string PreDefStringWithoutComments = @".umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}";
 static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {background-image: url();}.umcg.login-warning-NL::after {content: ;white - space: pre - wrap;display: inline - block;}.umcg.login-warning-EN::after {content: ;white - space: pre - wrap;display: inline - block;}";
 static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
 static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
 static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
+//
+
 public Dictionary<string, CssFile> classes = new Dictionary<string, CssFile>();
+public List<CssFile> CssFiles => new List<CssFile>(){
+	new(@"src/Progress.ClientApp/dist/portal.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","PortalStyleClasses"),
+	new(@"src/Progress.ClientApp/dist/catalogue.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","CatalogueStyleClasses"),
+	new(@"src/Progress.ClientApp/dist/pnet.css", @"src/Progress.Business/CssClasses/", "Progress.Businnes.CssClasses","PNetStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/curio.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","CurioStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/demo.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","DemoStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/ehb.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","EhbStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/hanze.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","HanzeStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/homeinstead.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","HomeinsteadStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/hva.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","HvaStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/react-tabs.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","ReactTabsStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/site.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","SiteStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/tudelft.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","TudelftStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/umcg.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","UmcgStyleClasses"),
+	new(@"src/ProgressElections/ProgressElections/ClientApp/css/uvh.css", @"src/ProgressElections/ProgressElections/ClientApp/css/", "ProgressElections.ClientApp.css","UvhTabsStyleClasses"),
+};
 
 void Main()
 {
-	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
-	TestRegexes(testString);
-	var markup = StyleClassMarkUpFromString(PreDefDotStartingWordsObjectList, new CssFile("", "", "Progress.Businnes.CssClasses", "BusinnessStyleClasses")).Dump();
-	var fooList = PreDefDotStartingWordsObjectList;
-	fooList.Add(new("fooClass"));
-	var markup2 = StyleClassMarkUpFromString(fooList, new CssFile("", "", "Progress.Businnes.CssClasses", "fooStyleClasses")).Dump();
+	foreach (var file in CssFiles) {
+		var markup3 = StyleClassMarkUpFromFile(file).Dump();
+	}
 }
 
 public static Regex DotRegex
@@ -30,28 +46,21 @@ public static Regex DotRegex
 //More complex regex only '-' still works:
 //	=> new Regex(@"(\.)(?!-?[0-9])(?<name>[^\u0000-,./:-@\[\\\]^`{-\u009f]+)");
 
-public static string removeComments(string fileWithComments)
+public static string RemoveComments(string fileWithComments)
 {
 	var commentRegx = new Regex(@"(?<comment>(/\*)(.|\s)*?(\*/))");
 
 	return commentRegx.Replace(fileWithComments, "");
 }
 
-public static string removeStrings(string fileWithStrings)
+public static string RemoveStrings(string fileWithStrings)
 {
 	var stringRegx = new Regex(@"(?<string>(\""[^\""]*\"")|((\')[^\']*(\')))");
 
 	return stringRegx.Replace(fileWithStrings, "");
 }
 
-public static List<string> getAllDotStartingWords(string fileWithDotStartingWords)
-{
-	var matchCol = DotRegex.Matches(fileWithDotStartingWords);
-	var list = matchCol.Cast<Match>().Select(match => match.Groups["name"].Value).ToList();
-	return list;
-}
-
-public static List<CssObjectContainer> getAllClassObjects(string fileWithDotStartingWords)
+public static List<CssObjectContainer> GetAllClassObjects(string fileWithDotStartingWords)
 {
 	var matchCollection = DotRegex.Matches(fileWithDotStartingWords);
 	var list = matchCollection.Cast<Match>().Select(m =>
@@ -66,11 +75,11 @@ public static List<CssObjectContainer> getAllClassObjects(string fileWithDotStar
 	return list;
 }
 
-public static List<CssObjectContainer> parseOriginalCssToClassList(string baseFile)
+public static List<CssObjectContainer> ParseOriginalCssToClassList(string baseFile)
 {
-	baseFile = removeComments(baseFile);
-	baseFile = removeStrings(baseFile);
-	return getAllClassObjects(baseFile);
+	baseFile = RemoveComments(baseFile);
+	baseFile = RemoveStrings(baseFile);
+	return GetAllClassObjects(baseFile);
 }
 
 public record CssObjectContainer(string className)
@@ -90,18 +99,30 @@ public record CssObjectContainer(string className)
 	}
 }
 
-public record CssFile(string inputF, string outputF, string nSpace, string className);
+public record CssFile(string inputFile, string outputFolder, string nSpace, string className)
+{
+	public string inputF = getCompleteFilePath(inputFile);
+	public string outputF = getCompleteFilePath(outputFolder) + className + @".cs";
 
+	static string getCompleteFilePath(string fP)
+	{
+		var folderpath = Util.CurrentQueryPath;
+		//var folderpath = GetMyPath();
+		return folderpath + @"..\..\..\..\progress\" + fP;
+	}
+}
+
+//tests
 public void TestRegexes(string testString)
 {
-	var noCommentTestString = removeComments(testString);
+	var noCommentTestString = RemoveComments(testString);
 	if (noCommentTestString != PreDefStringWithoutComments)
 	{
 		noCommentTestString.Dump();
 		PreDefStringWithoutComments.Dump();
 		throw new("No comments not the same.");
 	}
-	var noStingAndCommentTestString = removeStrings(noCommentTestString);
+	var noStingAndCommentTestString = RemoveStrings(noCommentTestString);
 	if (noStingAndCommentTestString != PreDefStringWithoutStrings)
 	{
 		noStingAndCommentTestString.Dump();
@@ -115,7 +136,7 @@ public void TestRegexes(string testString)
 		PreDefDotStartingWordsList.Dump();
 		throw new("Dot starting words not the same.");
 	}
-	var classObjects = getAllClassObjects(noStingAndCommentTestString);
+	var classObjects = GetAllClassObjects(noStingAndCommentTestString);
 	if (!classObjects.SequenceEqual(PreDefDotStartingWordsObjectList))
 	{
 		classObjects.Dump();
@@ -158,7 +179,7 @@ class DistinctICssClassComparer : IEqualityComparer<CssObjectContainer>
 	}
 }
 
-public string StyleClassMarkUpFromString(List<CssObjectContainer> cssClasses, CssFile file)
+public string StyleClassMarkUpFromClassList(List<CssObjectContainer> cssClasses, CssFile file)
 {
 	var uniqueClassList = cssClasses.Distinct(new DistinctICssClassComparer());
 	var fileContent = $@"namespace {file.nSpace}
@@ -190,6 +211,6 @@ public static class {file.className}
 
 public string StyleClassMarkUpFromFile(CssFile file)
 {
-	var parsedFile = parseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
-	return StyleClassMarkUpFromString(parsedFile, file);
+	var classList = ParseOriginalCssToClassList(System.IO.File.ReadAllText(file.inputF));
+	return StyleClassMarkUpFromClassList(classList, file);
 }
