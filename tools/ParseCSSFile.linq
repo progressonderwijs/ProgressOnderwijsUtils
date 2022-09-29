@@ -13,16 +13,16 @@ static string PreDefStringWithoutStrings = @".umcg .institutionlogo__0 {backgrou
 static List<string> PreDefDotStartingWordsList = new List<string> { "umcg", "institutionlogo__0", "umcg", "login-warning-NL", "umcg", "login-warning-EN", };
 static List<CssObjectContainer> PreDefDotStartingWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("umcg"), new("login-warning-NL"), new("umcg"), new("login-warning-EN") };
 static List<CssObjectContainer> PreDefDotStartingUniqueWordsObjectList = new List<CssObjectContainer>() { new("umcg"), new("institutionlogo__0"), new("login-warning-NL"), new("login-warning-EN") };
+public Dictionary<string, CssFile> classes = new Dictionary<string, CssFile>();
 
 void Main()
 {
 	var testString = @"/*Test*/.umcg .institutionlogo__0 {background-image: url(""./ logo / umcg.png"");}.umcg.login-warning-NL::after {content: ""Welkom bij de/*testing*/ medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e - mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent.Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;display: inline - block;}/*Test more testesfsef 'dwadwadawdaw' "" dwadwadawd'wadawdawd' ""fsfsf*/.umcg.login-warning-EN::/*esfsef*/after {content: ""Welkom bij de medezeggenschapsverkiezingen UMCG.\a\aGebruik de onderstaande knop om in te loggen. Je komt automatisch op het aanmeldscherm om je e-mailadres in te typen.\a\aJe gegevens worden gebruikt om te checken of je een stemgerechtigde van het UMCG bent. Zodra je stemt, is de link met de gegevens verbroken."";white - space: pre - wrap;/*testing*//* with a / oh and a * an a /* */display: inline - block;}";
 	TestRegexes(testString);
-	var classList = parseOriginalCssToClassList(testString);
-	classList.SequenceEqual(PreDefDotStartingWordsObjectList).Dump();
-	//execute this method after all the css classes are extracted to remove duplicates and different css classes with the same object name
-	var uniqueClassList = classList.Distinct(new DistinctItemComparer()).Dump();
-	uniqueClassList.SequenceEqual(PreDefDotStartingUniqueWordsObjectList).Dump();
+	var markup = StyleClassFileMarkUp(PreDefDotStartingWordsObjectList, new CssFile("", "", "Progress.Businnes.CssClasses", "BusinnessStyleClasses")).Dump();
+	var fooList = PreDefDotStartingWordsObjectList;
+	fooList.Add(new("fooClass"));
+	var markup2 = StyleClassFileMarkUp(fooList, new CssFile("", "", "Progress.Businnes.CssClasses", "fooStyleClasses")).Dump();
 }
 
 public static Regex DotRegex
@@ -90,6 +90,8 @@ public record CssObjectContainer(string className)
 	}
 }
 
+public record CssFile(string inputF, string outputF, string nSpace, string className);
+
 public void TestRegexes(string testString)
 {
 	var noCommentTestString = removeComments(testString);
@@ -139,7 +141,7 @@ public static bool IsValidClassName(string className)
 	return true;
 }
 
-class DistinctItemComparer : IEqualityComparer<CssObjectContainer>
+class DistinctICssClassComparer : IEqualityComparer<CssObjectContainer>
 {
 	public bool Equals(CssObjectContainer x, CssObjectContainer y)
 	{
@@ -154,4 +156,34 @@ class DistinctItemComparer : IEqualityComparer<CssObjectContainer>
 	{
 		return obj.objectName.GetHashCode();
 	}
+}
+
+public string StyleClassFileMarkUp(List<CssObjectContainer> cssClasses, CssFile file)
+{
+	var uniqueClassList = cssClasses.Distinct(new DistinctICssClassComparer());
+	var fileContent = $@"namespace {file.nSpace}
+
+public static class {file.className}
+{{
+";
+	foreach (var classContainer in uniqueClassList)
+	{
+		//Duplicate objects in the same namespace will get a reference to the first object found in that namespace
+		CssFile f;
+		if (classes.TryGetValue(classContainer.className, out f) && f.nSpace == file.nSpace)
+		{
+			var reference = classes[classContainer.className];
+			fileContent += $@"	public static readonly CssClass {classContainer.objectName} = {reference.className}.{classContainer.objectName};
+";
+		}
+		else
+		{
+			fileContent += $@"	public static readonly CssClass {classContainer.objectName} = new(""{classContainer.className}"");
+";
+			classes.TryAdd(classContainer.className, file);
+		}
+	}
+	fileContent += "}";
+
+	return fileContent;
 }
