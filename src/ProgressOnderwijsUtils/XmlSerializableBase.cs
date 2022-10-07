@@ -11,6 +11,9 @@ public static class XmlSerializerHelper
         => XmlSerializerHelper<T>.Deserialize(xml);
 
     public static string SerializeToString(object o)
+        => SerializeToString(o, null);
+
+    public static string SerializeToString(object o, XmlSerializerNamespaces? namespaces)
     {
         using var writer = new StringWriter();
         using (var xw = XmlWriter.Create(writer)) {
@@ -20,31 +23,42 @@ public static class XmlSerializerHelper
                         .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
                         .Single()
                         .Invoke(null)
-                ).SerializeToInst(xw, o);
+                ).SerializeToInst(xw, o, namespaces);
         }
         return writer.ToString();
     }
 
     public static XDocument SerializeToXDocument(object o)
+        => SerializeToXDocument(o, null);
+
+    public static XDocument SerializeToXDocument(object o, XmlSerializerNamespaces? namespaces)
     {
         var doc = new XDocument();
-        using (var xw = doc.CreateWriter()) {
-            ((IXmlSerializeHelper)
-                    typeof(XmlSerializerHelper<>)
-                        .MakeGenericType(o.GetType())
-                        .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                        .Single()
-                        .Invoke(null)
-                ).SerializeToInst(xw, o);
-        }
+        using var xw = doc.CreateWriter();
+        ((IXmlSerializeHelper)
+                typeof(XmlSerializerHelper<>)
+                    .MakeGenericType(o.GetType())
+                    .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Single()
+                    .Invoke(null)
+            ).SerializeToInst(xw, o, namespaces);
 
         return doc;
     }
+
+    public static string ToStringWithXmlDeclaration(this XDocument xdoc, XDeclaration declaration)
+        => $"{declaration}{Environment.NewLine}{xdoc}";
+
+    public static string ToStringWithXmlDeclaration(this XDocument xdoc, XDeclaration declaration, SaveOptions options)
+        => $"{declaration}{Environment.NewLine}{xdoc.ToString(options)}";
 }
 
 interface IXmlSerializeHelper
 {
-    void SerializeToInst(XmlWriter xw, object val);
+    void SerializeToInst(XmlWriter xw, object val)
+        => SerializeToInst(xw, val, null);
+
+    void SerializeToInst(XmlWriter xw, object val, XmlSerializerNamespaces? namespaces);
 }
 
 public sealed class XmlSerializerHelper<T> : IXmlSerializeHelper
@@ -71,14 +85,17 @@ public sealed class XmlSerializerHelper<T> : IXmlSerializeHelper
     }
 
     public static string Serialize(T val)
+        => Serialize(val, null);
+
+    public static string Serialize(T val, XmlSerializerNamespaces? namespaces)
     {
         using var writer = new StringWriter();
-        serializer.Serialize(writer, val);
+        serializer.Serialize(writer, val, namespaces);
         return writer.ToString();
     }
 
     internal XmlSerializerHelper() { }
 
-    void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val)
-        => serializer.Serialize(xw, val);
+    void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val, XmlSerializerNamespaces? namespaces)
+        => serializer.Serialize(xw, val, namespaces);
 }
