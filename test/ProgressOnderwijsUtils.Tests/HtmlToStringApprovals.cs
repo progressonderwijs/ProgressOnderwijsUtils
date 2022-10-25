@@ -29,7 +29,7 @@ public sealed class HtmlToStringApprovals
     static readonly HtmlTagKinds.HTML docWithEmptyClass =
         _html.Content(
             _head.Content(_title.Content("Hello world!")),
-            _body._class(StyleClassesTestsObjects.None).Content(_p.Content("Hello world!"))
+            _body._class((CssClass?)null).Content(_p.Content("Hello world!"))
         );
 
     [Fact]
