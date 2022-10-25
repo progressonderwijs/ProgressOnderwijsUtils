@@ -66,6 +66,32 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         }
     }
 
+    public bool HasClass(CssClass cssClass)
+    {
+        var classChars = cssClass.ClassName.AsSpan();
+        foreach (var attr in this) {
+            if (attr.Name == "class") {
+                var haystack = attr.Value.AsSpan();
+                while (haystack.Length > 0) {
+                    var endIdx = haystack.IndexOf(' ');
+
+                    ReadOnlySpan<char> head;
+                    if (endIdx == -1) {
+                        head = haystack;
+                        haystack = new();
+                    } else {
+                        head = haystack[..endIdx];
+                        haystack = haystack[(endIdx + 1)..];
+                    }
+                    if (head.SequenceEqual(classChars) && head.Length > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public string[] Classes()
     {
         var classes = new ArrayBuilder<string>();
@@ -161,30 +187,4 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
 
     public override string ToString()
         => this.Select(a => a.ToString()).JoinStrings("; ");
-
-    public bool HasClass(CssClass cssClass)
-    {
-        var classChars = cssClass.ClassName.AsSpan();
-        foreach (var attr in this) {
-            if (attr.Name == "class") {
-                var haystack = attr.Value.AsSpan();
-                while (haystack.Length > 0) {
-                    var endIdx = haystack.IndexOf(' ');
-
-                    ReadOnlySpan<char> head;
-                    if (endIdx == -1) {
-                        head = haystack;
-                        haystack = new();
-                    } else {
-                        head = haystack[..endIdx];
-                        haystack = haystack[(endIdx + 1)..];
-                    }
-                    if (head.SequenceEqual(classChars) && head.Length > 0) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }
