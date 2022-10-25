@@ -23,7 +23,7 @@ public static class HtmlClassAttribute
         return htmlTagExpr;
     }
 
-    public static bool HasClass(this HtmlAttributes atr, CssClass cssClass)
+    public static bool HasClass(HtmlAttributes atr, CssClass cssClass)
     {
         var classChars = cssClass.ClassName.AsSpan();
         foreach (var attr in atr) {
