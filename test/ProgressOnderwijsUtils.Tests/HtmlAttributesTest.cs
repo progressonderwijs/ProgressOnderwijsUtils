@@ -175,48 +175,48 @@ public sealed class HtmlAttributesTest
     public void HasClassCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, null, C, E, None, null)._class(None)._class(Y);
-        PAssert.That(() => HtmlClassAttribute.HasClass(GetAttributes(div), X));
-        PAssert.That(() => HtmlClassAttribute.HasClass(GetAttributes(div), Y));
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), Bla));
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), a));
+        PAssert.That(() => GetAttributes(div).HasClass(X));
+        PAssert.That(() => GetAttributes(div).HasClass(Y));
+        PAssert.That(() => !GetAttributes(div).HasClass(Bla));
+        PAssert.That(() => !GetAttributes(div).HasClass(a));
     }
 
     [Fact]
     public void You_cannot_check_multiple_classes_in_one_call()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, None, C, E, null, None)._class(None)._class(Y);
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), new CssClass("A X")));
+        PAssert.That(() => !GetAttributes(div).HasClass(new CssClass("A X")));
     }
 
     [Fact]
     public void TheEmptyClassIsNotPresent()
     {
         var div = _div._class(A, X)._id("B")._class(null, D, None, C, E, None, null)._class(None)._class(Y);
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), None));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
     }
 
     [Fact]
     public void HasClassReturnsFalseWhenThereIsNoClass()
     {
         var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), D));
+        PAssert.That(() => !GetAttributes(div).HasClass(D));
     }
 
     [Fact]
     public void HasClassFromObject()
     {
         var div = _div._class(D)._class(BlaWthSpace);
-        PAssert.That(() => HtmlClassAttribute.HasClass(GetAttributes(div), D));
-        PAssert.That(() => HtmlClassAttribute.HasClass(GetAttributes(div), Bla));
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), None));
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), d));
+        PAssert.That(() => GetAttributes(div).HasClass(D));
+        PAssert.That(() => GetAttributes(div).HasClass(Bla));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
+        PAssert.That(() => !GetAttributes(div).HasClass(d));
     }
 
     [Fact]
     public void ClassFromObjectEmptyClass()
     {
         var div = _div._class(None);
-        PAssert.That(() => !HtmlClassAttribute.HasClass(GetAttributes(div), None));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
     }
 
     [Fact]
