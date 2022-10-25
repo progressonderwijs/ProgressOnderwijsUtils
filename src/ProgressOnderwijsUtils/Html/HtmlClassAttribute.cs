@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlClassAttribute
@@ -21,32 +15,6 @@ public static class HtmlClassAttribute
             }
         }
         return htmlTagExpr;
-    }
-
-    public static bool HasClass(this HtmlAttributes atr, CssClass cssClass)
-    {
-        var classChars = cssClass.ClassName.AsSpan();
-        foreach (var attr in atr) {
-            if (attr.Name == "class") {
-                var haystack = attr.Value.AsSpan();
-                while (haystack.Length > 0) {
-                    var endIdx = haystack.IndexOf(' ');
-
-                    ReadOnlySpan<char> head;
-                    if (endIdx == -1) {
-                        head = haystack;
-                        haystack = new();
-                    } else {
-                        head = haystack[..endIdx];
-                        haystack = haystack[(endIdx + 1)..];
-                    }
-                    if (head.SequenceEqual(classChars) && head.Length > 0) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 }
 
