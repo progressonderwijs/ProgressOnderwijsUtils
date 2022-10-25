@@ -14,7 +14,7 @@ public static class StyleClassesTestsObjects
     public static readonly CssClass E = new("E");
     public static readonly CssClass X = new("X");
     public static readonly CssClass Y = new("Y");
-    public static readonly CssClass None = new(default(string));
+    public static readonly CssClass None = new("");
     public static readonly CssClass AClass = new("aClass");
     public static readonly CssClass BClass = new("bClass");
     public static readonly CssClass Bla = new("bla");
