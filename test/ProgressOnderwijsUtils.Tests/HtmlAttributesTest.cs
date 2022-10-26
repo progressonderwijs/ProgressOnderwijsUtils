@@ -6,16 +6,19 @@ namespace ProgressOnderwijsUtils.Tests;
 public static class StyleClassesTestsObjects
 {
     public static readonly CssClass A = new("A");
+    public static readonly CssClass a = new("a");
     public static readonly CssClass B = new("B");
     public static readonly CssClass C = new("C");
     public static readonly CssClass D = new("D");
+    public static readonly CssClass d = new("d");
     public static readonly CssClass E = new("E");
     public static readonly CssClass X = new("X");
     public static readonly CssClass Y = new("Y");
-    public static readonly CssClass None = new(default(string));
+    public static readonly CssClass None = new("");
     public static readonly CssClass AClass = new("aClass");
     public static readonly CssClass BClass = new("bClass");
-    public static readonly CssClass Bla = new("bla ");
+    public static readonly CssClass Bla = new("bla");
+    public static readonly CssClass BlaWthSpace = new("bla ");
 }
 
 public sealed class HtmlAttributesTest
@@ -172,48 +175,48 @@ public sealed class HtmlAttributesTest
     public void HasClassCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, null, C, E, None, null)._class(None)._class(Y);
-        PAssert.That(() => GetAttributes(div).HasClass("X"));
-        PAssert.That(() => GetAttributes(div).HasClass("Y"));
-        PAssert.That(() => !GetAttributes(div).HasClass("bla"));
-        PAssert.That(() => !GetAttributes(div).HasClass("a"));
+        PAssert.That(() => GetAttributes(div).HasClass(X));
+        PAssert.That(() => GetAttributes(div).HasClass(Y));
+        PAssert.That(() => !GetAttributes(div).HasClass(Bla));
+        PAssert.That(() => !GetAttributes(div).HasClass(a));
     }
 
     [Fact]
     public void You_cannot_check_multiple_classes_in_one_call()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, None, C, E, null, None)._class(None)._class(Y);
-        PAssert.That(() => !GetAttributes(div).HasClass("A X"));
+        PAssert.That(() => !GetAttributes(div).HasClass(new CssClass("A X")));
     }
 
     [Fact]
     public void TheEmptyClassIsNotPresent()
     {
         var div = _div._class(A, X)._id("B")._class(null, D, None, C, E, None, null)._class(None)._class(Y);
-        PAssert.That(() => !GetAttributes(div).HasClass(""));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
     }
 
     [Fact]
     public void HasClassReturnsFalseWhenThereIsNoClass()
     {
         var div = _div.Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._id("D");
-        PAssert.That(() => !GetAttributes(div).HasClass("D"));
+        PAssert.That(() => !GetAttributes(div).HasClass(D));
     }
 
     [Fact]
     public void HasClassFromObject()
     {
-        var div = _div._class(D)._class(Bla);
-        PAssert.That(() => GetAttributes(div).HasClass("D"));
-        PAssert.That(() => GetAttributes(div).HasClass("bla"));
-        PAssert.That(() => !GetAttributes(div).HasClass(""));
-        PAssert.That(() => !GetAttributes(div).HasClass("d"));
+        var div = _div._class(D)._class(BlaWthSpace);
+        PAssert.That(() => GetAttributes(div).HasClass(D));
+        PAssert.That(() => GetAttributes(div).HasClass(Bla));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
+        PAssert.That(() => !GetAttributes(div).HasClass(d));
     }
 
     [Fact]
     public void ClassFromObjectEmptyClass()
     {
         var div = _div._class(None);
-        PAssert.That(() => !GetAttributes(div).HasClass(""));
+        PAssert.That(() => !GetAttributes(div).HasClass(None));
     }
 
     [Fact]

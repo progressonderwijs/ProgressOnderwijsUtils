@@ -66,12 +66,11 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
         }
     }
 
-    public bool HasClass(string className)
+    public bool HasClass(CssClass cssClass)
     {
         //this is essentially Classes copy-pasted except checking for equality instead of accumulating in an array
         //this avoid the allocations for the strings and the array.
-        var classChars = className.AsSpan();
-
+        var classChars = cssClass.ClassName.AsSpan();
         foreach (var attr in this) {
             if (attr.Name == "class") {
                 var haystack = attr.Value.AsSpan();
