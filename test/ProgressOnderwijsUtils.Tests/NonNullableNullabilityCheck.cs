@@ -16,6 +16,7 @@ public sealed class NonNullableNullabilityCheck
         => $"{field} is a non nullable field with a null value.\n";
 
     static readonly NullabilityInfoContext context = new();
+    static readonly Func<NullablityTestClass, string> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     static string CheckValidNonNullablitiy(object obj)
         => obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -27,6 +28,9 @@ public sealed class NonNullableNullabilityCheck
 
     static bool AssertNullWhileNotNullable(object obj, FieldInfo? field)
         => field?.GetValue(obj) == null && context.Create(field.AssertNotNull()).WriteState == NullabilityState.NotNull;
+
+    static string getVerifierMessage(string field)
+        => "Found null value in non nullable field in ProgressOnderwijsUtils.Data.NullablityTestClass." + field + Environment.NewLine;
 
     [Fact]
     public void AssertWithReflectionOfField()
@@ -48,8 +52,8 @@ public sealed class NonNullableNullabilityCheck
             SomeFilledObjectArray = new object[] { }
         };
         PAssert.That(
-            () => NonNullableFieldVerifier.Verify(someClassChanged) ==
-                "Found null value in non nullable field in NullablityTestClass.SomeNullString" + Environment.NewLine
+            () => Verifier(someClassChanged) ==
+                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
         );
     }
 
@@ -58,10 +62,10 @@ public sealed class NonNullableNullabilityCheck
     {
         var someClassChanged = new NullablityTestClass();
         PAssert.That(
-            () => NonNullableFieldVerifier.Verify(someClassChanged) ==
-                "Found null value in non nullable field in NullablityTestClass.SomeNullString" + Environment.NewLine
-                + "Found null value in non nullable field in NullablityTestClass.SomeObject" + Environment.NewLine
-                + "Found null value in non nullable field in NullablityTestClass.SomeObjectArray" + Environment.NewLine
+            () => Verifier(someClassChanged) ==
+                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
+                + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
+                + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
         );
     }
 }
