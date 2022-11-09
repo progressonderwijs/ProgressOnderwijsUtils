@@ -4,29 +4,23 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils.Tests;
 
 #nullable enable
-public sealed class NullablityTestClass 
-{
-    public string SomeNullString = null;
-    public string? SomeNullableField = null;
-    public object SomeObject = null;
 
-    public object? SomeNullableObject = null;
-    public object[] SomeObjectArray = null;
-    public object[] SomeFilledObjectArray = {null};
-}
 public sealed class NonNullableNullabilityCheck
 {
-    static string WarnAbout(string field) => $"{field} is a non nullable field with a null value.\n";
+    static string WarnAbout(string field)
+        => $"{field} is a non nullable field with a null value.\n";
+
     static readonly NullabilityInfoContext context = new();
 
     static string CheckValidNonNullablitiy(object obj)
         => obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Select(
-                f => AssertNullWhileNotNullable(obj,f)
+                f => AssertNullWhileNotNullable(obj, f)
                     ? WarnAbout(f.Name)
                     : null
             ).WhereNotNull().JoinStrings();
@@ -41,4 +35,33 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertWithReflectionOfAllFields()
         => PAssert.That(() => CheckValidNonNullablitiy(new NullablityTestClass()) != "");
+
+    [Fact]
+    public void AssertOneNullFieldCompiled()
+    {
+        var someClassChanged = new NullablityTestClass {
+            SomeNullString = null, //non nullable
+            SomeNullableField = null,
+            SomeObject = new(),
+            SomeNullableObject = null,
+            SomeObjectArray = new object[] { },
+            SomeFilledObjectArray = new object[] { }
+        };
+        PAssert.That(
+            () => NonNullableFieldVerifier.Verify(someClassChanged) ==
+                "Found null value in non nullable field in NullablityTestClass.SomeNullString" + Environment.NewLine
+        );
+    }
+
+    [Fact]
+    public void AssertAllNullFieldsCompiled()
+    {
+        var someClassChanged = new NullablityTestClass();
+        PAssert.That(
+            () => NonNullableFieldVerifier.Verify(someClassChanged) ==
+                "Found null value in non nullable field in NullablityTestClass.SomeNullString" + Environment.NewLine
+                + "Found null value in non nullable field in NullablityTestClass.SomeObject" + Environment.NewLine
+                + "Found null value in non nullable field in NullablityTestClass.SomeObjectArray" + Environment.NewLine
+        );
+    }
 }
