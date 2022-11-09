@@ -40,7 +40,7 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertOneNullFieldCompiled()
     {
-        var someClassChanged = new NullablityTestClass {
+        var oneContainingNull = new NullablityTestClass {
             SomeNullString = null, //non nullable
             SomeNullableField = null,
             SomeObject = new(),
@@ -49,7 +49,7 @@ public sealed class NonNullableNullabilityCheck
             SomeFilledObjectArray = new object[] { }
         };
         PAssert.That(
-            () => Verifier(someClassChanged) ==
+            () => Verifier(oneContainingNull) ==
                 getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
         );
     }
@@ -57,9 +57,30 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertAllNullFieldsCompiled()
     {
-        var someClassChanged = new NullablityTestClass();
+        var allContainingNull = new NullablityTestClass();
         PAssert.That(
-            () => Verifier(someClassChanged) ==
+            () => Verifier(allContainingNull) ==
+                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
+                + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
+                + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+        );
+    }
+
+    [Fact]
+    public void AssertNoNullFieldsCompiled()
+    {
+        var notContainingNull
+            = new NullablityTestClass {
+            SomeNullString = "",
+            SomeNullableField = null,
+            SomeObject = new(),
+            SomeNullableObject = null,
+            SomeObjectArray = new object[] { },
+            SomeFilledObjectArray = new object[] { }
+        };
+        PAssert.That(
+            () => Verifier(notContainingNull
+) ==
                 getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
                 + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
                 + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
