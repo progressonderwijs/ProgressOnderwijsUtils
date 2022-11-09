@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
-using ProgressOnderwijsUtils.Data;
+using ProgressOnderwijsUtils.Tests;
 using Xunit.Sdk;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
