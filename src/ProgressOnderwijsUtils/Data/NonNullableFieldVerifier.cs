@@ -21,7 +21,7 @@ public static class NonNullableFieldVerifier
             fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .Select(
                     f => {
-                        var memberExpression = Expression.Field(objectParam, f.Name);
+                        var memberExpression = Expression.Field(objectParam, f);
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
                         return Expression.IfThen(
                             Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
