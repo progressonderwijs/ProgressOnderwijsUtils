@@ -71,19 +71,16 @@ public sealed class NonNullableNullabilityCheck
     {
         var notContainingNull
             = new NullablityTestClass {
-            SomeNullString = "",
-            SomeNullableField = null,
-            SomeObject = new(),
-            SomeNullableObject = null,
-            SomeObjectArray = new object[] { },
-            SomeFilledObjectArray = new object[] { }
-        };
+                SomeNullString = "",
+                SomeNullableField = null,
+                SomeObject = new(),
+                SomeNullableObject = null,
+                SomeObjectArray = new object[] { },
+                SomeFilledObjectArray = new object[] { }
+            };
         PAssert.That(
-            () => Verifier(notContainingNull
-) ==
-                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
-                + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
-                + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+            () => Verifier(notContainingNull) ==
+                ""
         );
     }
 }
