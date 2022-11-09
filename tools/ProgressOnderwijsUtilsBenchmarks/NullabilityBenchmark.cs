@@ -49,26 +49,18 @@ public sealed class NullabilityBenchmark
 
     [Benchmark]
     public void WithReflection()
-    {
-        _ = CheckValidNonNullablitiy(typeof(NullablityTestClass));
-    }
+        => _ = CheckValidNonNullablitiy(typeof(NullablityTestClass));
 
     [Benchmark]
     public void HardCoded()
-    {
-        _ = ""
+        => _ = ""
             + (nullablityTestClass.SomeNullString == null ? WarnAbout(nameof(NullablityTestClass.SomeNullString)) : "")
             + (nullablityTestClass.SomeObject == null ? WarnAbout(nameof(NullablityTestClass.SomeObject)) : "")
             + (nullablityTestClass.SomeObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : "")
-            + (nullablityTestClass.SomeFilledObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : "")
-            ;
-    }
+            + (nullablityTestClass.SomeFilledObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : "");
 
-    static readonly NonNullableFieldVerifier verifier = new();
-
+    static readonly Func<NullablityTestClass,string> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     [Benchmark]
     public void Compiled()
-    {
-        _ = verifier.Verify(nullablityTestClass);
-    }
+        => _ = Verifier(nullablityTestClass);
 }
