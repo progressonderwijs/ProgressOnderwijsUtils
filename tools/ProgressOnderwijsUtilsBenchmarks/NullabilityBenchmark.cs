@@ -12,7 +12,6 @@ using ProgressOnderwijsUtils.Tests;
 using Xunit.Sdk;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
-#nullable enable
 [Config(typeof(Config))]
 [MemoryDiagnoser]
 public sealed class NullabilityBenchmark
