@@ -17,6 +17,7 @@ public static class NonNullableFieldVerifier
             fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .Select(
                     f => {
+                        var info = ((Func<string,string,string>)string.Concat).Method;
                         var memberExpression = Expression.Field(objectParam, f);
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
                         return Expression.IfThen(
@@ -24,7 +25,7 @@ public static class NonNullableFieldVerifier
                             Expression.Assign(
                                 exceptionVar,
                                 Expression.Call(
-                                    typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string) }),
+                                    info,
                                     exceptionVar,
                                     Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + Environment.NewLine)
                                 )
