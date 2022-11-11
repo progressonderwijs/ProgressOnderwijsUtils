@@ -9,33 +9,54 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class NonNullableNullabilityCheck
 {
-    static string WarnAbout(string field)
-        => $"{field} is a non nullable field with a null value.\n";
-
     static readonly NullabilityInfoContext context = new();
     static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
-    static string CheckValidNonNullablitiy(object obj)
+    static string[] CheckValidNonNullablitiy(object obj)
         => obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Select(
                 f => NullFoundInNotNullField(obj, f)
-                    ? WarnAbout(f.Name)
+                    ? getVerifierMessage(f.Name)
                     : null
-            ).WhereNotNull().JoinStrings();
+            ).WhereNotNull().ToArray();
 
     static bool NullFoundInNotNullField(object obj, FieldInfo? field)
         => field?.GetValue(obj) == null && context.Create(field.AssertNotNull()).WriteState == NullabilityState.NotNull;
 
     static string getVerifierMessage(string field)
-        => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field + Environment.NewLine;
+        => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field;
 
     [Fact]
     public void AssertWithReflectionOfField()
         => PAssert.That(() => NullFoundInNotNullField(new NullablityTestClass(), typeof(NullablityTestClass).GetField("SomeNullString")) == true);
 
     [Fact]
+    public void AssertWithReflectionOfOneField()
+    {
+        var oneContainingNull = new NullablityTestClass {
+            SomeNullString = null, //non nullable
+            SomeNullableField = null,
+            SomeObject = new(),
+            SomeNullableObject = null,
+            SomeObjectArray = new object[] { },
+            SomeFilledObjectArray = new object[] { }
+        };
+        PAssert.That(
+            () => CheckValidNonNullablitiy(oneContainingNull).SequenceEqual(
+                new[] {
+                    getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
+                }
+            )
+        );
+    }
+
+    [Fact]
     public void AssertWithReflectionOfAllFields()
-        => PAssert.That(() => CheckValidNonNullablitiy(new NullablityTestClass()) != "");
+        => PAssert.That(() => CheckValidNonNullablitiy(new NullablityTestClass()).SequenceEqual(new[] {
+            getVerifierMessage(nameof(NullablityTestClass.SomeNullString)),
+            getVerifierMessage(nameof(NullablityTestClass.SomeObject)),
+            getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+        }));
 
     [Fact]
     public void AssertOneNullFieldCompiled()
