@@ -13,7 +13,7 @@ public sealed class NonNullableNullabilityCheck
         => $"{field} is a non nullable field with a null value.\n";
 
     static readonly NullabilityInfoContext context = new();
-    static readonly Func<NullablityTestClass, string> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     static string CheckValidNonNullablitiy(object obj)
         => obj.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
@@ -48,10 +48,7 @@ public sealed class NonNullableNullabilityCheck
             SomeObjectArray = new object[] { },
             SomeFilledObjectArray = new object[] { }
         };
-        PAssert.That(
-            () => Verifier(oneContainingNull) ==
-                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
-        );
+        PAssert.That(() => Verifier(oneContainingNull).SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)) }));
     }
 
     [Fact]
@@ -59,10 +56,13 @@ public sealed class NonNullableNullabilityCheck
     {
         var allContainingNull = new NullablityTestClass();
         PAssert.That(
-            () => Verifier(allContainingNull) ==
-                getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
-                + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
-                + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+            () => Verifier(allContainingNull).SequenceEqual(
+                new[] {
+                    getVerifierMessage(nameof(NullablityTestClass.SomeNullString)),
+                    getVerifierMessage(nameof(NullablityTestClass.SomeObject)),
+                    getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+                }
+            )
         );
     }
 
@@ -78,9 +78,7 @@ public sealed class NonNullableNullabilityCheck
                 SomeObjectArray = new object[] { },
                 SomeFilledObjectArray = new object[] { }
             };
-        PAssert.That(
-            () => Verifier(notContainingNull) ==
-                ""
-        );
+        PAssert.That(() => Verifier(notContainingNull) ==
+            null);
     }
 }

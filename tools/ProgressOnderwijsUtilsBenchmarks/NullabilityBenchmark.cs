@@ -58,7 +58,7 @@ public sealed class NullabilityBenchmark
             + (nullablityTestClass.SomeObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : "")
             + (nullablityTestClass.SomeFilledObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : "");
 
-    static readonly Func<NullablityTestClass,string> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass,string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     [Benchmark]
     public void Compiled()
         => _ = Verifier(nullablityTestClass);
