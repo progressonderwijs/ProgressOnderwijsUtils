@@ -78,7 +78,9 @@ public sealed class NonNullableNullabilityCheck
                 SomeObjectArray = new object[] { },
                 SomeFilledObjectArray = new object[] { }
             };
-        PAssert.That(() => Verifier(notContainingNull) ==
-            null);
+        PAssert.That(
+            () => Verifier(notContainingNull) ==
+                null
+        );
     }
 }
