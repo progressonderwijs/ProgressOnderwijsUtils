@@ -21,7 +21,7 @@ public static class NonNullableFieldVerifier
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
                         return Expression.Condition(
                             Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
-                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + Environment.NewLine),
+                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name),
                             Expression.Constant(null, typeof(string))
                         );
                     }
