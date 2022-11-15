@@ -54,10 +54,10 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void HardCoded()
         => _ = new[] {
-            (nullablityTestClass.SomeNullString == null ? WarnAbout(nameof(NullablityTestClass.SomeNullString)) : ""),
-            (nullablityTestClass.SomeObject == null ? WarnAbout(nameof(NullablityTestClass.SomeObject)) : ""),
-            (nullablityTestClass.SomeObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : ""),
-            (nullablityTestClass.SomeFilledObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : "")
+            nullablityTestClass.SomeNullString == null! ? WarnAbout(nameof(NullablityTestClass.SomeNullString)) : "",
+            nullablityTestClass.SomeObject == null! ? WarnAbout(nameof(NullablityTestClass.SomeObject)) : "",
+            nullablityTestClass.SomeObjectArray == null! ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : "",
+            nullablityTestClass.SomeFilledObjectArray == null! ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : ""
         };
 
     static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
