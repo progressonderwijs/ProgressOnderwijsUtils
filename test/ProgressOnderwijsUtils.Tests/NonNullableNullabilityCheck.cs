@@ -9,8 +9,10 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class NonNullableNullabilityCheck
 {
+    
     static readonly NullabilityInfoContext context = new();
-    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string[]?> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
