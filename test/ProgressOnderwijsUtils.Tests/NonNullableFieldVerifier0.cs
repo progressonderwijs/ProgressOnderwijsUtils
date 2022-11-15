@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils.Tests;
 
-public static class NonNullableFieldVerifier
+public static class NonNullableFieldVerifier0
 {
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
