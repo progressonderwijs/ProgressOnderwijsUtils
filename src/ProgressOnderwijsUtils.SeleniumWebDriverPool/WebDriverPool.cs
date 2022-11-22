@@ -18,6 +18,9 @@ public sealed class WebDriverPool : IDisposable
     readonly Func<IWebDriver> driverFactory;
 
     public static WebDriverPool ChromePool(bool runHeadless)
+        => ChromePool(runHeadless, Array.Empty<string>());
+
+    public static WebDriverPool ChromePool(bool runHeadless, string[] arguments)
     {
         var driverService = ChromeDriverService.CreateDefaultService();
         driverService.Start();
@@ -25,6 +28,9 @@ public sealed class WebDriverPool : IDisposable
         driverOptions.SetLoggingPreference(LogType.Browser, LogLevel.All);
         driverOptions.SetLoggingPreference(LogType.Driver, LogLevel.Warning);
         driverOptions.AddArgument("window-size=1920,1080");
+        foreach(var argument in arguments) {
+            driverOptions.AddArgument(argument);
+        }
         if (runHeadless) {
             driverOptions.AddArgument("headless");
         }
