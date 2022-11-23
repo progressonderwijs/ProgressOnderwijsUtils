@@ -61,7 +61,6 @@ public sealed class NullabilityBenchmark
         if (nullablityTestClass.SomeNullString == null!) {
             v1 = WarnAbout(nameof(NullablityTestClass.SomeNullString));
             errCount += 1;
-
         } else {
             v1 = null;
         }
