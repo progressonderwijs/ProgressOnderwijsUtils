@@ -173,7 +173,7 @@ public sealed class NonNullableNullabilityCheck
     {
         var allContainingNull = new NullablityTestClass();
         PAssert.That(
-            () => Verifier2(allContainingNull).SequenceEqual(
+            () => Verifier2(allContainingNull).EmptyIfNull().SequenceEqual(
                 new[] {
                     getVerifierMessage(nameof(NullablityTestClass.SomeNullString)),
                     getVerifierMessage(nameof(NullablityTestClass.SomeObject)),
