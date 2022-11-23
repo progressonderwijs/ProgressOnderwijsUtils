@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils.Tests;
-using Xunit.Sdk;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 
@@ -54,10 +46,10 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void HardCoded()
         => _ = new[] {
-            (nullablityTestClass.SomeNullString == null ? WarnAbout(nameof(NullablityTestClass.SomeNullString)) : ""),
-            (nullablityTestClass.SomeObject == null ? WarnAbout(nameof(NullablityTestClass.SomeObject)) : ""),
-            (nullablityTestClass.SomeObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : ""),
-            (nullablityTestClass.SomeFilledObjectArray == null ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : "")
+            nullablityTestClass.SomeNullString == null! ? WarnAbout(nameof(NullablityTestClass.SomeNullString)) : "",
+            nullablityTestClass.SomeObject == null! ? WarnAbout(nameof(NullablityTestClass.SomeObject)) : "",
+            nullablityTestClass.SomeObjectArray == null! ? WarnAbout(nameof(NullablityTestClass.SomeObjectArray)) : "",
+            nullablityTestClass.SomeFilledObjectArray == null! ? WarnAbout(nameof(NullablityTestClass.SomeFilledObjectArray)) : ""
         };
 
     static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();

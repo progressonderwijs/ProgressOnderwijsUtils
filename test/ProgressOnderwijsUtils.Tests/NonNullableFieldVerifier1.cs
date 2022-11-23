@@ -4,6 +4,8 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public static class NonNullableFieldVerifier1
 {
+
+    static readonly Func<string, StringSplitOptions, string[]> x = "".Split;
     //string split
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
@@ -36,7 +38,8 @@ public static class NonNullableFieldVerifier1
                     }
                 )
         );
-        var splitStringCall = typeof(string).GetMethod(nameof(string.Split),new[]{typeof(string), typeof(StringSplitOptions)});
+        
+        var splitStringCall = x.Method;
 
         var exceptionList = Expression.Variable(typeof(string[]), "exceptionList");
         var result = Expression.Call(exception, splitStringCall, Expression.Constant(Environment.NewLine), Expression.Constant(StringSplitOptions.RemoveEmptyEntries));

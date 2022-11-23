@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Running;
-using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 
