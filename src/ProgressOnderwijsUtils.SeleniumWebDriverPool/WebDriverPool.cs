@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Remote;
@@ -17,35 +18,42 @@ public sealed class WebDriverPool : IDisposable
     readonly ICommandServer server;
     readonly Func<IWebDriver> driverFactory;
 
+    [Obsolete("Will be removed")]
     public static WebDriverPool ChromePool(bool runHeadless, bool supressContentPopups, string? downloadDirectory)
-        => ChromePool(runHeadless, supressContentPopups, downloadDirectory, Array.Empty<string>());
+    {
+        var preferences = new List<(string Name, object Value)>();
+        var arguments = new List<string>();
+        if (!supressContentPopups) {
+            preferences.Add(("profile.default_content_settings.popups", 0));
+        }
+        if (!string.IsNullOrEmpty(downloadDirectory)) {
+            preferences.Add(("download.default_directory", downloadDirectory));
+        }
 
-    public static WebDriverPool ChromePool(bool runHeadless, bool supressContentPopups, string? downloadDirectory, string[] arguments)
+        if (!supressContentPopups || !string.IsNullOrEmpty(downloadDirectory)) {
+            preferences.Add(("download.directory_upgrade", 1));
+        }
+
+        if (runHeadless) {
+            arguments.Add("headless");
+        }
+        arguments.Add("window-size=1920,1080");
+        return ChromePool(preferences.ToArray(), arguments.ToArray());
+    }
+
+    public static WebDriverPool ChromePool((string Name, object Value)[] profilePreferences, string[] arguments)
     {
         var driverService = ChromeDriverService.CreateDefaultService();
         driverService.Start();
         var driverOptions = new ChromeOptions { AcceptInsecureCertificates = true, Proxy = null, };
         driverOptions.SetLoggingPreference(LogType.Browser, LogLevel.All);
         driverOptions.SetLoggingPreference(LogType.Driver, LogLevel.Warning);
-        driverOptions.AddArgument("window-size=1920,1080");
-        foreach(var argument in arguments) {
+        foreach (var argument in arguments) {
             driverOptions.AddArgument(argument);
         }
-        if (!supressContentPopups) {
-            driverOptions.AddUserProfilePreference("profile.default_content_settings.popups", 0);
+        foreach (var profilePreference in profilePreferences) {
+            driverOptions.AddUserProfilePreference(profilePreference.Name, profilePreference.Value);
         }
-        if (!string.IsNullOrEmpty(downloadDirectory)) {
-            driverOptions.AddUserProfilePreference("download.default_directory", downloadDirectory);
-        }
-
-        if (!supressContentPopups || !string.IsNullOrEmpty(downloadDirectory)) {
-            driverOptions.AddUserProfilePreference("download.directory_upgrade", 1);
-        }
-
-        if (runHeadless) {
-            driverOptions.AddArgument("headless");
-        }
-
         return new(driverService, () => new ChromeDriver(driverService, driverOptions));
     }
 
