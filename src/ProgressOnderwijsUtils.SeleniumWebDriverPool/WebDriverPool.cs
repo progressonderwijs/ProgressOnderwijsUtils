@@ -17,10 +17,10 @@ public sealed class WebDriverPool : IDisposable
     readonly ICommandServer server;
     readonly Func<IWebDriver> driverFactory;
 
-    public static WebDriverPool ChromePool(bool runHeadless)
-        => ChromePool(runHeadless, Array.Empty<string>());
+    public static WebDriverPool ChromePool(bool runHeadless, bool supressContentPopups, string? downloadDirectory)
+        => ChromePool(runHeadless, supressContentPopups, downloadDirectory, Array.Empty<string>());
 
-    public static WebDriverPool ChromePool(bool runHeadless, string[] arguments)
+    public static WebDriverPool ChromePool(bool runHeadless, bool supressContentPopups, string? downloadDirectory, string[] arguments)
     {
         var driverService = ChromeDriverService.CreateDefaultService();
         driverService.Start();
@@ -31,6 +31,17 @@ public sealed class WebDriverPool : IDisposable
         foreach(var argument in arguments) {
             driverOptions.AddArgument(argument);
         }
+        if (!supressContentPopups) {
+            driverOptions.AddUserProfilePreference("profile.default_content_settings.popups", 0);
+        }
+        if (!string.IsNullOrEmpty(downloadDirectory)) {
+            driverOptions.AddUserProfilePreference("download.default_directory", downloadDirectory);
+        }
+
+        if (!supressContentPopups || !string.IsNullOrEmpty(downloadDirectory)) {
+            driverOptions.AddUserProfilePreference("download.directory_upgrade", 1);
+        }
+
         if (runHeadless) {
             driverOptions.AddArgument("headless");
         }
