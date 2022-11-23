@@ -26,7 +26,7 @@ public static class NonNullableFieldVerifier0
                                 Expression.Call(
                                     typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string) }),
                                     exceptionVar,
-                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + Environment.NewLine)
+                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + "\n")
                                 )
                             )
                         );

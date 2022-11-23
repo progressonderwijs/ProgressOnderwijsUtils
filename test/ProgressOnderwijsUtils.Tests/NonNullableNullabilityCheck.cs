@@ -212,7 +212,7 @@ public sealed class NonNullableNullabilityCheck
             SomeObjectArray = new object[] { },
             SomeFilledObjectArray = new object[] { }
         };
-        PAssert.That(() => Verifier0(oneContainingNull) == getVerifierMessage(nameof(NullablityTestClass.SomeNullString)));
+        PAssert.That(() => Verifier0(oneContainingNull) == getVerifierMessage(nameof(NullablityTestClass.SomeNullString))+"\n");
     }
 
     [Fact]
@@ -221,9 +221,9 @@ public sealed class NonNullableNullabilityCheck
         var allContainingNull = new NullablityTestClass();
         PAssert.That(
                 () => Verifier0(allContainingNull) ==
-                    getVerifierMessage(nameof(NullablityTestClass.SomeNullString))
-                    + getVerifierMessage(nameof(NullablityTestClass.SomeObject))
-                    + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))
+                    getVerifierMessage(nameof(NullablityTestClass.SomeNullString)) +"\n"
+                    + getVerifierMessage(nameof(NullablityTestClass.SomeObject))+"\n"
+                    + getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray))+"\n"
             );
     }
 
@@ -239,6 +239,6 @@ public sealed class NonNullableNullabilityCheck
                 SomeObjectArray = new object[] { },
                 SomeFilledObjectArray = new object[] { }
             };
-        PAssert.That(() => Verifier0(notContainingNull) == null);
+        PAssert.That(() => Verifier0(notContainingNull) == "");
     }
 }
