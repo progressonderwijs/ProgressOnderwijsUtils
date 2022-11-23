@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Running;
-using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 
@@ -10,7 +9,8 @@ public static class BenchmarkProgram
         //=> BenchmarkRunner.Run<HtmlFragmentBenchmark>();
         //=> MicroOrmBenchmarkProgram.RunBenchmarks();
         //=> RunArrayBuilderBenchmarks();
-        => BenchmarkRunner.Run<SmallBatchInsertBench>();
+        //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
+        => BenchmarkRunner.Run<NullabilityBenchmark>();
 
     [UsedImplicitly]
     static void RunArrayBuilderBenchmarks()
