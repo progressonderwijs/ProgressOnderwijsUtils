@@ -99,11 +99,11 @@ public sealed record DbColumnMetaData(
 
     public short SemanticMaxLength(out bool typeSupportsMaxLength, out bool hasMaxLength)
     {
-        if (UserTypeId is SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar) { 
+        if (UserTypeId is SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar) {
             typeSupportsMaxLength = true;
             hasMaxLength = MaxLength > 0;
             return (short)(MaxLength >> 1);
-        } else if (UserTypeId is SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary) { 
+        } else if (UserTypeId is SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary) {
             typeSupportsMaxLength = true;
             hasMaxLength = MaxLength > 0;
             return MaxLength;
