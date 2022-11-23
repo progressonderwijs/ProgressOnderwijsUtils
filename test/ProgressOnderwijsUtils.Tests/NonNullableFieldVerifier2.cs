@@ -62,7 +62,6 @@ public static class NonNullableFieldVerifier2
                 Expression.Assign(exception, Expression.Constant(null, typeof(string[])))
             )
         );
-
         statements.Add(exception);
 
         var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { IteratorCounter, NullFoundCounter, messages, exception }, statements), objectParam);
