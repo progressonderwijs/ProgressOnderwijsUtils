@@ -26,6 +26,24 @@ public sealed class NullabilityBenchmark
 
     readonly NullablityTestClass nullablityTestClass = new();
 
+    readonly NullablityTestClass nullablityNullTestClass = new() {
+        SomeNullString = "",
+        SomeNullableField = null,
+        SomeObject = new(),
+        SomeNullableObject = null,
+        SomeObjectArray = new object[] { },
+        SomeFilledObjectArray = new object[] { }
+    };
+
+    readonly NullablityTestClass nullablityOneNullTestClass = new() {
+        SomeNullString = null,
+        SomeNullableField = null,
+        SomeObject = new(),
+        SomeNullableObject = null,
+        SomeObjectArray = new object[] { },
+        SomeFilledObjectArray = new object[] { }
+    };
+
     static string WarnAbout(string field)
         => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field;
 
@@ -58,15 +76,39 @@ public sealed class NullabilityBenchmark
     public void Compiled()
         => _ = Verifier(nullablityTestClass);
 
+    [Benchmark]
+    public void CompiledOneNull()
+        => _ = Verifier(nullablityOneNullTestClass);
+
+    [Benchmark]
+    public void CompiledNoNull()
+        => _ = Verifier(nullablityNullTestClass);
+
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled1()
         => _ = Verifier1(nullablityTestClass);
 
+    [Benchmark]
+    public void CompiledOneNull1()
+        => _ = Verifier1(nullablityOneNullTestClass);
+
+    [Benchmark]
+    public void CompiledNoNull1()
+        => _ = Verifier1(nullablityNullTestClass);
+
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled2()
         => _ = Verifier2(nullablityTestClass);
+
+    [Benchmark]
+    public void CompiledOneNull2()
+        => _ = Verifier2(nullablityOneNullTestClass);
+
+    [Benchmark]
+    public void CompiledNoNull2()
+        => _ = Verifier2(nullablityNullTestClass);
 }
