@@ -13,6 +13,7 @@ public static class NonNullableFieldVerifier0
 
         NullabilityInfoContext context = new();
         var fields = typeof(T).GetFields();
+        var concatCall = ((Func<string, string, string>)string.Concat).Method;
         statements.AddRange(
             fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .Select(
@@ -24,7 +25,7 @@ public static class NonNullableFieldVerifier0
                             Expression.Assign(
                                 exceptionVar,
                                 Expression.Call(
-                                    typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string) }),
+                                    concatCall,
                                     exceptionVar,
                                     Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + "\n")
                                 )
