@@ -38,7 +38,7 @@ public static class NonNullableFieldVerifier1
                     }
                 )
         );
-        
+
         var splitStringCall = x.Method;
 
         var exceptionList = Expression.Variable(typeof(string[]), "exceptionList");
