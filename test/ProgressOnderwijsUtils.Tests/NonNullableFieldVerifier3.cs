@@ -26,11 +26,11 @@ public static class NonNullableFieldVerifier3
         foreach (var f in fields) {
             var memberExpression = Expression.Field(objectParam, f);
             var fieldValue = Expression.Convert(memberExpression, typeof(object));
-            var va = Expression.Variable(typeof(string), "v" + i);
-            statements.Add(va);
+            var variable = Expression.Variable(typeof(string), "v" + i);
+            statements.Add(variable);
             statements.Add(
                 Expression.Assign(
-                    va,
+                    variable,
                     Expression.Condition(
                         Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
                         Expression.Block(
@@ -41,7 +41,7 @@ public static class NonNullableFieldVerifier3
                     )
                 )
             );
-            variables.Add(va);
+            variables.Add(variable);
             i++;
         }
         var setArray = variables.Select(
@@ -73,7 +73,7 @@ public static class NonNullableFieldVerifier3
 
         variables.AddRange(new[] { exception, ErrorCounter, });
 
-        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables.ToArray(), statements), objectParam);
+        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
         return ToLambda.Compile();
     }
 }
