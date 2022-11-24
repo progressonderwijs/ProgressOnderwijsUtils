@@ -54,7 +54,7 @@ public static class NonNullableFieldVerifier1
             )
         );
 
-        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] {exception, exceptionList }, statements), objectParam);
+        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] {exception, exceptionList, }, statements), objectParam);
         return ToLambda.Compile();
     }
 }

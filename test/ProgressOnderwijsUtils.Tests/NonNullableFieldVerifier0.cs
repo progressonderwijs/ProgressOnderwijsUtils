@@ -24,7 +24,7 @@ public static class NonNullableFieldVerifier0
                             Expression.Assign(
                                 exceptionVar,
                                 Expression.Call(
-                                    typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string) }).AssertNotNull(),
+                                    typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string), }).AssertNotNull(),
                                     exceptionVar,
                                     Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + "\n")
                                 )
@@ -35,7 +35,7 @@ public static class NonNullableFieldVerifier0
         );
 
         statements.Add(exceptionVar);
-        var ToLambda = Expression.Lambda<Func<T, string>>(Expression.Block(new[] { exceptionVar }, statements), objectParam);
+        var ToLambda = Expression.Lambda<Func<T, string>>(Expression.Block(new[] { exceptionVar, }, statements), objectParam);
         return ToLambda.Compile();
     }
 }
