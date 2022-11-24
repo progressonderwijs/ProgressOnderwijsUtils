@@ -85,25 +85,26 @@ public sealed class NullabilityBenchmark
         } else {
             v4 = null;
         }
-        if(errCount == 0 ) return null;
+        if (errCount == 0) {
+            return null;
+        }
         var errors = new string[errCount];
         errCount = 0;
 
         if (v1 is not null) {
             errors[errCount++] = v1;
-        } 
+        }
         if (v2 is not null) {
             errors[errCount++] = v2;
-        } 
+        }
         if (v3 is not null) {
             errors[errCount++] = v3;
-        } 
+        }
 
         if (v4 is not null) {
             errors[errCount] = v4;
         }
         return errors;
-
     }
 
     static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
@@ -111,6 +112,7 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void Compiled()
         => _ = Verifier(nullablityTestClass);
+
     static readonly Func<NullablityTestClass, string> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
