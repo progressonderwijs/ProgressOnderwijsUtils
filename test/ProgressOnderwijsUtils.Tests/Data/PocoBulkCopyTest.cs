@@ -151,7 +151,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         var target = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#tmp"));
 
-        _ = Assert.ThrowsAny<Exception>(() => new ComputedColumnExample_LackingAnnotation[] { new() { Bla = "ja", Computed = true, Id = 13, } }.BulkCopyToSqlServer(Connection, target));
+        _ = Assert.ThrowsAny<Exception>(() => new ComputedColumnExample_LackingAnnotation[] { new() { Bla = "ja", Computed = true, Id = 13, }, }.BulkCopyToSqlServer(Connection, target));
     }
 
     [Fact]

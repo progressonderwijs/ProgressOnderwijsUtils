@@ -33,7 +33,7 @@ public static class NonNullableFieldVerifier
         statements.Add(Expression.Assign(exception, Expression.Call(ToNewArrayCall, Expression.NewArrayInit(typeof(string), conditionalExpressions))));
         statements.Add(exception);
 
-        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exception }, statements), objectParam);
+        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exception, }, statements), objectParam);
         return ToLambda.Compile();
     }
 
