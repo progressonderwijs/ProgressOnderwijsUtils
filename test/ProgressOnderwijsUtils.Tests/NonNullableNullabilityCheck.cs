@@ -320,7 +320,7 @@ public sealed class NonNullableNullabilityCheck
                 new[] {
                     getVerifierMessage(nameof(NullablityTestPropertyClass.SomeNullString),nameof(NullablityTestPropertyClass)),
                     getVerifierMessage(nameof(NullablityTestPropertyClass.SomeObject),nameof(NullablityTestPropertyClass)),
-                    getVerifierMessage(nameof(NullablityTestPropertyClass.SomeObjectArray),nameof(NullabilityTestSubClass)),
+                    getVerifierMessage(nameof(NullablityTestPropertyClass.SomeObjectArray),nameof(NullablityTestPropertyClass)),
                 }
             )
         );
