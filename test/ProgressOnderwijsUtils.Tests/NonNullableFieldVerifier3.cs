@@ -19,7 +19,7 @@ public static class NonNullableFieldVerifier3
 
         NullabilityInfoContext context = new();
 
-        var fields = typeof(T).GetFields().Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
 
         var variables = new List<ParameterExpression>();
         var i = 0;

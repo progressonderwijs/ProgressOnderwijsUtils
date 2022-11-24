@@ -12,7 +12,7 @@ public static class NonNullableFieldVerifier0
         statements.Add(Expression.Assign(exceptionVar, Expression.Constant("")));
 
         NullabilityInfoContext context = new();
-        var fields = typeof(T).GetFields();
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
         var concatCall = ((Func<string, string, string>)string.Concat).Method;
         statements.AddRange(
             fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)

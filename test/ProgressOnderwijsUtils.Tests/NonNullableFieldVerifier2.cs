@@ -18,7 +18,7 @@ public static class NonNullableFieldVerifier2
 
         NullabilityInfoContext context = new();
 
-        var fields = typeof(T).GetFields().Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
         var count = fields.Count();
         var messages = Expression.Variable(typeof(string[]), "AllExceptions");
         statements.Add(Expression.Assign(messages, Expression.NewArrayBounds(typeof(string), Expression.Constant(count))));
