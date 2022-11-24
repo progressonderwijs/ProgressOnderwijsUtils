@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
-static class BackingFieldDetector
+public static class BackingFieldDetector
 {
     const string BackingFieldPrefix = "<";
     const string BackingFieldSuffix = ">k__BackingField";

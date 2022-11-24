@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public static class NonNullableFieldVerifier3
 {
-    //Without any calls but with counters etc
+    //Without any calls but with counters etc based of hardcoded2
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
         var statements = new List<Expression>();
@@ -27,6 +27,10 @@ public static class NonNullableFieldVerifier3
             var memberExpression = Expression.Field(objectParam, f);
             var fieldValue = Expression.Convert(memberExpression, typeof(object));
             var variable = Expression.Variable(typeof(string), "v" + i);
+
+            var p = BackingFieldDetector.AutoPropertyOfFieldOrNull(f);
+            var name = p == null ? f.Name : p.Name;
+
             statements.Add(variable);
             statements.Add(
                 Expression.Assign(
@@ -35,7 +39,7 @@ public static class NonNullableFieldVerifier3
                         Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
                         Expression.Block(
                             Expression.AddAssign(ErrorCounter, Expression.Constant(1, typeof(int))),
-                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name)
+                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + name)
                         ),
                         Expression.Constant(null, typeof(string))
                     )
@@ -58,7 +62,6 @@ public static class NonNullableFieldVerifier3
             Expression.Assign(ErrorCounter, Expression.Constant(0, typeof(int))),
             Expression.Block(setArray)
         );
-
         statements.Add(
             Expression.Block(
                 Expression.IfThenElse(
@@ -68,7 +71,6 @@ public static class NonNullableFieldVerifier3
                 )
             )
         );
-
         statements.Add(exception);
 
         variables.AddRange(new[] { exception, ErrorCounter, });
