@@ -17,13 +17,16 @@ public static class NonNullableFieldVerifier1
         NullabilityInfoContext context = new();
         var concatCall = ((Func<string, string, string>)string.Concat).Method;
 
-        var fields = typeof(T).GetFields();
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
         statements.AddRange(
-            fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
-                .Select(
+            fields.Select(
                     f => {
                         var memberExpression = Expression.Field(objectParam, f);
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
+
+                        var p = BackingFieldDetector.AutoPropertyOfFieldOrNull(f);
+                        var name = p == null ? f.Name : p.Name;
+
                         return Expression.IfThen(
                             Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
                             Expression.Assign(
@@ -31,7 +34,7 @@ public static class NonNullableFieldVerifier1
                                 Expression.Call(
                                     concatCall,
                                     exception,
-                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + Environment.NewLine)
+                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + name + "\n")
                                 )
                             )
                         );
@@ -42,7 +45,7 @@ public static class NonNullableFieldVerifier1
         var splitStringCall = x.Method;
 
         var exceptionList = Expression.Variable(typeof(string[]), "exceptionList");
-        var result = Expression.Call(exception, splitStringCall, Expression.Constant(Environment.NewLine), Expression.Constant(StringSplitOptions.RemoveEmptyEntries));
+        var result = Expression.Call(exception, splitStringCall, Expression.Constant("\n"), Expression.Constant(StringSplitOptions.RemoveEmptyEntries));
         statements.Add(Expression.Assign(exceptionList,result));
         statements.Add(Expression.Condition(
             Expression.GreaterThan(

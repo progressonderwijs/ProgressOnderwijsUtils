@@ -11,6 +11,8 @@ public sealed class NullablityTestClass
     public object[] SomeFilledObjectArray = { null!, };
 }
 
+public sealed record NullablityTestPropertyClass(string SomeNullString, string? SomeNullableField, object SomeObject, object? SomeNullableObject, object[] SomeObjectArray, object[] SomeFilledObjectArray);
+
 public abstract class NullablityTestBaseClass
 {
     //Intentionally violate nullability assumptions so we can test this:

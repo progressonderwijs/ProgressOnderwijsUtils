@@ -12,21 +12,26 @@ public static class NonNullableFieldVerifier0
         statements.Add(Expression.Assign(exceptionVar, Expression.Constant("")));
 
         NullabilityInfoContext context = new();
-        var fields = typeof(T).GetFields();
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+        var concatCall = ((Func<string, string, string>)string.Concat).Method;
         statements.AddRange(
             fields.Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .Select(
                     f => {
                         var memberExpression = Expression.Field(objectParam, f);
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
+
+                        var p = BackingFieldDetector.AutoPropertyOfFieldOrNull(f);
+                        var name = p == null ? f.Name : p.Name;
+
                         return Expression.IfThen(
                             Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
                             Expression.Assign(
                                 exceptionVar,
                                 Expression.Call(
-                                    typeof(string).GetMethod(nameof(string.Concat), new[] { typeof(string), typeof(string), }).AssertNotNull(),
+                                    concatCall,
                                     exceptionVar,
-                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name + "\n")
+                                    Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + name + "\n")
                                 )
                             )
                         );
