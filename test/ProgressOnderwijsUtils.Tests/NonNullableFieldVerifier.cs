@@ -19,9 +19,13 @@ public static class NonNullableFieldVerifier
                     f => {
                         var memberExpression = Expression.Field(objectParam, f);
                         var fieldValue = Expression.Convert(memberExpression, typeof(object));
+
+                        var p = BackingFieldDetector.AutoPropertyOfFieldOrNull(f);
+                        var name = p == null ? f.Name : p.Name;
+
                         return Expression.Condition(
                             Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
-                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + f.Name),
+                            Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + name),
                             Expression.Constant(null, typeof(string))
                         );
                     }
