@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public static class NonNullableFieldVerifier3
 {
-    //Without any calls but with counters etc based of hardcoded2
+    //Without any calls but with counters etc based off hardcoded2
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
         var statements = new List<Expression>();
