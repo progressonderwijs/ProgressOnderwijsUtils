@@ -15,59 +15,65 @@ public sealed class NullabilityBenchmark
             => _ = AddJob(
                 Job.MediumRun
                     .WithLaunchCount(1)
-                    .WithWarmupCount(3)
+                    .WithWarmupCount(2)
                     .WithOutlierMode(OutlierMode.DontRemove)
-                    .WithMaxIterationCount(5000)
-                    .WithMaxRelativeError(0.002)
+                    .WithMaxIterationCount(3000)
+                    .WithMaxRelativeError(0.01)
                     .WithToolchain(InProcessNoEmitToolchain.Instance)
                     .WithId("InProcess")
             );
     }
 
-    readonly NullablityTestClass NullablityTestClass = new();
+    static readonly NullablityTestClass EverythingInvalidTestCase = new() { Name = nameof(EverythingInvalidTestCase), };
 
-    readonly NullablityTestClass NullablityNullTestClass = new() {
+    static readonly NullablityTestClass ValidTestCase = new() {
         SomeNullString = "",
-        SomeNullableField = null,
+        Name = nameof(ValidTestCase),
         SomeObject = new(),
         SomeNullableObject = null,
         SomeObjectArray = new object[] { },
         SomeFilledObjectArray = new object[] { },
     };
 
-    readonly NullablityTestClass NullablityOneNullTestClass = new() {
+    static readonly NullablityTestClass OneNullInNonNullTestCase = new() {
         SomeNullString = null!,
-        SomeNullableField = null,
+        Name = nameof(OneNullInNonNullTestCase),
         SomeObject = new(),
         SomeNullableObject = null,
         SomeObjectArray = new object[] { },
         SomeFilledObjectArray = new object[] { },
     };
+
+    public static NullablityTestClass[] ObjectsToTest { get; set; } = { EverythingInvalidTestCase, ValidTestCase, OneNullInNonNullTestCase, };
+
+    [ParamsSource(nameof(ObjectsToTest))]
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public NullablityTestClass ObjToTest = null!;
 
     static string WarnAbout(string field)
         => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field;
 
     readonly NullabilityInfoContext context = new();
 
-    string[] CheckValidNonNullablitiy(Type type)
+    string[] CheckValidNonNullablitiy(Type type, NullablityTestClass obj)
         => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
             .Select(
-                f => f.GetValue(NullablityTestClass) == null && context.Create(f).WriteState == NullabilityState.NotNull
+                f => f.GetValue(obj) == null && context.Create(f).WriteState == NullabilityState.NotNull
                     ? WarnAbout(f.Name)
                     : null
             ).WhereNotNull().ToArray();
 
     [Benchmark]
     public void WithReflection()
-        => _ = CheckValidNonNullablitiy(typeof(NullablityTestClass));
+        => _ = CheckValidNonNullablitiy(typeof(NullablityTestClass), ObjToTest);
 
     [Benchmark]
     public void HardCoded()
         => _ = new[] {
-            NullablityTestClass.SomeNullString == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeNullString) : null,
-            NullablityTestClass.SomeObject == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeObject) : null,
-            NullablityTestClass.SomeObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeObjectArray) : null,
-            NullablityTestClass.SomeFilledObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeFilledObjectArray) : null,
+            ObjToTest.SomeNullString == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString) : null,
+            ObjToTest.SomeObject == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject) : null,
+            ObjToTest.SomeObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObjectArray) : null,
+            ObjToTest.SomeFilledObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeFilledObjectArray) : null,
         }.WhereNotNull().ToArray();
 
     public static string[]? HardCoded2Meth(NullablityTestClass nullablityTestClass)
@@ -76,28 +82,28 @@ public sealed class NullabilityBenchmark
 
         string? v1;
         if (nullablityTestClass.SomeNullString == null!) {
-            v1 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeNullString);
+            v1 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString);
             errCount += 1;
         } else {
             v1 = null;
         }
         string? v2;
         if (nullablityTestClass.SomeObject == null!) {
-            v2 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeObject);
+            v2 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject);
             errCount += 1;
         } else {
             v2 = null;
         }
         string? v3;
         if (nullablityTestClass.SomeObjectArray == null!) {
-            v3 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeObjectArray);
+            v3 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObjectArray);
             errCount += 1;
         } else {
             v3 = null;
         }
         string? v4;
         if (nullablityTestClass.SomeFilledObjectArray == null!) {
-            v4 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(ProgressOnderwijsUtils.Tests.NullablityTestClass.SomeFilledObjectArray);
+            v4 = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeFilledObjectArray);
             errCount += 1;
         } else {
             v4 = null;
@@ -125,83 +131,80 @@ public sealed class NullabilityBenchmark
 
     [Benchmark]
     public void HardCoded2()
-        => _ = HardCoded2Meth(NullablityTestClass);
+        => _ = HardCoded2Meth(ObjToTest);
+
 
     [Benchmark]
-    public void HardCoded2OneNull()
-        => _ = HardCoded2Meth(NullablityOneNullTestClass);
+    public void HardCoded3()
+        => _ = HardCoded3Meth(ObjToTest);
+    
+    public static string[]? HardCoded3Meth(NullablityTestClass nullablityTestClass)
+    {
+        var errCount = 0;
 
-    [Benchmark]
-    public void HardCodedNoNull2()
-        => _ = HardCoded2Meth(NullablityNullTestClass);
+        if (nullablityTestClass.SomeNullString == null!) {
+            errCount++;
+        }
+        if (nullablityTestClass.SomeObject == null!) {
+            errCount++;
+        }
+        if (nullablityTestClass.SomeObjectArray == null!) {
+            errCount++;
+        }
+        if (nullablityTestClass.SomeFilledObjectArray == null!) {
+            errCount++;
+        }
+        if (errCount == 0) {
+            return null;
+        }
+        var errors = new string[errCount];
+        errCount = 0;
+
+        if (nullablityTestClass.SomeNullString is null) {
+            errors[errCount++] = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString);
+        }
+        if (nullablityTestClass.SomeObject is null) {
+            errors[errCount++] = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject);
+        }
+        if (nullablityTestClass.SomeObjectArray is null) {
+            errors[errCount++] = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObjectArray);
+        }
+        if (nullablityTestClass.SomeFilledObjectArray is null) {
+            errors[errCount] = "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeFilledObjectArray);
+        }
+        return errors;
+    }
+
 
     static readonly Func<NullablityTestClass, string> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled0()
-        => _ = Verifier0(NullablityTestClass);
-
-    [Benchmark]
-    public void Compiled0OneNull()
-        => _ = Verifier0(NullablityOneNullTestClass);
-
-    [Benchmark]
-    public void Compiled0NoNull()
-        => _ = Verifier0(NullablityNullTestClass);
+        => _ = Verifier0(ObjToTest);
 
     static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled()
-        => _ = Verifier(NullablityTestClass);
-
-    [Benchmark]
-    public void CompiledOneNull()
-        => _ = Verifier(NullablityOneNullTestClass);
-
-    [Benchmark]
-    public void CompiledNoNull()
-        => _ = Verifier(NullablityNullTestClass);
+        => _ = Verifier(ObjToTest);
 
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled1()
-        => _ = Verifier1(NullablityTestClass);
+        => _ = Verifier1(ObjToTest);
 
-    [Benchmark]
-    public void CompiledOneNull1()
-        => _ = Verifier1(NullablityOneNullTestClass);
-
-    [Benchmark]
-    public void CompiledNoNull1()
-        => _ = Verifier1(NullablityNullTestClass);
 
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled2()
-        => _ = Verifier2(NullablityTestClass);
-
-    [Benchmark]
-    public void CompiledOneNull2()
-        => _ = Verifier2(NullablityOneNullTestClass);
-
-    [Benchmark]
-    public void CompiledNoNull2()
-        => _ = Verifier2(NullablityNullTestClass);
+        => _ = Verifier2(ObjToTest);
 
     static readonly Func<NullablityTestClass, string[]?> Verifier3 = NonNullableFieldVerifier3.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled3()
-        => _ = Verifier3(NullablityTestClass);
+        => _ = Verifier3(ObjToTest);
 
-    [Benchmark]
-    public void CompiledOneNull3()
-        => _ = Verifier3(NullablityOneNullTestClass);
-
-    [Benchmark]
-    public void CompiledNoNull3()
-        => _ = Verifier3(NullablityNullTestClass);
 }
