@@ -14,7 +14,7 @@ public sealed class NonNullableNullabilityCheck
 
     readonly NullablityTestClass OneContainingNull = new() {
         SomeNullString = null, //non nullable
-        SomeNullableField = null,
+        Name = null,
         SomeObject = new(),
         SomeNullableObject = null,
         SomeObjectArray = new object[] { },
@@ -25,7 +25,7 @@ public sealed class NonNullableNullabilityCheck
 
     readonly NullablityTestClass NotContainingNull = new() {
         SomeNullString = "",
-        SomeNullableField = null,
+        Name = null,
         SomeObject = new(),
         SomeNullableObject = null,
         SomeObjectArray = new object[] { },
