@@ -3,6 +3,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.WebSockets;
 using Microsoft.VisualBasic;
+using static ProgressOnderwijsUtils.BackingFieldDetector;
 
 namespace ProgressOnderwijsUtils.Tests;
 
@@ -37,7 +38,7 @@ public static class NonNullableFieldVerifier4
             f => Expression.IfThen(
                 Expression.Equal(Expression.Convert(Expression.Field(objectParam, f), typeof(object)), Expression.Constant(null, typeof(object))),
                 Expression.Block(
-                    Expression.Assign(Expression.ArrayAccess(exception, ErrorCounter), Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + (BackingFieldDetector.AutoPropertyOfFieldOrNull(f) == null ? f.Name : BackingFieldDetector.AutoPropertyOfFieldOrNull(f).Name))),
+                    Expression.Assign(Expression.ArrayAccess(exception, ErrorCounter), Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + (AutoPropertyOfFieldOrNull(f) == null ? f.Name : AutoPropertyOfFieldOrNull(f)?.Name))),
                     Expression.AddAssign(ErrorCounter, Expression.Constant(1, typeof(int)))
                 )
             )
