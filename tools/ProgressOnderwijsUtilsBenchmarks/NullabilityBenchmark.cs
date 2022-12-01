@@ -207,4 +207,10 @@ public sealed class NullabilityBenchmark
     public void Compiled3()
         => _ = Verifier3(ObjToTest);
 
+    static readonly Func<NullablityTestClass, string[]?> Verifier4 = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+
+    [Benchmark]
+    public void Compiled4()
+        => _ = Verifier4(ObjToTest);
+
 }
