@@ -46,17 +46,16 @@ public static class NonNullableFieldVerifier1
 
         var exceptionList = Expression.Variable(typeof(string[]), "exceptionList");
         var result = Expression.Call(exception, splitStringCall, Expression.Constant("\n"), Expression.Constant(StringSplitOptions.RemoveEmptyEntries));
-        statements.Add(Expression.Assign(exceptionList,result));
         statements.Add(Expression.Condition(
-            Expression.GreaterThan(
-                Expression.ArrayLength(exceptionList),
-                Expression.Constant(0)
+            Expression.NotEqual(
+                exception,
+                Expression.Constant("")
                 ),
-            exceptionList,
-            Expression.Constant(null,typeof(string[]))
-            )
+            Expression.Assign(exceptionList,result),
+            Expression.Assign(exceptionList,Expression.Constant(null,typeof(string[]))
+            ))
         );
-
+        statements.Add(exceptionList);
         var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] {exception, exceptionList, }, statements), objectParam);
         return ToLambda.Compile();
     }

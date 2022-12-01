@@ -10,6 +10,8 @@ public sealed class NonNullableNullabilityCheck
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier3 = NonNullableFieldVerifier3.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string[]?> Verifier4 = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+
     readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null });
 
     readonly NullablityTestClass OneContainingNull = new() {
@@ -158,6 +160,18 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertNoNullFieldsCompiled3()
         => PAssert.That(() => Verifier3(NotContainingNull) == null);
+
+    [Fact]
+    public void AssertOneNullFieldCompile4()
+        => PAssert.That(() => Verifier4(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)) }));
+
+    [Fact]
+    public void AssertAllNullFieldsCompiled4()
+        => PAssert.That(() => Verifier4(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)) }));
+
+    [Fact]
+    public void AssertNoNullFieldsCompiled4()
+        => PAssert.That(() => Verifier4(NotContainingNull) == null);
 
     [Fact]
     public void AssertAllNullFieldsInheridedCompiled3()

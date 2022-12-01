@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>93.0.0</Version>
-    <PackageReleaseNotes>Bump dependencies to .net 7.</PackageReleaseNotes>
+    <Version>93.0.1</Version>
+    <PackageReleaseNotes>Add required(non nullable) field\property validator, for generic types.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
