@@ -1,6 +1,7 @@
 using System.Reflection;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
+using ProgressOnderwijsUtils.RequiredFields;
 using ProgressOnderwijsUtils.Tests;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
@@ -137,7 +138,7 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void HardCoded3()
         => _ = HardCoded3Meth(ObjToTest);
-    
+
     public static string[]? HardCoded3Meth(NullablityTestClass nullablityTestClass)
     {
         var errCount = 0;

@@ -1,11 +1,6 @@
-using System;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Net.WebSockets;
-using Microsoft.VisualBasic;
 using static ProgressOnderwijsUtils.BackingFieldDetector;
 
-namespace ProgressOnderwijsUtils.Tests;
+namespace ProgressOnderwijsUtils.RequiredFields;
 
 public static class NonNullableFieldVerifier4
 {
