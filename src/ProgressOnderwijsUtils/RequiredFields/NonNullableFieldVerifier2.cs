@@ -1,10 +1,4 @@
-using System;
-using System.Linq.Expressions;
-using System.Net.WebSockets;
-using Microsoft.VisualBasic;
-using static ProgressOnderwijsUtils.Html.HtmlTagKinds;
-
-namespace ProgressOnderwijsUtils.Tests;
+namespace ProgressOnderwijsUtils.RequiredFields;
 
 public static class NonNullableFieldVerifier2
 {
