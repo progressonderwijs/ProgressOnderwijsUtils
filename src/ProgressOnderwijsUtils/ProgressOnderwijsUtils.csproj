@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>93.0.2</Version>
-    <PackageReleaseNotes>Move required(non nullable) field\property validator, for generic types. For outside use.</PackageReleaseNotes>
+    <Version>93.1.0</Version>
+    <PackageReleaseNotes>Added XmlSerializerNamespaces option to the XML-serialization helpers that will be passed to the .Net implementation.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
