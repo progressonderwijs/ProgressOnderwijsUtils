@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>93.1.0</Version>
-    <PackageReleaseNotes>Added XmlSerializerNamespaces option to the XML-serialization helpers that will be passed to the .Net implementation.</PackageReleaseNotes>
+    <Version>93.2.0</Version>
+    <PackageReleaseNotes>Bump bundeled dependencies.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
