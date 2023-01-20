@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>93.2.0</Version>
+    <Version>93.2.1</Version>
     <PackageReleaseNotes>Bump bundeled dependencies.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
