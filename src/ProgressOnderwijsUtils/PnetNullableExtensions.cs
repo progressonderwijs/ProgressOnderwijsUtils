@@ -136,7 +136,7 @@ public static class PnetNullableExtensions
         => values.Select(o => (TVal?)o).NullIfEmpty();
 
     [UsefulToKeep("library function")]
-    public static IQueryable<TVal> NullIfEmpty<TVal>(this IQueryable<TVal> values)
+    public static IQueryable<TVal?> NullIfEmpty<TVal>(this IQueryable<TVal> values)
         where TVal : class?
         => values.DefaultIfEmpty();
 }
