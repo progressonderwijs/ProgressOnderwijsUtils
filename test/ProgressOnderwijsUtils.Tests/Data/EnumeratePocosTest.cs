@@ -61,6 +61,15 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     }
 
     [Fact]
+    public void Sets_row_object_properties_for_tuples()
+    {
+        var enumerable = SQL($"select Item1 = x.Id, Item2 = x.Content from ({ExampleQuery}) x").OfTuples<(int Id, string Content)>().ToLazilyEnumeratedCommand().Execute(Connection);
+        var value = enumerable.Skip(1).First();
+        Assert.Equal(new() { Id = 37, Content = "hmm", }, value);
+    }
+
+
+    [Fact]
     public void ConcurrentReadersCrash()
     {
         var enumerable = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
