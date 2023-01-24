@@ -116,6 +116,7 @@ public static class SsoProcessor
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
                 InResponseTo = inresponseTo,
+                RawAssertion = assertion,
                 AuthnContextClassRef = (string?)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext")?.Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
             }
         );

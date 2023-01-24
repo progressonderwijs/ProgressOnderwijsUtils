@@ -8,6 +8,7 @@ public struct SsoAttributes
     public string[] roles;
     public string? InResponseTo;
     public string? AuthnContextClassRef;
+    public XElement RawAssertion;
 
     public override string ToString()
         => $"uid='{uid}'; domain='{domain}'; emails='{StringUtils.ToFlatDebugString(email)}'; roles='{StringUtils.ToFlatDebugString(roles)}'";
