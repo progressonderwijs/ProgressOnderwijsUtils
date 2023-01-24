@@ -1,6 +1,5 @@
 namespace ProgressOnderwijsUtils.SingleSignOn;
 
-[Serializable]
 public struct SsoAttributes
 {
     public string uid;
