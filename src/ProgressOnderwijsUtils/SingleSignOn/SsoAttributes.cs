@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.SingleSignOn;
 
-public readonly record struct SsoAttributes
+public readonly record struct SsoAttributes()
 {
     public string uid { get; init; }
     public string? domain { get; init; }
