@@ -200,7 +200,7 @@ namespace ProgressOnderwijsUtils
             public T QueryTableValue { get; init; }
 
             public override string? ToString()
-                => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
+                => QueryTableValue is null ? "NULL" : QueryTableValue.ToString();
 
             public object? ProjectionForDebuggingOrNull()
                 => QueryTableValue;
