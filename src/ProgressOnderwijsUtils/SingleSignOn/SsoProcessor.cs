@@ -111,11 +111,12 @@ public static class SsoProcessor
 
         return Maybe.Ok(
             new SsoAttributes {
-                uid = uid,
-                domain = GetNullableAttribute(assertion, DOMAIN),
-                email = GetAttributes(assertion, MAIL),
-                roles = GetAttributes(assertion, ROLE),
+                Uid = uid,
+                Domain = GetNullableAttribute(assertion, DOMAIN),
+                Email = GetAttributes(assertion, MAIL),
+                Roles = GetAttributes(assertion, ROLE),
                 InResponseTo = inresponseTo,
+                RawAssertion = assertion,
                 AuthnContextClassRef = (string?)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext")?.Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
             }
         );
