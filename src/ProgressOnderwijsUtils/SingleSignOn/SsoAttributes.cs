@@ -2,8 +2,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn;
 
 public readonly record struct SsoAttributes()
 {
-    public string uid { get; init; }
-    public string? domain { get; init; }
+    public required string uid { get; init; }
+    public required string? domain { get; init; }
     public string[] email { get; init; } = Array.Empty<string>();
     public string[] roles { get; init; } = Array.Empty<string>();
     public string? InResponseTo { get; init; }
