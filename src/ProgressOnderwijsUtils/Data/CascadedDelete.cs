@@ -183,7 +183,7 @@ public static class CascadedDelete
             if (StopCascading(table.QualifiedNameSql)) {
                 return;
             }
-            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new Stack<ParameterizedSql>());
+            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
                 var unionOfProblems = onStackDeletionTables.Select(onStackTmpTable => SQL($"(select * from {onStackTmpTable} intersect select * from {tempTableName})")).ConcatenateSql(SQL($" union all "));
                 var cycleDetected = SQL($"select iif(exists({unionOfProblems}), {true}, {false})").ReadScalar<bool>(conn);
