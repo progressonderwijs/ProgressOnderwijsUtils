@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>93.2.1</Version>
-    <PackageReleaseNotes>Bump to .net 7; Capitalize SsoAttribute properties and include RawAssertion; Remove obsolete SqlTimeoutDetection</PackageReleaseNotes>
+    <PackageReleaseNotes>Bump to .net 7; Capitalize SsoAttribute properties and include RawAssertion; Remove obsolete SqlTimeoutDetection; Remove a few redundant WithTimeout overloads; </PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
