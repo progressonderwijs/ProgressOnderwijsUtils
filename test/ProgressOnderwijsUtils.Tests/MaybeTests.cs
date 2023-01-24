@@ -135,6 +135,7 @@ public sealed class MaybeTests
         PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<string>().ErrorOrNullable() == 1337);
         PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<string>().ErrorOrNull() == null);
         PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<int?>().ErrorOrNullable() == 1337);
+        PAssert.That(() => Maybe.Error(1337.AsNullable()).AsMaybeWithoutValue<string>().ErrorOrNull() == 1337);
         PAssert.That(() => Maybe.Ok((int?)42).AsMaybeWithoutError<string>().ErrorOrNull() == null);
     }
 
