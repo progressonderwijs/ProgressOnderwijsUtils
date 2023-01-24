@@ -12,7 +12,7 @@ public static class VirusScan
             PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk();
 
             fixed (void* bufferPtr = buffer) {
-                _ = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, IntPtr.Zero, out var result);
+                _ = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, nint.Zero, out var result);
                 return ResultIsMalware(result);
             }
         } finally {
