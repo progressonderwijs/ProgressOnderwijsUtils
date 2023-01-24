@@ -18,29 +18,6 @@ public sealed class WebDriverPool : IDisposable
     readonly ICommandServer server;
     readonly Func<IWebDriver> driverFactory;
 
-    [Obsolete("Will be removed")]
-    public static WebDriverPool ChromePool(bool runHeadless, bool supressContentPopups, string? downloadDirectory)
-    {
-        var preferences = new List<(string Name, object Value)>();
-        var arguments = new List<string>();
-        if (!supressContentPopups) {
-            preferences.Add(("profile.default_content_settings.popups", 0));
-        }
-        if (!string.IsNullOrEmpty(downloadDirectory)) {
-            preferences.Add(("download.default_directory", downloadDirectory));
-        }
-
-        if (!supressContentPopups || !string.IsNullOrEmpty(downloadDirectory)) {
-            preferences.Add(("download.directory_upgrade", 1));
-        }
-
-        if (runHeadless) {
-            arguments.Add("headless");
-        }
-        arguments.Add("window-size=1920,1080");
-        return ChromePool(preferences.ToArray(), arguments.ToArray());
-    }
-
     public static WebDriverPool ChromePool((string Name, object Value)[] profilePreferences, string[] arguments)
     {
         var driverService = ChromeDriverService.CreateDefaultService();
