@@ -206,6 +206,11 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
             } catch (Exception e) {
                 throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
             }
+            var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+            var verifier = nullableVerifier(nextRow);
+            if (verifier != null) {
+                throw new(verifier.JoinStrings());
+            }
             yield return nextRow; //cannot yield in try-catch block
         }
     }
