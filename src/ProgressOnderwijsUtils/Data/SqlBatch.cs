@@ -1,3 +1,5 @@
+using ProgressOnderwijsUtils.RequiredFields;
+
 namespace ProgressOnderwijsUtils;
 
 static class ErrorMessageHelpers
@@ -143,7 +145,15 @@ public readonly record struct PocosSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
-        return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var readerToArray = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+        foreach (var t in readerToArray) {
+            var verifier = nullableVerifier(t);
+            if (verifier != null) {
+                throw new(verifier.JoinStrings());
+            }
+        }
+        return readerToArray;
     }
 }
 
