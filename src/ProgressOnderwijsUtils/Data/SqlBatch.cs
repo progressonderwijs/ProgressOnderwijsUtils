@@ -145,7 +145,7 @@ public readonly record struct PocosSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
-        var readerToArray = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
         var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
         foreach (var row in readerToArray) {
             var verifier = nullableVerifier(row);
