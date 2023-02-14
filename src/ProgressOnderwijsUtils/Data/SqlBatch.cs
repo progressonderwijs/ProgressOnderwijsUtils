@@ -209,7 +209,7 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
             var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
             var nullablityError = nullableVerifier(nextRow);
             if (nullablityError != null) {
-                throw new(nullablityError.JoinStrings());
+                throw new(nullablityError.JoinStrings("\n"));
             }
             yield return nextRow; //cannot yield in try-catch block
         }
