@@ -1,3 +1,5 @@
+using ProgressOnderwijsUtils.RequiredFields;
+
 namespace ProgressOnderwijsUtils;
 
 static class ErrorMessageHelpers
@@ -143,7 +145,15 @@ public readonly record struct PocosSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
-        return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+        foreach (var row in rows) {
+            var nullablityError = nullableVerifier(row);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings("\n"));
+            }
+        }
+        return rows;
     }
 }
 
@@ -195,6 +205,11 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
                 nextRow = unpacker(reader, out lastColumnRead);
             } catch (Exception e) {
                 throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
+            }
+            var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+            var nullablityError = nullableVerifier(nextRow);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings("\n"));
             }
             yield return nextRow; //cannot yield in try-catch block
         }
