@@ -147,13 +147,13 @@ public readonly record struct PocosSqlCommand<
         }
         var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
         var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
-        foreach (var row in readerToArray) {
+        foreach (var row in rows) {
             var verifier = nullableVerifier(row);
             if (verifier != null) {
                 throw new(verifier.JoinStrings());
             }
         }
-        return readerToArray;
+        return rows;
     }
 }
 
