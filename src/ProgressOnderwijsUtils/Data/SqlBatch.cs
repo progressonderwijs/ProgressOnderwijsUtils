@@ -150,7 +150,7 @@ public readonly record struct PocosSqlCommand<
         foreach (var row in rows) {
             var nullablityError = nullableVerifier(row);
             if (nullablityError != null) {
-                throw new(nullablityError.JoinStrings());
+                throw new(nullablityError.JoinStrings("\n"));
             }
         }
         return rows;
