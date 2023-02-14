@@ -148,9 +148,9 @@ public readonly record struct PocosSqlCommand<
         var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
         var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
         foreach (var row in rows) {
-            var verifier = nullableVerifier(row);
-            if (verifier != null) {
-                throw new(verifier.JoinStrings());
+            var nullablityError = nullableVerifier(row);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings());
             }
         }
         return rows;
@@ -207,9 +207,9 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
                 throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
             }
             var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
-            var verifier = nullableVerifier(nextRow);
-            if (verifier != null) {
-                throw new(verifier.JoinStrings());
+            var nullablityError = nullableVerifier(nextRow);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings());
             }
             yield return nextRow; //cannot yield in try-catch block
         }
