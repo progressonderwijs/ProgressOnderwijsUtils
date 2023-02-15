@@ -4,7 +4,7 @@ namespace ProgressOnderwijsUtils.RequiredFields;
 
 public static class NonNullableFieldVerifier5
 {
-    //Without any calls but with counters etc based of hardcoded2
+    //Copy of NonNullableFieldVerifier4 except also verifies nested objects within T
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
         var statements = new List<Expression>();
@@ -12,14 +12,12 @@ public static class NonNullableFieldVerifier5
         var exception = Expression.Variable(typeof(string[]), "exceptionVar");
         var ErrorCounter = Expression.Variable(typeof(int), "counter");
         statements.Add(Expression.Assign(ErrorCounter, Expression.Constant(0)));
+        statements.AddRange(CountInvalidNullOccurrences(typeof(T), objectParam, ErrorCounter));
 
-        statements.AddRange(CountInvalidNullOccurrences(typeof(T),objectParam,ErrorCounter));
-
-        var setArray = SetArrayValues(typeof(T),objectParam,ErrorCounter,exception);
         var falseState = Expression.Block(
             Expression.Assign(exception, Expression.NewArrayBounds(typeof(string), ErrorCounter)),
             Expression.Assign(ErrorCounter, Expression.Constant(0, typeof(int))),
-            Expression.Block(setArray)
+            Expression.Block(SetArrayValues(typeof(T), objectParam, ErrorCounter, exception))
         );
         statements.Add(
             Expression.Block(
