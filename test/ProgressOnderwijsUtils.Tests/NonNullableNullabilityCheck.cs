@@ -13,6 +13,8 @@ public sealed class NonNullableNullabilityCheck
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier3 = NonNullableFieldVerifier3.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier4 = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestNestedClass, string[]?> Verifier5 = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestNestedClass>();
+
 
     readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null });
 
@@ -205,5 +207,16 @@ public sealed class NonNullableNullabilityCheck
                 }
             )
         );
+    }
+
+    [Fact]
+    public void AssertNestedCompiled5() {
+        var p = new NullablityTestNestedClass();
+        PAssert.That(() => Verifier5(p).AssertNotNull().SequenceEqual(
+            new[] {
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeNullString)),
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeObject)),
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeObjectArray)),
+            }));
     }
 }

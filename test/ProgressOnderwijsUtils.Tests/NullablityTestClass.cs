@@ -25,4 +25,9 @@ public abstract class NullablityTestBaseClass
     public object[] SomeFilledObjectArray = { null!, };
 }
 
+public sealed class NullablityTestNestedClass
+{
+    public NullablityTestClass SomeNestedClass = new NullablityTestClass();
+}
+
 public sealed class NullabilityTestSubClass : NullablityTestBaseClass { }
