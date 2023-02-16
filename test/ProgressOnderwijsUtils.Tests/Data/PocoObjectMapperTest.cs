@@ -384,4 +384,24 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0, }); //can't predict roversion, just its ordering
         PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
     }
+
+    public record struct NullablityVerifierPoco : IWrittenImplicitly
+    {
+        public required string AccountNumber { get; init; }
+        public int SalesOrderId { get; init; }
+    }
+
+    [Fact]
+    public void VerifyNullability()
+    {
+        var okQuery = SQL($"Select AccountNumber = 'bla', SalesOrderID = 1").OfPocos<NullablityVerifierPoco>();
+        var poco = okQuery.Execute(Connection).Single();
+        PAssert.That(() => poco == new NullablityVerifierPoco { AccountNumber = "bla", SalesOrderId = 1 });
+
+        var badQuery = SQL($"Select AccountNumber = null, SalesOrderID = 1").OfPocos<NullablityVerifierPoco>();
+        var exc = Assert.ThrowsAny<Exception>(() =>badQuery.Execute(Connection).Single());
+        var message = exc.Message;
+        PAssert.That(() => message.Contains("PocoObjectMapperTest.NullablityVerifierPoco.AccountNumber contains NULL despite being non-nullable"));
+        PAssert.That(() => !message.Contains("+"));
+    }
 }
