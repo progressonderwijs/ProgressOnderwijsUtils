@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>94.0.2</Version>
-    <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
+    <Version>94.0.3</Version>
+    <PackageReleaseNotes>Tweak error message</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
