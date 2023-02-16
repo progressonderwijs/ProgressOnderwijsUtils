@@ -1,3 +1,5 @@
+using static ProgressOnderwijsUtils.BackingFieldDetector;
+
 namespace ProgressOnderwijsUtils.RequiredFields;
 
 public static class NonNullableFieldVerifier2
@@ -13,7 +15,9 @@ public static class NonNullableFieldVerifier2
 
         NullabilityInfoContext context = new();
 
-        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance)
+            .Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
+            .ToArray();
         var count = fields.Count();
         var messages = Expression.Variable(typeof(string[]), "AllExceptions");
         statements.Add(Expression.Assign(messages, Expression.NewArrayBounds(typeof(string), Expression.Constant(count))));
@@ -22,14 +26,14 @@ public static class NonNullableFieldVerifier2
             var memberExpression = Expression.Field(objectParam, f);
             var fieldValue = Expression.Convert(memberExpression, typeof(object));
 
-            var p = BackingFieldDetector.AutoPropertyOfFieldOrNull(f);
-            var name = p == null ? f.Name : p.Name;
+            var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
+            var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
 
             statements.Add(
                 Expression.IfThen(
                     Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
                     Expression.Block(
-                        Expression.Assign(Expression.ArrayAccess(messages, NullFoundCounter), Expression.Constant("Found null value in non nullable field in " + typeof(T) + "." + name)),
+                        Expression.Assign(Expression.ArrayAccess(messages, NullFoundCounter), Expression.Constant(exceptionMessage)),
                         Expression.AddAssign(NullFoundCounter, Expression.Constant(1))
                     )
                 )
