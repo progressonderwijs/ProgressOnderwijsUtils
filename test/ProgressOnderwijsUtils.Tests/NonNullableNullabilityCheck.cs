@@ -219,4 +219,13 @@ public sealed class NonNullableNullabilityCheck
                 getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeObjectArray)),
             }));
     }
+
+    [Fact]
+    public void AssertBothEmptyNestedCompiled5() {
+        var p = new NullablityTestNestedClass { SomeNestedClass = null, SomeNullableNestedClass = null};
+        PAssert.That(() => Verifier5(p).AssertNotNull().SequenceEqual(
+            new[] {
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass), nameof(NullablityTestNestedClass)),
+            }));
+    }
 }

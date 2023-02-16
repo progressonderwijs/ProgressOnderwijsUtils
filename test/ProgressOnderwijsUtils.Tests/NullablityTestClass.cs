@@ -27,7 +27,8 @@ public abstract class NullablityTestBaseClass
 
 public sealed class NullablityTestNestedClass
 {
-    public NullablityTestClass SomeNestedClass = new NullablityTestClass();
+    public NullablityTestClass SomeNestedClass = new();
+    public NullablityTestClass? SomeNullableNestedClass = new();
 }
 
 public sealed class NullabilityTestSubClass : NullablityTestBaseClass { }
