@@ -39,18 +39,20 @@ public static class NonNullableFieldVerifier5
 
     static List<Expression> CountInvalidNullOccurrences(Type type, Expression obj, Expression nullCounter)
     {
-        NullabilityInfoContext context = new();
+        var context = new NullabilityInfoContext();
 
         var statements = new List<Expression>();
-        var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+            .Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
 
+        var nullExpression = Expression.Constant(null, typeof(object));
         foreach (var f in fields) {
             var memberExpression = Expression.Field(obj, f);
             var fieldValue = Expression.Convert(memberExpression, typeof(object));
 
             statements.Add(
                 Expression.IfThen(
-                    Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
+                    Expression.Equal(fieldValue, nullExpression),
                     Expression.AddAssign(nullCounter, Expression.Constant(1, typeof(int)))
                 )
             );
@@ -64,16 +66,21 @@ public static class NonNullableFieldVerifier5
 
     static List<Expression> SetArrayValues(Type type, Expression obj, Expression count, Expression exception)
     {
-        NullabilityInfoContext context = new();
+        var context = new NullabilityInfoContext();
 
         var statements = new List<Expression>();
-        var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance).Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var fields = type.GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
+            .Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
+        var nullExpression = Expression.Constant(null, typeof(object));
         foreach (var f in fields) {
+            var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
+            var exceptionMessage = type.ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
+            var fieldAccessExpression = Expression.Convert(Expression.Field(obj, f), typeof(object));
             statements.Add(
                 Expression.IfThen(
-                    Expression.Equal(Expression.Convert(Expression.Field(obj, f), typeof(object)), Expression.Constant(null, typeof(object))),
+                    Expression.Equal(fieldAccessExpression, nullExpression),
                     Expression.Block(
-                        Expression.Assign(Expression.ArrayAccess(exception, count), Expression.Constant("Found null value in non nullable field in " + type + "." + (AutoPropertyOfFieldOrNull(f) == null ? f.Name : AutoPropertyOfFieldOrNull(f)?.Name))),
+                        Expression.Assign(Expression.ArrayAccess(exception, count), Expression.Constant(exceptionMessage)),
                         Expression.AddAssign(count, Expression.Constant(1, typeof(int)))
                     )
                 )
