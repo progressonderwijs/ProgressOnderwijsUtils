@@ -72,7 +72,6 @@ public static class NonNullableFieldVerifier5
                 );
             }
         }
-
         return statements;
     }
 

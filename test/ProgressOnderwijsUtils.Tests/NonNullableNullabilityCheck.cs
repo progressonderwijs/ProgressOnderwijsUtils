@@ -217,6 +217,9 @@ public sealed class NonNullableNullabilityCheck
                 getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeNullString)),
                 getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeObject)),
                 getVerifierMessage(nameof(NullablityTestNestedClass.SomeNestedClass.SomeObjectArray)),
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNullableNestedClass.SomeNullString)),
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNullableNestedClass.SomeObject)),
+                getVerifierMessage(nameof(NullablityTestNestedClass.SomeNullableNestedClass.SomeObjectArray)),
             }));
     }
 
