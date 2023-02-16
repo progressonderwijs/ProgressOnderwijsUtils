@@ -52,10 +52,10 @@ public sealed class NonNullableNullabilityCheck
         => field?.GetValue(obj) == null && context.Create(field.AssertNotNull()).WriteState == NullabilityState.NotNull;
 
     static string getVerifierMessage(string field)
-        => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field;
+        => "NullablityTestClass." + field + " contains NULL despite being non-nullable";
 
     static string getVerifierMessage(string field, string className)
-        => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests." + className + "." + field;
+        => className + "." + field + " contains NULL despite being non-nullable";
 
     [Fact]
     public void AssertWithReflectionOfField()
