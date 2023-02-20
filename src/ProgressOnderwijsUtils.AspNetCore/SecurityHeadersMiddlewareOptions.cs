@@ -7,7 +7,6 @@ public sealed record SecurityHeadersMiddlewareOptions
     /// <summary>
     /// Legacy header name for Permissions-Policy used in safari 11.1+ and firefox 74+
     /// </summary>
-    public bool AlsoSetFeaturePolicy = true;
     public string? ReferrerPolicy { get; init; } = "same-origin";
     public string? XContentTypeOptions { get; init; } = "nosniff";
     public string? CrossOriginEmbedderPolicy { get; init; } = "require-corp";

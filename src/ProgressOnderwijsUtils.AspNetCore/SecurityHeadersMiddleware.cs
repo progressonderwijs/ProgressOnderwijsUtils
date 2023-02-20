@@ -22,9 +22,6 @@ public sealed class SecurityHeadersMiddleware
         }
         if (options.PermissionsPolicy != null) {
             context.Response.Headers["Permissions-Policy"] = options.PermissionsPolicy;
-            if (options.AlsoSetFeaturePolicy) {
-                context.Response.Headers["Feature-Policy"] = options.PermissionsPolicy;
-            }
         }
         if (options.ReferrerPolicy != null) {
             context.Response.Headers["Referrer-Policy"] = options.ReferrerPolicy;
