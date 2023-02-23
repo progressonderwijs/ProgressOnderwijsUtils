@@ -1,4 +1,5 @@
 using System.Data.Common;
+using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
@@ -80,6 +81,14 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 5);
+    }
+
+    [Fact]
+    public void ParameterizedSqlTvpsCanCountGuids()
+    {
+        var q = SQL($@"select count(x.querytablevalue) from {new[] { new Guid(), new Guid(), }} x");
+        var dayCount = q.ReadScalar<int>(Connection);
+        PAssert.That(() => dayCount == 2);
     }
 
     [Fact]
