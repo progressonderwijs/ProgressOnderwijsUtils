@@ -122,6 +122,7 @@ namespace ProgressOnderwijsUtils
                 new(typeof(TimeSpan), "TVar_Time", "querytablevalue time(7) not null"),
                 new(typeof(byte), "TVar_Tinyint", "querytablevalue tinyint not null"),
                 new(typeof(byte[]), "TVar_VarBinaryMax", "querytablevalue varbinary(max) not null"),
+                new(typeof(Guid), "TVar_Uniqueidentifier", "querytablevalue uniqueidentifier not null"),
             };
 
             public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
