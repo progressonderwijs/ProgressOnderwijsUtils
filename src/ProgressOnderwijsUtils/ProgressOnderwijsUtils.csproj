@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>94.0.4</Version>
-    <PackageReleaseNotes>Added TVP support for uniqueidentifier (guid's)</PackageReleaseNotes>
+    <Version>94.1.0</Version>
+    <PackageReleaseNotes>Add DeleteLocalFolderRecursivelyAndWait</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
