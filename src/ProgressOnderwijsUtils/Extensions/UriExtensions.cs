@@ -46,8 +46,15 @@ public static class UriExtensions
     }
 
     /// <summary>
-    /// NTFS deletions can be async, unfortunately, and worse: they only are under certain corner cases and specific loads, so code that appears correct (by assuming deletions are synchronous) may only fail sometimes.
+    /// NTFS deletions can be async, unfortunately, and worse: they only are under certain corner cases and specific loads,
+    /// so code that appears correct (by assuming deletions are synchronous) may only fail sometimes.
     /// This method deletes a folder, and waits until it's not found any longer.
+    ///
+    /// However, https://github.com/progressonderwijs/ProgressOnderwijsUtils/pull/823 suggests this is no longer the case.
+    /// Ref: https://stackoverflow.com/questions/60424732/did-the-behaviour-of-deleted-files-open-with-fileshare-delete-change-on-windows/60512798
+    /// Ref: https://github.com/dotnet/runtime/issues/27958
+    ///
+    /// This method is only necessary on "old" versions of windows (see linked issues for details on which versions, but likely pre-windows 10 1909)
     /// </summary>
     public static void DeleteLocalFolderRecursivelyAndWait(this Uri path)
     {
