@@ -43,16 +43,16 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var tables = rawDescription.tables;
-        var views = rawDescription.views;
-        var dependencies = rawDescription.dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-        var columns = rawDescription.columns;
-        var foreignKeys = rawDescription.foreignKeys;
-        var checkConstraints = rawDescription.checkConstraints;
-        var dmlTableTriggers = rawDescription.dmlTableTriggers;
-        var defaultConstraints = rawDescription.defaultConstraints;
-        var computedColumnDefinitions = rawDescription.computedColumnDefinitions;
-        var sequences = rawDescription.sequences;
+        var tables = rawDescription.Tables;
+        var views = rawDescription.Views;
+        var dependencies = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
+        var columns = rawDescription.Columns;
+        var foreignKeys = rawDescription.ForeignKeys;
+        var checkConstraints = rawDescription.CheckConstraints;
+        var dmlTableTriggers = rawDescription.DmlTableTriggers;
+        var defaultConstraints = rawDescription.DefaultConstraints;
+        var computedColumnDefinitions = rawDescription.ComputedColumnDefinitions;
+        var sequences = rawDescription.Sequences;
 
         Sequences = sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         var defaultsByColumnId = defaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
