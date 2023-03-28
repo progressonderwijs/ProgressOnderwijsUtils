@@ -151,23 +151,13 @@ public sealed record DbColumnMetaData(
         => ColumnMetaDatas(conn, objectName.CommandText());
 
     public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, string qualifiedObjectName)
-    {
-        var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
+        => qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
             ? RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
             : RunQuery(conn, false, SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
-        return Sort(dbColumnMetaDatas);
-    }
 
-    public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlConnection conn)
-        => RunQuery(conn, false, new()).ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
+    public static DbColumnMetaData[] LoadAll(SqlConnection conn)
+        => RunQuery(conn, false, new());
 
-    static DbColumnMetaData[] Sort(DbColumnMetaData[] toArray)
-    {
-        Array.Sort(toArray, byColumnId);
-        return toArray;
-    }
-
-    static readonly Comparison<DbColumnMetaData> byColumnId = (a, b) => ((int)a.ColumnId).CompareTo((int)b.ColumnId);
     static readonly Regex isSafeForSql = new("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
     public static ParameterizedSql BaseQuery(bool fromTempDb)
@@ -200,7 +190,11 @@ public sealed record DbColumnMetaData(
         );
 
     static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
-        => BaseQuery(fromTempDb).Append(filter).OfPocos<DbColumnMetaData>().WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(conn);
+    {
+        var retval = BaseQuery(fromTempDb).Append(filter).OfPocos<DbColumnMetaData>().WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(conn);
+        Array.Sort(retval);
+        return retval;
+    }
 
     public int CompareTo(DbColumnMetaData? other)
         => other switch {

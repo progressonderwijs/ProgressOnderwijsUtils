@@ -46,7 +46,7 @@ public sealed class DatabaseDescription
         var tables = rawDescription.Tables;
         var views = rawDescription.Views;
         var dependencies = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-        var columns = rawDescription.Columns;
+        var columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray());
         var foreignKeys = rawDescription.ForeignKeys;
         var checkConstraints = rawDescription.CheckConstraints;
         var dmlTableTriggers = rawDescription.DmlTableTriggers;

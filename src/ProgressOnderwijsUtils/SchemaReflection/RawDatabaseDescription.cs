@@ -7,7 +7,7 @@ public sealed record RawDatabaseDescription
     public required DbNamedObjectId[] Tables { get; init; }
     public required DbNamedObjectId[] Views { get; init; }
     public required ObjectDependency[] Dependencies { get; init; }
-    public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
+    public required DbColumnMetaData[] Columns { get; init; }
     public required ForeignKeySqlDefinition[] ForeignKeys { get; init; }
     public required CheckConstraintSqlDefinition[] CheckConstraints { get; init; }
     public required DmlTableTriggerSqlDefinition[] DmlTableTriggers { get; init; }
