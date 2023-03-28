@@ -16,10 +16,21 @@ public sealed record RawDatabaseDescription
     public required SequenceSqlDefinition[] sequences { get; init; }
 
     public static RawDatabaseDescription Load(SqlConnection conn)
-    {
-        var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
-        var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
-        var dependencies = SQL(
+        => new() {
+            tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U"),
+            views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V"),
+            dependencies = Load_sql_expression_dependencies(conn),
+            columns = DbColumnMetaData.LoadAll(conn),
+            foreignKeys = ForeignKeyColumnEntry.LoadAll(conn),
+            checkConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
+            dmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
+            defaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
+            computedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
+            sequences = SequenceSqlDefinition.LoadAll(conn),
+        };
+
+    static ILookup<DbObjectId, DbObjectId> Load_sql_expression_dependencies(SqlConnection conn)
+        => SQL(
             $@"
                 select
                     sed.referencing_id
@@ -29,19 +40,4 @@ public sealed record RawDatabaseDescription
                     and sed.referenced_id is not null
             "
         ).ReadPocos<ObjectDependency>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-
-        var rawDescription = new RawDatabaseDescription {
-            tables = tables,
-            views = views,
-            dependencies = dependencies,
-            columns = DbColumnMetaData.LoadAll(conn),
-            foreignKeys = ForeignKeyColumnEntry.LoadAll(conn),
-            checkConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
-            dmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
-            defaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
-            computedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
-            sequences = SequenceSqlDefinition.LoadAll(conn),
-        };
-        return rawDescription;
-    }
 }
