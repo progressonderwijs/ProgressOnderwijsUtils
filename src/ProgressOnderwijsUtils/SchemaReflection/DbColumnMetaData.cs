@@ -6,7 +6,7 @@ public sealed record DbColumnMetaData(
     short MaxLength,
     byte Precision,
     byte Scale
-) : IWrittenImplicitly
+) : IWrittenImplicitly, IComparable<DbColumnMetaData>
 {
     public DbObjectId DbObjectId { get; init; }
     public DbColumnId ColumnId { get; init; }
@@ -201,6 +201,13 @@ public sealed record DbColumnMetaData(
 
     static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
         => BaseQuery(fromTempDb).Append(filter).OfPocos<DbColumnMetaData>().WithFieldMappingMode(FieldMappingMode.IgnoreExtraPocoProperties).Execute(conn);
+
+    public int CompareTo(DbColumnMetaData? other)
+        => other switch {
+            null => 1,
+            _ when DbObjectId.CompareTo(other.DbObjectId) is not 0 and var comparison => comparison,
+            _ => ColumnId.CompareTo(other.ColumnId),
+        };
 }
 
 public static class DbColumnMetaDataExtensions
