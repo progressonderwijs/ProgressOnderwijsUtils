@@ -45,6 +45,36 @@ public sealed class DatabaseDescription
         public required DefaultValueConstraintSqlDefinition[] defaultConstraints { get; init; }
         public required ComputedColumnSqlDefinition[] computedColumnDefinitions { get; init; }
         public required SequenceSqlDefinition[] sequences { get; init; }
+
+        public static Raw Load(SqlConnection conn)
+        {
+            var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
+            var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
+            var dependencies = SQL(
+                $@"
+                select
+                    sed.referencing_id
+                    , sed.referenced_id
+                from sys.sql_expression_dependencies sed
+                where 1=1
+                    and sed.referenced_id is not null
+            "
+            ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
+
+            var rawDescription = new Raw {
+                tables = tables,
+                views = views,
+                dependencies = dependencies,
+                columns = DbColumnMetaData.LoadAll(conn),
+                foreignKeys = ForeignKeyColumnEntry.LoadAll(conn),
+                checkConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
+                dmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
+                defaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
+                computedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
+                sequences = SequenceSqlDefinition.LoadAll(conn),
+            };
+            return rawDescription;
+        }
     }
 
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
@@ -94,35 +124,7 @@ public sealed class DatabaseDescription
     sealed record SqlExpressionDependencies(DbObjectId referencing_id, DbObjectId referenced_id) : IWrittenImplicitly;
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
-    {
-        var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
-        var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
-        var dependencies = SQL(
-            $@"
-                select
-                    sed.referencing_id
-                    , sed.referenced_id
-                from sys.sql_expression_dependencies sed
-                where 1=1
-                    and sed.referenced_id is not null
-            "
-        ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-
-        return new(
-            new() {
-                tables = tables,
-                views = views,
-                dependencies = dependencies,
-                columns = DbColumnMetaData.LoadAll(conn),
-                foreignKeys = ForeignKeyColumnEntry.LoadAll(conn),
-                checkConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
-                dmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
-                defaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
-                computedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
-                sequences = SequenceSqlDefinition.LoadAll(conn),
-            }
-        );
-    }
+        => new(Raw.Load(conn));
 
     public IEnumerable<Table> AllTables
         => tableById.Values;
