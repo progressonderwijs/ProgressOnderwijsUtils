@@ -159,7 +159,7 @@ sealed class Benchmarker
             Task.WaitAll(tasks);
             elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
             foreach (var task in tasks) {
-                latencyDistribution = latencyDistribution.Add(task.Result);
+                latencyDistribution = latencyDistribution.Add(task.GetAwaiter().GetResult());
             }
 #endif
         }

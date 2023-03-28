@@ -21,11 +21,11 @@ public sealed class ProcessRunnerTest
                 ExecutableName = "xcopy",
             }.StartProcess(CancellationToken.None);
 
-            result.ExitCode.Wait();
+            result.ExitCode.GetAwaiter().GetResult();
 
-            PAssert.That(() => result.ExitCode.Result == 4);
-            PAssert.That(() => result.StdError().Result.SequenceEqual(new[] { "Invalid number of parameters", }));
-            PAssert.That(() => result.StdOutput().Result.SequenceEqual(new[] { "0 File(s) copied", }));
+            PAssert.That(() => result.ExitCode.GetAwaiter().GetResult() == 4);
+            PAssert.That(() => result.StdError().GetAwaiter().GetResult().SequenceEqual(new[] { "Invalid number of parameters", }));
+            PAssert.That(() => result.StdOutput().GetAwaiter().GetResult().SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {
@@ -46,7 +46,7 @@ public sealed class ProcessRunnerTest
             }.StartProcess(CancellationToken.None);
 
             result.WriteToConsoleWithPrefix("x");
-            PAssert.That(() => result.StdOutput().Result.SequenceEqual(new[] { "0 File(s) copied", }));
+            PAssert.That(() => result.StdOutput().GetAwaiter().GetResult().SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {
