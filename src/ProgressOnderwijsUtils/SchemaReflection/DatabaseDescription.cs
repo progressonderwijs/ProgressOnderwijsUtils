@@ -33,6 +33,20 @@ public struct DbNamedObjectId : IWrittenImplicitly
 
 public sealed class DatabaseDescription
 {
+    public sealed record Raw
+    {
+        public required DbNamedObjectId[] tables { get; init; }
+        public required DbNamedObjectId[] views { get; init; }
+        public required ILookup<DbObjectId, DbObjectId> dependencies { get; init; }
+        public required Dictionary<DbObjectId, DbColumnMetaData[]> columns { get; init; }
+        public required ForeignKeySqlDefinition[] foreignKeys { get; init; }
+        public required CheckConstraintSqlDefinition[] checkConstraints { get; init; }
+        public required DmlTableTriggerSqlDefinition[] dmlTableTriggers { get; init; }
+        public required DefaultValueConstraintSqlDefinition[] defaultConstraints { get; init; }
+        public required ComputedColumnSqlDefinition[] computedColumnDefinitions { get; init; }
+        public required SequenceSqlDefinition[] sequences { get; init; }
+    }
+
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
     readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
     readonly IReadOnlyDictionary<DbObjectId, View> viewById;
@@ -41,18 +55,19 @@ public sealed class DatabaseDescription
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-    public DatabaseDescription(
-        DbNamedObjectId[] tables,
-        DbNamedObjectId[] views,
-        ILookup<DbObjectId, DbObjectId> dependencies,
-        Dictionary<DbObjectId, DbColumnMetaData[]> columns,
-        ForeignKeySqlDefinition[] foreignKeys,
-        CheckConstraintSqlDefinition[] checkConstraints,
-        DmlTableTriggerSqlDefinition[] dmlTableTriggers,
-        DefaultValueConstraintSqlDefinition[] defaultConstraints,
-        ComputedColumnSqlDefinition[] computedColumnDefinitions,
-        SequenceSqlDefinition[] sequences)
+    public DatabaseDescription(Raw rawDescription)
     {
+        var tables = rawDescription.tables;
+        var views = rawDescription.views;
+        var dependencies = rawDescription.dependencies;
+        var columns = rawDescription.columns;
+        var foreignKeys = rawDescription.foreignKeys;
+        var checkConstraints = rawDescription.checkConstraints;
+        var dmlTableTriggers = rawDescription.dmlTableTriggers;
+        var defaultConstraints = rawDescription.defaultConstraints;
+        var computedColumnDefinitions = rawDescription.computedColumnDefinitions;
+        var sequences = rawDescription.sequences;
+
         Sequences = sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         var defaultsByColumnId = defaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
         var computedColumnsByColumnId = computedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
@@ -94,16 +109,18 @@ public sealed class DatabaseDescription
         ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
 
         return new(
-            tables,
-            views,
-            dependencies,
-            DbColumnMetaData.LoadAll(conn),
-            ForeignKeyColumnEntry.LoadAll(conn),
-            CheckConstraintSqlDefinition.LoadAll(conn),
-            DmlTableTriggerSqlDefinition.LoadAll(conn),
-            DefaultValueConstraintSqlDefinition.LoadAll(conn),
-            ComputedColumnSqlDefinition.LoadAll(conn),
-            SequenceSqlDefinition.LoadAll(conn)
+            new() {
+                tables = tables,
+                views = views,
+                dependencies = dependencies,
+                columns = DbColumnMetaData.LoadAll(conn),
+                foreignKeys = ForeignKeyColumnEntry.LoadAll(conn),
+                checkConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
+                dmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
+                defaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
+                computedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
+                sequences = SequenceSqlDefinition.LoadAll(conn),
+            }
         );
     }
 
