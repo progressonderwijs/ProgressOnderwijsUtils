@@ -15,7 +15,7 @@ public sealed record RawDatabaseDescription
     public required ComputedColumnSqlDefinition[] ComputedColumnDefinitions { get; init; }
     public required SequenceSqlDefinition[] Sequences { get; init; }
     public required DbObjectIndex[] Indexes { get; init; }
-
+    public required DbObjectIndexColumn[] IndexColumns { get; init; }
 
     public static RawDatabaseDescription Load(SqlConnection conn)
         => new() {
@@ -30,6 +30,7 @@ public sealed record RawDatabaseDescription
             ComputedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
             Sequences = SequenceSqlDefinition.LoadAll(conn),
             Indexes = DbObjectIndex.LoadAll(conn),
+            IndexColumns = DbObjectIndexColumn.LoadAll(conn),
         };
 
     static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
