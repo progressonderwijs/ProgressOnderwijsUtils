@@ -1,5 +1,8 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
+[DbIdEnum]
+public enum DbObjectId { }
+
 public struct DbNamedObjectId : IWrittenImplicitly
 {
     public DbObjectId ObjectId { get; init; }

@@ -1,17 +1,5 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-[AttributeUsage(AttributeTargets.Enum)]
-public sealed class DbIdEnumAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
-
-[DbIdEnum]
-public enum DbObjectId { }
-
-/// <summary>
-/// This id is 1-based and may contain gaps due to dropping of columns.
-/// </summary>
-[DbIdEnum]
-public enum DbColumnId { }
-
 public sealed class DatabaseDescription
 {
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
