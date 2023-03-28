@@ -14,9 +14,9 @@ public static class DiagnosticHelper
     public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
     {
         var project = CreateProject(source);
-        var compilation = project.GetCompilationAsync().Result.AssertNotNull();
+        var compilation = project.GetCompilationAsync().GetAwaiter().GetResult().AssertNotNull();
         var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
-        return compilationWithAnalyzers.GetAllDiagnosticsAsync().Result.ToArray();
+        return compilationWithAnalyzers.GetAllDiagnosticsAsync().GetAwaiter().GetResult().ToArray();
     }
 
     static Project CreateProject(string source)
