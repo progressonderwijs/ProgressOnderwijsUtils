@@ -14,6 +14,8 @@ public sealed record RawDatabaseDescription
     public required DefaultValueConstraintSqlDefinition[] DefaultConstraints { get; init; }
     public required ComputedColumnSqlDefinition[] ComputedColumnDefinitions { get; init; }
     public required SequenceSqlDefinition[] Sequences { get; init; }
+    public required DbObjectIndex[] Indexes { get; init; }
+
 
     public static RawDatabaseDescription Load(SqlConnection conn)
         => new() {
@@ -27,6 +29,7 @@ public sealed record RawDatabaseDescription
             DefaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
             ComputedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
             Sequences = SequenceSqlDefinition.LoadAll(conn),
+            Indexes = DbObjectIndex.LoadAll(conn),
         };
 
     static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
