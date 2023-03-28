@@ -13,7 +13,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
     public bool IsUniqueConstraint { get; init; }
     public bool IsUnique { get; init; }
     public string? Filter { get; init; }
-    public byte DataCompressionType { get; init; }
+    public SqlCompressionType DataCompressionType { get; init; }
 
     public static DbObjectIndex[] LoadAll(SqlConnection conn)
         => SQL(
