@@ -43,28 +43,20 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var tables = rawDescription.Tables;
-        var views = rawDescription.Views;
         var dependencies = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
         var columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray());
-        var foreignKeys = rawDescription.ForeignKeys;
-        var checkConstraints = rawDescription.CheckConstraints;
-        var dmlTableTriggers = rawDescription.DmlTableTriggers;
-        var defaultConstraints = rawDescription.DefaultConstraints;
-        var computedColumnDefinitions = rawDescription.ComputedColumnDefinitions;
-        var sequences = rawDescription.Sequences;
 
-        Sequences = sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        var defaultsByColumnId = defaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
-        var computedColumnsByColumnId = computedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
-        var checkContraintsByTableId = checkConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
-        var triggersByTableId = dmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+        Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
+        var defaultsByColumnId = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
+        var computedColumnsByColumnId = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
+        var checkContraintsByTableId = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+        var triggersByTableId = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
 
         var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
 
-        tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
-        var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
+        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
         tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
