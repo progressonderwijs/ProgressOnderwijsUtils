@@ -6,7 +6,7 @@ public sealed record RawDatabaseDescription
 
     public required DbNamedObjectId[] tables { get; init; }
     public required DbNamedObjectId[] views { get; init; }
-    public required ILookup<DbObjectId, DbObjectId> dependencies { get; init; }
+    public required ObjectDependency[] dependencies { get; init; }
     public required Dictionary<DbObjectId, DbColumnMetaData[]> columns { get; init; }
     public required ForeignKeySqlDefinition[] foreignKeys { get; init; }
     public required CheckConstraintSqlDefinition[] checkConstraints { get; init; }
@@ -29,7 +29,7 @@ public sealed record RawDatabaseDescription
             sequences = SequenceSqlDefinition.LoadAll(conn),
         };
 
-    static ILookup<DbObjectId, DbObjectId> Load_sql_expression_dependencies(SqlConnection conn)
+    static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
         => SQL(
             $@"
                 select
@@ -39,5 +39,5 @@ public sealed record RawDatabaseDescription
                 where 1=1
                     and sed.referenced_id is not null
             "
-        ).ReadPocos<ObjectDependency>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
+        ).ReadPocos<ObjectDependency>(conn);
 }

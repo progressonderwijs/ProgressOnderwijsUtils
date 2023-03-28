@@ -45,7 +45,7 @@ public sealed class DatabaseDescription
     {
         var tables = rawDescription.tables;
         var views = rawDescription.views;
-        var dependencies = rawDescription.dependencies;
+        var dependencies = rawDescription.dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
         var columns = rawDescription.columns;
         var foreignKeys = rawDescription.foreignKeys;
         var checkConstraints = rawDescription.checkConstraints;
