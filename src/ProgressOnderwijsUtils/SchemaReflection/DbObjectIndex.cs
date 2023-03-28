@@ -8,7 +8,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
     public string? IndexNaam { get; init; }
-    public byte IndexType { get; init; }
+    public SqlIndexType IndexType { get; init; }
     public bool IsPrimaryKey { get; init; }
     public bool IsUniqueConstraint { get; init; }
     public bool IsUnique { get; init; }
