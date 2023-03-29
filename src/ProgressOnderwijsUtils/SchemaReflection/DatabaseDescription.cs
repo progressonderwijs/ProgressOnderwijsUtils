@@ -12,7 +12,7 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var dataByTableId = new DatabaseDescriptionById {
+        var rawSchemaById = new DatabaseDescriptionById {
             DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
             ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
             CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
@@ -22,8 +22,8 @@ public sealed class DatabaseDescription
         };
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, dataByTableId, this));
-        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o,dataByTableId, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o,rawSchemaById, rawSchemaById.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), rawSchemaById.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
