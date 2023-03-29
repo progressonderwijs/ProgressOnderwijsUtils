@@ -7,7 +7,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
 {
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
-    public string? IndexNaam { get; init; }
+    public string? IndexName { get; init; }
     public SqlIndexType IndexType { get; init; }
     public bool IsPrimaryKey { get; init; }
     public bool IsUniqueConstraint { get; init; }
@@ -21,7 +21,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
             select
                 ObjectId = i.object_id
                 , IndexId = i.index_id
-                , IndexNaam = i.name
+                , IndexName = i.name
                 , IndexType =  i.type
                 , IsUniqueConstraint = i.is_unique_constraint
                 , IsUnique =  i.is_unique

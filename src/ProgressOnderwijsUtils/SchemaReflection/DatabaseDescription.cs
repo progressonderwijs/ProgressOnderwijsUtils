@@ -137,6 +137,9 @@ public sealed class DatabaseDescription
             public Column<TObject> Column
                 => Index.ContainingObject.ColumnsById[UnderlyingMetaData.ColumnId];
 
+
+            public bool IsDescending
+                => UnderlyingMetaData.IsDescending;
         }
 
         public DbObjectId ObjectId
@@ -144,6 +147,49 @@ public sealed class DatabaseDescription
 
         public DbIndexId IndexId
             => IndexMetaData.IndexId;
+
+        public SqlIndexType IndexType
+            => IndexMetaData.IndexType;
+
+        public string? IndexName
+            => IndexMetaData.IndexName;
+
+        public string IndexCreationScript()
+        {
+            var include = IndexType.IsColumnStore() || IncludedColumns.None() ? "" : $" include ({IncludedColumns.Select(col => col.Column.ColumnName).JoinStrings(", ")})";
+            var filter = Filter is null ? "" : $" where {SqlServerUtils.PrettifySqlExpression(Filter)}";
+            var compression = DataCompressionType is SqlCompressionType.None or SqlCompressionType.ColumnStore ? "" : $" with (data_compression={DataCompressionType.ToSqlName().CommandText()})";
+            var defaultIndexType = IsPrimaryKey ? SqlIndexType.ClusteredIndex : SqlIndexType.NonClusteredIndex;
+            var indexType = IndexType == defaultIndexType ? "" : " " + IndexType.ToSqlName().CommandText();
+            var indexColumns = IndexType == SqlIndexType.ClusteredColumnStore
+                ? ""
+                : $" ({IndexColumns.Select(col => col.Column.ColumnName + (col.IsDescending ? " desc" : "")).JoinStrings(", ")})";
+
+            if (IsPrimaryKey || IsUniqueConstraint) {
+                var constraintType = IsPrimaryKey ? " primary key" : " unique";
+                return $"alter table {ContainingObject.QualifiedName} add constraint {IndexName}{constraintType}{indexType}{indexColumns}{compression}";
+            } else if (IndexType == SqlIndexType.Heap) {
+                return $"-- {ContainingObject.QualifiedName} is a heap{compression}";
+            } else {
+                var unique = IsUnique ? " unique" : "";
+                return $"create{unique}{indexType} index {IndexName} on {ContainingObject.QualifiedName}{indexColumns}{include}{filter}{compression}";
+            }
+        }
+
+        public bool IsUnique
+            => IndexMetaData.IsUnique;
+
+        public bool IsUniqueConstraint
+            => IndexMetaData.IsUniqueConstraint;
+
+        public bool IsPrimaryKey
+            => IndexMetaData.IsPrimaryKey;
+
+        public SqlCompressionType DataCompressionType
+            => IndexMetaData.DataCompressionType;
+
+        public string? Filter
+            => IndexMetaData.Filter;
     }
 
     public sealed class Column<TObject> : IDbColumn
