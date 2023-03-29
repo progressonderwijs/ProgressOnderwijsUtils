@@ -241,7 +241,7 @@ public sealed class DatabaseDescription
         }
     }
 
-    public sealed class View
+    public sealed class View : IDbNamedObject
     {
         readonly DbNamedObjectId view;
         public readonly DatabaseDescription db;
@@ -255,6 +255,9 @@ public sealed class DatabaseDescription
             Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull();
             ReferencedTables = rawSchemaById.SqlExpressionDependsOn[view.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
+
+        public DbObjectId ObjectId
+            => view.ObjectId;
 
         public string QualifiedName
             => view.QualifiedName;
