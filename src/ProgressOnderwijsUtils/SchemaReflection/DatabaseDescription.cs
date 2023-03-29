@@ -229,7 +229,7 @@ public sealed class DatabaseDescription
         public readonly DbColumnMetaData[] Columns;
         public readonly Table[] ReferencedTables;
 
-        public View(DbNamedObjectId view, DatabaseDescriptionById databaseDescriptionById, DatabaseDescription databaseDescription, DbColumnMetaData[] columns, Table[] referencedTables)
+        internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db, DbColumnMetaData[] columns, Table[] referencedTables)
         {
             this.view = view;
             Columns = columns;
