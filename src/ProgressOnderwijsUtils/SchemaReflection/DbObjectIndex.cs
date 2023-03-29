@@ -55,7 +55,7 @@ public sealed record DbObjectIndexColumn : IWrittenImplicitly
                 , IsDescending = sic.is_descending_key
                 , IsIncluded = sic.is_included_column
             from sys.index_columns sic
-            where i.object_id not in (select o.object_id from sys.objects o where o.is_ms_shipped = 1)
+            where sic.object_id not in (select o.object_id from sys.objects o where o.is_ms_shipped = 1)
             """
         ).ReadPocos<DbObjectIndexColumn>(conn);
 }
