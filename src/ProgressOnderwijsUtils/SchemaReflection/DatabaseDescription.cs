@@ -166,9 +166,9 @@ public sealed class DatabaseDescription
             => ColumnMetaData.HasAutoIncrementIdentity;
     }
 
-    static Column<TObject> DefineColumn<TObject>(TObject containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)
-        where TObject : IDbNamedObject
-        => new(containingObject, col, rawSchemaById);
+    static Column<TObject> DefineColumn<TObject>(ObjectWithColumns<TObject> containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)
+        where TObject : ObjectWithColumns<TObject>
+        => new((TObject)containingObject, col, rawSchemaById);
 
     public interface IObjectWithColumns<TObject> : IDbNamedObject
         where TObject : IObjectWithColumns<TObject>
@@ -177,30 +177,39 @@ public sealed class DatabaseDescription
         IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
     }
 
-    public sealed class Table : IObjectWithColumns<Table>
+    public abstract class ObjectWithColumns<TObject> : IObjectWithColumns<TObject>
+        where TObject : ObjectWithColumns<TObject>
     {
-        public Column<Table>[] Columns { get; }
-        public IReadOnlyDictionary<DbColumnId, Column<Table>> ColumnsById { get; }
-        public readonly DmlTableTriggerSqlDefinition[] Triggers;
-        public readonly CheckConstraintSqlDefinition[] CheckConstraints;
-        readonly DbNamedObjectId NamedTableId;
-        public DatabaseDescription Database { get; }
-
-        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database)
+        private protected ObjectWithColumns(DbNamedObjectId namedObjectId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database)
         {
             Database = database;
-            NamedTableId = namedTableId;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
+            NamedObjectId = namedObjectId;
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedObjectId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ColumnsById = Columns.ToDictionary(o => o.ColumnId);
+        }
+
+        public Column<TObject>[] Columns { get; }
+        public IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
+        protected readonly DbNamedObjectId NamedObjectId;
+        public DatabaseDescription Database { get; }
+
+        public DbObjectId ObjectId
+            => NamedObjectId.ObjectId;
+
+        public string QualifiedName
+            => NamedObjectId.QualifiedName;
+    }
+
+    public sealed class Table : ObjectWithColumns<Table>
+    {
+        public readonly DmlTableTriggerSqlDefinition[] Triggers;
+        public readonly CheckConstraintSqlDefinition[] CheckConstraints;
+
+        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database) : base(namedTableId, rawSchemaById, database)
+        {
             Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
-
-        public DbObjectId ObjectId
-            => NamedTableId.ObjectId;
-
-        public string QualifiedName
-            => NamedTableId.QualifiedName;
 
         public string SchemaName
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
@@ -236,29 +245,14 @@ public sealed class DatabaseDescription
                 ).ToArray();
     }
 
-    public sealed class View : IObjectWithColumns<View>
+    public sealed class View : ObjectWithColumns<View>
     {
-        readonly DbNamedObjectId NamedObject;
-        public DatabaseDescription Database { get; }
-        public Column<View>[] Columns { get; }
         public readonly Table[] ReferencedTables;
 
-        internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
+        internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db) : base(namedObject, rawSchemaById, db)
         {
-            NamedObject = namedObject;
-            Database = db;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(namedObject.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ReferencedTables = rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
-            ColumnsById = Columns.ToDictionary(o => o.ColumnId);
         }
-
-        public IReadOnlyDictionary<DbColumnId, Column<View>> ColumnsById { get; }
-
-        public DbObjectId ObjectId
-            => NamedObject.ObjectId;
-
-        public string QualifiedName
-            => NamedObject.QualifiedName;
 
         public string SchemaName
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
