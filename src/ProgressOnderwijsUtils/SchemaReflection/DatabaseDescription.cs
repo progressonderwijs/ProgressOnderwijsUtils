@@ -245,14 +245,14 @@ public sealed class DatabaseDescription
     {
         readonly DbNamedObjectId view;
         public readonly DatabaseDescription db;
-        public readonly DbColumnMetaData[] Columns;
+        public readonly Column<View>[] Columns;
         public readonly Table[] ReferencedTables;
 
         internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
         {
             this.view = view;
             this.db = db;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull();
+            Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ReferencedTables = rawSchemaById.SqlExpressionDependsOn[view.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
 
