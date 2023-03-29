@@ -23,7 +23,7 @@ public sealed class DatabaseDescription
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
-        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o,rawSchemaById, this, rawSchemaById.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), rawSchemaById.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o,rawSchemaById, this));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
@@ -229,11 +229,11 @@ public sealed class DatabaseDescription
         public readonly DbColumnMetaData[] Columns;
         public readonly Table[] ReferencedTables;
 
-        internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db, DbColumnMetaData[] columns, Table[] referencedTables)
+        internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
         {
             this.view = view;
-            Columns = columns;
-            ReferencedTables = referencedTables;
+            Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull();
+            ReferencedTables = rawSchemaById.SqlExpressionDependsOn[view.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
 
         public string QualifiedName
