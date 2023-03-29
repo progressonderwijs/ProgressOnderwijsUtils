@@ -157,13 +157,13 @@ public sealed class DatabaseDescription
         readonly DbNamedObjectId NamedTableId;
         public readonly DatabaseDescription db;
 
-        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById dataByTableId, DatabaseDescription db)
+        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
         {
             this.db = db;
             NamedTableId = namedTableId;
-            Columns = dataByTableId.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new TableColumn(this, col, dataByTableId));
-            Triggers = dataByTableId.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
-            CheckConstraints = dataByTableId.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new TableColumn(this, col, rawSchemaById));
+            Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
+            CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
 
         public DbObjectId ObjectId
