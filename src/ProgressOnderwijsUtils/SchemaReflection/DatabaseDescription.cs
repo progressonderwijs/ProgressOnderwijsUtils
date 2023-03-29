@@ -106,7 +106,7 @@ public sealed class DatabaseDescription
     public sealed class TableColumn
     {
         public readonly Table Table;
-        public readonly DbColumnMetaData ColumnMetaData;
+        public DbColumnMetaData ColumnMetaData { get; }
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
