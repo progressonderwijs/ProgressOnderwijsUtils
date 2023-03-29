@@ -246,24 +246,24 @@ public sealed class DatabaseDescription
 
     public sealed class View : IDbNamedObject
     {
-        readonly DbNamedObjectId view;
-        public readonly DatabaseDescription db;
+        readonly DbNamedObjectId NamedObject;
+        public DatabaseDescription Database { get; }
         public readonly Column<View>[] Columns;
         public readonly Table[] ReferencedTables;
 
-        internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
+        internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
         {
-            this.view = view;
-            this.db = db;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
-            ReferencedTables = rawSchemaById.SqlExpressionDependsOn[view.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
+            NamedObject = namedObject;
+            Database = db;
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedObject.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
+            ReferencedTables = rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
 
         public DbObjectId ObjectId
-            => view.ObjectId;
+            => NamedObject.ObjectId;
 
         public string QualifiedName
-            => view.QualifiedName;
+            => NamedObject.QualifiedName;
 
         public string SchemaName
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
