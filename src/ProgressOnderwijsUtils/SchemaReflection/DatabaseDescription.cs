@@ -81,7 +81,7 @@ public sealed class DatabaseDescription
         {
             ReferencedParentTable = tablesById[fkDef.ReferencedParentTable];
             ReferencingChildTable = tablesById[fkDef.ReferencingChildTable];
-            Columns = fkDef.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
+            Columns = fkDef.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.ColumnsById[pair.ReferencedParentColumn], ReferencingChildTable.ColumnsById[pair.ReferencingChildColumn]));
             UnqualifiedName = fkDef.ConstraintName;
             DeleteReferentialAction = fkDef.DeleteReferentialAction;
             UpdateReferentialAction = fkDef.UpdateReferentialAction;
@@ -170,9 +170,17 @@ public sealed class DatabaseDescription
         where TObject : IDbNamedObject
         => new(containingObject, col, rawSchemaById);
 
-    public sealed class Table : IDbNamedObject
+    public interface IObjectWithColumns<TObject> : IDbNamedObject
+        where TObject : IObjectWithColumns<TObject>
+    {
+        Column<TObject>[] Columns { get; }
+        IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
+    }
+
+    public sealed class Table : IObjectWithColumns<Table>
     {
         public Column<Table>[] Columns { get; }
+        public IReadOnlyDictionary<DbColumnId, Column<Table>> ColumnsById { get; }
         public readonly DmlTableTriggerSqlDefinition[] Triggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
         readonly DbNamedObjectId NamedTableId;
@@ -183,6 +191,7 @@ public sealed class DatabaseDescription
             Database = database;
             NamedTableId = namedTableId;
             Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
+            ColumnsById = Columns.ToDictionary(o => o.ColumnId);
             Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
@@ -225,26 +234,9 @@ public sealed class DatabaseDescription
                             .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
                             .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                 ).ToArray();
-
-        public Column<Table> GetByColumnIndex(DbColumnId columnId)
-        {
-            var guess = (int)columnId - 1;
-            if (guess >= 0 && guess < Columns.Length && Columns[guess].ColumnId == columnId) {
-                //optimized guess: most tables aren't missing column-ids, and sql indexes are 1-based, so usually this will be where we can find a column:
-                return Columns[guess];
-            }
-
-            //...but brute force is fine too!
-            foreach (var col in Columns) {
-                if (col.ColumnId == columnId) {
-                    return col;
-                }
-            }
-            throw new ArgumentOutOfRangeException(nameof(columnId), $"column index {columnId} not found");
-        }
     }
 
-    public sealed class View : IDbNamedObject
+    public sealed class View : IObjectWithColumns<View>
     {
         readonly DbNamedObjectId NamedObject;
         public DatabaseDescription Database { get; }
@@ -257,7 +249,10 @@ public sealed class DatabaseDescription
             Database = db;
             Columns = rawSchemaById.Columns.GetValueOrDefault(namedObject.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ReferencedTables = rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
+            ColumnsById = Columns.ToDictionary(o => o.ColumnId);
         }
+
+        public IReadOnlyDictionary<DbColumnId, Column<View>> ColumnsById { get; }
 
         public DbObjectId ObjectId
             => NamedObject.ObjectId;
