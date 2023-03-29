@@ -115,12 +115,12 @@ public sealed class DatabaseDescription
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-        internal Column(TObject containingObject, DbColumnMetaData columnMetaData, DatabaseDescriptionById dataByTableId)
+        internal Column(TObject containingObject, DbColumnMetaData columnMetaData, DatabaseDescriptionById rawSchemaById)
         {
             ColumnMetaData = columnMetaData;
             ContainingObject = containingObject;
-            DefaultValueConstraint = dataByTableId.DefaultValues.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
-            ComputedAs = dataByTableId.ComputedColumns.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
+            DefaultValueConstraint = rawSchemaById.DefaultValues.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
+            ComputedAs = rawSchemaById.ComputedColumns.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
         }
 
         public DbColumnId ColumnId
