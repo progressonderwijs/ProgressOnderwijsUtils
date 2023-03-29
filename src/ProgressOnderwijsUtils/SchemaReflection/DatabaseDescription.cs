@@ -163,6 +163,10 @@ public sealed class DatabaseDescription
             => ColumnMetaData.Scale;
     }
 
+    static Column<TObject> DefineColumn<TObject>(TObject containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)
+        where TObject : IDbNamedObject
+        => new(containingObject, col, rawSchemaById);
+
     public sealed class Table : IDbNamedObject
     {
         public readonly Column<Table>[] Columns;
@@ -175,7 +179,7 @@ public sealed class DatabaseDescription
         {
             this.db = db;
             NamedTableId = namedTableId;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new Column<Table>(this, col, rawSchemaById));
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
