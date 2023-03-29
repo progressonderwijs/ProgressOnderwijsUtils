@@ -46,7 +46,7 @@ public static class CascadedDelete
         var pkColumns = PocoUtils.GetProperties<TId>().Select(pocoProperty => pocoProperty.Name).ToArray();
         var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-        var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+        var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
 
         var target = new BulkInsertTarget(
@@ -84,7 +84,7 @@ public static class CascadedDelete
         var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
         var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-        var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+        var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
         BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
 
@@ -138,7 +138,7 @@ public static class CascadedDelete
 
         var delTable = SQL($"#del_init");
 
-        var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+        var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
         pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
 
         var idsToDelete = SQL(
@@ -225,7 +225,7 @@ public static class CascadedDelete
                         return SQL(
                             $@"
                                 declare @output_deleted table(
-                                    {table.Columns.Select(col => col.ColumnMetaData.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
+                                    {table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
                                 );
                                 {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
                                 select * from @output_deleted;

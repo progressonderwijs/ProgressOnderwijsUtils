@@ -49,6 +49,21 @@ public static class DbColumnExtensions
             _ => "",
         };
 
+    public static DataColumn ToDataColumn(this IDbColumn column)
+        => new(column.ColumnName, column.UserTypeId.SqlUnderlyingTypeInfo().ClrType);
+
+    public static IDbColumn AsStaticRowVersion(this IDbColumn column)
+    {
+        if (column.IsRowVersion) {
+            return column.ColumnMetaData with {
+                UserTypeId = SqlSystemTypeId.Binary,
+                MaxLength = 8,
+            };
+        } else {
+            return column;
+        }
+    }
+
     public static bool IsReadOnly(this IDbColumn sqlColumn)
         => sqlColumn.HasAutoIncrementIdentity || sqlColumn.IsComputed || sqlColumn.IsRowVersion;
 

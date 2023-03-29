@@ -89,20 +89,6 @@ public sealed record DbColumnMetaData(
     public override string ToString()
         => ToStringByMembers.ToStringByPublicMembers(this);
 
-    public DataColumn ToDataColumn()
-        => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
-
-    public DbColumnMetaData AsStaticRowVersion()
-    {
-        if (IsRowVersion) {
-            return this with {
-                UserTypeId = SqlSystemTypeId.Binary,
-                MaxLength = 8,
-            };
-        } else {
-            return this;
-        }
-    }
 
     static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
@@ -164,7 +150,7 @@ public sealed record DbColumnMetaData(
 public static class DbColumnMetaDataExtensions
 {
     [Pure]
-    public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
+    public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<IDbColumn> columns, ParameterizedSql tableName)
     {
         var keyColumns = columns
             .Where(md => md.IsPrimaryKey)

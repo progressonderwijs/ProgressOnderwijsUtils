@@ -40,10 +40,10 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
     public override string ToString()
         => $"{DataType.ToCSharpFriendlyTypeName()} {Name}";
 
-    public static ColumnDefinition FromDbColumnMetaData(DbColumnMetaData col, int colIdx)
+    public static ColumnDefinition FromDbColumnMetaData(IDbColumn col, int colIdx)
         => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
 
-    static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
+    static ColumnAccessibility DbColumnMetaDataAccessibility(IDbColumn col)
         => col switch {
             { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrementIdentity,
             { IsRowVersion : true, } => ColumnAccessibility.Readonly,
