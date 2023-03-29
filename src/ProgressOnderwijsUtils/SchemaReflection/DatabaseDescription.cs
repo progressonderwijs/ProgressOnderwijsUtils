@@ -23,7 +23,7 @@ public sealed class DatabaseDescription
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
-        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o,rawSchemaById, this));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, rawSchemaById, this));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
