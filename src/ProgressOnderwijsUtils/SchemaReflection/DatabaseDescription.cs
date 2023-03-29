@@ -161,6 +161,9 @@ public sealed class DatabaseDescription
 
         public byte Scale
             => ColumnMetaData.Scale;
+
+        public bool HasAutoIncrementIdentity
+            => ColumnMetaData.HasAutoIncrementIdentity;
     }
 
     static Column<TObject> DefineColumn<TObject>(TObject containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)

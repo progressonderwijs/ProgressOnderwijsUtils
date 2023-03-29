@@ -15,6 +15,7 @@ public interface IDbColumn
     short MaxLength { get; }
     byte Precision { get; }
     byte Scale { get; }
+    bool HasAutoIncrementIdentity { get; }
 }
 
 public static class DbColumnExtensions
@@ -47,6 +48,9 @@ public static class DbColumnExtensions
             SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when column.Scale != 7 => $"({column.Scale})",
             _ => "",
         };
+
+    public static bool IsReadOnly(this IDbColumn sqlColumn)
+        => sqlColumn.HasAutoIncrementIdentity || sqlColumn.IsComputed || sqlColumn.IsRowVersion;
 
     public static short SemanticMaxLength(this IDbColumn column, out bool typeSupportsMaxLength, out bool hasMaxLength)
     {
