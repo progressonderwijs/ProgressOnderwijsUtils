@@ -172,7 +172,7 @@ public sealed class DatabaseDescription
 
     public sealed class Table : IDbNamedObject
     {
-        public readonly Column<Table>[] Columns;
+        public Column<Table>[] Columns { get; }
         public readonly DmlTableTriggerSqlDefinition[] Triggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
         readonly DbNamedObjectId NamedTableId;
@@ -248,7 +248,7 @@ public sealed class DatabaseDescription
     {
         readonly DbNamedObjectId NamedObject;
         public DatabaseDescription Database { get; }
-        public readonly Column<View>[] Columns;
+        public Column<View>[] Columns { get; }
         public readonly Table[] ReferencedTables;
 
         internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
