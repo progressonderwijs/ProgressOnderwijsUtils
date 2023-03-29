@@ -22,6 +22,7 @@ public sealed class DatabaseDescription
             ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
             CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
             Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Columns = columnsInOrderByObjectId,
         };
 
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
@@ -39,6 +40,7 @@ public sealed class DatabaseDescription
         public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
         public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
         public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
+        public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
     }
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
