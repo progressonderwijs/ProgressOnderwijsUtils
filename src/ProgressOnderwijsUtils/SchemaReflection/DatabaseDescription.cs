@@ -22,7 +22,7 @@ public sealed class DatabaseDescription
         };
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
+        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, dataByTableId, this));
         viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
@@ -157,11 +157,11 @@ public sealed class DatabaseDescription
         readonly DbNamedObjectId NamedTableId;
         public readonly DatabaseDescription db;
 
-        internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns, DatabaseDescriptionById dataByTableId)
+        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById dataByTableId, DatabaseDescription db)
         {
             this.db = db;
             NamedTableId = namedTableId;
-            Columns = columns.ArraySelect(col => new TableColumn(this, col, dataByTableId));
+            Columns = dataByTableId.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new TableColumn(this, col, dataByTableId));
             Triggers = dataByTableId.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = dataByTableId.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
