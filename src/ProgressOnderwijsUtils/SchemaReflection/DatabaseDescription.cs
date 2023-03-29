@@ -107,6 +107,45 @@ public sealed class DatabaseDescription
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
     }
 
+    public sealed class Index<TObject>
+        where TObject : IObjectWithColumns<TObject>
+    {
+        public readonly TObject ContainingObject;
+        readonly DbObjectIndex IndexMetaData;
+
+        internal Index(TObject containingObject, DbObjectIndex indexMetaData, DatabaseDescriptionById dataByTableId)
+        {
+            ContainingObject = containingObject;
+            IndexMetaData = indexMetaData;
+
+            List<IndexColumn> cols = new(), included = new();
+            foreach (var col in dataByTableId.IndexColumns[(ObjectId, IndexId)]) {
+                (col.IsIncluded ? included : cols).Add(new(this, col));
+            }
+            IndexColumns = cols.ToArray();
+            Array.Sort(IndexColumns, colOrdering);
+            IncludedColumns = included.ToArray();
+            Array.Sort(IncludedColumns, colOrdering);
+        }
+
+        static readonly Comparison<IndexColumn> colOrdering = (a, b) => (a.UnderlyingMetaData.KeyOrdinal, a.UnderlyingMetaData.IndexColumnId).CompareTo((b.UnderlyingMetaData.KeyOrdinal, b.UnderlyingMetaData.IndexColumnId));
+        public IndexColumn[] IncludedColumns { get; }
+        public IndexColumn[] IndexColumns { get; }
+
+        public readonly record struct IndexColumn(Index<TObject> Index, DbObjectIndexColumn UnderlyingMetaData)
+        {
+            public Column<TObject> Column
+                => Index.ContainingObject.ColumnsById[UnderlyingMetaData.ColumnId];
+
+        }
+
+        public DbObjectId ObjectId
+            => IndexMetaData.ObjectId;
+
+        public DbIndexId IndexId
+            => IndexMetaData.IndexId;
+    }
+
     public sealed class Column<TObject> : IDbColumn
         where TObject : IDbNamedObject
     {
@@ -186,12 +225,14 @@ public sealed class DatabaseDescription
             NamedObjectId = namedObjectId;
             Columns = rawSchemaById.Columns.GetValueOrDefault(namedObjectId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ColumnsById = Columns.ToDictionary(o => o.ColumnId);
+            Indexes = rawSchemaById.Indexes[namedObjectId.ObjectId].Select(index => new Index<TObject>((TObject)this, index, rawSchemaById)).ToArray();
         }
 
         public Column<TObject>[] Columns { get; }
         public IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
         protected readonly DbNamedObjectId NamedObjectId;
         public DatabaseDescription Database { get; }
+        public Index<TObject>[] Indexes { get; }
 
         public DbObjectId ObjectId
             => NamedObjectId.ObjectId;

@@ -35,11 +35,15 @@ public sealed record DbObjectIndex : IWrittenImplicitly
         ).ReadPocos<DbObjectIndex>(conn);
 }
 
+[DbIdEnum]
+public enum DbIndexColumnId { }
+
 public sealed record DbObjectIndexColumn : IWrittenImplicitly
 {
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
     public DbColumnId ColumnId { get; init; }
+    public DbIndexColumnId IndexColumnId { get; init; }
     public byte KeyOrdinal { get; init; }
     public bool IsDescending { get; init; }
     public bool IsIncluded { get; init; }
@@ -51,6 +55,7 @@ public sealed record DbObjectIndexColumn : IWrittenImplicitly
                 ObjectId = sic.object_id
                 , IndexId = sic.index_id
                 , ColumnId = sic.column_id
+                , IndexColumnId = sic.index_column_id
                 , KeyOrdinal = sic.key_ordinal
                 , IsDescending = sic.is_descending_key
                 , IsIncluded = sic.is_included_column
