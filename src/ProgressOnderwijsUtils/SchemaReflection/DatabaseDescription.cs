@@ -107,7 +107,8 @@ public sealed class DatabaseDescription
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
     }
 
-    public sealed class Column<TObject>
+    public sealed class Column<TObject> : IDbColumn
+        where TObject : IDbNamedObject
     {
         public readonly TObject ContainingObject;
         public DbColumnMetaData ColumnMetaData { get; }
@@ -151,9 +152,18 @@ public sealed class DatabaseDescription
 
         public bool IsUnicode
             => ColumnMetaData.IsUnicode;
+
+        public short MaxLength
+            => ColumnMetaData.MaxLength;
+
+        public byte Precision
+            => ColumnMetaData.Precision;
+
+        public byte Scale
+            => ColumnMetaData.Scale;
     }
 
-    public sealed class Table
+    public sealed class Table : IDbNamedObject
     {
         public readonly Column<Table>[] Columns;
         public readonly DmlTableTriggerSqlDefinition[] Triggers;

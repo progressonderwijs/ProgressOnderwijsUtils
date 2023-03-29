@@ -3,7 +3,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 [DbIdEnum]
 public enum DbObjectId { }
 
-public struct DbNamedObjectId : IWrittenImplicitly
+public interface IDbNamedObject
+{
+    DbObjectId ObjectId { get; }
+    string QualifiedName { get; }
+}
+
+public struct DbNamedObjectId : IWrittenImplicitly, IDbNamedObject
 {
     public DbObjectId ObjectId { get; init; }
     public string QualifiedName { get; init; }

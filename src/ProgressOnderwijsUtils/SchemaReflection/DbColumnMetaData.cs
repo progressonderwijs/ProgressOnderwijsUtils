@@ -12,8 +12,11 @@ public sealed record DbColumnMetaData(
     short MaxLength,
     byte Precision,
     byte Scale
-) : IWrittenImplicitly, IComparable<DbColumnMetaData>
+) : IWrittenImplicitly, IComparable<DbColumnMetaData>, IDbColumn
 {
+    DbColumnMetaData IDbColumn.ColumnMetaData
+        => this;
+
     public DbObjectId DbObjectId { get; init; }
     public DbColumnId ColumnId { get; init; }
 
@@ -92,46 +95,6 @@ public sealed record DbColumnMetaData(
     public override string ToString()
         => ToStringByMembers.ToStringByPublicMembers(this);
 
-    public string ToSqlColumnDefinition()
-        => $"{ColumnName} {ToSqlTypeName()}";
-
-    string ColumnPrecisionSpecifier()
-        => UserTypeId switch {
-            _ when SemanticMaxLength(out var supportMaxLen, out var hasMaxLen) is var maxLen && supportMaxLen => hasMaxLen ? $"({maxLen})" : "(max)",
-            SqlSystemTypeId.Decimal or SqlSystemTypeId.Numeric => $"({Precision},{Scale})",
-            SqlSystemTypeId.DateTime2 or SqlSystemTypeId.DateTimeOffset or SqlSystemTypeId.Time when Scale != 7 => $"({Scale})",
-            _ => "",
-        };
-
-    public short SemanticMaxLength(out bool typeSupportsMaxLength, out bool hasMaxLength)
-    {
-        if (UserTypeId is SqlSystemTypeId.NVarChar or SqlSystemTypeId.NChar) {
-            typeSupportsMaxLength = true;
-            hasMaxLength = MaxLength > 0;
-            return (short)(MaxLength >> 1);
-        } else if (UserTypeId is SqlSystemTypeId.VarChar or SqlSystemTypeId.Char or SqlSystemTypeId.VarBinary or SqlSystemTypeId.Binary) {
-            typeSupportsMaxLength = true;
-            hasMaxLength = MaxLength > 0;
-            return MaxLength;
-        } else {
-            typeSupportsMaxLength = false;
-            hasMaxLength = false;
-            return 0;
-        }
-    }
-
-    public string ToSqlTypeName()
-        => ToSqlTypeNameWithoutNullability() + NullabilityAnnotation();
-
-    public string ToSqlTypeNameWithoutNullability()
-        => UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + ColumnPrecisionSpecifier();
-
-    string NullabilityAnnotation()
-        => IsNullable ? " null" : " not null";
-
-    public ParameterizedSql ToSqlColumnDefinitionSql()
-        => ParameterizedSql.CreateDynamic($"{ColumnName} {ToSqlTypeName()}");
-
     public DataColumn ToDataColumn()
         => new(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
@@ -147,10 +110,6 @@ public sealed record DbColumnMetaData(
         }
     }
 
-    [Pure]
-    public ParameterizedSql SqlColumnName()
-        => ParameterizedSql.CreateDynamic(isSafeForSql.IsMatch(ColumnName) ? ColumnName : throw new NotSupportedException("this isn't safe!"));
-
     static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
     public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, ParameterizedSql objectName)
@@ -164,7 +123,6 @@ public sealed record DbColumnMetaData(
     public static DbColumnMetaData[] LoadAll(SqlConnection conn)
         => RunQuery(conn, false, new());
 
-    static readonly Regex isSafeForSql = new("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
     public static ParameterizedSql BaseQuery(bool fromTempDb)
         => SQL(
