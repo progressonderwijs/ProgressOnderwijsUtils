@@ -19,6 +19,8 @@ public sealed class DatabaseDescription
             Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
             Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
             SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
+            Indexes = rawDescription.Indexes.ToLookup(o => o.ObjectId),
+            IndexColumns = rawDescription.IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
         };
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
@@ -39,6 +41,8 @@ public sealed class DatabaseDescription
         public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
         public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
         public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
+        public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
+        public required ILookup<(DbObjectId ObjectId, DbIndexId IndexId), DbObjectIndexColumn> IndexColumns { get; init; }
     }
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
