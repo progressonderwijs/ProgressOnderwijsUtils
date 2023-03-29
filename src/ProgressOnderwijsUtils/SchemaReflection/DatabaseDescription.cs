@@ -108,7 +108,7 @@ public sealed class DatabaseDescription
     }
 
     public sealed class Index<TObject>
-        where TObject : IObjectWithColumns<TObject>
+        where TObject : ObjectWithColumns<TObject>
     {
         public readonly TObject ContainingObject;
         readonly DbObjectIndex IndexMetaData;
@@ -136,7 +136,6 @@ public sealed class DatabaseDescription
         {
             public Column<TObject> Column
                 => Index.ContainingObject.ColumnsById[UnderlyingMetaData.ColumnId];
-
 
             public bool IsDescending
                 => UnderlyingMetaData.IsDescending;
@@ -255,14 +254,7 @@ public sealed class DatabaseDescription
         where TObject : ObjectWithColumns<TObject>
         => new((TObject)containingObject, col, rawSchemaById);
 
-    public interface IObjectWithColumns<TObject> : IDbNamedObject
-        where TObject : IObjectWithColumns<TObject>
-    {
-        Column<TObject>[] Columns { get; }
-        IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
-    }
-
-    public abstract class ObjectWithColumns<TObject> : IObjectWithColumns<TObject>
+    public abstract class ObjectWithColumns<TObject> : IDbNamedObject
         where TObject : ObjectWithColumns<TObject>
     {
         private protected ObjectWithColumns(DbNamedObjectId namedObjectId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database)
