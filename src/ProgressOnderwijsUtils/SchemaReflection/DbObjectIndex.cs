@@ -40,7 +40,7 @@ public sealed record DbObjectIndexColumn : IWrittenImplicitly
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
     public DbColumnId ColumnId { get; init; }
-    public int KeyOrdinal { get; init; }
+    public byte KeyOrdinal { get; init; }
     public bool IsDescending { get; init; }
     public bool IsIncluded { get; init; }
 
