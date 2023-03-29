@@ -17,7 +17,7 @@ public sealed class DatabaseDescription
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
 
-        var dataByTableId = new DataByTableId {
+        var dataByTableId = new DatabaseDescriptionById {
             DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
             ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
             CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
@@ -33,7 +33,7 @@ public sealed class DatabaseDescription
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
 
-    internal sealed record DataByTableId
+    internal sealed record DatabaseDescriptionById
     {
         public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
         public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
@@ -110,7 +110,7 @@ public sealed class DatabaseDescription
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-        internal TableColumn(Table table, DbColumnMetaData columnMetaData, DataByTableId dataByTableId)
+        internal TableColumn(Table table, DbColumnMetaData columnMetaData, DatabaseDescriptionById dataByTableId)
         {
             ColumnMetaData = columnMetaData;
             Table = table;
@@ -157,7 +157,7 @@ public sealed class DatabaseDescription
         readonly DbNamedObjectId NamedTableId;
         public readonly DatabaseDescription db;
 
-        internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns, DataByTableId dataByTableId)
+        internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns, DatabaseDescriptionById dataByTableId)
         {
             this.db = db;
             NamedTableId = namedTableId;
