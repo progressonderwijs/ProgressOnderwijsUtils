@@ -176,11 +176,11 @@ public sealed class DatabaseDescription
         public readonly DmlTableTriggerSqlDefinition[] Triggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
         readonly DbNamedObjectId NamedTableId;
-        public readonly DatabaseDescription db;
+        public DatabaseDescription Database { get; }
 
-        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
+        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database)
         {
-            this.db = db;
+            Database = database;
             NamedTableId = namedTableId;
             Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
@@ -208,14 +208,14 @@ public sealed class DatabaseDescription
         public IEnumerable<Table> AllDependantTables
             => Utils.TransitiveClosure(
                 new[] { ObjectId, },
-                reachable => db.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
-            ).Select(id => db.tableById[id]);
+                reachable => Database.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
+            ).Select(id => Database.tableById[id]);
 
         public IEnumerable<ForeignKey> KeysToReferencedParents
-            => db.fksByReferencingChildObjectId[ObjectId];
+            => Database.fksByReferencingChildObjectId[ObjectId];
 
         public IEnumerable<ForeignKey> KeysFromReferencingChildren
-            => db.fksByReferencedParentObjectId[ObjectId];
+            => Database.fksByReferencedParentObjectId[ObjectId];
 
         public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
             => KeysFromReferencingChildren
