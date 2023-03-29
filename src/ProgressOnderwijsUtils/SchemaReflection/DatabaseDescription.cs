@@ -12,9 +12,6 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-
-        Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-
         var dataByTableId = new DatabaseDescriptionById {
             DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
             ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
@@ -24,6 +21,7 @@ public sealed class DatabaseDescription
             SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
         };
 
+        Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
         viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
