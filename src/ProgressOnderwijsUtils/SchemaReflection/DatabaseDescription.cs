@@ -1,36 +1,5 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-[AttributeUsage(AttributeTargets.Enum)]
-public sealed class DbIdEnumAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
-
-[DbIdEnum]
-public enum DbObjectId { }
-
-/// <summary>
-/// This id is 1-based and may contain gaps due to dropping of columns.
-/// </summary>
-[DbIdEnum]
-public enum DbColumnId { }
-
-public struct DbNamedObjectId : IWrittenImplicitly
-{
-    public DbObjectId ObjectId { get; init; }
-    public string QualifiedName { get; init; }
-
-    public static DbNamedObjectId[] LoadAllObjectsOfType(SqlConnection conn, string type)
-        => SQL(
-            $@"
-                    select
-                        ObjectId = o.object_id
-                        , QualifiedName = schema_name(o.schema_id) + '.' + o.name
-                    from sys.objects o
-                    where 1=1
-                        and o.type = {type}
-                        and o.is_ms_shipped = {false} -- to filter out the dbo.dtproperties system table
-                "
-        ).ReadPocos<DbNamedObjectId>(conn);
-}
-
 public sealed class DatabaseDescription
 {
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
@@ -41,29 +10,22 @@ public sealed class DatabaseDescription
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
 
-    public DatabaseDescription(
-        DbNamedObjectId[] tables,
-        DbNamedObjectId[] views,
-        ILookup<DbObjectId, DbObjectId> dependencies,
-        Dictionary<DbObjectId, DbColumnMetaData[]> columns,
-        ForeignKeySqlDefinition[] foreignKeys,
-        CheckConstraintSqlDefinition[] checkConstraints,
-        DmlTableTriggerSqlDefinition[] dmlTableTriggers,
-        DefaultValueConstraintSqlDefinition[] defaultConstraints,
-        ComputedColumnSqlDefinition[] computedColumnDefinitions,
-        SequenceSqlDefinition[] sequences)
+    public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        Sequences = sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        var defaultsByColumnId = defaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
-        var computedColumnsByColumnId = computedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
-        var checkContraintsByTableId = checkConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
-        var triggersByTableId = dmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+        var referencedIdByReferencingId = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
+        var columnsInOrderByObjectId = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray());
+
+        Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
+        var defaultsByColumnId = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
+        var computedColumnsByColumnId = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
+        var checkContraintsByTableId = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
+        var triggersByTableId = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
 
         var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
 
-        tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dependencies[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
-        var fkObjects = foreignKeys.ArraySelect(o => new ForeignKey(o, tableById));
+        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), referencedIdByReferencingId[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
         tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
@@ -76,36 +38,8 @@ public sealed class DatabaseDescription
         Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
         Dictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers);
 
-    sealed record SqlExpressionDependencies(DbObjectId referencing_id, DbObjectId referenced_id) : IWrittenImplicitly;
-
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
-    {
-        var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
-        var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
-        var dependencies = SQL(
-            $@"
-                select
-                    sed.referencing_id
-                    , sed.referenced_id
-                from sys.sql_expression_dependencies sed
-                where 1=1
-                    and sed.referenced_id is not null
-            "
-        ).ReadPocos<SqlExpressionDependencies>(conn).ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-
-        return new(
-            tables,
-            views,
-            dependencies,
-            DbColumnMetaData.LoadAll(conn),
-            ForeignKeyColumnEntry.LoadAll(conn),
-            CheckConstraintSqlDefinition.LoadAll(conn),
-            DmlTableTriggerSqlDefinition.LoadAll(conn),
-            DefaultValueConstraintSqlDefinition.LoadAll(conn),
-            ComputedColumnSqlDefinition.LoadAll(conn),
-            SequenceSqlDefinition.LoadAll(conn)
-        );
-    }
+        => new(RawDatabaseDescription.Load(conn));
 
     public IEnumerable<Table> AllTables
         => tableById.Values;
