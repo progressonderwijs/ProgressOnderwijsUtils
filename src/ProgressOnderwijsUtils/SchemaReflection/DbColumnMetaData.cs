@@ -52,12 +52,6 @@ public sealed record DbColumnMetaData(
         set => columnFlags[3] = value;
     }
 
-    public bool HasDefaultValue
-    {
-        get => columnFlags[4];
-        set => columnFlags[4] = value;
-    }
-
     public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
     {
         var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
@@ -145,7 +139,6 @@ public sealed record DbColumnMetaData(
                         + 2*c.is_computed
                         + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
                         + 8*c.is_identity
-                        + 16*iif(c.default_object_id <> 0, convert(bit, 1), convert(bit, 0))
                         )
                 from {fromTempDb && SQL($"tempdb.")}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id

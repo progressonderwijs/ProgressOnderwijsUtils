@@ -7,11 +7,11 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     {
         var db = CreateSampleData();
 
-        var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithDefault").ColumnMetaData;
-        var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithoutDefault").ColumnMetaData;
+        var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithDefault");
+        var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithoutDefault");
 
-        PAssert.That(() => SomeDataWithDefault_metadata.HasDefaultValue);
-        PAssert.That(() => !SomeDataWithoutDefault_metadata.HasDefaultValue);
+        PAssert.That(() => SomeDataWithDefault_metadata.DefaultValueConstraint != null);
+        PAssert.That(() => SomeDataWithoutDefault_metadata.DefaultValueConstraint == null);
     }
 
     DatabaseDescription CreateSampleData()
