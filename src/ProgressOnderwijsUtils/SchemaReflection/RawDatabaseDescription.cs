@@ -35,13 +35,13 @@ public sealed record RawDatabaseDescription
 
     static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
         => SQL(
-            $@"
-                select
-                    sed.referencing_id
-                    , sed.referenced_id
-                from sys.sql_expression_dependencies sed
-                where 1=1
-                    and sed.referenced_id is not null
-            "
+            $"""
+            select
+                sed.referencing_id
+                , sed.referenced_id
+            from sys.sql_expression_dependencies sed
+            where 1=1
+                and sed.referenced_id is not null
+            """
         ).ReadPocos<ObjectDependency>(conn);
 }
