@@ -16,12 +16,13 @@ public sealed class DatabaseDescription
         var columnsInOrderByObjectId = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray());
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        var defaultsByColumnId = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
-        var computedColumnsByColumnId = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
-        var checkContraintsByTableId = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
-        var triggersByTableId = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
 
-        var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
+        var dataByTableId = new DataByTableId {
+            DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
+            ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
+            CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+        };
 
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
         viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), referencedIdByReferencingId[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
@@ -32,11 +33,13 @@ public sealed class DatabaseDescription
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
 
-    internal sealed record DataByTableId(
-        Dictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues,
-        Dictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns,
-        Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
-        Dictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers);
+    internal sealed record DataByTableId
+    {
+        public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
+        public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
+        public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
+        public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
+    }
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         => new(RawDatabaseDescription.Load(conn));
@@ -160,7 +163,7 @@ public sealed class DatabaseDescription
             NamedTableId = namedTableId;
             Columns = columns.ArraySelect(col => new TableColumn(this, col, dataByTableId));
             Triggers = dataByTableId.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
-            CheckConstraints = dataByTableId.CheckContraints.GetValueOrDefault(ObjectId).EmptyIfNull();
+            CheckConstraints = dataByTableId.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
 
         public DbObjectId ObjectId
