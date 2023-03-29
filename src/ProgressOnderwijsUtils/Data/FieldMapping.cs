@@ -71,7 +71,7 @@ public struct FieldMappingValidation
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} does not fill any corresponding target field.");
                 }
             } else if (src == null) {
-                if (dst.ColumnAccessibility == ColumnAccessibility.Normal || dst.ColumnAccessibility == ColumnAccessibility.NormalWithDefaultValue) {
+                if (dst.ColumnAccessibility is ColumnAccessibility.Normal) {
                     if (!AllowExtraTargetColumns) {
                         errors.Add($"Target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
@@ -89,7 +89,7 @@ public struct FieldMappingValidation
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                     errors.Add($"Cannot fill readonly field {dst.Name}.");
-                } else if (dst.ColumnAccessibility == ColumnAccessibility.Normal || dst.ColumnAccessibility == ColumnAccessibility.NormalWithDefaultValue || OverwriteAutoIncrement) {
+                } else if (dst.ColumnAccessibility is ColumnAccessibility.Normal || OverwriteAutoIncrement) {
                     mapped.Add(new(src, dst));
                 }
             }
