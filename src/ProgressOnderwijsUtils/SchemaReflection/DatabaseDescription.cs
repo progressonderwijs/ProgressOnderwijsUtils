@@ -66,7 +66,7 @@ public sealed class DatabaseDescription
     public Table? TryGetTableById(DbObjectId id)
         => tableById.GetValueOrDefault(id);
 
-    public sealed record ForeignKeyColumn(TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
+    public sealed record ForeignKeyColumn(Column<Table> ReferencedParentColumn, Column<Table> ReferencingChildColumn);
 
     public sealed class ForeignKey
     {
@@ -107,14 +107,14 @@ public sealed class DatabaseDescription
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
     }
 
-    public sealed class TableColumn
+    public sealed class Column<TObject>
     {
-        public readonly Table Table;
+        public readonly TObject Table;
         public DbColumnMetaData ColumnMetaData { get; }
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-        internal TableColumn(Table table, DbColumnMetaData columnMetaData, DatabaseDescriptionById dataByTableId)
+        internal Column(TObject table, DbColumnMetaData columnMetaData, DatabaseDescriptionById dataByTableId)
         {
             ColumnMetaData = columnMetaData;
             Table = table;
@@ -155,7 +155,7 @@ public sealed class DatabaseDescription
 
     public sealed class Table
     {
-        public readonly TableColumn[] Columns;
+        public readonly Column<Table>[] Columns;
         public readonly DmlTableTriggerSqlDefinition[] Triggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
         readonly DbNamedObjectId NamedTableId;
@@ -165,7 +165,7 @@ public sealed class DatabaseDescription
         {
             this.db = db;
             NamedTableId = namedTableId;
-            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new TableColumn(this, col, rawSchemaById));
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedTableId.ObjectId).EmptyIfNull().ArraySelect(col => new Column<Table>(this, col, rawSchemaById));
             Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
@@ -185,7 +185,7 @@ public sealed class DatabaseDescription
         public ParameterizedSql QualifiedNameSql
             => ParameterizedSql.CreateDynamic(QualifiedName);
 
-        public IEnumerable<TableColumn> PrimaryKey
+        public IEnumerable<Column<Table>> PrimaryKey
             => Columns.Where(c => c.IsPrimaryKey);
 
         public IEnumerable<Table> AllDependantTables
@@ -209,7 +209,7 @@ public sealed class DatabaseDescription
                             .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                 ).ToArray();
 
-        public TableColumn GetByColumnIndex(DbColumnId columnId)
+        public Column<Table> GetByColumnIndex(DbColumnId columnId)
         {
             var guess = (int)columnId - 1;
             if (guess >= 0 && guess < Columns.Length && Columns[guess].ColumnId == columnId) {
