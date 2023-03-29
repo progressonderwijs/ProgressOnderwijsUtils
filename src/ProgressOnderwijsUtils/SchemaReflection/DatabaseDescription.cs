@@ -32,7 +32,7 @@ public sealed class DatabaseDescription
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
 
-    public sealed record DataByTableId(
+    internal sealed record DataByTableId(
         Dictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues,
         Dictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns,
         Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
@@ -107,7 +107,7 @@ public sealed class DatabaseDescription
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-        public TableColumn(Table table, DbColumnMetaData columnMetaData, DataByTableId dataByTableId)
+        internal TableColumn(Table table, DbColumnMetaData columnMetaData, DataByTableId dataByTableId)
         {
             ColumnMetaData = columnMetaData;
             Table = table;
