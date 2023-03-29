@@ -12,7 +12,6 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var referencedIdByReferencingId = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
 
@@ -22,10 +21,11 @@ public sealed class DatabaseDescription
             CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
             Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
             Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
+            SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
         };
 
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), referencedIdByReferencingId[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, dataByTableId.Columns.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId.SqlExpressionDependsOn[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
@@ -40,6 +40,7 @@ public sealed class DatabaseDescription
         public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
         public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
         public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
+        public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
     }
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
