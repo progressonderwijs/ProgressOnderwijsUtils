@@ -226,12 +226,14 @@ public sealed class DatabaseDescription
     public sealed class View
     {
         readonly DbNamedObjectId view;
+        public readonly DatabaseDescription db;
         public readonly DbColumnMetaData[] Columns;
         public readonly Table[] ReferencedTables;
 
         internal View(DbNamedObjectId view, DatabaseDescriptionById rawSchemaById, DatabaseDescription db)
         {
             this.view = view;
+            this.db = db;
             Columns = rawSchemaById.Columns.GetValueOrDefault(view.ObjectId).EmptyIfNull();
             ReferencedTables = rawSchemaById.SqlExpressionDependsOn[view.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
