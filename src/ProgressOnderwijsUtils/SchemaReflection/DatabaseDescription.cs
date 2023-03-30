@@ -2,6 +2,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed class DatabaseDescription
 {
+    public RawDatabaseDescription RawDescription { get; }
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
     readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
     readonly IReadOnlyDictionary<DbObjectId, View> viewById;
@@ -12,31 +13,18 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var referencedIdByReferencingId = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id);
-        var columnsInOrderByObjectId = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray());
+        RawDescription = rawDescription;
+        var rawSchemaById = rawDescription.IndexById();
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
-        var defaultsByColumnId = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId));
-        var computedColumnsByColumnId = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId));
-        var checkContraintsByTableId = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
-        var triggersByTableId = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray());
-
-        var dataByTableId = new DataByTableId(defaultsByColumnId, computedColumnsByColumnId, checkContraintsByTableId, triggersByTableId);
-
-        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), dataByTableId));
-        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, columnsInOrderByObjectId.GetValueOrDefault(o.ObjectId).EmptyIfNull(), referencedIdByReferencingId[o.ObjectId].Select(dep => tableById.GetValueOrDefault(dep)).WhereNotNull().ToArray()));
+        tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
+        viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, rawSchemaById, this));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
         tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
-
-    public sealed record DataByTableId(
-        Dictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues,
-        Dictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns,
-        Dictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckContraints,
-        Dictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers);
 
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         => new(RawDatabaseDescription.Load(conn));
@@ -59,7 +47,7 @@ public sealed class DatabaseDescription
     public Table? TryGetTableById(DbObjectId id)
         => tableById.GetValueOrDefault(id);
 
-    public sealed record ForeignKeyColumn(TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn);
+    public sealed record ForeignKeyColumn(Column<Table> ReferencedParentColumn, Column<Table> ReferencingChildColumn);
 
     public sealed class ForeignKey
     {
@@ -74,7 +62,7 @@ public sealed class DatabaseDescription
         {
             ReferencedParentTable = tablesById[fkDef.ReferencedParentTable];
             ReferencingChildTable = tablesById[fkDef.ReferencingChildTable];
-            Columns = fkDef.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.GetByColumnIndex(pair.ReferencedParentColumn), ReferencingChildTable.GetByColumnIndex(pair.ReferencingChildColumn)));
+            Columns = fkDef.Columns.ArraySelect(pair => new ForeignKeyColumn(ReferencedParentTable.ColumnsById[pair.ReferencedParentColumn], ReferencingChildTable.ColumnsById[pair.ReferencingChildColumn]));
             UnqualifiedName = fkDef.ConstraintName;
             DeleteReferentialAction = fkDef.DeleteReferentialAction;
             UpdateReferentialAction = fkDef.UpdateReferentialAction;
@@ -100,19 +88,104 @@ public sealed class DatabaseDescription
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
     }
 
-    public sealed class TableColumn
+    public sealed class Index<TObject>
+        where TObject : ObjectWithColumns<TObject>
     {
-        public readonly Table Table;
-        public readonly DbColumnMetaData ColumnMetaData;
+        public readonly TObject ContainingObject;
+        readonly DbObjectIndex IndexMetaData;
+
+        internal Index(TObject containingObject, DbObjectIndex indexMetaData, DatabaseDescriptionById dataByTableId)
+        {
+            ContainingObject = containingObject;
+            IndexMetaData = indexMetaData;
+
+            List<IndexColumn> cols = new(), included = new();
+            foreach (var col in dataByTableId.IndexColumns[(ObjectId, IndexId)]) {
+                (col.IsIncluded ? included : cols).Add(new(this, col));
+            }
+            IndexColumns = cols.ToArray();
+            Array.Sort(IndexColumns, colOrdering);
+            IncludedColumns = included.ToArray();
+            Array.Sort(IncludedColumns, colOrdering);
+        }
+
+        static readonly Comparison<IndexColumn> colOrdering = (a, b) => (a.UnderlyingMetaData.KeyOrdinal, a.UnderlyingMetaData.IndexColumnId).CompareTo((b.UnderlyingMetaData.KeyOrdinal, b.UnderlyingMetaData.IndexColumnId));
+        public IndexColumn[] IncludedColumns { get; }
+        public IndexColumn[] IndexColumns { get; }
+
+        public readonly record struct IndexColumn(Index<TObject> Index, DbObjectIndexColumn UnderlyingMetaData)
+        {
+            public Column<TObject> Column
+                => Index.ContainingObject.ColumnsById[UnderlyingMetaData.ColumnId];
+
+            public bool IsDescending
+                => UnderlyingMetaData.IsDescending;
+        }
+
+        public DbObjectId ObjectId
+            => IndexMetaData.ObjectId;
+
+        public DbIndexId IndexId
+            => IndexMetaData.IndexId;
+
+        public SqlIndexType IndexType
+            => IndexMetaData.IndexType;
+
+        public string? IndexName
+            => IndexMetaData.IndexName;
+
+        public string IndexCreationScript()
+        {
+            var include = IndexType.IsColumnStore() || IncludedColumns.None() ? "" : $" include ({IncludedColumns.Select(col => col.Column.ColumnName).JoinStrings(", ")})";
+            var filter = Filter is null ? "" : $" where {SqlServerUtils.PrettifySqlExpression(Filter)}";
+            var compression = DataCompressionType is SqlCompressionType.None or SqlCompressionType.ColumnStore ? "" : $" with (data_compression={DataCompressionType.ToSqlName().CommandText()})";
+            var defaultIndexType = IsPrimaryKey ? SqlIndexType.ClusteredIndex : SqlIndexType.NonClusteredIndex;
+            var indexType = IndexType == defaultIndexType ? "" : " " + IndexType.ToSqlName().CommandText();
+            var indexColumns = IndexType == SqlIndexType.ClusteredColumnStore
+                ? ""
+                : $" ({IndexColumns.Select(col => col.Column.ColumnName + (col.IsDescending ? " desc" : "")).JoinStrings(", ")})";
+
+            if (IsPrimaryKey || IsUniqueConstraint) {
+                var constraintType = IsPrimaryKey ? " primary key" : " unique";
+                return $"alter table {ContainingObject.QualifiedName} add constraint {IndexName}{constraintType}{indexType}{indexColumns}{compression}";
+            } else if (IndexType == SqlIndexType.Heap) {
+                return $"-- {ContainingObject.QualifiedName} is a heap{compression}";
+            } else {
+                var unique = IsUnique ? " unique" : "";
+                return $"create{unique}{indexType} index {IndexName} on {ContainingObject.QualifiedName}{indexColumns}{include}{filter}{compression}";
+            }
+        }
+
+        public bool IsUnique
+            => IndexMetaData.IsUnique;
+
+        public bool IsUniqueConstraint
+            => IndexMetaData.IsUniqueConstraint;
+
+        public bool IsPrimaryKey
+            => IndexMetaData.IsPrimaryKey;
+
+        public SqlCompressionType DataCompressionType
+            => IndexMetaData.DataCompressionType;
+
+        public string? Filter
+            => IndexMetaData.Filter;
+    }
+
+    public sealed class Column<TObject> : IDbColumn
+        where TObject : IDbNamedObject
+    {
+        public readonly TObject ContainingObject;
+        public DbColumnMetaData ColumnMetaData { get; }
         public readonly DefaultValueConstraintSqlDefinition? DefaultValueConstraint;
         public readonly ComputedColumnSqlDefinition? ComputedAs;
 
-        public TableColumn(Table table, DbColumnMetaData columnMetaData, DataByTableId dataByTableId)
+        internal Column(TObject containingObject, DbColumnMetaData columnMetaData, DatabaseDescriptionById rawSchemaById)
         {
             ColumnMetaData = columnMetaData;
-            Table = table;
-            DefaultValueConstraint = dataByTableId.DefaultValues.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
-            ComputedAs = dataByTableId.ComputedColumns.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
+            ContainingObject = containingObject;
+            DefaultValueConstraint = rawSchemaById.DefaultValues.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
+            ComputedAs = rawSchemaById.ComputedColumns.GetValueOrDefault((columnMetaData.DbObjectId, columnMetaData.ColumnId));
         }
 
         public DbColumnId ColumnId
@@ -144,30 +217,59 @@ public sealed class DatabaseDescription
 
         public bool IsUnicode
             => ColumnMetaData.IsUnicode;
+
+        public short MaxLength
+            => ColumnMetaData.MaxLength;
+
+        public byte Precision
+            => ColumnMetaData.Precision;
+
+        public byte Scale
+            => ColumnMetaData.Scale;
+
+        public bool HasAutoIncrementIdentity
+            => ColumnMetaData.HasAutoIncrementIdentity;
     }
 
-    public sealed class Table
-    {
-        public readonly TableColumn[] Columns;
-        public readonly DmlTableTriggerSqlDefinition[] Triggers;
-        public readonly CheckConstraintSqlDefinition[] CheckConstraints;
-        readonly DbNamedObjectId NamedTableId;
-        public readonly DatabaseDescription db;
+    static Column<TObject> DefineColumn<TObject>(ObjectWithColumns<TObject> containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)
+        where TObject : ObjectWithColumns<TObject>
+        => new((TObject)containingObject, col, rawSchemaById);
 
-        internal Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns, DataByTableId dataByTableId)
+    public abstract class ObjectWithColumns<TObject> : IDbNamedObject
+        where TObject : ObjectWithColumns<TObject>
+    {
+        private protected ObjectWithColumns(DbNamedObjectId namedObjectId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database)
         {
-            this.db = db;
-            NamedTableId = namedTableId;
-            Columns = columns.ArraySelect(col => new TableColumn(this, col, dataByTableId));
-            Triggers = dataByTableId.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
-            CheckConstraints = dataByTableId.CheckContraints.GetValueOrDefault(ObjectId).EmptyIfNull();
+            Database = database;
+            NamedObjectId = namedObjectId;
+            Columns = rawSchemaById.Columns.GetValueOrDefault(namedObjectId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
+            ColumnsById = Columns.ToDictionary(o => o.ColumnId);
+            Indexes = rawSchemaById.Indexes[namedObjectId.ObjectId].Select(index => new Index<TObject>((TObject)this, index, rawSchemaById)).ToArray();
         }
 
+        public Column<TObject>[] Columns { get; }
+        public IReadOnlyDictionary<DbColumnId, Column<TObject>> ColumnsById { get; }
+        protected readonly DbNamedObjectId NamedObjectId;
+        public DatabaseDescription Database { get; }
+        public Index<TObject>[] Indexes { get; }
+
         public DbObjectId ObjectId
-            => NamedTableId.ObjectId;
+            => NamedObjectId.ObjectId;
 
         public string QualifiedName
-            => NamedTableId.QualifiedName;
+            => NamedObjectId.QualifiedName;
+    }
+
+    public sealed class Table : ObjectWithColumns<Table>
+    {
+        public readonly DmlTableTriggerSqlDefinition[] Triggers;
+        public readonly CheckConstraintSqlDefinition[] CheckConstraints;
+
+        internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database) : base(namedTableId, rawSchemaById, database)
+        {
+            Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
+            CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
+        }
 
         public string SchemaName
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
@@ -178,20 +280,20 @@ public sealed class DatabaseDescription
         public ParameterizedSql QualifiedNameSql
             => ParameterizedSql.CreateDynamic(QualifiedName);
 
-        public IEnumerable<TableColumn> PrimaryKey
+        public IEnumerable<Column<Table>> PrimaryKey
             => Columns.Where(c => c.IsPrimaryKey);
 
         public IEnumerable<Table> AllDependantTables
             => Utils.TransitiveClosure(
                 new[] { ObjectId, },
-                reachable => db.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
-            ).Select(id => db.tableById[id]);
+                reachable => Database.fksByReferencedParentObjectId[reachable].Select(fk => fk.ReferencingChildTable.ObjectId)
+            ).Select(id => Database.tableById[id]);
 
         public IEnumerable<ForeignKey> KeysToReferencedParents
-            => db.fksByReferencingChildObjectId[ObjectId];
+            => Database.fksByReferencingChildObjectId[ObjectId];
 
         public IEnumerable<ForeignKey> KeysFromReferencingChildren
-            => db.fksByReferencedParentObjectId[ObjectId];
+            => Database.fksByReferencedParentObjectId[ObjectId];
 
         public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
             => KeysFromReferencingChildren
@@ -201,40 +303,16 @@ public sealed class DatabaseDescription
                             .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
                             .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                 ).ToArray();
-
-        public TableColumn GetByColumnIndex(DbColumnId columnId)
-        {
-            var guess = (int)columnId - 1;
-            if (guess >= 0 && guess < Columns.Length && Columns[guess].ColumnId == columnId) {
-                //optimized guess: most tables aren't missing column-ids, and sql indexes are 1-based, so usually this will be where we can find a column:
-                return Columns[guess];
-            }
-
-            //...but brute force is fine too!
-            foreach (var col in Columns) {
-                if (col.ColumnId == columnId) {
-                    return col;
-                }
-            }
-            throw new ArgumentOutOfRangeException(nameof(columnId), $"column index {columnId} not found");
-        }
     }
 
-    public sealed class View
+    public sealed class View : ObjectWithColumns<View>
     {
-        readonly DbNamedObjectId view;
-        public readonly DbColumnMetaData[] Columns;
         public readonly Table[] ReferencedTables;
 
-        public View(DbNamedObjectId view, DbColumnMetaData[] columns, Table[] referencedTables)
+        internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db) : base(namedObject, rawSchemaById, db)
         {
-            this.view = view;
-            Columns = columns;
-            ReferencedTables = referencedTables;
+            ReferencedTables = rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
         }
-
-        public string QualifiedName
-            => view.QualifiedName;
 
         public string SchemaName
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);

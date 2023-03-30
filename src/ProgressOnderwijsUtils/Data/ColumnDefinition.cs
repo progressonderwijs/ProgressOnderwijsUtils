@@ -6,7 +6,6 @@ namespace ProgressOnderwijsUtils;
 public enum ColumnAccessibility
 {
     Normal,
-    NormalWithDefaultValue,
     AutoIncrementIdentity,
     Readonly,
 }
@@ -20,8 +19,7 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         => col switch {
             { AutoIncrement: true, } => ColumnAccessibility.AutoIncrementIdentity,
             { ReadOnly: true, } => ColumnAccessibility.Readonly,
-            { DefaultValue : DBNull, } => ColumnAccessibility.Normal,
-            _ => ColumnAccessibility.NormalWithDefaultValue,
+            _ => ColumnAccessibility.Normal,
         };
 
     static Type DataColumnType(DataColumn col)
@@ -42,15 +40,14 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
     public override string ToString()
         => $"{DataType.ToCSharpFriendlyTypeName()} {Name}";
 
-    public static ColumnDefinition FromDbColumnMetaData(DbColumnMetaData col, int colIdx)
+    public static ColumnDefinition FromDbColumnMetaData(IDbColumn col, int colIdx)
         => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
 
-    static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
+    static ColumnAccessibility DbColumnMetaDataAccessibility(IDbColumn col)
         => col switch {
             { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrementIdentity,
             { IsRowVersion : true, } => ColumnAccessibility.Readonly,
             { IsComputed : true, } => ColumnAccessibility.Readonly,
-            { HasDefaultValue : true, } => ColumnAccessibility.NormalWithDefaultValue,
             _ => ColumnAccessibility.Normal,
         };
 

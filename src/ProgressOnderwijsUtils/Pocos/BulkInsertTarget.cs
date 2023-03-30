@@ -21,7 +21,7 @@ public sealed class BulkInsertTarget
         => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
 
     public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table)
-        => new(table.QualifiedName, table.Columns.ArraySelect((col, colIdx) => ColumnDefinition.FromDbColumnMetaData(col.ColumnMetaData, colIdx)));
+        => new(table.QualifiedName, table.Columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
     public static BulkInsertTarget LoadFromTable(SqlConnection conn, ParameterizedSql tableName)
         => LoadFromTable(conn, tableName.CommandText());
@@ -29,7 +29,7 @@ public sealed class BulkInsertTarget
     public static BulkInsertTarget LoadFromTable(SqlConnection conn, string tableName)
         => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
 
-    public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
+    public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns)
         => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
     public BulkInsertTarget With(BulkCopyFieldMappingMode mode)

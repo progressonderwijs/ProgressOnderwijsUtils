@@ -31,4 +31,12 @@ public static class SqlServerUtils
     static bool IsSpidAlreadyDeadException(Exception exception)
         => exception.Message.PretendNullable() != null && exception.Message.Contains("is not an active process ID.", StringComparison.Ordinal)
             || exception.InnerException != null && IsSpidAlreadyDeadException(exception.InnerException);
+
+    public static string PrettifySqlExpression(string sql)
+    {
+        var uncappedKeyWords = Regex.Replace(sql, @"\b(NEXT|VALUE|FOR|IS|NOT|NULL|OR|AND|CONVERT|TRY_CAST|AS)\b", m => m.Value.ToLowerInvariant());
+        var withoutPointlessBrackets = Regex.Replace(uncappedKeyWords, @"\[(\w+)\]", m => m.Value[1..^1]);
+        var withoutPointlessParens = Regex.Replace(withoutPointlessBrackets, @"\((\w+)\)", m => m.Value[1..^1]);
+        return withoutPointlessParens;
+    }
 }

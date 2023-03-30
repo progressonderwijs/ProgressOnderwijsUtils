@@ -7,7 +7,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
 {
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
-    public string? IndexNaam { get; init; }
+    public string? IndexName { get; init; }
     public SqlIndexType IndexType { get; init; }
     public bool IsPrimaryKey { get; init; }
     public bool IsUniqueConstraint { get; init; }
@@ -21,7 +21,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
             select
                 ObjectId = i.object_id
                 , IndexId = i.index_id
-                , IndexNaam = i.name
+                , IndexName = i.name
                 , IndexType =  i.type
                 , IsUniqueConstraint = i.is_unique_constraint
                 , IsUnique =  i.is_unique
@@ -35,11 +35,15 @@ public sealed record DbObjectIndex : IWrittenImplicitly
         ).ReadPocos<DbObjectIndex>(conn);
 }
 
+[DbIdEnum]
+public enum DbIndexColumnId { }
+
 public sealed record DbObjectIndexColumn : IWrittenImplicitly
 {
     public DbObjectId ObjectId { get; init; }
     public DbIndexId IndexId { get; init; }
     public DbColumnId ColumnId { get; init; }
+    public DbIndexColumnId IndexColumnId { get; init; }
     public byte KeyOrdinal { get; init; }
     public bool IsDescending { get; init; }
     public bool IsIncluded { get; init; }
@@ -51,6 +55,7 @@ public sealed record DbObjectIndexColumn : IWrittenImplicitly
                 ObjectId = sic.object_id
                 , IndexId = sic.index_id
                 , ColumnId = sic.column_id
+                , IndexColumnId = sic.index_column_id
                 , KeyOrdinal = sic.key_ordinal
                 , IsDescending = sic.is_descending_key
                 , IsIncluded = sic.is_included_column

@@ -35,13 +35,37 @@ public sealed record RawDatabaseDescription
 
     static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
         => SQL(
-            $@"
-                select
-                    sed.referencing_id
-                    , sed.referenced_id
-                from sys.sql_expression_dependencies sed
-                where 1=1
-                    and sed.referenced_id is not null
-            "
+            $"""
+            select
+                sed.referencing_id
+                , sed.referenced_id
+            from sys.sql_expression_dependencies sed
+            where 1=1
+                and sed.referenced_id is not null
+            """
         ).ReadPocos<ObjectDependency>(conn);
+
+    internal DatabaseDescriptionById IndexById()
+        => new() {
+            DefaultValues = DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
+            ComputedColumns = ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
+            CheckConstraints = CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Triggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Columns = Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
+            SqlExpressionDependsOn = Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
+            Indexes = Indexes.ToLookup(o => o.ObjectId),
+            IndexColumns = IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
+        };
+}
+
+sealed record DatabaseDescriptionById
+{
+    public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
+    public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
+    public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
+    public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
+    public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
+    public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
+    public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
+    public required ILookup<(DbObjectId ObjectId, DbIndexId IndexId), DbObjectIndexColumn> IndexColumns { get; init; }
 }
