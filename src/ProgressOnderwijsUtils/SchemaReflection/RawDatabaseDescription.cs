@@ -44,6 +44,18 @@ public sealed record RawDatabaseDescription
                 and sed.referenced_id is not null
             """
         ).ReadPocos<ObjectDependency>(conn);
+
+    internal static DatabaseDescriptionById IndexById(RawDatabaseDescription rawDescription)
+        => new() {
+            DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
+            ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
+            CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
+            SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
+            Indexes = rawDescription.Indexes.ToLookup(o => o.ObjectId),
+            IndexColumns = rawDescription.IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
+        };
 }
 
 sealed record DatabaseDescriptionById
@@ -56,16 +68,4 @@ sealed record DatabaseDescriptionById
     public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
     public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
     public required ILookup<(DbObjectId ObjectId, DbIndexId IndexId), DbObjectIndexColumn> IndexColumns { get; init; }
-
-    internal static DatabaseDescriptionById Create(RawDatabaseDescription rawDescription)
-        => new() {
-            DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
-            ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
-            CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
-            SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
-            Indexes = rawDescription.Indexes.ToLookup(o => o.ObjectId),
-            IndexColumns = rawDescription.IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
-        };
 }
