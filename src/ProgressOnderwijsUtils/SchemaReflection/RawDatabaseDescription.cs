@@ -45,16 +45,16 @@ public sealed record RawDatabaseDescription
             """
         ).ReadPocos<ObjectDependency>(conn);
 
-    internal static DatabaseDescriptionById IndexById(RawDatabaseDescription rawDescription)
+    internal DatabaseDescriptionById IndexById()
         => new() {
-            DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
-            ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
-            CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
-            SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
-            Indexes = rawDescription.Indexes.ToLookup(o => o.ObjectId),
-            IndexColumns = rawDescription.IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
+            DefaultValues = DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
+            ComputedColumns = ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
+            CheckConstraints = CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Triggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            Columns = Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
+            SqlExpressionDependsOn = Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
+            Indexes = Indexes.ToLookup(o => o.ObjectId),
+            IndexColumns = IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
         };
 }
 

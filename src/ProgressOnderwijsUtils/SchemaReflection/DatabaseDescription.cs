@@ -12,7 +12,7 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
-        var rawSchemaById = RawDatabaseDescription.IndexById(rawDescription);
+        var rawSchemaById = rawDescription.IndexById();
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
