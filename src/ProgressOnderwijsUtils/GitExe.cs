@@ -73,10 +73,10 @@ public sealed class GitExe
         }
     }
 
-    public TemporaryWorkTree EnsureWorktreeForCommitExists(string commit, Uri temporaryBuildGitPath)
+    public TemporaryWorkTree EnsureWorktreeForCommitExists(string commit, Uri temporaryBuildGitPath, string? branch = null)
     {
         temporaryBuildGitPath.DeleteLocalFolderRecursivelyAndWait();
-        _ = Git_AssertSuccess($"worktree add -f \"{temporaryBuildGitPath.LocalPath.TrimEnd(Path.DirectorySeparatorChar)}\" \"{commit}\"");
+        _ = Git_AssertSuccess($"worktree add -f {(branch is null ? "" : $"-B \"{branch}\" ")}\"{temporaryBuildGitPath.LocalPath.TrimEnd(Path.DirectorySeparatorChar)}\" \"{commit}\"");
         return new(this, new(temporaryBuildGitPath));
     }
 }
