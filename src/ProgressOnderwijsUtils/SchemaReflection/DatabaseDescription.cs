@@ -2,6 +2,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed class DatabaseDescription
 {
+    public RawDatabaseDescription RawDescription { get; }
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
     readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
     readonly IReadOnlyDictionary<DbObjectId, View> viewById;
@@ -12,6 +13,7 @@ public sealed class DatabaseDescription
 
     public DatabaseDescription(RawDatabaseDescription rawDescription)
     {
+        RawDescription = rawDescription;
         var rawSchemaById = rawDescription.IndexById();
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
