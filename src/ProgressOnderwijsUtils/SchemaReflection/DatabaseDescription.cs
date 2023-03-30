@@ -24,30 +24,6 @@ public sealed class DatabaseDescription
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
 
-    internal sealed record DatabaseDescriptionById
-    {
-        public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
-        public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
-        public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
-        public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
-        public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
-        public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
-        public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
-        public required ILookup<(DbObjectId ObjectId, DbIndexId IndexId), DbObjectIndexColumn> IndexColumns { get; init; }
-
-        internal static DatabaseDescriptionById Create(RawDatabaseDescription rawDescription)
-            => new() {
-                DefaultValues = rawDescription.DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
-                ComputedColumns = rawDescription.ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
-                CheckConstraints = rawDescription.CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-                Triggers = rawDescription.DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-                Columns = rawDescription.Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
-                SqlExpressionDependsOn = rawDescription.Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
-                Indexes = rawDescription.Indexes.ToLookup(o => o.ObjectId),
-                IndexColumns = rawDescription.IndexColumns.ToLookup(o => (o.ObjectId, o.IndexId)),
-            };
-    }
-
     public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         => new(RawDatabaseDescription.Load(conn));
 
