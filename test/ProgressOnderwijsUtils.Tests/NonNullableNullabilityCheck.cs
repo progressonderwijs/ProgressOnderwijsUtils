@@ -4,7 +4,6 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class NonNullableNullabilityCheck
 {
-    static readonly NullabilityInfoContext context = new();
     readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null, });
 
     readonly NullablityTestClass OneContainingNull = new() {
