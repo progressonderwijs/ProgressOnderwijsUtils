@@ -7,12 +7,12 @@ namespace ProgressOnderwijsUtils.Tests;
 public sealed class NonNullableNullabilityCheck
 {
     static readonly NullabilityInfoContext context = new();
-    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string?> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier3 = NonNullableFieldVerifier3.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier4 = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string[]?> Verifier5 = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null });
 
@@ -82,15 +82,15 @@ public sealed class NonNullableNullabilityCheck
         );
 
     [Fact]
-    public void AssertOneNullFieldCompiled()
-        => PAssert.That(() => Verifier(OneContainingNull).AssertNotNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)) }));
+    public void AssertOneNullFieldCompiled5()
+        => PAssert.That(() => Verifier5(OneContainingNull).AssertNotNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
 
         [Fact]
-    public void AssertAllNullFieldsCompiled()
+    public void AssertAllNullFieldsCompiled5()
     {
         var allContainingNull = new NullablityTestClass();
         PAssert.That(
-            () => Verifier(allContainingNull).AssertNotNull().SequenceEqual(
+            () => Verifier5(allContainingNull).AssertNotNull().SequenceEqual(
                 new[] {
                     getVerifierMessage(nameof(NullablityTestClass.SomeNullString)),
                     getVerifierMessage(nameof(NullablityTestClass.SomeObject)),
@@ -101,9 +101,9 @@ public sealed class NonNullableNullabilityCheck
     }
 
     [Fact]
-    public void AssertNoNullFieldsCompiled()
+    public void AssertNoNullFieldsCompiled5()
         => PAssert.That(
-        () => Verifier(NotContainingNull) ==
+            () => Verifier5(NotContainingNull) ==
                 null
         );
 
