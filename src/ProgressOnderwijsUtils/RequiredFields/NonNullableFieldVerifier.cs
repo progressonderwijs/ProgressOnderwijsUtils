@@ -85,10 +85,7 @@ public static class NonNullableFieldVerifier
         }
 
         static string ErrorMessageForField(FieldInfo field)
-        {
-            var memberName = HumanReadableMemberName(field);
-            return $"{typeof(T).ToCSharpFriendlyTypeName()}.{memberName} contains NULL despite being non-nullable";
-        }
+            => $"{typeof(T).ToCSharpFriendlyTypeName()}.{HumanReadableMemberName(field)} contains NULL despite being non-nullable";
 
         static string HumanReadableMemberName(FieldInfo field)
             => AutoPropertyOfFieldOrNull(field) is { } autoProp ? autoProp.Name : field.Name;
