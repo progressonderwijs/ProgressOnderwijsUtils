@@ -30,20 +30,18 @@ public sealed class NonNullableNullabilityCheck
 
     readonly NullabilityTestSubClass ContainingAllNullSubClass = new();
 
-    static string getVerifierMessage(string field)
-        => "NullablityTestClass." + field + " contains NULL despite being non-nullable";
-
     [Fact]
     public void AssertOneNullFieldIsDetected()
         => ValidateExpectedNullabilityErrors(OneContainingNull, o => o.SomeNullString);
 
     static void ValidateExpectedNullabilityErrors<T>(T poco, params Expression<Func<T, object>>[] membersReportingNullabilityErrors)
     {
+        var typeName = typeof(T).ToCSharpFriendlyTypeName();
         var foundErrors = NonNullableFieldVerifier.Verify(poco).EmptyIfNull();
-        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(prop => getVerifierMessage(ExpressionToCode.GetNameIn(prop)));
+        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(prop => $"{typeName}.{ExpressionToCode.GetNameIn(prop)} contains NULL despite being non-nullable");
         var unexpectedErrors = foundErrors.Except(expectedErrors);
         var missingErrors = expectedErrors.Except(foundErrors);
-        PAssert.That(() => unexpectedErrors.None() && missingErrors.None(), $"{typeof(T).ToCSharpFriendlyTypeName()} poco ({poco}) did not report the expected nullability errors");
+        PAssert.That(() => unexpectedErrors.None() && missingErrors.None(), $"{typeName} poco ({poco}) did not report the expected nullability errors");
     }
 
     [Fact]
