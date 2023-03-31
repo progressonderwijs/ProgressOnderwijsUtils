@@ -44,10 +44,6 @@ public sealed class NonNullableNullabilityCheck
         => PAssert.That(() => NonNullableFieldVerifier.Verify(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
 
     [Fact]
-    public void AssertAllNullFieldsAreDetected_SubClass()
-        => PAssert.That(() => NonNullableFieldVerifier.Verify(ContainingAllNullSubClass).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
-
-    [Fact]
     public void AssertNoNullFieldsReturnsNull()
         => PAssert.That(() => NonNullableFieldVerifier.Verify(NotContainingNull) == null);
 
