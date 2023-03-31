@@ -18,6 +18,7 @@ public sealed class NonNullableNullabilityCheck
     };
 
     readonly NullablityTestClass AllContainingNull = new();
+    readonly NullablityTestStruct AllContainingNull_struct = new();
 
     readonly NullablityTestClass NotContainingNull = new() {
         SomeNullString = "",
@@ -59,6 +60,10 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertAllNullFieldsAreDetected_ConstructorBasedProperties()
         => ValidateExpectedNullabilityErrors(containingAllNullPropertyClass, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
+
+    [Fact]
+    public void AssertAllNullFieldsAreDetected_Struct()
+        => ValidateExpectedNullabilityErrors(AllContainingNull_struct, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 }
 
 public sealed class NullablityTestClass
@@ -73,6 +78,17 @@ public sealed class NullablityTestClass
 
     public override string? ToString()
         => Name;
+}
+
+public sealed class NullablityTestStruct
+{
+    //Intentionally violate nullability assumptions so we can test this:
+    public string SomeNullString = null!;
+    public string? Name;
+    public object SomeObject = null!;
+    public object? SomeNullableObject;
+    public object[] SomeObjectArray { get; set; } = null!;
+    public object[] SomeFilledObjectArray = { null!, };
 }
 
 public sealed record NullablityTestPropertyClass(string SomeNullString, string? SomeNullableField, object SomeObject, object? SomeNullableObject, object[] SomeObjectArray, object[] SomeFilledObjectArray);
