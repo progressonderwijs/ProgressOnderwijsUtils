@@ -58,13 +58,10 @@ public static class NonNullableFieldVerifier
             };
 
             var setArray = fields.Select(
-                field => {
-                    var onNullDetected = hmm(field);
-                    return Expression.IfThen(
-                        Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
-                        onNullDetected
-                    );
-                }
+                field => Expression.IfThen(
+                    Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
+                    hmm(field)
+                )
             );
             var falseState = Expression.Block(
                 typeof(string[]),
