@@ -90,7 +90,7 @@ public static class NonNullableFieldVerifier
                 return onNullDetected;
             }
 
-            IEnumerable<ConditionalExpression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
+            IEnumerable<Expression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
                 => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
         }
     }
