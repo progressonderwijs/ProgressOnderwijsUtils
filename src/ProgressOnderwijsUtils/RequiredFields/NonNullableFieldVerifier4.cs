@@ -24,8 +24,8 @@ public static class NonNullableFieldVerifier4
             var statements = new List<Expression>();
             var objectParam = Expression.Parameter(typeof(T), "obj");
             var exceptionVar = Expression.Variable(typeof(string[]), "exceptionVar");
-            var ErrorCounter = Expression.Variable(typeof(int), "counter");
-            statements.Add(Expression.Assign(ErrorCounter, Expression.Constant(0)));
+            var errorCounterVar = Expression.Variable(typeof(int), "errorCounterVar");
+            statements.Add(Expression.Assign(errorCounterVar, Expression.Constant(0)));
 
             var context = new NullabilityInfoContext();
 
@@ -43,7 +43,7 @@ public static class NonNullableFieldVerifier4
                 statements.Add(
                     Expression.IfThen(
                         Expression.Equal(fieldValue, nullConstantExpression),
-                        Expression.AddAssign(ErrorCounter, Expression.Constant(1, typeof(int)))
+                        Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
                     )
                 );
             }
@@ -55,21 +55,21 @@ public static class NonNullableFieldVerifier4
                     return Expression.IfThen(
                         Expression.Equal(fieldAccessExpression, nullConstantExpression),
                         Expression.Block(
-                            Expression.Assign(Expression.ArrayAccess(exceptionVar, ErrorCounter), Expression.Constant(exceptionMessage)),
-                            Expression.AddAssign(ErrorCounter, Expression.Constant(1, typeof(int)))
+                            Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
+                            Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
                         )
                     );
                 }
             );
             var falseState = Expression.Block(
-                Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), ErrorCounter)),
-                Expression.Assign(ErrorCounter, Expression.Constant(0, typeof(int))),
+                Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
+                Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
                 Expression.Block(setArray)
             );
             statements.Add(
                 Expression.Block(
                     Expression.IfThenElse(
-                        Expression.Equal(ErrorCounter, Expression.Constant(0, typeof(int))),
+                        Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
                         Expression.Assign(exceptionVar, Expression.Constant(null, typeof(string[]))),
                         falseState
                     )
@@ -77,7 +77,7 @@ public static class NonNullableFieldVerifier4
             );
             statements.Add(exceptionVar);
 
-            variables.AddRange(new[] { exceptionVar, ErrorCounter, });
+            variables.AddRange(new[] { exceptionVar, errorCounterVar, });
 
             var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
             return ToLambda.Compile();
