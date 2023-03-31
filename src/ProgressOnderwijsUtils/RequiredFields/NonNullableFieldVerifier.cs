@@ -61,7 +61,7 @@ public static class NonNullableFieldVerifier
                 whenNullabilityErrorDetected
             );
 
-            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exceptionVar, errorCounterVar, }, storeNullabilityErrorCountInVariable, computeErrorMessageGivenCount), objectParam);
+            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { errorCounterVar, }, storeNullabilityErrorCountInVariable, computeErrorMessageGivenCount), objectParam);
             return ToLambda.Compile();
         }
 
