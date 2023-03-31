@@ -43,9 +43,8 @@ public static class NonNullableFieldVerifier
 
             var setArray = ForEachInvalidNull(
                 field => {
-                    var exceptionMessage1 = ErrorMessageForField(field);
                     return Expression.Block(
-                        Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage1)),
+                        Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
                         incrementErrorCounter
                     );
                 }
