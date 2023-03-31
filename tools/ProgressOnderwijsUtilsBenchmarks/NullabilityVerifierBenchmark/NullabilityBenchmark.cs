@@ -3,6 +3,7 @@ using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils.RequiredFields;
 using ProgressOnderwijsUtils.Tests;
+using ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 
