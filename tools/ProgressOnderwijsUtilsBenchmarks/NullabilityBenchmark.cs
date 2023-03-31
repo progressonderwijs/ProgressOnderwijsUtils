@@ -134,7 +134,6 @@ public sealed class NullabilityBenchmark
     public void HardCoded2()
         => _ = HardCoded2Meth(ObjToTest);
 
-
     [Benchmark]
     public void HardCoded3()
         => _ = HardCoded3Meth(ObjToTest);
@@ -176,6 +175,11 @@ public sealed class NullabilityBenchmark
         return errors;
     }
 
+    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+
+    [Benchmark]
+    public void Compiled()
+        => _ = Verifier(ObjToTest);
 
     static readonly Func<NullablityTestClass, string> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
@@ -183,18 +187,11 @@ public sealed class NullabilityBenchmark
     public void Compiled0()
         => _ = Verifier0(ObjToTest);
 
-    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
-
-    [Benchmark]
-    public void Compiled()
-        => _ = Verifier(ObjToTest);
-
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled1()
         => _ = Verifier1(ObjToTest);
-
 
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
@@ -214,4 +211,9 @@ public sealed class NullabilityBenchmark
     public void Compiled4()
         => _ = Verifier4(ObjToTest);
 
+    static readonly Func<NullablityTestClass, string[]?> Verifier5 = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+
+    [Benchmark]
+    public void Compiled5()
+        => _ = Verifier5(ObjToTest);
 }
