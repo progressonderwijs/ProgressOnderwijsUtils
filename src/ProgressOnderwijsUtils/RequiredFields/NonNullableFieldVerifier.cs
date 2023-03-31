@@ -44,12 +44,11 @@ public static class NonNullableFieldVerifier
                 )
             );
             var setArray = fields.Select(
-                f => {
-                    var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
+                field => {
+                    var propName = AutoPropertyOfFieldOrNull(field) is { } prop ? prop.Name : field.Name;
                     var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
-                    var fieldAccessExpression = Expression.Convert(Expression.Field(objectParam, f), typeof(object));
                     return Expression.IfThen(
-                        Expression.Equal(fieldAccessExpression, nullConstantExpression),
+                        Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
                         Expression.Block(
                             Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
                             Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
