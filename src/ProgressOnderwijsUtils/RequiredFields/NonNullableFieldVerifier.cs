@@ -35,24 +35,29 @@ public static class NonNullableFieldVerifier
 
             var variables = new List<ParameterExpression>();
             var nullConstantExpression = Expression.Constant(null, typeof(object));
+            var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
             statements.AddRange(
                 fields.Select(
-                    field => Expression.IfThen(
-                        Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
-                        Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
-                    )
+                    field => {
+                        var onNullDetected = incrementErrorCounter;
+                        return Expression.IfThen(
+                            Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
+                            onNullDetected
+                        );
+                    }
                 )
             );
             var setArray = fields.Select(
                 field => {
                     var propName = AutoPropertyOfFieldOrNull(field) is { } prop ? prop.Name : field.Name;
                     var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
+                    var onNullDetected = Expression.Block(
+                        Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
+                        incrementErrorCounter
+                    );
                     return Expression.IfThen(
                         Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
-                        Expression.Block(
-                            Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
-                            Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
-                        )
+                        onNullDetected
                     );
                 }
             );
