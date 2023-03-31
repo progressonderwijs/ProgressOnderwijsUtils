@@ -36,7 +36,6 @@ public static class NonNullableFieldVerifier
             IEnumerable<Expression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
                 => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
 
-            var variables = new List<ParameterExpression>();
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
 
             var statements = new List<Expression>();
@@ -65,6 +64,7 @@ public static class NonNullableFieldVerifier
                 )
             );
 
+            var variables = new List<ParameterExpression>();
             variables.AddRange(new[] { exceptionVar, errorCounterVar, });
 
             var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
