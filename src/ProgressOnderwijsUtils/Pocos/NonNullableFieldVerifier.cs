@@ -1,6 +1,6 @@
 using static ProgressOnderwijsUtils.BackingFieldDetector;
 
-namespace ProgressOnderwijsUtils.RequiredFields;
+namespace ProgressOnderwijsUtils;
 
 public static class NonNullableFieldVerifier
 {
@@ -72,6 +72,9 @@ public static class NonNullableFieldVerifier
             => AutoPropertyOfFieldOrNull(field) is { } autoProp ? autoProp.Name : field.Name;
     }
 
-    public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
+    public static Func<T, string[]?> VerificationDelegate<T>()
         => Cache<T>.checker ?? throw new("Failed to construct nullability verifier", Cache<T>.exception);
+
+    public static string[]? Verify<T>(T obj)
+        => VerificationDelegate<T>()(obj);
 }

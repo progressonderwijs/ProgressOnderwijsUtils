@@ -1,5 +1,3 @@
-using ProgressOnderwijsUtils.RequiredFields;
-
 #pragma warning disable CS8625
 
 namespace ProgressOnderwijsUtils.Tests;
@@ -39,15 +37,15 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
+        => PAssert.That(() => NonNullableFieldVerifier.Verify(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+        => PAssert.That(() => NonNullableFieldVerifier.Verify(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
 
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(NotContainingNull) == null);
+        => PAssert.That(() => NonNullableFieldVerifier.Verify(NotContainingNull) == null);
 
     [Fact]
     public void AssertWithReflectionOfField()
