@@ -58,11 +58,10 @@ public sealed class NullabilityBenchmark
 
     string[] CheckValidNonNullablitiy(Type type, NullablityTestClass obj)
         => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Select(
-                f => f.GetValue(obj) == null && context.Create(f).WriteState == NullabilityState.NotNull
-                    ? WarnAbout(f.Name)
-                    : null
-            ).WhereNotNull().ToArray();
+            .Where(f=> context.Create(f).WriteState == NullabilityState.NotNull)
+            .Where(f=> f.GetValue(obj) == null)
+            .Select(f => WarnAbout(f.Name))
+            .ToArray();
 
     [Benchmark]
     public void WithReflection()
