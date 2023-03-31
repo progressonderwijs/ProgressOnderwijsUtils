@@ -39,12 +39,6 @@ public static class NonNullableFieldVerifier
             var variables = new List<ParameterExpression>();
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
 
-            var setArray = ForEachInvalidNull(
-                field => Expression.Block(
-                    Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
-                    incrementErrorCounter
-                )
-            );
             var statements = new List<Expression>();
             statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
@@ -54,7 +48,12 @@ public static class NonNullableFieldVerifier
                 new Expression[] {
                         Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
                         Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
-                    }.Concat(setArray)
+                    }.Concat(ForEachInvalidNull(
+                        field => Expression.Block(
+                            Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
+                            incrementErrorCounter
+                        )
+                    ))
                     .Concat(new[] { exceptionVar, })
             );
             statements.Add(
