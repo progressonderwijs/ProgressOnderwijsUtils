@@ -2,7 +2,7 @@ using static ProgressOnderwijsUtils.BackingFieldDetector;
 
 namespace ProgressOnderwijsUtils.RequiredFields;
 
-public static class NonNullableFieldVerifier
+public static class NonNullableFieldVerifier5
 {
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {
