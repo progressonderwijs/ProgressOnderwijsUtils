@@ -183,12 +183,6 @@ public sealed class NullabilityBenchmark
     public void Compiled0()
         => _ = Verifier0(ObjToTest);
 
-    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
-
-    [Benchmark]
-    public void Compiled()
-        => _ = Verifier(ObjToTest);
-
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
     [Benchmark]
@@ -214,4 +208,9 @@ public sealed class NullabilityBenchmark
     public void Compiled4()
         => _ = Verifier4(ObjToTest);
 
+    static readonly Func<NullablityTestClass, string[]?> Verifier5 = NonNullableFieldVerifier5.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+
+    [Benchmark]
+    public void Compiled5()
+        => _ = Verifier5(ObjToTest);
 }
