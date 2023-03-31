@@ -21,7 +21,6 @@ public static class NonNullableFieldVerifier
         //Without any calls but with counters etc based of hardcoded2
         static Func<T, string[]?> CreateDelegate()
         {
-            var statements = new List<Expression>();
             var objectParam = Expression.Parameter(typeof(T), "obj");
             var exceptionVar = Expression.Variable(typeof(string[]), "exceptionVar");
             var errorCounterVar = Expression.Variable(typeof(int), "errorCounterVar");
@@ -39,7 +38,6 @@ public static class NonNullableFieldVerifier
 
             var variables = new List<ParameterExpression>();
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
-            statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var setArray = ForEachInvalidNull(
                 field => Expression.Block(
@@ -47,6 +45,8 @@ public static class NonNullableFieldVerifier
                     incrementErrorCounter
                 )
             );
+            var statements = new List<Expression>();
+            statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var falseState = Expression.Block(
                 typeof(string[]),
