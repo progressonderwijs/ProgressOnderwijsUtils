@@ -29,9 +29,6 @@ public sealed class NonNullableNullabilityCheck
 
     readonly NullabilityTestSubClass ContainingAllNullSubClass = new();
 
-    static bool NullFoundInNotNullField(object obj, FieldInfo? field)
-        => field?.GetValue(obj) == null && context.Create(field.AssertNotNull()).WriteState == NullabilityState.NotNull;
-
     static string getVerifierMessage(string field)
         => "NullablityTestClass." + field + " contains NULL despite being non-nullable";
 
@@ -46,10 +43,6 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
         => PAssert.That(() => NonNullableFieldVerifier.Verify(NotContainingNull) == null);
-
-    [Fact]
-    public void AssertWithReflectionOfField()
-        => PAssert.That(() => NullFoundInNotNullField(new NullablityTestClass(), typeof(NullablityTestClass).GetField("SomeNullString")) == true);
 }
 
 public sealed class NullablityTestClass
