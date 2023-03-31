@@ -134,7 +134,6 @@ public sealed class NullabilityBenchmark
     public void HardCoded2()
         => _ = HardCoded2Meth(ObjToTest);
 
-
     [Benchmark]
     public void HardCoded3()
         => _ = HardCoded3Meth(ObjToTest);
@@ -188,7 +187,6 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void Compiled1()
         => _ = Verifier1(ObjToTest);
-
 
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
 
