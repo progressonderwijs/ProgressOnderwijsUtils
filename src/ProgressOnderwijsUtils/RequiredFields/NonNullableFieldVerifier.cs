@@ -47,9 +47,10 @@ public static class NonNullableFieldVerifier
                     }
                 )
             );
+            Func<FieldInfo, BlockExpression> hmm = bla;
+
             var setArray = fields.Select(
                 field => {
-                    Func<FieldInfo, BlockExpression> hmm = bla;
                     var onNullDetected = hmm(field);
                     return Expression.IfThen(
                         Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
