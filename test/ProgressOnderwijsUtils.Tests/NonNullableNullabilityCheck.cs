@@ -7,6 +7,7 @@ namespace ProgressOnderwijsUtils.Tests;
 public sealed class NonNullableNullabilityCheck
 {
     static readonly NullabilityInfoContext context = new();
+    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string?> Verifier0 = NonNullableFieldVerifier0.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier1 = NonNullableFieldVerifier1.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
     static readonly Func<NullablityTestClass, string[]?> Verifier2 = NonNullableFieldVerifier2.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
@@ -54,6 +55,18 @@ public sealed class NonNullableNullabilityCheck
 
     static string getVerifierMessage(string field, string className)
         => className + "." + field + " contains NULL despite being non-nullable";
+
+    [Fact]
+    public void AssertOneNullFieldIsDetected()
+        => PAssert.That(() => Verifier(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
+
+    [Fact]
+    public void AssertAllNullFieldsAreDetected()
+        => PAssert.That(() => Verifier(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+
+    [Fact]
+    public void AssertNoNullFieldsReturnsNull()
+        => PAssert.That(() => Verifier(NotContainingNull) == null);
 
     [Fact]
     public void AssertWithReflectionOfField()
