@@ -36,17 +36,16 @@ public static class NonNullableFieldVerifier
 
             var variables = new List<ParameterExpression>();
             var nullConstantExpression = Expression.Constant(null, typeof(object));
-            foreach (var f in fields) {
-                var memberExpression = Expression.Field(objectParam, f);
-                var fieldValue = Expression.Convert(memberExpression, typeof(object));
-
-                statements.Add(
-                    Expression.IfThen(
-                        Expression.Equal(fieldValue, nullConstantExpression),
-                        Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
+            statements.AddRange(
+                fields.Select(f => Expression.Field(objectParam, f))
+                    .Select(memberExpression => Expression.Convert(memberExpression, typeof(object)))
+                    .Select(
+                        fieldValue => Expression.IfThen(
+                            Expression.Equal(fieldValue, nullConstantExpression),
+                            Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
+                        )
                     )
-                );
-            }
+            );
             var setArray = fields.Select(
                 f => {
                     var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
