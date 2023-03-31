@@ -25,6 +25,7 @@ public static class NonNullableFieldVerifier
             var objectParam = Expression.Parameter(typeof(T), "obj");
             var exceptionVar = Expression.Variable(typeof(string[]), "exceptionVar");
             var errorCounterVar = Expression.Variable(typeof(int), "errorCounterVar");
+            var nullConstantExpression = Expression.Constant(null, typeof(object));
 
             var context = new NullabilityInfoContext();
 
@@ -33,8 +34,10 @@ public static class NonNullableFieldVerifier
                 .Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .ToArray();
 
+            IEnumerable<Expression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
+                => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
+
             var variables = new List<ParameterExpression>();
-            var nullConstantExpression = Expression.Constant(null, typeof(object));
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
             statements.AddRange(
                 fields.Select(
@@ -89,9 +92,6 @@ public static class NonNullableFieldVerifier
                 );
                 return onNullDetected;
             }
-
-            IEnumerable<Expression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
-                => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
         }
     }
 
