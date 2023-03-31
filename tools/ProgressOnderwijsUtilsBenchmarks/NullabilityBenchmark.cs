@@ -51,21 +51,17 @@ public sealed class NullabilityBenchmark
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public NullablityTestClass ObjToTest = null!;
 
-    static string WarnAbout(string field)
-        => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + field;
+    static readonly NullabilityInfoContext context = new();
 
-    readonly NullabilityInfoContext context = new();
-
-    string[] CheckValidNonNullablitiy(Type type, NullablityTestClass obj)
-        => type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-            .Where(f=> context.Create(f).WriteState == NullabilityState.NotNull)
-            .Where(f=> f.GetValue(obj) == null)
-            .Select(f => WarnAbout(f.Name))
-            .ToArray();
+    static readonly IEnumerable<FieldInfo> reflectionBasedFieldsToCheck = typeof(NullablityTestClass).GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+        .Where(f => context.Create(f).WriteState == NullabilityState.NotNull);
 
     [Benchmark]
     public void WithReflection()
-        => _ = CheckValidNonNullablitiy(typeof(NullablityTestClass), ObjToTest);
+        => _ = reflectionBasedFieldsToCheck
+            .Where(f => f.GetValue(ObjToTest) == null)
+            .Select(f => "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + f.Name)
+            .ToArray();
 
     [Benchmark]
     public void HardCoded()
