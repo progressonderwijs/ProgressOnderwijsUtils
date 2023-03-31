@@ -21,11 +21,10 @@ public static class NonNullableFieldVerifier
         //Without any calls but with counters etc based of hardcoded2
         static Func<T, string[]?> CreateDelegate()
         {
-            var statements = new List<Expression>();
             var objectParam = Expression.Parameter(typeof(T), "obj");
             var exceptionVar = Expression.Variable(typeof(string[]), "exceptionVar");
             var errorCounterVar = Expression.Variable(typeof(int), "errorCounterVar");
-            statements.Add(Expression.Assign(errorCounterVar, Expression.Constant(0)));
+            var nullConstantExpression = Expression.Constant(null, typeof(object));
 
             var context = new NullabilityInfoContext();
 
@@ -34,54 +33,43 @@ public static class NonNullableFieldVerifier
                 .Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
                 .ToArray();
 
-            var variables = new List<ParameterExpression>();
-            var nullConstantExpression = Expression.Constant(null, typeof(object));
-            foreach (var f in fields) {
-                var memberExpression = Expression.Field(objectParam, f);
-                var fieldValue = Expression.Convert(memberExpression, typeof(object));
+            IEnumerable<Expression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
+                => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
 
-                statements.Add(
-                    Expression.IfThen(
-                        Expression.Equal(fieldValue, nullConstantExpression),
-                        Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
-                    )
-                );
-            }
-            var setArray = fields.Select(
-                f => {
-                    var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
-                    var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
-                    var fieldAccessExpression = Expression.Convert(Expression.Field(objectParam, f), typeof(object));
-                    return Expression.IfThen(
-                        Expression.Equal(fieldAccessExpression, nullConstantExpression),
-                        Expression.Block(
-                            Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
-                            Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)))
+            var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
+
+            var storeNullabilityErrorCountInVariable = Expression.Block(ForEachInvalidNull(_ => incrementErrorCounter));
+
+            var whenNullabilityErrorDetected = Expression.Block(
+                    new[] { exceptionVar, },
+                    Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
+                    Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
+                    Expression.Block(
+                        ForEachInvalidNull(
+                            field => Expression.Block(
+                                Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
+                                incrementErrorCounter
+                            )
                         )
-                    );
-                }
-            );
-            var falseState = Expression.Block(
-                Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
-                Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
-                Expression.Block(setArray)
-            );
-            statements.Add(
-                Expression.Block(
-                    Expression.IfThenElse(
-                        Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
-                        Expression.Assign(exceptionVar, Expression.Constant(null, typeof(string[]))),
-                        falseState
-                    )
-                )
-            );
-            statements.Add(exceptionVar);
+                    ),
+                    exceptionVar
+                );
 
-            variables.AddRange(new[] { exceptionVar, errorCounterVar, });
+            var computeErrorMessageGivenCount = Expression.Condition(
+                Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
+                Expression.Constant(null, typeof(string[])),
+                whenNullabilityErrorDetected
+            );
 
-            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
+            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { errorCounterVar, }, storeNullabilityErrorCountInVariable, computeErrorMessageGivenCount), objectParam);
             return ToLambda.Compile();
         }
+
+        static string ErrorMessageForField(FieldInfo field)
+            => $"{typeof(T).ToCSharpFriendlyTypeName()}.{HumanReadableMemberName(field)} contains NULL despite being non-nullable";
+
+        static string HumanReadableMemberName(FieldInfo field)
+            => AutoPropertyOfFieldOrNull(field) is { } autoProp ? autoProp.Name : field.Name;
     }
 
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
