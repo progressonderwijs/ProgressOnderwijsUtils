@@ -69,16 +69,6 @@ public static class NonNullableFieldVerifier
 
             var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
             return ToLambda.Compile();
-            BlockExpression bla(FieldInfo field)
-            {
-                var propName = AutoPropertyOfFieldOrNull(field) is { } prop ? prop.Name : field.Name;
-                var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable";
-                var onNullDetected = Expression.Block(
-                    Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage)),
-                    incrementErrorCounter
-                );
-                return onNullDetected;
-            }
         }
 
         static string ErrorMessageForField(FieldInfo field)
