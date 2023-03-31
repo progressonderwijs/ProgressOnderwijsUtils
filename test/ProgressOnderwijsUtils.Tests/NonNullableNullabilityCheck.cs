@@ -55,6 +55,10 @@ public sealed class NonNullableNullabilityCheck
     [Fact]
     public void AssertAllNullFieldsAreDetected_SubClass()
         => ValidateExpectedNullabilityErrors(ContainingAllNullSubClass, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
+
+    [Fact]
+    public void AssertAllNullFieldsAreDetected_ConstructorBasedProperties()
+        => ValidateExpectedNullabilityErrors(containingAllNullPropertyClass, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 }
 
 public sealed class NullablityTestClass
