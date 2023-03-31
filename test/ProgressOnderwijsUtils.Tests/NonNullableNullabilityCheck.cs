@@ -1,10 +1,11 @@
+using System.Linq.Expressions;
+
 #pragma warning disable CS8625
 
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class NonNullableNullabilityCheck
 {
-    static readonly NullabilityInfoContext context = new();
     readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null, });
 
     readonly NullablityTestClass OneContainingNull = new() {
@@ -17,6 +18,7 @@ public sealed class NonNullableNullabilityCheck
     };
 
     readonly NullablityTestClass AllContainingNull = new();
+    readonly NullablityTestStruct AllContainingNull_struct = new();
 
     readonly NullablityTestClass NotContainingNull = new() {
         SomeNullString = "",
@@ -29,27 +31,39 @@ public sealed class NonNullableNullabilityCheck
 
     readonly NullabilityTestSubClass ContainingAllNullSubClass = new();
 
-    static bool NullFoundInNotNullField(object obj, FieldInfo? field)
-        => field?.GetValue(obj) == null && context.Create(field.AssertNotNull()).WriteState == NullabilityState.NotNull;
-
-    static string getVerifierMessage(string field)
-        => "NullablityTestClass." + field + " contains NULL despite being non-nullable";
-
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.Verify(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
+        => ValidateExpectedNullabilityErrors(OneContainingNull, o => o.SomeNullString);
+
+    static void ValidateExpectedNullabilityErrors<T>(T poco, params Expression<Func<T, object>>[] membersReportingNullabilityErrors)
+    {
+        var typeName = typeof(T).ToCSharpFriendlyTypeName();
+        var foundErrors = NonNullableFieldVerifier.Verify(poco).EmptyIfNull();
+        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(prop => $"{typeName}.{ExpressionToCode.GetNameIn(prop)} contains NULL despite being non-nullable");
+        var unexpectedErrors = foundErrors.Except(expectedErrors);
+        var missingErrors = expectedErrors.Except(foundErrors);
+        PAssert.That(() => unexpectedErrors.None() && missingErrors.None(), $"{typeName} poco ({poco}) did not report the expected nullability errors");
+    }
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.Verify(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+        => ValidateExpectedNullabilityErrors(AllContainingNull, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
         => PAssert.That(() => NonNullableFieldVerifier.Verify(NotContainingNull) == null);
 
     [Fact]
-    public void AssertWithReflectionOfField()
-        => PAssert.That(() => NullFoundInNotNullField(new NullablityTestClass(), typeof(NullablityTestClass).GetField("SomeNullString")) == true);
+    public void AssertAllNullFieldsAreDetected_SubClass()
+        => ValidateExpectedNullabilityErrors(ContainingAllNullSubClass, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
+
+    [Fact]
+    public void AssertAllNullFieldsAreDetected_ConstructorBasedProperties()
+        => ValidateExpectedNullabilityErrors(containingAllNullPropertyClass, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
+
+    [Fact]
+    public void AssertAllNullFieldsAreDetected_Struct()
+        => ValidateExpectedNullabilityErrors(AllContainingNull_struct, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 }
 
 public sealed class NullablityTestClass
@@ -64,6 +78,17 @@ public sealed class NullablityTestClass
 
     public override string? ToString()
         => Name;
+}
+
+public sealed class NullablityTestStruct
+{
+    //Intentionally violate nullability assumptions so we can test this:
+    public string SomeNullString = null!;
+    public string? Name;
+    public object SomeObject = null!;
+    public object? SomeNullableObject;
+    public object[] SomeObjectArray { get; set; } = null!;
+    public object[] SomeFilledObjectArray = { null!, };
 }
 
 public sealed record NullablityTestPropertyClass(string SomeNullString, string? SomeNullableField, object SomeObject, object? SomeNullableObject, object[] SomeObjectArray, object[] SomeFilledObjectArray);
