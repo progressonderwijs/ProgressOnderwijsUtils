@@ -43,19 +43,20 @@ public static class NonNullableFieldVerifier
             statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var falseState = Expression.Block(
-                typeof(string[]),
-                new[] { exceptionVar, },
-                new Expression[] {
-                        Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
-                        Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
-                    }.Concat(ForEachInvalidNull(
-                        field => Expression.Block(
-                            Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
-                            incrementErrorCounter
+                    new[] { exceptionVar, },
+                    Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
+                    Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
+                    Expression.Block(
+                        ForEachInvalidNull(
+                            field => Expression.Block(
+                                Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
+                                incrementErrorCounter
+                            )
                         )
-                    ))
-                    .Concat(new[] { exceptionVar, })
-            );
+                    ),
+                    exceptionVar
+                )
+                ;
             statements.Add(
                 Expression.Condition(
                     Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
