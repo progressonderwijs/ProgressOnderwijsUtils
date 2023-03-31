@@ -146,7 +146,7 @@ public readonly record struct PocosSqlCommand<
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
         var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
-        var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+        var nullableVerifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<T>();
         foreach (var row in rows) {
             var nullablityError = nullableVerifier(row);
             if (nullablityError != null) {
@@ -206,7 +206,7 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
             } catch (Exception e) {
                 throw cmd.CreateExceptionWithTextAndArguments(e, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
             }
-            var nullableVerifier = NonNullableFieldVerifier4.MissingRequiredProperties_FuncFactory<T>();
+            var nullableVerifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<T>();
             var nullablityError = nullableVerifier(nextRow);
             if (nullablityError != null) {
                 throw new(nullablityError.JoinStrings("\n"));
