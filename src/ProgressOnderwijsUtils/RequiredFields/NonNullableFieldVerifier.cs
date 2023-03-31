@@ -74,4 +74,7 @@ public static class NonNullableFieldVerifier
 
     public static Func<T, string[]?> VerificationDelegate<T>()
         => Cache<T>.checker ?? throw new("Failed to construct nullability verifier", Cache<T>.exception);
+
+    public static string[]? Verify<T>(T obj)
+        => VerificationDelegate<T>()(obj);
 }
