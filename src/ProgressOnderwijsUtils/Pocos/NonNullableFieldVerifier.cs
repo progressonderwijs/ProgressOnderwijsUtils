@@ -1,6 +1,6 @@
 using static ProgressOnderwijsUtils.BackingFieldDetector;
 
-namespace ProgressOnderwijsUtils.RequiredFields;
+namespace ProgressOnderwijsUtils;
 
 public static class NonNullableFieldVerifier
 {
