@@ -39,19 +39,19 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
+        => PAssert.That(() => NonNullableFieldVerifier.VerificationDelegate<NullablityTestClass>()(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+        => PAssert.That(() => NonNullableFieldVerifier.VerificationDelegate<NullablityTestClass>()(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
 
     [Fact]
     public void AssertAllNullFieldsAreDetected_SubClass()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullabilityTestSubClass>()(ContainingAllNullSubClass).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+        => PAssert.That(() => NonNullableFieldVerifier.VerificationDelegate<NullabilityTestSubClass>()(ContainingAllNullSubClass).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
 
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
-        => PAssert.That(() => NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>()(NotContainingNull) == null);
+        => PAssert.That(() => NonNullableFieldVerifier.VerificationDelegate<NullablityTestClass>()(NotContainingNull) == null);
 
     [Fact]
     public void AssertWithReflectionOfField()

@@ -111,7 +111,7 @@ public sealed class NullabilityBenchmark
         }
     }
 
-    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.MissingRequiredProperties_FuncFactory<NullablityTestClass>();
+    static readonly Func<NullablityTestClass, string[]?> Verifier = NonNullableFieldVerifier.VerificationDelegate<NullablityTestClass>();
 
     [Benchmark]
     public void Compiled()
