@@ -43,8 +43,7 @@ public static class NonNullableFieldVerifier
 
             var setArray = ForEachInvalidNull(
                 field => {
-                    var memberName = AutoPropertyOfFieldOrNull(field) is { } autoProp ? autoProp.Name : field.Name;
-                    var exceptionMessage1 = $"{typeof(T).ToCSharpFriendlyTypeName()}.{memberName} contains NULL despite being non-nullable";
+                    var exceptionMessage1 = ErrorMessageForField(field);
                     return Expression.Block(
                         Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(exceptionMessage1)),
                         incrementErrorCounter
@@ -83,6 +82,13 @@ public static class NonNullableFieldVerifier
                 );
                 return onNullDetected;
             }
+        }
+
+        static string ErrorMessageForField(FieldInfo field)
+        {
+            var memberName = AutoPropertyOfFieldOrNull(field) is { } autoProp ? autoProp.Name : field.Name;
+            var exceptionMessage1 = $"{typeof(T).ToCSharpFriendlyTypeName()}.{memberName} contains NULL despite being non-nullable";
+            return exceptionMessage1;
         }
     }
 
