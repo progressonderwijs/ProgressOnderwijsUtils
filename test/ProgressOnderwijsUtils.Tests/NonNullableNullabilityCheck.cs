@@ -33,17 +33,20 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => ValidateExpectedNullabilityErrors(OneContainingNull, new[] { nameof(NullablityTestClass.SomeNullString), });
+        => ValidateExpectedNullabilityErrors(OneContainingNull, nameof(NullablityTestClass.SomeNullString));
 
-    static void ValidateExpectedNullabilityErrors<T>(T poco, string[] membersReportingNullabilityErrors)
+    static void ValidateExpectedNullabilityErrors<T>(T poco, params string[] membersReportingNullabilityErrors)
     {
         var foundErrors = NonNullableFieldVerifier.Verify(poco).EmptyIfNull();
-        PAssert.That(() => foundErrors.SequenceEqual(membersReportingNullabilityErrors.ArraySelect(getVerifierMessage)));
+        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(getVerifierMessage);
+        var unexpectedErrors = foundErrors.Except(expectedErrors);
+        var missingErrors = expectedErrors.Except(foundErrors);
+        PAssert.That(() => unexpectedErrors.None() && missingErrors.None(), $"{typeof(T).ToCSharpFriendlyTypeName()} poco ({poco}) did not report the expected nullability errors");
     }
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.Verify(AllContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), getVerifierMessage(nameof(NullablityTestClass.SomeObject)), getVerifierMessage(nameof(NullablityTestClass.SomeObjectArray)), }));
+        => ValidateExpectedNullabilityErrors(AllContainingNull, nameof(NullablityTestClass.SomeNullString), nameof(NullablityTestClass.SomeObject), nameof(NullablityTestClass.SomeObjectArray));
 
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
