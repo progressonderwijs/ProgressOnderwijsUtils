@@ -1,5 +1,3 @@
-using ProgressOnderwijsUtils.RequiredFields;
-
 namespace ProgressOnderwijsUtils;
 
 static class ErrorMessageHelpers

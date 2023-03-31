@@ -1,7 +1,6 @@
 using System.Reflection;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
-using ProgressOnderwijsUtils.RequiredFields;
 using ProgressOnderwijsUtils.Tests;
 
 namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
