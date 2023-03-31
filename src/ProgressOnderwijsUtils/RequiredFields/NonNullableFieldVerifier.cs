@@ -38,8 +38,7 @@ public static class NonNullableFieldVerifier
 
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
 
-            var statements = new List<Expression>();
-            statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
+            var storeNullabilityErrorCountInVariable = Expression.Block(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var whenNullabilityErrorDetected = Expression.Block(
                     new[] { exceptionVar, },
@@ -56,18 +55,13 @@ public static class NonNullableFieldVerifier
                     exceptionVar
                 )
                 ;
-            statements.Add(
-                Expression.Condition(
-                    Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
-                    Expression.Constant(null, typeof(string[])),
-                    whenNullabilityErrorDetected
-                )
+            var computeErrorMessageGivenCount = Expression.Condition(
+                Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
+                Expression.Constant(null, typeof(string[])),
+                whenNullabilityErrorDetected
             );
 
-            var variables = new List<ParameterExpression>();
-            variables.AddRange(new[] { exceptionVar, errorCounterVar, });
-
-            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(variables, statements), objectParam);
+            var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exceptionVar, errorCounterVar, }, storeNullabilityErrorCountInVariable, computeErrorMessageGivenCount), objectParam);
             return ToLambda.Compile();
         }
 
