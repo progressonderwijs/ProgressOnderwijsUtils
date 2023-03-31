@@ -53,8 +53,8 @@ public static class NonNullableFieldVerifier
                         )
                     ),
                     exceptionVar
-                )
-                ;
+                );
+
             var computeErrorMessageGivenCount = Expression.Condition(
                 Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
                 Expression.Constant(null, typeof(string[])),
