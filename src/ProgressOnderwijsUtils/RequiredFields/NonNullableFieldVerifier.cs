@@ -42,7 +42,7 @@ public static class NonNullableFieldVerifier
             var statements = new List<Expression>();
             statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
-            var falseState = Expression.Block(
+            var whenNullabilityErrorDetected = Expression.Block(
                     new[] { exceptionVar, },
                     Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
                     Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
@@ -61,7 +61,7 @@ public static class NonNullableFieldVerifier
                 Expression.Condition(
                     Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
                     Expression.Constant(null, typeof(string[])),
-                    falseState
+                    whenNullabilityErrorDetected
                 )
             );
 
