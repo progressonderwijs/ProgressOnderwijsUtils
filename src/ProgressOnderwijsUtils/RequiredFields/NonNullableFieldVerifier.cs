@@ -62,20 +62,21 @@ public static class NonNullableFieldVerifier
                 }
             );
             var falseState = Expression.Block(
-                Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
-                Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
-                Expression.Block(setArray)
+                typeof(string[]),
+                new[] { exceptionVar, },
+                new Expression[] {
+                        Expression.Assign(exceptionVar, Expression.NewArrayBounds(typeof(string), errorCounterVar)),
+                        Expression.Assign(errorCounterVar, Expression.Constant(0, typeof(int))),
+                    }.Concat(setArray)
+                    .Concat(new[] { exceptionVar, })
             );
             statements.Add(
-                Expression.Block(
-                    Expression.IfThenElse(
-                        Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
-                        Expression.Assign(exceptionVar, Expression.Constant(null, typeof(string[]))),
-                        falseState
-                    )
+                Expression.Condition(
+                    Expression.Equal(errorCounterVar, Expression.Constant(0, typeof(int))),
+                    Expression.Constant(null, typeof(string[])),
+                    falseState
                 )
             );
-            statements.Add(exceptionVar);
 
             variables.AddRange(new[] { exceptionVar, errorCounterVar, });
 
