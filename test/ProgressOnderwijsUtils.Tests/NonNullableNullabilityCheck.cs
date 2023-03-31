@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 #pragma warning disable CS8625
 
 namespace ProgressOnderwijsUtils.Tests;
@@ -33,12 +35,12 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => ValidateExpectedNullabilityErrors(OneContainingNull, nameof(NullablityTestClass.SomeNullString));
+        => ValidateExpectedNullabilityErrors(OneContainingNull, o => o.SomeNullString);
 
-    static void ValidateExpectedNullabilityErrors<T>(T poco, params string[] membersReportingNullabilityErrors)
+    static void ValidateExpectedNullabilityErrors<T>(T poco, params Expression<Func<T, object>>[] membersReportingNullabilityErrors)
     {
         var foundErrors = NonNullableFieldVerifier.Verify(poco).EmptyIfNull();
-        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(getVerifierMessage);
+        var expectedErrors = membersReportingNullabilityErrors.ArraySelect(prop => getVerifierMessage(ExpressionToCode.GetNameIn(prop)));
         var unexpectedErrors = foundErrors.Except(expectedErrors);
         var missingErrors = expectedErrors.Except(foundErrors);
         PAssert.That(() => unexpectedErrors.None() && missingErrors.None(), $"{typeof(T).ToCSharpFriendlyTypeName()} poco ({poco}) did not report the expected nullability errors");
@@ -46,7 +48,7 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
-        => ValidateExpectedNullabilityErrors(AllContainingNull, nameof(NullablityTestClass.SomeNullString), nameof(NullablityTestClass.SomeObject), nameof(NullablityTestClass.SomeObjectArray));
+        => ValidateExpectedNullabilityErrors(AllContainingNull, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 
     [Fact]
     public void AssertNoNullFieldsReturnsNull()
