@@ -33,7 +33,13 @@ public sealed class NonNullableNullabilityCheck
 
     [Fact]
     public void AssertOneNullFieldIsDetected()
-        => PAssert.That(() => NonNullableFieldVerifier.Verify(OneContainingNull).EmptyIfNull().SequenceEqual(new[] { getVerifierMessage(nameof(NullablityTestClass.SomeNullString)), }));
+        => ValidateExpectedNullabilityErrors(OneContainingNull, new[] { nameof(NullablityTestClass.SomeNullString), });
+
+    static void ValidateExpectedNullabilityErrors<T>(T poco, string[] membersReportingNullabilityErrors)
+    {
+        var foundErrors = NonNullableFieldVerifier.Verify(poco).EmptyIfNull();
+        PAssert.That(() => foundErrors.SequenceEqual(membersReportingNullabilityErrors.ArraySelect(getVerifierMessage)));
+    }
 
     [Fact]
     public void AssertAllNullFieldsAreDetected()
