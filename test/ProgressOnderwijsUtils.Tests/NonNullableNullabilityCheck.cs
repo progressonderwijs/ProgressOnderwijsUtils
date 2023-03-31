@@ -1,5 +1,3 @@
-using ProgressOnderwijsUtils.RequiredFields;
-
 #pragma warning disable CS8625
 
 namespace ProgressOnderwijsUtils.Tests;
