@@ -25,7 +25,6 @@ public static class NonNullableFieldVerifier
             var objectParam = Expression.Parameter(typeof(T), "obj");
             var exceptionVar = Expression.Variable(typeof(string[]), "exceptionVar");
             var errorCounterVar = Expression.Variable(typeof(int), "errorCounterVar");
-            statements.Add(Expression.Assign(errorCounterVar, Expression.Constant(0)));
 
             var context = new NullabilityInfoContext();
 
