@@ -42,12 +42,10 @@ public static class NonNullableFieldVerifier
             statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var setArray = ForEachInvalidNull(
-                field => {
-                    return Expression.Block(
-                        Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
-                        incrementErrorCounter
-                    );
-                }
+                field => Expression.Block(
+                    Expression.Assign(Expression.ArrayAccess(exceptionVar, errorCounterVar), Expression.Constant(ErrorMessageForField(field))),
+                    incrementErrorCounter
+                )
             );
 
             var falseState = Expression.Block(
