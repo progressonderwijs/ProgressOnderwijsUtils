@@ -57,7 +57,7 @@ public static class NonNullableFieldVerifier
                 return onNullDetected;
             };
 
-            var setArray = ForEachInvalidNull();
+            var setArray = ForEachInvalidNull(hmm);
             var falseState = Expression.Block(
                 typeof(string[]),
                 new[] { exceptionVar, },
@@ -89,13 +89,9 @@ public static class NonNullableFieldVerifier
                 );
                 return onNullDetected;
             }
-            IEnumerable<ConditionalExpression> ForEachInvalidNull()
-                => fields.Select(
-                    field => Expression.IfThen(
-                        Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
-                        hmm(field)
-                    )
-                );
+
+            IEnumerable<ConditionalExpression> ForEachInvalidNull(Func<FieldInfo, Expression> func)
+                => fields.Select(field => Expression.IfThen(Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression), func(field)));
         }
     }
 
