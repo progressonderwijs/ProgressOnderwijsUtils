@@ -64,7 +64,7 @@ public sealed class NullabilityBenchmark
             .ToArray();
 
     [Benchmark]
-    public void HardCoded()
+    public void NaiveHardCoded()
         => _ = new[] {
             ObjToTest.SomeNullString == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString) : null,
             ObjToTest.SomeObject == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject) : null,
