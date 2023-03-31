@@ -39,16 +39,7 @@ public static class NonNullableFieldVerifier
 
             var variables = new List<ParameterExpression>();
             var incrementErrorCounter = Expression.AddAssign(errorCounterVar, Expression.Constant(1, typeof(int)));
-            statements.AddRange(
-                fields.Select(
-                    field => {
-                        var onNullDetected = incrementErrorCounter;
-                        return Expression.IfThen(
-                            Expression.Equal(Expression.Convert(Expression.Field(objectParam, field), typeof(object)), nullConstantExpression),
-                            onNullDetected
-                        );
-                    }
-                )
+            statements.AddRange(ForEachInvalidNull(_ => incrementErrorCounter));
 
             var setArray = ForEachInvalidNull(
                 field => {
