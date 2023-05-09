@@ -23,7 +23,7 @@ public sealed class DebounceTests
 
         handler();
         Assert.NotEqual(TaskStatus.RanToCompletion, task.Status);
-        _ = task.Wait(1000);
+        _ = task.Wait(10_000);
         Assert.Equal(TaskStatus.RanToCompletion, task.Status);
     }
 
@@ -44,7 +44,7 @@ public sealed class DebounceTests
         PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
     }
 
-    [Fact(Skip = "Flaky")]
+    [Fact]
     public void DebounceCallsHandlersWithMutualExclusion()
     {
         var inCriticalSection = 0;
@@ -64,7 +64,7 @@ public sealed class DebounceTests
             handler();
 
             var sw = Stopwatch.StartNew();
-            while (counts.Count == runs && sw.Elapsed.TotalMilliseconds < 300.0) {
+            while (counts.Count == runs && sw.Elapsed.TotalMilliseconds < 10_000.0) {
                 Thread.Sleep(5);
             }
         }
@@ -73,7 +73,7 @@ public sealed class DebounceTests
         PAssert.That(() => counts.Count == 5);
     }
 
-    [Fact(Skip = "Flaky")]
+    [Fact]
     public void LotsOfCallsPreventHandlerFromFiring()
     {
         const int durationThatEventsAreFired = 300;
@@ -81,7 +81,7 @@ public sealed class DebounceTests
         const int numberOfEventFiringThreads = 10;
         const int earliestExpectedDebouncedEventDelay = durationThatEventsAreFired + debounceDurationThreshhold;
         const int gracePeriod = debounceDurationThreshhold * 5;
-        const int durationToWaitForDebouncedHandlerToFire = durationThatEventsAreFired + gracePeriod;
+        const int durationToWaitForDebouncedHandlerToFire = durationThatEventsAreFired + gracePeriod + 10_000;
 
         var debouncedHandlerCompletion = new TaskCompletionSource<TimeSpan>();
         var debouncedHandlerTask = debouncedHandlerCompletion.Task;
