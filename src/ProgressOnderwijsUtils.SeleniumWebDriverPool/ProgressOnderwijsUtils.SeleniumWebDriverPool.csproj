@@ -10,7 +10,7 @@
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Selenium.WebDriver" Version="4.8.2" />
+        <PackageReference Include="Selenium.WebDriver" Version="4.9.1" />
     </ItemGroup>
 </Project>
 
