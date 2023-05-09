@@ -44,7 +44,7 @@ public sealed class DebounceTests
         PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
     }
 
-    [Fact(Skip = "Flaky")]
+    [Fact]
     public void DebounceCallsHandlersWithMutualExclusion()
     {
         var inCriticalSection = 0;
@@ -73,7 +73,7 @@ public sealed class DebounceTests
         PAssert.That(() => counts.Count == 5);
     }
 
-    [Fact(Skip = "Flaky")]
+    [Fact]
     public void LotsOfCallsPreventHandlerFromFiring()
     {
         const int durationThatEventsAreFired = 300;
