@@ -9,7 +9,7 @@ public static class VirusScan
         var context = default(nint);
 
         try {
-            PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk();
+            PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
 
             fixed (void* bufferPtr = buffer) {
                 _ = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, nint.Zero, out var result);
