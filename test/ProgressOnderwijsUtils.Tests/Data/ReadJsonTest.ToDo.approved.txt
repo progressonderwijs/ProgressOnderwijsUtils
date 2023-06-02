@@ -1,0 +1,14 @@
+[
+  {
+    "ReadJsonTestId": 1,
+    "BooleanColumn": true,
+    "NumberColumn": 17,
+    "StringColumn": "iets"
+  },
+  {
+    "ReadJsonTestId": 2,
+    "BooleanColumn": null,
+    "NumberColumn": null,
+    "StringColumn": null
+  }
+]

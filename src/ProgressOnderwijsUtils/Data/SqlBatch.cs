@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Threading.Tasks;
+
 namespace ProgressOnderwijsUtils;
 
 static class ErrorMessageHelpers
@@ -152,6 +155,47 @@ public readonly record struct PocosSqlCommand<
             }
         }
         return rows;
+    }
+}
+
+public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<JsonSqlCommand>
+{
+    public JsonSqlCommand WithTimeout(CommandTimeout timeout)
+        => this with { CommandTimeout = timeout, };
+
+    public async Task ExecuteAsync(SqlConnection conn, Stream stream, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        await using var disposeReader = reader;
+        await using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
+
+        writer.WriteStartArray();
+        while (await reader.ReadAsync(cancel)) {
+            writer.WriteStartObject();
+            for (var i = 0; i < reader.FieldCount; i++) {
+                var name = reader.GetName(i);
+                var type = reader.GetFieldType(i);
+                if (await reader.IsDBNullAsync(i, cancel)) {
+                    writer.WriteNull(name);
+                } else if (type == typeof(bool)) {
+                    writer.WriteBoolean(name, await reader.GetFieldValueAsync<bool>(i, cancel));
+                } else if (type == typeof(int)) {
+                    writer.WriteNumber(name, await reader.GetFieldValueAsync<int>(i, cancel));
+                } else if (type == typeof(string)) {
+                    writer.WriteString(name, await reader.GetFieldValueAsync<string>(i, cancel));
+                } else {
+                    throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown field type '{type}'"), this);
+                }
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
     }
 }
 
