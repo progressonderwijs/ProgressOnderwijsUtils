@@ -173,15 +173,18 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
         using var disposeReader = reader;
-        using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
+        var table = reader.GetColumnSchema()
+            .Select(column => (column.ColumnName, column.DataType))
+            .ToArray();
 
+        using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
         writer.WriteStartArray();
         while (reader.Read()) {
             writer.WriteStartObject();
-            for (var i = 0; i < reader.FieldCount; i++) {
+            for (var i = 0; i < table.Length; i++) {
                 if (!reader.IsDBNull(i)) {
-                    var name = reader.GetName(i);
-                    var type = reader.GetFieldType(i);
+                    var name = table[i].ColumnName;
+                    var type = table[i].DataType;
                     if (type == typeof(bool)) {
                         writer.WriteBoolean(name, reader.GetFieldValue<bool>(i));
                     } else if (type == typeof(int)) {
