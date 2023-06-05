@@ -186,23 +186,23 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     var name = table[i].ColumnName;
                     var type = table[i].DataType;
                     if (type == typeof(bool)) {
-                        writer.WriteBoolean(name, reader.GetFieldValue<bool>(i));
+                        writer.WriteBoolean(name, reader.GetBoolean(i));
                     } else if (type == typeof(int)) {
-                        writer.WriteNumber(name, reader.GetFieldValue<int>(i));
+                        writer.WriteNumber(name, reader.GetInt32(i));
                     } else if (type == typeof(long)) {
-                        writer.WriteNumber(name, reader.GetFieldValue<long>(i));
+                        writer.WriteNumber(name, reader.GetInt64(i));
                     } else if (type == typeof(decimal)) {
-                        writer.WriteNumber(name, reader.GetFieldValue<decimal>(i));
+                        writer.WriteNumber(name, reader.GetDecimal(i));
                     } else if (type == typeof(double)) {
-                        writer.WriteNumber(name, reader.GetFieldValue<double>(i));
+                        writer.WriteNumber(name, reader.GetDouble(i));
                     } else if (type == typeof(DateTime)) {
-                        writer.WriteString(name, reader.GetFieldValue<DateTime>(i));
+                        writer.WriteString(name, reader.GetDateTime(i));
                     } else if (type == typeof(string)) {
-                        writer.WriteString(name, reader.GetFieldValue<string>(i));
+                        writer.WriteString(name, reader.GetString(i));
                     } else if (type == typeof(byte[])) {
                         writer.WriteString(name, reader.GetFieldValue<byte[]>(i));
                     } else if (type == typeof(Guid)) {
-                        writer.WriteString(name, reader.GetFieldValue<Guid>(i));
+                        writer.WriteString(name, reader.GetGuid(i));
                     } else {
                         throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown field type '{type}'"), this);
                     }
