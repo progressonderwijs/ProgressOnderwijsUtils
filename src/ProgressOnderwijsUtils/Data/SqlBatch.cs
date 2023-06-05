@@ -163,32 +163,32 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public JsonSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
-    public async Task ExecuteAsync(SqlConnection conn, Stream stream, CancellationToken cancel)
+    public void Execute(SqlConnection conn, Stream stream)
     {
         using var cmd = this.ReusableCommand(conn);
         SqlDataReader? reader;
         try {
-            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel);
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
-        await using var disposeReader = reader;
-        await using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
+        using var disposeReader = reader;
+        using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
 
         writer.WriteStartArray();
-        while (await reader.ReadAsync(cancel)) {
+        while (reader.Read()) {
             writer.WriteStartObject();
             for (var i = 0; i < reader.FieldCount; i++) {
                 var name = reader.GetName(i);
                 var type = reader.GetFieldType(i);
-                if (await reader.IsDBNullAsync(i, cancel)) {
+                if (reader.IsDBNull(i)) {
                     writer.WriteNull(name);
                 } else if (type == typeof(bool)) {
-                    writer.WriteBoolean(name, await reader.GetFieldValueAsync<bool>(i, cancel));
+                    writer.WriteBoolean(name, reader.GetFieldValue<bool>(i));
                 } else if (type == typeof(int)) {
-                    writer.WriteNumber(name, await reader.GetFieldValueAsync<int>(i, cancel));
+                    writer.WriteNumber(name, reader.GetFieldValue<int>(i));
                 } else if (type == typeof(string)) {
-                    writer.WriteString(name, await reader.GetFieldValueAsync<string>(i, cancel));
+                    writer.WriteString(name, reader.GetFieldValue<string>(i));
                 } else {
                     throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown field type '{type}'"), this);
                 }

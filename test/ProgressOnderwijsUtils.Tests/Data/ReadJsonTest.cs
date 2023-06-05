@@ -39,7 +39,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     }
 
     [Fact]
-    public async Task ToDo()
+    public void ToDo()
     {
         SQL(
             $@"
@@ -61,7 +61,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         using var stream = new MemoryStream();
-        await SQL($"select t.* from #ReadJsonTest t").ReadJsonAsync(Connection, stream, CancellationToken.None);
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, stream);
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(stream.ToArray()));
     }

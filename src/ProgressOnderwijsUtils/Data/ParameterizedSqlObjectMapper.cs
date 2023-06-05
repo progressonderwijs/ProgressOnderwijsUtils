@@ -62,8 +62,8 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
 
-    public static async Task ReadJsonAsync(this ParameterizedSql q, SqlConnection sqlConn, Stream stream, CancellationToken cancel)
-        => await q.OfJson().ExecuteAsync(sqlConn, stream, cancel);
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, Stream stream)
+        => q.OfJson().Execute(sqlConn, stream);
 
     /// <summary>
     /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order
