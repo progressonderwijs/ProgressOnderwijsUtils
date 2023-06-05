@@ -96,7 +96,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {DateTime.Today}, {DateTime.Now}, {DateTime.UtcNow}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3 }}, {Guid.NewGuid()} )
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
                     , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
