@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -62,8 +63,8 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
 
-    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, Stream stream)
-        => q.OfJson().Execute(sqlConn, stream);
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, Stream stream, JsonWriterOptions options)
+        => q.OfJson().Execute(sqlConn, stream, options);
 
     /// <summary>
     /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order

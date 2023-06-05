@@ -102,7 +102,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         using var stream = new MemoryStream();
-        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, stream);
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, stream, new() { Indented = true, });
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(stream.ToArray()));
     }
