@@ -15,6 +15,9 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                     : colMetaData.IsNullable
                         ? " persisted"
                         : " persisted not null";
+                var collationClause = colMetaData.CollationName.Length == 0
+                    ? ""
+                    : " collate " + colMetaData.CollationName;
                 var columnTrivia = "--"
                     + colMetaData.ToSqlTypeNameWithoutNullability()
                     + ";"

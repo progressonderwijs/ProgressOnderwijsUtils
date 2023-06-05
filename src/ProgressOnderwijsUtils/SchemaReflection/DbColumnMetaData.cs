@@ -11,7 +11,8 @@ public sealed record DbColumnMetaData(
     SqlSystemTypeId UserTypeId,
     short MaxLength,
     byte Precision,
-    byte Scale
+    byte Scale,
+    string CollationName
 ) : IWrittenImplicitly, IComparable<DbColumnMetaData>, IDbColumn
 {
     DbColumnMetaData IDbColumn.ColumnMetaData
@@ -126,6 +127,7 @@ public sealed record DbColumnMetaData(
                         + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
                         + 8*c.is_identity
                         )
+                    , CollationName = c.collation_name
                 from {fromTempDb && SQL($"tempdb.")}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
