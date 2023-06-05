@@ -187,8 +187,20 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     writer.WriteBoolean(name, reader.GetFieldValue<bool>(i));
                 } else if (type == typeof(int)) {
                     writer.WriteNumber(name, reader.GetFieldValue<int>(i));
+                } else if (type == typeof(long)) {
+                    writer.WriteNumber(name, reader.GetFieldValue<long>(i));
+                } else if (type == typeof(decimal)) {
+                    writer.WriteNumber(name, reader.GetFieldValue<decimal>(i));
+                } else if (type == typeof(double)) {
+                    writer.WriteNumber(name, reader.GetFieldValue<double>(i));
+                } else if (type == typeof(DateTime)) {
+                    writer.WriteString(name, reader.GetFieldValue<DateTime>(i));
                 } else if (type == typeof(string)) {
                     writer.WriteString(name, reader.GetFieldValue<string>(i));
+                } else if (type == typeof(byte[])) {
+                    writer.WriteString(name, reader.GetFieldValue<byte[]>(i));
+                } else if (type == typeof(Guid)) {
+                    writer.WriteString(name, reader.GetFieldValue<Guid>(i));
                 } else {
                     throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown field type '{type}'"), this);
                 }

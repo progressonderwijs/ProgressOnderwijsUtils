@@ -1,14 +1,38 @@
 [
   {
     "ReadJsonTestId": 1,
-    "BooleanColumn": true,
-    "NumberColumn": 17,
-    "StringColumn": "iets"
+    "BitColumn": true,
+    "IntColumn": 2147483647,
+    "BigIntColumn": 9223372036854775807,
+    "DecimalColumn": 0.99,
+    "FloatColumn": 1.234,
+    "DateColumn": "2023-06-05T00:00:00",
+    "DateTimeColumn": "2023-06-05T16:02:48.077",
+    "DateTime2Column": "2023-06-05T14:02:48.078222",
+    "CharColumn": "x",
+    "VarCharColumn": "xyz",
+    "NCharColumn": "p",
+    "NVarCharColumn": "pqr",
+    "BinaryColumn": "\u0001\u0002\u0003\u0000\u0000\u0000\u0000\u0000",
+    "UniqueIdentifierColumn": "bce2307e-90e2-47c6-b09d-9d069f620962",
+    "RowVersionColumn": "\u0000\u0000\u0000\u0000\u0000\u0000\u0007\uFFFD"
   },
   {
     "ReadJsonTestId": 2,
-    "BooleanColumn": null,
-    "NumberColumn": null,
-    "StringColumn": null
+    "BitColumn": null,
+    "IntColumn": null,
+    "BigIntColumn": null,
+    "DecimalColumn": null,
+    "FloatColumn": null,
+    "DateColumn": null,
+    "DateTimeColumn": null,
+    "DateTime2Column": null,
+    "CharColumn": null,
+    "VarCharColumn": null,
+    "NCharColumn": null,
+    "NVarCharColumn": null,
+    "BinaryColumn": null,
+    "UniqueIdentifierColumn": null,
+    "RowVersionColumn": "\u0000\u0000\u0000\u0000\u0000\u0000\u0007\uFFFD"
   }
 ]

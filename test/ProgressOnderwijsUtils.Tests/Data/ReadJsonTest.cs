@@ -25,14 +25,13 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     public void Utf8JosonWriter_writes_invalid_json_upon_exception()
     {
         using var stream = new MemoryStream();
-        try
-        {
+        try {
             using var writer = new Utf8JsonWriter(stream);
             writer.WriteStartArray();
             writer.WriteStartObject();
             writer.WriteString("property", "testje");
             throw new NotSupportedException();
-        } catch (NotSupportedException) {}
+        } catch (NotSupportedException) { }
 
         var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(stream.ToArray()))).Catch<Exception>();
         PAssert.That(() => json.AssertError().Message.Contains("json", StringComparison.OrdinalIgnoreCase));
@@ -45,18 +44,60 @@ public sealed class ReadJsonTest : TransactedLocalConnection
             $@"
                 create table #ReadJsonTest (
                     ReadJsonTestId int not null
-                    , BooleanColumn bit null
-                    , NumberColumn int null
-                    , StringColumn nvarchar(32) null
+
+                    -- exact numerics
+                    , BitColumn bit null
+                    , IntColumn int null
+                    , BigIntColumn bigint null
+                    , DecimalColumn decimal(4,2) null
+
+                    -- Approximate numerics
+                    , FloatColumn float null
+
+                    -- Date and time
+                    , DateColumn date null
+                    , DateTimeColumn datetime null
+                    , DateTime2Column datetime2 null
+
+                    -- Character strings
+                    , CharColumn char null
+                    , VarCharColumn varchar(32) null
+
+                    -- Unicode character strings
+                    , NCharColumn nchar null
+                    , NVarCharColumn nvarchar(32) null
+
+                    -- Binary strings
+                    , BinaryColumn binary(8) null
+
+                    -- Other data types
+                    , UniqueIdentifierColumn uniqueidentifier null
+                    , RowVersionColumn rowversion not null
                 );
             "
         ).ExecuteNonQuery(Connection);
 
         SQL(
             $@"
-                insert into #ReadJsonTest values
-                    (1, {true}, 17, 'iets'),
-                    (2, null, null, null);
+                insert into #ReadJsonTest (
+                    ReadJsonTestId
+                    , BitColumn
+                    , IntColumn
+                    , BigIntColumn
+                    , DecimalColumn
+                    , FloatColumn
+                    , DateColumn
+                    , DateTimeColumn
+                    , DateTime2Column
+                    , CharColumn
+                    , VarCharColumn
+                    , NCharColumn
+                    , NVarCharColumn
+                    , BinaryColumn
+                    , UniqueIdentifierColumn
+                ) values
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {DateTime.Today}, {DateTime.Now}, {DateTime.UtcNow}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3 }}, {Guid.NewGuid()} )
+                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
