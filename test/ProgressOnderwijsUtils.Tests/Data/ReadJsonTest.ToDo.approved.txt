@@ -19,20 +19,6 @@
   },
   {
     "ReadJsonTestId": 2,
-    "BitColumn": null,
-    "IntColumn": null,
-    "BigIntColumn": null,
-    "DecimalColumn": null,
-    "FloatColumn": null,
-    "DateColumn": null,
-    "DateTimeColumn": null,
-    "DateTime2Column": null,
-    "CharColumn": null,
-    "VarCharColumn": null,
-    "NCharColumn": null,
-    "NVarCharColumn": null,
-    "BinaryColumn": null,
-    "UniqueIdentifierColumn": null,
     "RowVersionColumn": "\u0000\u0000\u0000\u0000\u0000\u0000\u0007\uFFFD"
   }
 ]
