@@ -174,7 +174,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         }
         using var disposeReader = reader;
         var table = reader.GetColumnSchema()
-            .Select(column => (column.ColumnName, column.DataType))
+            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType))
             .ToArray();
 
         using var writer = new Utf8JsonWriter(stream, new() { Indented = true, });
