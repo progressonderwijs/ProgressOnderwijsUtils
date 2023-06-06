@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>96.0.3</Version>
-    <PackageReleaseNotes>Crash when "short" strings exceed 2GB instead of thrashing the garbage collector indefinitely</PackageReleaseNotes>
+    <PackageReleaseNotes>Crash when "short" strings exceed 1GB instead of thrashing the garbage collector indefinitely</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
