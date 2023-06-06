@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>96.0.2</Version>
-    <PackageReleaseNotes>Add more details to failure exceptions when PInvoking win32 system functions</PackageReleaseNotes>
+    <Version>96.0.3</Version>
+    <PackageReleaseNotes>Added (minimal) readme file</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>

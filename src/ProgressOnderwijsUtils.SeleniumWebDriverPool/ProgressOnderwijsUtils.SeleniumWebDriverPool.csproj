@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>4.0.1</Version>
-        <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
+        <Version>4.0.2</Version>
+        <PackageReleaseNotes>Added (minimal) readme file</PackageReleaseNotes>
 
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
