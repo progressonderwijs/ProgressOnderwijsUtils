@@ -107,4 +107,53 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
     }
+
+    enum ReadJsonPocoTestId { }
+
+    sealed record ReadJsonPocoTest : IWrittenImplicitly
+    {
+        public ReadJsonPocoTestId ReadJsonPocoTestId { get; init; }
+        public bool BooleanColumn { get; init; }
+        public int? NumberColumn { get; init; }
+        public string? StringColumn { get; init; }
+    }
+
+    [Fact]
+    public void Deserialize_ReadJson_gives_the_same_result_as_ReadPocos()
+    {
+        SQL(
+            $@"
+                create table #ReadJsonPocoTest (
+                    ReadJsonPocoTestId int not null
+                    , BooleanColumn bit not null
+                    , NumberColumn int null
+                    , StringColumn nvarchar(32) null
+                );
+            "
+        ).ExecuteNonQuery(Connection);
+
+        SQL(
+            $@"
+                insert into #ReadJsonPocoTest (
+                    ReadJsonPocoTestId
+                    , BooleanColumn
+                    , NumberColumn
+                    , StringColumn
+                ) values
+                    (1, {true}, {17}, {"iets"})
+                    , (2, {false}, null, null);
+            "
+        ).ExecuteNonQuery(Connection);
+
+        var query = SQL($"select t.* from #ReadJsonPocoTest t");
+        var pocos = query.ReadPocos<ReadJsonPocoTest>(Connection);
+
+        var pipe = new Pipe();
+        query.ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        pipe.Writer.Complete();
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
+
+        PAssert.That(() => jsonPocos.SequenceEqual(pocos));
+    }
 }
