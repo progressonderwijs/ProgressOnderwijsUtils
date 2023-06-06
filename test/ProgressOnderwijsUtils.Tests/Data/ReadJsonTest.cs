@@ -9,31 +9,31 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public void Utf8JosonWriter_writes_invalid_json_when_aborted()
     {
-        using var stream = new MemoryStream();
-        {
-            using var writer = new Utf8JsonWriter(stream);
-            writer.WriteStartArray();
-            writer.WriteStartObject();
-            writer.WriteString("property", "testje");
-        }
+        var pipe = new Pipe();
+        using var writer = new Utf8JsonWriter(pipe.Writer);
+        writer.WriteStartArray();
+        writer.WriteStartObject();
+        writer.WriteString("property", "testje");
+        pipe.Writer.Complete();
 
-        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(stream.ToArray()))).Catch<Exception>();
+        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer))).Catch<Exception>();
         PAssert.That(() => json.AssertError().Message.Contains("json", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
     public void Utf8JosonWriter_writes_invalid_json_upon_exception()
     {
-        using var stream = new MemoryStream();
+        var pipe = new Pipe();
         try {
-            using var writer = new Utf8JsonWriter(stream);
+            using var writer = new Utf8JsonWriter(pipe.Writer);
             writer.WriteStartArray();
             writer.WriteStartObject();
             writer.WriteString("property", "testje");
             throw new NotSupportedException();
         } catch (NotSupportedException) { }
+        pipe.Writer.Complete();
 
-        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(stream.ToArray()))).Catch<Exception>();
+        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer))).Catch<Exception>();
         PAssert.That(() => json.AssertError().Message.Contains("json", StringComparison.OrdinalIgnoreCase));
     }
 
