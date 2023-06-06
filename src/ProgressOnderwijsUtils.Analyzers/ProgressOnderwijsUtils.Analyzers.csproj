@@ -7,6 +7,7 @@
     <Version>2.0.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   
   <ItemGroup>
@@ -17,6 +18,7 @@
   <ItemGroup>
     <!-- It puts the dll in the expected folder of the NuGet package to be recognized as a C# analyzer -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
