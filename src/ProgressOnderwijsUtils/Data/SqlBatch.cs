@@ -204,7 +204,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(Guid)) {
                         writer.WriteString(name, reader.GetGuid(i));
                     } else {
-                        throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown field type '{type}'"), this);
+                        throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown type '{type}' for column '{name}'"), this);
                     }
                 }
             }
