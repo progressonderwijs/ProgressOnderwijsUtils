@@ -1,5 +1,5 @@
+using System.Buffers;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils;
 
@@ -163,7 +163,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public JsonSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
-    public void Execute(SqlConnection conn, Stream stream, JsonWriterOptions options)
+    public void Execute(SqlConnection conn, IBufferWriter<byte> stream, JsonWriterOptions options)
     {
         using var cmd = this.ReusableCommand(conn);
         SqlDataReader? reader;

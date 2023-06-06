@@ -63,7 +63,7 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
 
-    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, Stream stream, JsonWriterOptions options)
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> stream, JsonWriterOptions options)
         => q.OfJson().Execute(sqlConn, stream, options);
 
     /// <summary>

@@ -1,6 +1,6 @@
+using System.IO.Pipelines;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
@@ -101,9 +101,10 @@ public sealed class ReadJsonTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
-        using var stream = new MemoryStream();
-        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, stream, new() { Indented = true, });
+        var pipe = new Pipe();
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        pipe.Writer.Complete();
 
-        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(stream.ToArray()));
+        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
     }
 }
