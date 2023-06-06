@@ -163,7 +163,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public JsonSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
-    public void Execute(SqlConnection conn, IBufferWriter<byte> stream, JsonWriterOptions options)
+    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options)
     {
         using var cmd = this.ReusableCommand(conn);
         SqlDataReader? reader;
@@ -177,7 +177,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
             .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType))
             .ToArray();
 
-        using var writer = new Utf8JsonWriter(stream, options);
+        using var writer = new Utf8JsonWriter(buffer, options);
         writer.WriteStartArray();
         while (reader.Read()) {
             writer.WriteStartObject();
