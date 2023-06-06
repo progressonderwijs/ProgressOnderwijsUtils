@@ -38,7 +38,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     }
 
     [Fact]
-    public void ToDo()
+    public void ReadJson_can_read_all_known_used_column_types_from_the_db()
     {
         SQL(
             $@"
