@@ -57,4 +57,19 @@ public sealed class ApprovalTestTest
             () => File.Delete(approval.ApprovalPath)
         );
     }
+
+    [Fact]
+    public void Approval_failure_gives_correct_diff()
+    {
+        var approval = ApprovalTest.CreateHere();
+        File.WriteAllText(approval.ApprovalPath, "Hello world!");
+        Utils.TryWithCleanup(
+            () => {
+                var changed = approval.IsChangedFrom("Hello astronauts ...", out var diff);
+                PAssert.That(() => changed);
+                PAssert.That(() => diff == "'world!' »» 'astron'");
+            },
+            () => File.Delete(approval.ApprovalPath)
+        );
+    }
 }
