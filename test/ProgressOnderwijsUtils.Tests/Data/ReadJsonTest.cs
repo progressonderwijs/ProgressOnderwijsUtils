@@ -115,6 +115,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public ReadJsonPocoTestId ReadJsonPocoTestId { get; init; }
         public bool BooleanColumn { get; init; }
         public int? NumberColumn { get; init; }
+        public long? LongColumn {get; init;}
+        public decimal? DecimalColumn { get; init; }
+        public double? DoubleColumn {get; init;}
         public string? StringColumn { get; init; }
         public DateTime? DateTimeColumn { get; init; }
         public byte[]? BinaryColumn { get; init; }
@@ -130,6 +133,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     ReadJsonPocoTestId int not null
                     , BooleanColumn bit not null
                     , NumberColumn int null
+                    , LongColumn bigint null
+                    , DecimalColumn decimal(10, 2) null
+                    , DoubleColumn float(53) null
                     , StringColumn nvarchar(32) null
                     , DateTimeColumn datetime2 null
                     , BinaryColumn varbinary(32) null
@@ -144,12 +150,15 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     ReadJsonPocoTestId
                     , BooleanColumn
                     , NumberColumn
+                    , LongColumn
+                    , DoubleColumn
+                    , DecimalColumn
                     , StringColumn
                     , DateTimeColumn
                     , BinaryColumn
                 ) values
-                    (1, {true}, {17}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 1, 2, 3, 4, 5, }})
-                    , (2, {false}, null, null, null, null);
+                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 1, 2, 3, 4, 5, }})
+                    , (2, {false}, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
