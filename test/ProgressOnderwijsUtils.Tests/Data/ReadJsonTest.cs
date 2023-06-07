@@ -116,6 +116,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public bool BooleanColumn { get; init; }
         public int? NumberColumn { get; init; }
         public string? StringColumn { get; init; }
+        public DateTime? DateTimeColumn { get; init; }
+        public byte[]? BinaryColumn { get; init; }
+        public required byte[] RowVersionColumn { get; init; }
     }
 
     [Fact]
@@ -128,6 +131,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BooleanColumn bit not null
                     , NumberColumn int null
                     , StringColumn nvarchar(32) null
+                    , DateTimeColumn datetime2 null
+                    , BinaryColumn varbinary(32) null
+                    , RowVersionColumn rowversion not null
                 );
             "
         ).ExecuteNonQuery(Connection);
@@ -139,9 +145,11 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BooleanColumn
                     , NumberColumn
                     , StringColumn
+                    , DateTimeColumn
+                    , BinaryColumn
                 ) values
-                    (1, {true}, {17}, {"iets"})
-                    , (2, {false}, null, null);
+                    (1, {true}, {17}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 1, 2, 3, 4, 5, }})
+                    , (2, {false}, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
@@ -154,6 +162,20 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
 
-        PAssert.That(() => jsonPocos.SequenceEqual(pocos));
+        PAssert.That(() => jsonPocos.Length == pocos.Length);
+        for (var i = 0; i < jsonPocos.Length; i++) {
+            var structered = jsonPocos[i] with {
+                BinaryColumn = pocos[i].BinaryColumn,
+                RowVersionColumn = pocos[i].RowVersionColumn,
+            };
+            PAssert.That(() => structered == pocos[i]);
+
+            PAssert.That(() => jsonPocos[i].RowVersionColumn.SequenceEqual(pocos[i].RowVersionColumn));
+            if (jsonPocos[i].BinaryColumn is { } buf) {
+                PAssert.That(() => buf.SequenceEqual(pocos[i].BinaryColumn.AssertNotNull()));
+            } else {
+                PAssert.That(() => pocos[i].BinaryColumn == null);
+            }
+        }
     }
 }

@@ -200,7 +200,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(string)) {
                         writer.WriteString(name, reader.GetString(i));
                     } else if (type == typeof(byte[])) {
-                        writer.WriteString(name, reader.GetFieldValue<byte[]>(i));
+                        writer.WriteBase64String(name, reader.GetFieldValue<byte[]>(i));
                     } else if (type == typeof(Guid)) {
                         writer.WriteString(name, reader.GetGuid(i));
                     } else {
