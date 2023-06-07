@@ -1,15 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>8.1.0</Version>
+    <Version>8.1.1</Version>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add Cross-Origin-Embedder-Policy and Cross-Origin-Opener-Policy to the default set of headers set.</Description>
-    <PackageReleaseNotes>Remove support for the deprecated Feature-Policy header (but retain Permissions-Policy)</PackageReleaseNotes>
+    <PackageReleaseNotes>Added (minimal) readme file</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFramework>net7.0</TargetFramework>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
