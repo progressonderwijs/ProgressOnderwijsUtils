@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>96.0.3</Version>
+    <Version>96.0.4</Version>
     <PackageReleaseNotes>Added (minimal) readme file</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
