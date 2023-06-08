@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>96.1.0</Version>
+    <Version>97.1.0</Version>
     <PackageReleaseNotes>Added ParameterizedSql.ReadJson() method to read any SQL select statement as a JSON-array</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>

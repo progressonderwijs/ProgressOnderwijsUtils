@@ -29,19 +29,34 @@ public sealed class ApprovalTest
 
     public void AssertUnchangedAndSave(string text)
     {
-        if (UpdateIfChangedFrom(text)) {
-            throw new($"Approval changed: {Path.GetFileName(ApprovalPath)}");
+        if (UpdateIfChangedFrom(text, out var diff)) {
+            throw new($"Approval {Path.GetFileName(ApprovalPath)} changed: {diff}");
         }
     }
 
     [Pure]
-    public bool IsChangedFrom(string text)
-        => !File.Exists(ApprovalPath) || File.ReadAllText(ApprovalPath) != text;
+    public bool IsChangedFrom(string text, out string diff)
+    {
+        if (File.Exists(ApprovalPath)) {
+            var approved = File.ReadAllText(ApprovalPath);
+            if (approved != text) {
+                var x = approved.Zip(text).SkipWhile(c => c.First == c.Second).Take(50).ToArray();
+                diff = $"'{new(x.ArraySelect(d => d.First))}' »» '{new(x.ArraySelect(d => d.Second))}'";
+                return true;
+            } else {
+                diff = "";
+                return false;
+            }
+        } else {
+            diff = "was not yet approved";
+            return true;
+        }
+    }
 
     [MustUseReturnValue]
-    public bool UpdateIfChangedFrom(string text)
+    public bool UpdateIfChangedFrom(string text, out string diff)
     {
-        var isChangedFrom = IsChangedFrom(text);
+        var isChangedFrom = IsChangedFrom(text, out diff);
         if (isChangedFrom) {
             File.WriteAllText(ApprovalPath, text);
         }
