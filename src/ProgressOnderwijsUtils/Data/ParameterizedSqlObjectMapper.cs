@@ -1,5 +1,7 @@
 using System.Buffers;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -26,6 +28,9 @@ public static class ParameterizedSqlObjectMapper
     public static PocosSqlCommand<T> OfPocos<T>(this ParameterizedSql sql)
         where T : IWrittenImplicitly
         => new(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+
+    public static JsonSqlCommand OfJson(this ParameterizedSql sql)
+        => new(sql, CommandTimeout.DeferToConnectionDefault);
 
     public static TuplesSqlCommand<T> OfTuples<T>(this ParameterizedSql sql)
         where T : struct, IStructuralEquatable, ITuple
@@ -57,6 +62,9 @@ public static class ParameterizedSqlObjectMapper
     public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, SqlConnection sqlConn)
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
+
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> buffer, JsonWriterOptions options)
+        => q.OfJson().Execute(sqlConn, buffer, options);
 
     /// <summary>
     /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order

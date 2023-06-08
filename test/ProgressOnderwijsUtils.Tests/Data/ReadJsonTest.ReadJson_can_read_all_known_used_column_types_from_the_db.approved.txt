@@ -1,0 +1,24 @@
+[
+  {
+    "ReadJsonTestId": 1,
+    "BitColumn": true,
+    "IntColumn": 2147483647,
+    "BigIntColumn": 9223372036854775807,
+    "DecimalColumn": 0.99,
+    "FloatColumn": 1.234,
+    "DateColumn": "2008-04-01T00:00:00",
+    "DateTimeColumn": "2023-05-06T16:13:55",
+    "DateTime2Column": "0001-02-03T04:05:06.007",
+    "CharColumn": "x",
+    "VarCharColumn": "xyz",
+    "NCharColumn": "p",
+    "NVarCharColumn": "pqr",
+    "BinaryColumn": "AQIDAAAAAAA=",
+    "UniqueIdentifierColumn": "82dbee37-3af8-46f2-a403-ae0a1950bc6e",
+    "RowVersionColumn": "AAAAAAAAB9M="
+  },
+  {
+    "ReadJsonTestId": 2,
+    "RowVersionColumn": "AAAAAAAAB9Q="
+  }
+]

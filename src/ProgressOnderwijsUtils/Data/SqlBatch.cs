@@ -1,3 +1,6 @@
+using System.Buffers;
+using System.Text.Json;
+
 namespace ProgressOnderwijsUtils;
 
 static class ErrorMessageHelpers
@@ -152,6 +155,62 @@ public readonly record struct PocosSqlCommand<
             }
         }
         return rows;
+    }
+}
+
+public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<JsonSqlCommand>
+{
+    public JsonSqlCommand WithTimeout(CommandTimeout timeout)
+        => this with { CommandTimeout = timeout, };
+
+    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        var table = reader.GetColumnSchema()
+            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType))
+            .ToArray();
+
+        using var writer = new Utf8JsonWriter(buffer, options);
+        writer.WriteStartArray();
+        while (reader.Read()) {
+            writer.WriteStartObject();
+            for (var i = 0; i < table.Length; i++) {
+                if (!reader.IsDBNull(i)) {
+                    var name = table[i].ColumnName;
+                    var type = table[i].DataType;
+                    if (type == typeof(bool)) {
+                        writer.WriteBoolean(name, reader.GetBoolean(i));
+                    } else if (type == typeof(int)) {
+                        writer.WriteNumber(name, reader.GetInt32(i));
+                    } else if (type == typeof(long)) {
+                        writer.WriteNumber(name, reader.GetInt64(i));
+                    } else if (type == typeof(decimal)) {
+                        writer.WriteNumber(name, reader.GetDecimal(i));
+                    } else if (type == typeof(double)) {
+                        writer.WriteNumber(name, reader.GetDouble(i));
+                    } else if (type == typeof(DateTime)) {
+                        writer.WriteString(name, reader.GetDateTime(i));
+                    } else if (type == typeof(string)) {
+                        writer.WriteString(name, reader.GetString(i));
+                    } else if (type == typeof(byte[])) {
+                        writer.WriteBase64String(name, reader.GetFieldValue<byte[]>(i));
+                    } else if (type == typeof(Guid)) {
+                        writer.WriteString(name, reader.GetGuid(i));
+                    } else {
+                        throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown type '{type}' for property '{name}'"), this);
+                    }
+                }
+            }
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
     }
 }
 
