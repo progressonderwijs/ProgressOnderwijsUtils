@@ -95,10 +95,10 @@ public sealed class HtmlGenerator
                                         }
                                 )
                             ),
-                        attributes = elGroup.SelectMany(el => el.attributes).Distinct().ToArray(),
-                        categories = elGroup.SelectMany(el => el.categories).Distinct().ToArray(),
-                        parents = elGroup.SelectMany(el => el.parents).Distinct().ToArray(),
-                        children = elGroup.SelectMany(el => el.children).Distinct().ToArray(),
+                        attributes = elGroup.SelectMany(el => el.attributes).ToDistinctArray(),
+                        categories = elGroup.SelectMany(el => el.categories).ToDistinctArray(),
+                        parents = elGroup.SelectMany(el => el.parents).ToDistinctArray(),
+                        children = elGroup.SelectMany(el => el.children).ToDistinctArray(),
                     }
             ).ToArray();
 
