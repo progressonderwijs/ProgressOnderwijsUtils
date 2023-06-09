@@ -103,110 +103,128 @@ public sealed class HtmlDslGenerator
 
         var globalAttributeExtensionMethods = globalAttributes
             .Select(
-                attrName => $@"{(attrName == "class" ? @"
+                attrName => $"""
+                    {(attrName == "class" ? @"
 				[Obsolete]" : "")}
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-            where THtmlTag : struct, IHtmlElement<THtmlTag>
-            => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
+                            public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+                                where THtmlTag : struct, IHtmlElement<THtmlTag>
+                                => htmlTagExpr.Attribute("{attrName}", attrValue);
+                    """
             );
 
         var specificAttributes = elements.SelectMany(el => el.attributes).ToDistinctArray();
 
         var elAttrInterfaces = specificAttributes
             .Select(
-                attrName => $@"
-        public interface IHasAttr_{toClassName(attrName)} {{ }}"
+                attrName => $$"""
+                    
+                            public interface IHasAttr_{{toClassName(attrName)}} { }
+                    """
             );
         var elAttrExtensionMethods = specificAttributes
             .Select(
-                attrName => $@"
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-            where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
-            => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
+                attrName => $"""
+                    
+                            public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+                                where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
+                                => htmlTagExpr.Attribute("{attrName}", attrValue);
+                    """
             );
 
-        var attrNamesClass = $@"
-    namespace AttributeNameInterfaces
-    {{{elAttrInterfaces.JoinStrings("")}
-    }}";
+        var attrNamesClass = $$"""
+            
+                namespace AttributeNameInterfaces
+                {{{elAttrInterfaces.JoinStrings("")}}
+                }
+            """;
 
-        var attrExtensionMethodsClass = $@"
-    public static class AttributeConstructionMethods
-    {{{globalAttributeExtensionMethods.JoinStrings("")}{elAttrExtensionMethods.JoinStrings("")}
-    }}";
+        var attrExtensionMethodsClass = $$"""
+            
+                public static class AttributeConstructionMethods
+                {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
+                }
+            """;
 
         var elTagNameClasses = elements
             .Select(
                 el =>
                     voidElements.Contains(el.elementName)
-                        ? $@"
-        public struct {el.csUpperName} : IHtmlElement<{el.csUpperName}>{
-            el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")
-        }
-        {{
-            public string TagName => ""{el.elementName}"";
-            string IHtmlElement.TagStart => ""<{el.elementName}"";
-            string IHtmlElement.EndTag => """";
-            HtmlAttributes attrs;
-            {el.csUpperName} IHtmlElement<{el.csUpperName}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes }};
-            HtmlAttributes IHtmlElement.Attributes => attrs;
-            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-            public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
-            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-        }}"
-                        : $@"
-        public struct {el.csUpperName} : IHtmlElementAllowingContent<{el.csUpperName}>{
-            el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")
-        }
-        {{
-            public string TagName => ""{el.elementName}"";
-            string IHtmlElement.TagStart => ""<{el.elementName}"";
-            string IHtmlElement.EndTag => ""</{el.elementName}>"";
-            HtmlAttributes attrs;
-            {el.csUpperName} IHtmlElement<{el.csUpperName}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
-            HtmlAttributes IHtmlElement.Attributes => attrs;
-            HtmlFragment children;
-            {el.csUpperName} IHtmlElementAllowingContent<{el.csUpperName}>.ReplaceContentWith(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
-            HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
-            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-            public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
-            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-        }}"
+                        ? $$"""
+                            
+                                    public struct {{el.csUpperName}} : IHtmlElement<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                                    {
+                                        public string TagName => "{{el.elementName}}";
+                                        string IHtmlElement.TagStart => "<{{el.elementName}}";
+                                        string IHtmlElement.EndTag => "";
+                                        HtmlAttributes attrs;
+                                        {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
+                                        HtmlAttributes IHtmlElement.Attributes => attrs;
+                                        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
+                                        [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                                        public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                        public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                                        public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                                    }
+                            """
+                        : $$"""
+                            
+                                    public struct {{el.csUpperName}} : IHtmlElementAllowingContent<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                                    {
+                                        public string TagName => "{{el.elementName}}";
+                                        string IHtmlElement.TagStart => "<{{el.elementName}}";
+                                        string IHtmlElement.EndTag => "</{{el.elementName}}>";
+                                        HtmlAttributes attrs;
+                                        {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
+                                        HtmlAttributes IHtmlElement.Attributes => attrs;
+                                        HtmlFragment children;
+                                        {{el.csUpperName}} IHtmlElementAllowingContent<{{el.csUpperName}}>.ReplaceContentWith(HtmlFragment replacementContents) => new {{el.csUpperName}} { attrs = attrs, children = replacementContents };
+                                        HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+                                        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
+                                        [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                                        public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                        public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                                        public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                                    }
+                            """
             );
 
-        var tagNamesClass = $@"
-    public static class HtmlTagKinds
-    {{{elTagNameClasses.JoinStrings("")}
-    }}";
+        var tagNamesClass = $$"""
+            
+                public static class HtmlTagKinds
+                {{{elTagNameClasses.JoinStrings("")}}
+                }
+            """;
 
         var elFields = elements
             .Select(
-                el => $@"
-
-{Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "        ///")}
-        public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();"
+                el => $"""
+                    
+                    
+                    {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "        ///")}
+                            public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();
+                    """
             );
-        var tagsClass = $@"
-    public static class Tags
-    {{{elFields.JoinStrings("")}
-    }}";
+        var tagsClass = $$"""
+            
+                public static class Tags
+                {{{elFields.JoinStrings("")}}
+                }
+            """;
 
         output.WriteLine(
-            $@"#nullable enable
-using JetBrains.Annotations;
-
-namespace ProgressOnderwijsUtils.Html
-{{
-    using AttributeNameInterfaces;
-{tagNamesClass}
-{tagsClass}
-{attrNamesClass}
-{attrExtensionMethodsClass}
-}}"
+            $$"""
+                #nullable enable
+                using JetBrains.Annotations;
+                
+                namespace ProgressOnderwijsUtils.Html
+                {
+                    using AttributeNameInterfaces;
+                {{tagNamesClass}}
+                {{tagsClass}}
+                {{attrNamesClass}}
+                {{attrExtensionMethodsClass}}
+                }
+                """
         );
     }
 }
