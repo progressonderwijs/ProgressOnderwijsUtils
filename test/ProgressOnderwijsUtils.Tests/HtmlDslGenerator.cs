@@ -1,5 +1,4 @@
 #nullable disable
-// ReSharper disable UseJoinStringsExtension
 // ReSharper disable PossibleMultipleEnumeration
 #pragma warning disable IDE0063
 using System.Net.Http;
@@ -130,12 +129,12 @@ public sealed class HtmlGenerator
 
         var attrNamesClass = $@"
     namespace AttributeNameInterfaces
-    {{{string.Join("", elAttrInterfaces)}
+    {{{elAttrInterfaces.JoinStrings("")}
     }}";
 
         var attrExtensionMethodsClass = $@"
     public static class AttributeConstructionMethods
-    {{{string.Join("", globalAttributeExtensionMethods)}{string.Join("", elAttrExtensionMethods)}
+    {{{globalAttributeExtensionMethods.JoinStrings("")}{elAttrExtensionMethods.JoinStrings("")}
     }}";
 
         var elTagNameClasses = elements
@@ -144,7 +143,7 @@ public sealed class HtmlGenerator
                     voidElements.Contains(el.elementName)
                         ? $@"
         public struct {el.csUpperName} : IHtmlElement<{el.csUpperName}>{
-            string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
+            el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")
         }
         {{
             public string TagName => ""{el.elementName}"";
@@ -161,7 +160,7 @@ public sealed class HtmlGenerator
         }}"
                         : $@"
         public struct {el.csUpperName} : IHtmlElementAllowingContent<{el.csUpperName}>{
-            string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
+            el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")
         }
         {{
             public string TagName => ""{el.elementName}"";
@@ -183,7 +182,7 @@ public sealed class HtmlGenerator
 
         var tagNamesClass = $@"
     public static class HtmlTagKinds
-    {{{string.Join("", elTagNameClasses)}
+    {{{elTagNameClasses.JoinStrings("")}
     }}";
 
         var elFields = elements
@@ -195,7 +194,7 @@ public sealed class HtmlGenerator
             );
         var tagsClass = $@"
     public static class Tags
-    {{{string.Join("", elFields)}
+    {{{elFields.JoinStrings("")}
     }}";
 
         output.WriteLine(
