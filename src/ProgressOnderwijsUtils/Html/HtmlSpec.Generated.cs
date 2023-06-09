@@ -236,7 +236,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BUTTON : IHtmlElementAllowingContent<BUTTON>, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_type, IHasAttr_value
+        public struct BUTTON : IHtmlElementAllowingContent<BUTTON>, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_type, IHasAttr_value
         {
             public string TagName => "button";
             string IHtmlElement.TagStart => "<button";
@@ -856,7 +856,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_decoding, IHasAttr_loading
+        public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_decoding, IHasAttr_loading, IHasAttr_fetchpriority
         {
             public string TagName => "img";
             string IHtmlElement.TagStart => "<img";
@@ -870,7 +870,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
+        public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
         {
             public string TagName => "input";
             string IHtmlElement.TagStart => "<input";
@@ -969,7 +969,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LINK : IHtmlElement<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_imagesrcset, IHasAttr_imagesizes, IHasAttr_referrerpolicy, IHasAttr_integrity, IHasAttr_blocking, IHasAttr_color, IHasAttr_disabled
+        public struct LINK : IHtmlElement<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_imagesrcset, IHasAttr_imagesizes, IHasAttr_referrerpolicy, IHasAttr_integrity, IHasAttr_blocking, IHasAttr_color, IHasAttr_disabled, IHasAttr_fetchpriority
         {
             public string TagName => "link";
             string IHtmlElement.TagStart => "<link";
@@ -1371,7 +1371,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy, IHasAttr_blocking
+        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_nomodule, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy, IHasAttr_blocking, IHasAttr_fetchpriority
         {
             public string TagName => "script";
             string IHtmlElement.TagStart => "<script";
@@ -1387,6 +1387,23 @@ namespace ProgressOnderwijsUtils.Html
             public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
             public static HtmlFragment operator +(SCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, SCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+        }
+        public struct SEARCH : IHtmlElementAllowingContent<SEARCH>
+        {
+            public string TagName => "search";
+            string IHtmlElement.TagStart => "<search";
+            string IHtmlElement.EndTag => "</search>";
+            HtmlAttributes attrs;
+            SEARCH IHtmlElement<SEARCH>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SEARCH { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SEARCH IHtmlElementAllowingContent<SEARCH>.ReplaceContentWith(HtmlFragment replacementContents) => new SEARCH { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+            public static implicit operator HtmlFragment(SEARCH tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SEARCH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SEARCH tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
         public struct SECTION : IHtmlElementAllowingContent<SECTION>
         {
@@ -1640,7 +1657,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TEXTAREA : IHtmlElementAllowingContent<TEXTAREA>, IHasAttr_cols, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
+        public struct TEXTAREA : IHtmlElementAllowingContent<TEXTAREA>, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
         {
             public string TagName => "textarea";
             string IHtmlElement.TagStart => "<textarea";
@@ -1884,7 +1901,7 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Keywords. See: <a href="https://html.spec.whatwg.org/#the-b-element">https://html.spec.whatwg.org/#the-b-element</a><br /></summary>
         public static readonly HtmlTagKinds.B _b = new HtmlTagKinds.B();
 
-        ///<summary>Base URL and default target browsing context for hyperlinks and forms. See: <a href="https://html.spec.whatwg.org/#the-base-element">https://html.spec.whatwg.org/#the-base-element</a><br /></summary>
+        ///<summary>Base URL and default target navigable for hyperlinks and forms. See: <a href="https://html.spec.whatwg.org/#the-base-element">https://html.spec.whatwg.org/#the-base-element</a><br /></summary>
         public static readonly HtmlTagKinds.BASE _base = new HtmlTagKinds.BASE();
 
         ///<summary>Text directionality isolation. See: <a href="https://html.spec.whatwg.org/#the-bdi-element">https://html.spec.whatwg.org/#the-bdi-element</a><br /></summary>
@@ -2010,7 +2027,7 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Alternate voice. See: <a href="https://html.spec.whatwg.org/#the-i-element">https://html.spec.whatwg.org/#the-i-element</a><br /></summary>
         public static readonly HtmlTagKinds.I _i = new HtmlTagKinds.I();
 
-        ///<summary>Nested browsing context. See: <a href="https://html.spec.whatwg.org/#the-iframe-element">https://html.spec.whatwg.org/#the-iframe-element</a><br /></summary>
+        ///<summary>Child navigable. See: <a href="https://html.spec.whatwg.org/#the-iframe-element">https://html.spec.whatwg.org/#the-iframe-element</a><br /></summary>
         public static readonly HtmlTagKinds.IFRAME _iframe = new HtmlTagKinds.IFRAME();
 
         ///<summary>Image. See: <a href="https://html.spec.whatwg.org/#the-img-element">https://html.spec.whatwg.org/#the-img-element</a><br /></summary>
@@ -2061,7 +2078,7 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Fallback content for script. See: <a href="https://html.spec.whatwg.org/#the-noscript-element">https://html.spec.whatwg.org/#the-noscript-element</a><br /></summary>
         public static readonly HtmlTagKinds.NOSCRIPT _noscript = new HtmlTagKinds.NOSCRIPT();
 
-        ///<summary>Image, nested browsing context, or plugin. See: <a href="https://html.spec.whatwg.org/#the-object-element">https://html.spec.whatwg.org/#the-object-element</a><br /></summary>
+        ///<summary>Image, child navigable, or plugin. See: <a href="https://html.spec.whatwg.org/#the-object-element">https://html.spec.whatwg.org/#the-object-element</a><br /></summary>
         public static readonly HtmlTagKinds.OBJECT _object = new HtmlTagKinds.OBJECT();
 
         ///<summary>Ordered list. See: <a href="https://html.spec.whatwg.org/#the-ol-element">https://html.spec.whatwg.org/#the-ol-element</a><br /></summary>
@@ -2108,6 +2125,9 @@ namespace ProgressOnderwijsUtils.Html
 
         ///<summary>Embedded script. See: <a href="https://html.spec.whatwg.org/#the-script-element">https://html.spec.whatwg.org/#the-script-element</a><br /></summary>
         public static readonly HtmlTagKinds.SCRIPT _script = new HtmlTagKinds.SCRIPT();
+
+        ///<summary>Container for search controls. See: <a href="https://html.spec.whatwg.org/#the-search-element">https://html.spec.whatwg.org/#the-search-element</a><br /></summary>
+        public static readonly HtmlTagKinds.SEARCH _search = new HtmlTagKinds.SEARCH();
 
         ///<summary>Generic document or application section. See: <a href="https://html.spec.whatwg.org/#the-section-element">https://html.spec.whatwg.org/#the-section-element</a><br /></summary>
         public static readonly HtmlTagKinds.SECTION _section = new HtmlTagKinds.SECTION();
@@ -2239,6 +2259,8 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_formnovalidate { }
         public interface IHasAttr_formtarget { }
         public interface IHasAttr_name { }
+        public interface IHasAttr_popovertarget { }
+        public interface IHasAttr_popovertargetaction { }
         public interface IHasAttr_value { }
         public interface IHasAttr_width { }
         public interface IHasAttr_height { }
@@ -2262,6 +2284,7 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_usemap { }
         public interface IHasAttr_ismap { }
         public interface IHasAttr_decoding { }
+        public interface IHasAttr_fetchpriority { }
         public interface IHasAttr_accept { }
         public interface IHasAttr_checked { }
         public interface IHasAttr_dirname { }
@@ -2296,12 +2319,12 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_start { }
         public interface IHasAttr_label { }
         public interface IHasAttr_selected { }
+        public interface IHasAttr_nomodule { }
         public interface IHasAttr_async { }
         public interface IHasAttr_defer { }
         public interface IHasAttr_colspan { }
         public interface IHasAttr_rowspan { }
         public interface IHasAttr_headers { }
-        public interface IHasAttr_cols { }
         public interface IHasAttr_rows { }
         public interface IHasAttr_wrap { }
         public interface IHasAttr_scope { }
@@ -2324,7 +2347,7 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("autofocus", attrValue);
-        [Obsolete]
+				[Obsolete]
         public static THtmlTag _class<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("class", attrValue);
@@ -2376,6 +2399,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _nonce<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("nonce", attrValue);
+        public static THtmlTag _popover<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("popover", attrValue);
         public static THtmlTag _slot<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("slot", attrValue);
@@ -2523,6 +2549,12 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _name<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_name, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("name", attrValue);
+        public static THtmlTag _popovertarget<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHasAttr_popovertarget, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("popovertarget", attrValue);
+        public static THtmlTag _popovertargetaction<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHasAttr_popovertargetaction, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("popovertargetaction", attrValue);
         public static THtmlTag _value<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_value, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("value", attrValue);
@@ -2592,6 +2624,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _decoding<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_decoding, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("decoding", attrValue);
+        public static THtmlTag _fetchpriority<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHasAttr_fetchpriority, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("fetchpriority", attrValue);
         public static THtmlTag _accept<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_accept, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("accept", attrValue);
@@ -2694,6 +2729,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _selected<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_selected, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("selected", attrValue);
+        public static THtmlTag _nomodule<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+            where THtmlTag : struct, IHasAttr_nomodule, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("nomodule", attrValue);
         public static THtmlTag _async<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_async, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("async", attrValue);
@@ -2709,9 +2747,6 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _headers<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_headers, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("headers", attrValue);
-        public static THtmlTag _cols<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-            where THtmlTag : struct, IHasAttr_cols, IHtmlElement<THtmlTag>
-            => htmlTagExpr.Attribute("cols", attrValue);
         public static THtmlTag _rows<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_rows, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("rows", attrValue);
