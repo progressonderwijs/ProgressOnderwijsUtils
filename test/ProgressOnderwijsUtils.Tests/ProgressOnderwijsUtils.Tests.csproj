@@ -8,6 +8,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
