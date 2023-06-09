@@ -214,7 +214,6 @@ public sealed class HtmlDslGenerator
         output.WriteLine(
             $$"""
                 #nullable enable
-                using JetBrains.Annotations;
                 using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
                 namespace ProgressOnderwijsUtils.Html;
