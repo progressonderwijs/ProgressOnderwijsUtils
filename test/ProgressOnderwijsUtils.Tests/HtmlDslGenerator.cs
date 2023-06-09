@@ -1,5 +1,4 @@
 #nullable disable
-// ReSharper disable PossibleMultipleEnumeration
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
@@ -111,7 +110,7 @@ public sealed class HtmlGenerator
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
             );
 
-        var specificAttributes = elements.SelectMany(el => el.attributes).Distinct();
+        var specificAttributes = elements.SelectMany(el => el.attributes).ToDistinctArray();
 
         var elAttrInterfaces = specificAttributes
             .Select(
