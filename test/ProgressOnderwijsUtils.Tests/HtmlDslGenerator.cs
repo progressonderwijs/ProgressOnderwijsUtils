@@ -14,9 +14,13 @@ public sealed class HtmlDslGenerator
     public HtmlDslGenerator(ITestOutputHelper output)
         => this.output = output;
 
-    [Fact(Skip = "For manual regeneration; won't work on the CI")]
+    [SkippableFact]
     public async Task RegenerateHtmlTagCSharp()
     {
+        if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
+            throw new SkipException("For manual regeneration; won't work on the CI");
+        }
+
         var specUri = new Uri("https://html.spec.whatwg.org/");
 
         var content = await client.GetStringAsync(specUri);
