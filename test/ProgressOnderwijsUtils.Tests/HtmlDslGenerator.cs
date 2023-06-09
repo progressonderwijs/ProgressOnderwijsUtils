@@ -1,5 +1,4 @@
 #nullable disable
-// ReSharper disable StringStartsWithIsCultureSpecific
 // ReSharper disable UseJoinStringsExtension
 // ReSharper disable PossibleMultipleEnumeration
 #pragma warning disable IDE0063
@@ -34,7 +33,7 @@ public sealed class HtmlGenerator
         var attributesColumnIndex = Array.IndexOf(columns, "Attributes");
         var descriptionColumnIndex = Array.IndexOf(columns, "Description");
         var categoriesColumnIndex = Array.IndexOf(columns, "Categories");
-        var parentsColumnIndex = columns.TakeWhile(s => !s.StartsWith("Parents")).Count();
+        var parentsColumnIndex = columns.TakeWhile(s => !s.StartsWith("Parents", StringComparison.Ordinal)).Count();
         var childrenColumnIndex = Array.IndexOf(columns, "Children");
 
         PAssert.That(() => 0 <= elementNameColumnIndex && elementNameColumnIndex < attributesColumnIndex);
