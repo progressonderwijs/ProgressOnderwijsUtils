@@ -10,6 +10,7 @@ public sealed class HtmlDslGenerator
 {
     static readonly HttpClient client = new();
     readonly ITestOutputHelper output;
+
     public HtmlDslGenerator(ITestOutputHelper output)
         => this.output = output;
 
