@@ -1,4 +1,3 @@
-#nullable disable
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
@@ -23,7 +22,7 @@ public sealed class HtmlDslGenerator
         var content = await client.GetStringAsync(specUri);
         var document = new HtmlParser().ParseDocument(content);
 
-        var voidElements = document.GetElementById("void-elements").ParentElement.NextElementSibling.TextContent.Split(',').Select(s => s.Trim()).ToArray();
+        var voidElements = (document.GetElementById("void-elements")?.ParentElement?.NextElementSibling?.TextContent.Split(',').Select(s => s.Trim()).ToArray()).AssertNotNull();
         var tableOfElements = document.QuerySelectorAll("h3#elements-3 + p + table").Single();
 
         var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el => el.TextContent.Trim()).ToArray();
@@ -41,8 +40,8 @@ public sealed class HtmlDslGenerator
 
         var globalAttributes =
             tableOfAttributes.QuerySelectorAll("tbody tr")
-                .Where(tr => tr.QuerySelector("td").TextContent.Trim() == "HTML elements")
-                .Select(tr => tr.QuerySelector("th").TextContent.Trim())
+                .Where(tr => tr.QuerySelector("td")?.TextContent.Trim() == "HTML elements")
+                .Select(tr => tr.QuerySelector("th").AssertNotNull().TextContent.Trim())
                 .ToArray();
 
         string toClassName(string s)
