@@ -1,7 +1,6 @@
 #nullable disable
 // ReSharper disable StringStartsWithIsCultureSpecific
 // ReSharper disable UseJoinStringsExtension
-// ReSharper disable ConvertToUsingDeclaration
 // ReSharper disable PossibleMultipleEnumeration
 #pragma warning disable IDE0063
 using System.Net.Http;
