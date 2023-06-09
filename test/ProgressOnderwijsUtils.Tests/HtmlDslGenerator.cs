@@ -1,6 +1,5 @@
 #nullable disable
 // ReSharper disable PossibleMultipleEnumeration
-#pragma warning disable IDE0063
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
