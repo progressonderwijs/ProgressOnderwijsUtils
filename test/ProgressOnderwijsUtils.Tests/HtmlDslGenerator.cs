@@ -9,6 +9,7 @@ namespace ProgressOnderwijsUtils.Tests;
 public sealed class HtmlDslGenerator
 {
     static readonly HttpClient client = new();
+    static readonly SourceLocation here = SourceLocation.Here();
     readonly ITestOutputHelper output;
 
     public HtmlDslGenerator(ITestOutputHelper output)
@@ -211,8 +212,7 @@ public sealed class HtmlDslGenerator
             }
             """;
 
-        output.WriteLine(
-            $$"""
+        var generatedCSharpContent = $$"""
                 #nullable enable
                 using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
@@ -221,7 +221,16 @@ public sealed class HtmlDslGenerator
                 {{tagsClass}}
                 {{attrNamesClass}}
                 {{attrExtensionMethodsClass}}
-                """
-        );
+
+                """;
+
+        output.WriteLine(generatedCSharpContent);
+
+        var target = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/HtmlSpec.Generated.cs");
+        if (!target.RefersToExistingLocalFile()) {
+            throw new($"Expected {target.LocalPath} to already exist; has the repo-layout changed?");
+        }
+
+        ApprovalTest.CreateForApprovedPath(target.LocalPath).AssertUnchangedAndSave(generatedCSharpContent);
     }
 }
