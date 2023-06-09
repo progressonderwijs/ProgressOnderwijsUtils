@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class HtmlGenerator
 {
-    static readonly HttpClient client = new HttpClient();
+    static readonly HttpClient client = new();
     readonly ITestOutputHelper output;
     public HtmlGenerator(ITestOutputHelper output)
         => this.output = output;
