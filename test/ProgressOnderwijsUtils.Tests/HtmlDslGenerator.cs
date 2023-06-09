@@ -6,11 +6,11 @@ using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils.Tests;
 
-public sealed class HtmlGenerator
+public sealed class HtmlDslGenerator
 {
     static readonly HttpClient client = new();
     readonly ITestOutputHelper output;
-    public HtmlGenerator(ITestOutputHelper output)
+    public HtmlDslGenerator(ITestOutputHelper output)
         => this.output = output;
 
     [Fact]
