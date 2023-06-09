@@ -14,7 +14,7 @@ public sealed class HtmlDslGenerator
     public HtmlDslGenerator(ITestOutputHelper output)
         => this.output = output;
 
-    [Fact]
+    [Fact(Skip = "For manual regeneration; won't work on the CI")]
     public async Task RegenerateHtmlTagCSharp()
     {
         var specUri = new Uri("https://html.spec.whatwg.org/");
