@@ -133,7 +133,7 @@ public sealed class HtmlDslGenerator
 
         var attrNamesClass = $$"""
             
-                namespace AttributeNameInterfaces
+                public static class AttributeNameInterfaces
                 {{{elAttrInterfaces.JoinStrings("")}}
                 }
             """;
@@ -215,15 +215,13 @@ public sealed class HtmlDslGenerator
             $$"""
                 #nullable enable
                 using JetBrains.Annotations;
-                
-                namespace ProgressOnderwijsUtils.Html
-                {
-                    using AttributeNameInterfaces;
+                using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+                namespace ProgressOnderwijsUtils.Html;
                 {{tagNamesClass}}
                 {{tagsClass}}
                 {{attrNamesClass}}
                 {{attrExtensionMethodsClass}}
-                }
                 """
         );
     }

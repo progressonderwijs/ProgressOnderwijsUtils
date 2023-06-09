@@ -1,9 +1,8 @@
 #nullable enable
 using JetBrains.Annotations;
+using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-namespace ProgressOnderwijsUtils.Html
-{
-    using AttributeNameInterfaces;
+namespace ProgressOnderwijsUtils.Html;
 
     public static class HtmlTagKinds
     {
@@ -2214,7 +2213,7 @@ namespace ProgressOnderwijsUtils.Html
         public static readonly HtmlTagKinds.WBR _wbr = new HtmlTagKinds.WBR();
     }
 
-    namespace AttributeNameInterfaces
+    public static class AttributeNameInterfaces
     {
         public interface IHasAttr_href { }
         public interface IHasAttr_target { }
@@ -2775,4 +2774,3 @@ namespace ProgressOnderwijsUtils.Html
             where THtmlTag : struct, IHasAttr_playsinline, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("playsinline", attrValue);
     }
-}
