@@ -115,9 +115,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public ReadJsonPocoTestId ReadJsonPocoTestId { get; init; }
         public bool BooleanColumn { get; init; }
         public int? NumberColumn { get; init; }
-        public long? LongColumn {get; init;}
+        public long? LongColumn { get; init; }
         public decimal? DecimalColumn { get; init; }
-        public double? DoubleColumn {get; init;}
+        public double? DoubleColumn { get; init; }
         public string? StringColumn { get; init; }
         public DateTime? DateTimeColumn { get; init; }
         public byte[]? BinaryColumn { get; init; }
