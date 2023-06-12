@@ -3,7 +3,6 @@ namespace ProgressOnderwijsUtils.Html;
 
 public static class Tags
 {
-
     ///<summary>Hyperlink. See: <a href="https://html.spec.whatwg.org/#the-a-element">https://html.spec.whatwg.org/#the-a-element</a><br /></summary>
     public static readonly HtmlTagKinds.A _a = new HtmlTagKinds.A();
 

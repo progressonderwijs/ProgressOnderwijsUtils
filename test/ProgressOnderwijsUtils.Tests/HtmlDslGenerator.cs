@@ -195,9 +195,9 @@ public sealed class HtmlDslGenerator
             .Select(
                 el => $"""
 
-
                     {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "    ///")}
                         public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();
+
                     """
             );
 
@@ -213,6 +213,7 @@ public sealed class HtmlDslGenerator
             public static class HtmlTagKinds
             {{{elTagNameClasses.JoinStrings("")}}
             }
+
             """
             ),
 
@@ -223,8 +224,8 @@ public sealed class HtmlDslGenerator
             namespace ProgressOnderwijsUtils.Html;
 
             public static class Tags
-            {{{elFields.JoinStrings("")}}
-            }
+            {{{elFields.JoinStrings("")}}}
+
             """
             ),
 
@@ -249,6 +250,7 @@ public sealed class HtmlDslGenerator
             public static class AttributeConstructionMethods
             {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
             }
+
             """
             ),
         }.WhereNotNull().ToArray();
