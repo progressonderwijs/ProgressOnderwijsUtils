@@ -14,6 +14,11 @@ public sealed class HtmlDslGenerator
         localCache = new Uri(here.FilePath).Combine("html.spec.whatwg.org.cached"),
         specUri = new("https://html.spec.whatwg.org/");
 
+    static readonly Uri LibHtmlDirectory = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/");
+
+    static readonly Uri GeneratedOutputFilePath = LibHtmlDirectory
+        .Combine("HtmlSpec.Generated.cs");
+
     readonly ITestOutputHelper output;
 
     public HtmlDslGenerator(ITestOutputHelper output)
@@ -236,12 +241,10 @@ public sealed class HtmlDslGenerator
 
         output.WriteLine(generatedCSharpContent);
 
-        var target = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/")
-            .Combine("HtmlSpec.Generated.cs");
-        if (!target.RefersToExistingLocalFile()) {
-            throw new($"Expected {target.LocalPath} to already exist; has the repo-layout changed?");
+        if (!GeneratedOutputFilePath.RefersToExistingLocalFile()) {
+            throw new($"Expected {GeneratedOutputFilePath.LocalPath} to already exist; has the repo-layout changed?");
         }
 
-        ApprovalTest.CreateForApprovedPath(target.LocalPath).AssertUnchangedAndSave(generatedCSharpContent);
+        ApprovalTest.CreateForApprovedPath(GeneratedOutputFilePath.LocalPath).AssertUnchangedAndSave(generatedCSharpContent);
     }
 }
