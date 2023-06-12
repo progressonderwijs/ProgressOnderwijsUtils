@@ -11,13 +11,11 @@ public sealed class HtmlDslGenerator
     static readonly SourceLocation here = SourceLocation.Here();
 
     static readonly Uri
-        localCache = new Uri(here.FilePath).Combine("html.spec.whatwg.org.cached"),
-        specUri = new("https://html.spec.whatwg.org/");
-
-    static readonly Uri LibHtmlDirectory = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/");
-
-    static readonly Uri GeneratedOutputFilePath = LibHtmlDirectory
-        .Combine("HtmlSpec.Generated.cs");
+        specUri = new("https://html.spec.whatwg.org/"),
+        currentFilePath = new(here.FilePath),
+        localCache = currentFilePath.Combine("html.spec.whatwg.org.cached"),
+        LibHtmlDirectory = currentFilePath.Combine("../../src/ProgressOnderwijsUtils/Html/"),
+        GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.Generated.cs");
 
     readonly ITestOutputHelper output;
 
