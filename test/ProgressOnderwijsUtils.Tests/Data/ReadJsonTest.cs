@@ -67,11 +67,10 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , NCharColumn nchar
                     , NVarCharColumn nvarchar(32)
 
-                    -- Binary strings
+                    -- Binary strings (equiv. to rowversion)
                     , BinaryColumn binary(8)
 
                     -- Other data types
-                    , RowVersionColumn rowversion not null
                     , UniqueIdentifierColumn uniqueidentifier
                 );
             "
@@ -96,7 +95,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
                     , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
@@ -121,7 +120,6 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public string? StringColumn { get; init; }
         public DateTime? DateTimeColumn { get; init; }
         public byte[]? BinaryColumn { get; init; }
-        public required byte[] RowVersionColumn { get; init; }
     }
 
     [Fact]
@@ -132,7 +130,6 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 create table #ReadJsonPocoTest (
                     ReadJsonPocoTestId int not null
                     , BooleanColumn bit not null
-                    , RowVersionColumn rowversion not null
                     , NumberColumn int
                     , LongColumn bigint
                     , DecimalColumn decimal(10, 2)
@@ -175,11 +172,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         for (var i = 0; i < jsonPocos.Length; i++) {
             var structered = jsonPocos[i] with {
                 BinaryColumn = pocos[i].BinaryColumn,
-                RowVersionColumn = pocos[i].RowVersionColumn,
             };
             PAssert.That(() => structered == pocos[i]);
 
-            PAssert.That(() => jsonPocos[i].RowVersionColumn.SequenceEqual(pocos[i].RowVersionColumn));
             if (jsonPocos[i].BinaryColumn is { } buf) {
                 PAssert.That(() => buf.SequenceEqual(pocos[i].BinaryColumn.AssertNotNull()));
             } else {
