@@ -15,7 +15,10 @@ public sealed class HtmlDslGenerator
         currentFilePath = new(here.FilePath),
         localCache = currentFilePath.Combine("html.spec.whatwg.org.cached"),
         LibHtmlDirectory = currentFilePath.Combine("../../src/ProgressOnderwijsUtils/Html/"),
-        GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.Generated.cs");
+        HtmlTagKinds_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTagKinds.Generated.cs"),
+        HtmlTags_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTags.Generated.cs"),
+        AttributeNameInterfaces_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeNameInterfaces.Generated.cs"),
+        AttributeConstructionMethods_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeConstructionMethods.Generated.cs");
 
     readonly ITestOutputHelper output;
 
@@ -225,28 +228,63 @@ public sealed class HtmlDslGenerator
             }
             """;
 
-        var generatedCSharpContent = $$"""
-                #nullable enable
-                using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+        var diff = new[] {
+            AssertFileExistsAndApproveContent(
+                HtmlTagKinds_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-                namespace ProgressOnderwijsUtils.Html;
-                {{tagNamesClass}}
-                {{tagsClass}}
-                {{attrNamesClass}}
-                {{attrExtensionMethodsClass}}
+            namespace ProgressOnderwijsUtils.Html;
+            {{tagNamesClass}}
+            """
+            ),
 
-                """;
+            AssertFileExistsAndApproveContent(
+                HtmlTags_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-        output.WriteLine(generatedCSharpContent);
-        AssertFileExistsAndApproveContent(GeneratedOutputFilePath, generatedCSharpContent);
+            namespace ProgressOnderwijsUtils.Html;
+            {{tagsClass}}
+            """
+            ),
+
+            AssertFileExistsAndApproveContent(
+                AttributeNameInterfaces_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+            namespace ProgressOnderwijsUtils.Html;
+            {{attrNamesClass}}
+            """
+            ),
+
+            AssertFileExistsAndApproveContent(
+                AttributeConstructionMethods_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+            namespace ProgressOnderwijsUtils.Html;
+            {{attrExtensionMethodsClass}}
+            """
+            ),
+        }.WhereNotNull().ToArray();
+
+        PAssert.That(() => diff.None());
     }
 
-    static void AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
+    static string? AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
     {
         if (!GeneratedOutputFilePath.RefersToExistingLocalFile()) {
             throw new($"Expected {GeneratedOutputFilePath.LocalPath} to already exist; has the repo-layout changed?");
         }
 
-        ApprovalTest.CreateForApprovedPath(GeneratedOutputFilePath.LocalPath).AssertUnchangedAndSave(generatedCSharpContent);
+        return ApprovalTest.CreateForApprovedPath(GeneratedOutputFilePath.LocalPath).UpdateIfChangedFrom(generatedCSharpContent, out var diff)
+            ? diff
+            : null;
     }
 }
