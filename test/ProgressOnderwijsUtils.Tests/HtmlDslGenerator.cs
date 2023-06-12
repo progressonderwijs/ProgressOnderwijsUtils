@@ -134,8 +134,8 @@ public sealed class HtmlDslGenerator
         var elAttrInterfaces = specificAttributes
             .Select(
                 attrName => $$"""
+                    public interface IHasAttr_{{toClassName(attrName)}} { }
 
-                        public interface IHasAttr_{{toClassName(attrName)}} { }
                     """
             );
         var elAttrExtensionMethods = specificAttributes
@@ -206,7 +206,7 @@ public sealed class HtmlDslGenerator
                 HtmlTagKinds_GeneratedOutputFilePath,
                 $$"""
             #nullable enable
-            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
 
@@ -220,8 +220,6 @@ public sealed class HtmlDslGenerator
                 HtmlTags_GeneratedOutputFilePath,
                 $$"""
             #nullable enable
-            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
-
             namespace ProgressOnderwijsUtils.Html;
 
             public static class Tags
@@ -234,13 +232,9 @@ public sealed class HtmlDslGenerator
                 AttributeNameInterfaces_GeneratedOutputFilePath,
                 $$"""
             #nullable enable
-            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+            namespace ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-            namespace ProgressOnderwijsUtils.Html;
-
-            public static class AttributeNameInterfaces
-            {{{elAttrInterfaces.JoinStrings("")}}
-            }
+            {{elAttrInterfaces.JoinStrings("")}}
             """
             ),
 
@@ -248,7 +242,7 @@ public sealed class HtmlDslGenerator
                 AttributeConstructionMethods_GeneratedOutputFilePath,
                 $$"""
             #nullable enable
-            using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
 
