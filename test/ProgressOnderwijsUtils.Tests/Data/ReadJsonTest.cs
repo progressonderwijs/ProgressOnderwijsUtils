@@ -46,33 +46,33 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     ReadJsonTestId int not null
 
                     -- exact numerics
-                    , BitColumn bit null
-                    , IntColumn int null
-                    , BigIntColumn bigint null
-                    , DecimalColumn decimal(4,2) null
+                    , BitColumn bit
+                    , IntColumn int
+                    , BigIntColumn bigint
+                    , DecimalColumn decimal(4,2)
 
                     -- Approximate numerics
-                    , FloatColumn float null
+                    , FloatColumn float
 
                     -- Date and time
-                    , DateColumn date null
-                    , DateTimeColumn datetime null
-                    , DateTime2Column datetime2 null
+                    , DateColumn date
+                    , DateTimeColumn datetime
+                    , DateTime2Column datetime2
 
                     -- Character strings
-                    , CharColumn char null
-                    , VarCharColumn varchar(32) null
+                    , CharColumn char
+                    , VarCharColumn varchar(32)
 
                     -- Unicode character strings
-                    , NCharColumn nchar null
-                    , NVarCharColumn nvarchar(32) null
+                    , NCharColumn nchar
+                    , NVarCharColumn nvarchar(32)
 
                     -- Binary strings
-                    , BinaryColumn binary(8) null
+                    , BinaryColumn binary(8)
 
                     -- Other data types
-                    , UniqueIdentifierColumn uniqueidentifier null
                     , RowVersionColumn rowversion not null
+                    , UniqueIdentifierColumn uniqueidentifier
                 );
             "
         ).ExecuteNonQuery(Connection);
@@ -132,14 +132,14 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 create table #ReadJsonPocoTest (
                     ReadJsonPocoTestId int not null
                     , BooleanColumn bit not null
-                    , NumberColumn int null
-                    , LongColumn bigint null
-                    , DecimalColumn decimal(10, 2) null
-                    , DoubleColumn float(53) null
-                    , StringColumn nvarchar(32) null
-                    , DateTimeColumn datetime2 null
-                    , BinaryColumn varbinary(32) null
                     , RowVersionColumn rowversion not null
+                    , NumberColumn int
+                    , LongColumn bigint
+                    , DecimalColumn decimal(10, 2)
+                    , DoubleColumn float(53)
+                    , StringColumn nvarchar(32)
+                    , DateTimeColumn datetime2
+                    , BinaryColumn varbinary(32)
                 );
             "
         ).ExecuteNonQuery(Connection);
