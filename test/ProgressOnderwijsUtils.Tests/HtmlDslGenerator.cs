@@ -9,6 +9,11 @@ public sealed class HtmlDslGenerator
 {
     static readonly HttpClient client = new();
     static readonly SourceLocation here = SourceLocation.Here();
+
+    static readonly Uri
+        localCache = new Uri(here.FilePath).Combine("html.spec.whatwg.org.cached"),
+        specUri = new("https://html.spec.whatwg.org/");
+
     readonly ITestOutputHelper output;
 
     public HtmlDslGenerator(ITestOutputHelper output)
@@ -20,10 +25,12 @@ public sealed class HtmlDslGenerator
         if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
             throw new SkipException("For manual regeneration; won't work on the CI");
         }
-
-        var specUri = new Uri("https://html.spec.whatwg.org/");
-
-        var content = await client.GetStringAsync(specUri);
+        if (!localCache.RefersToExistingLocalFile() || new FileInfo(localCache.LocalPath).LastWriteTimeUtc < DateTime.UtcNow.AddDays(-1)) {
+            output.WriteLine("Cache out of date; refreshing");
+            var freshContent = await client.GetStringAsync(specUri);
+            await File.WriteAllTextAsync(localCache.LocalPath, freshContent);
+        }
+        var content = await File.ReadAllTextAsync(localCache.LocalPath);
         var document = new HtmlParser().ParseDocument(content);
 
         var voidElements = (document.GetElementById("void-elements")?.ParentElement?.NextElementSibling?.TextContent.Split(',').Select(s => s.Trim()).ToArray()).AssertNotNull();

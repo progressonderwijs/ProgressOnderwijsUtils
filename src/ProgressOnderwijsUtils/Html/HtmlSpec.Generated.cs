@@ -1655,7 +1655,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct TEXTAREA : IHtmlElementAllowingContent<TEXTAREA>, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
+    public struct TEXTAREA : IHtmlElementAllowingContent<TEXTAREA>, IHasAttr_autocomplete, IHasAttr_cols, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
     {
         public string TagName => "textarea";
         string IHtmlElement.TagStart => "<textarea";
@@ -2323,6 +2323,7 @@ public static class AttributeNameInterfaces
     public interface IHasAttr_colspan { }
     public interface IHasAttr_rowspan { }
     public interface IHasAttr_headers { }
+    public interface IHasAttr_cols { }
     public interface IHasAttr_rows { }
     public interface IHasAttr_wrap { }
     public interface IHasAttr_scope { }
@@ -2745,6 +2746,9 @@ public static class AttributeConstructionMethods
     public static THtmlTag _headers<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_headers, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("headers", attrValue);
+    public static THtmlTag _cols<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_cols, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("cols", attrValue);
     public static THtmlTag _rows<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_rows, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("rows", attrValue);
