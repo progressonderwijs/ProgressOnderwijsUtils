@@ -157,7 +157,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DateTimeColumn
                     , BinaryColumn
                 ) values
-                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 1, 2, 3, 4, 5, }})
+                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245 }})
                     , (2, {false}, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
