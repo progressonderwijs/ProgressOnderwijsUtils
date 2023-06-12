@@ -238,7 +238,11 @@ public sealed class HtmlDslGenerator
                 """;
 
         output.WriteLine(generatedCSharpContent);
+        AssertFileExistsAndApproveContent(GeneratedOutputFilePath, generatedCSharpContent);
+    }
 
+    static void AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
+    {
         if (!GeneratedOutputFilePath.RefersToExistingLocalFile()) {
             throw new($"Expected {GeneratedOutputFilePath.LocalPath} to already exist; has the repo-layout changed?");
         }
