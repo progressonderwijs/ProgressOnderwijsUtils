@@ -46,33 +46,32 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     ReadJsonTestId int not null
 
                     -- exact numerics
-                    , BitColumn bit null
-                    , IntColumn int null
-                    , BigIntColumn bigint null
-                    , DecimalColumn decimal(4,2) null
+                    , BitColumn bit
+                    , IntColumn int
+                    , BigIntColumn bigint
+                    , DecimalColumn decimal(4,2)
 
                     -- Approximate numerics
-                    , FloatColumn float null
+                    , FloatColumn float
 
                     -- Date and time
-                    , DateColumn date null
-                    , DateTimeColumn datetime null
-                    , DateTime2Column datetime2 null
+                    , DateColumn date
+                    , DateTimeColumn datetime
+                    , DateTime2Column datetime2
 
                     -- Character strings
-                    , CharColumn char null
-                    , VarCharColumn varchar(32) null
+                    , CharColumn char
+                    , VarCharColumn varchar(32)
 
                     -- Unicode character strings
-                    , NCharColumn nchar null
-                    , NVarCharColumn nvarchar(32) null
+                    , NCharColumn nchar
+                    , NVarCharColumn nvarchar(32)
 
-                    -- Binary strings
-                    , BinaryColumn binary(8) null
+                    -- Binary strings (equiv. to rowversion)
+                    , BinaryColumn binary(8)
 
                     -- Other data types
-                    , UniqueIdentifierColumn uniqueidentifier null
-                    , RowVersionColumn rowversion not null
+                    , UniqueIdentifierColumn uniqueidentifier
                 );
             "
         ).ExecuteNonQuery(Connection);
@@ -96,13 +95,13 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
                     , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         pipe.Writer.Complete();
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
@@ -115,13 +114,12 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public ReadJsonPocoTestId ReadJsonPocoTestId { get; init; }
         public bool BooleanColumn { get; init; }
         public int? NumberColumn { get; init; }
-        public long? LongColumn {get; init;}
+        public long? LongColumn { get; init; }
         public decimal? DecimalColumn { get; init; }
-        public double? DoubleColumn {get; init;}
+        public double? DoubleColumn { get; init; }
         public string? StringColumn { get; init; }
         public DateTime? DateTimeColumn { get; init; }
         public byte[]? BinaryColumn { get; init; }
-        public required byte[] RowVersionColumn { get; init; }
     }
 
     [Fact]
@@ -132,14 +130,13 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 create table #ReadJsonPocoTest (
                     ReadJsonPocoTestId int not null
                     , BooleanColumn bit not null
-                    , NumberColumn int null
-                    , LongColumn bigint null
-                    , DecimalColumn decimal(10, 2) null
-                    , DoubleColumn float(53) null
-                    , StringColumn nvarchar(32) null
-                    , DateTimeColumn datetime2 null
-                    , BinaryColumn varbinary(32) null
-                    , RowVersionColumn rowversion not null
+                    , NumberColumn int
+                    , LongColumn bigint
+                    , DecimalColumn decimal(10, 2)
+                    , DoubleColumn float(53)
+                    , StringColumn nvarchar(32)
+                    , DateTimeColumn datetime2
+                    , BinaryColumn varbinary(32)
                 );
             "
         ).ExecuteNonQuery(Connection);
@@ -157,12 +154,12 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DateTimeColumn
                     , BinaryColumn
                 ) values
-                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 1, 2, 3, 4, 5, }})
+                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245 }})
                     , (2, {false}, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
-        var query = SQL($"select t.* from #ReadJsonPocoTest t");
+        var query = SQL($"select t.* from #ReadJsonPocoTest t order by t.ReadJsonPocoTestId");
         var pocos = query.ReadPocos<ReadJsonPocoTest>(Connection);
 
         var pipe = new Pipe();
@@ -175,11 +172,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         for (var i = 0; i < jsonPocos.Length; i++) {
             var structered = jsonPocos[i] with {
                 BinaryColumn = pocos[i].BinaryColumn,
-                RowVersionColumn = pocos[i].RowVersionColumn,
             };
             PAssert.That(() => structered == pocos[i]);
 
-            PAssert.That(() => jsonPocos[i].RowVersionColumn.SequenceEqual(pocos[i].RowVersionColumn));
             if (jsonPocos[i].BinaryColumn is { } buf) {
                 PAssert.That(() => buf.SequenceEqual(pocos[i].BinaryColumn.AssertNotNull()));
             } else {
