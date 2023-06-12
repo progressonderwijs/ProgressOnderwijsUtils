@@ -11,8 +11,14 @@ public sealed class HtmlDslGenerator
     static readonly SourceLocation here = SourceLocation.Here();
 
     static readonly Uri
-        localCache = new Uri(here.FilePath).Combine("html.spec.whatwg.org.cached"),
-        specUri = new("https://html.spec.whatwg.org/");
+        specUri = new("https://html.spec.whatwg.org/"),
+        currentFilePath = new(here.FilePath),
+        localCache = currentFilePath.Combine("html.spec.whatwg.org.cached"),
+        LibHtmlDirectory = currentFilePath.Combine("../../src/ProgressOnderwijsUtils/Html/"),
+        HtmlTagKinds_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTagKinds.Generated.cs"),
+        HtmlTags_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTags.Generated.cs"),
+        AttributeNameInterfaces_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeNameInterfaces.Generated.cs"),
+        AttributeConstructionMethods_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeConstructionMethods.Generated.cs");
 
     readonly ITestOutputHelper output;
 
@@ -128,8 +134,8 @@ public sealed class HtmlDslGenerator
         var elAttrInterfaces = specificAttributes
             .Select(
                 attrName => $$"""
+                    public interface IHasAttr_{{toClassName(attrName)}} { }
 
-                        public interface IHasAttr_{{toClassName(attrName)}} { }
                     """
             );
         var elAttrExtensionMethods = specificAttributes
@@ -141,20 +147,6 @@ public sealed class HtmlDslGenerator
                             => htmlTagExpr.Attribute("{attrName}", attrValue);
                     """
             );
-
-        var attrNamesClass = $$"""
-
-            public static class AttributeNameInterfaces
-            {{{elAttrInterfaces.JoinStrings("")}}
-            }
-            """;
-
-        var attrExtensionMethodsClass = $$"""
-
-            public static class AttributeConstructionMethods
-            {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
-            }
-            """;
 
         var elTagNameClasses = elements
             .Select(
@@ -199,48 +191,81 @@ public sealed class HtmlDslGenerator
                             """
             );
 
-        var tagNamesClass = $$"""
-
-            public static class HtmlTagKinds
-            {{{elTagNameClasses.JoinStrings("")}}
-            }
-            """;
-
         var elFields = elements
             .Select(
                 el => $"""
 
-
                     {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "    ///")}
                         public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();
+
                     """
             );
-        var tagsClass = $$"""
+
+        var diff = new[] {
+            AssertFileExistsAndApproveContent(
+                HtmlTagKinds_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+            namespace ProgressOnderwijsUtils.Html;
+
+            public static class HtmlTagKinds
+            {{{elTagNameClasses.JoinStrings("")}}
+            }
+
+            """
+            ),
+
+            AssertFileExistsAndApproveContent(
+                HtmlTags_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            namespace ProgressOnderwijsUtils.Html;
 
             public static class Tags
-            {{{elFields.JoinStrings("")}}
+            {{{elFields.JoinStrings("")}}}
+
+            """
+            ),
+
+            AssertFileExistsAndApproveContent(
+                AttributeNameInterfaces_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            namespace ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+            {{elAttrInterfaces.JoinStrings("")}}
+            """
+            ),
+
+            AssertFileExistsAndApproveContent(
+                AttributeConstructionMethods_GeneratedOutputFilePath,
+                $$"""
+            #nullable enable
+            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+
+            namespace ProgressOnderwijsUtils.Html;
+
+            public static class AttributeConstructionMethods
+            {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
             }
-            """;
 
-        var generatedCSharpContent = $$"""
-                #nullable enable
-                using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+            """
+            ),
+        }.WhereNotNull().ToArray();
 
-                namespace ProgressOnderwijsUtils.Html;
-                {{tagNamesClass}}
-                {{tagsClass}}
-                {{attrNamesClass}}
-                {{attrExtensionMethodsClass}}
+        PAssert.That(() => diff.None());
+    }
 
-                """;
-
-        output.WriteLine(generatedCSharpContent);
-
-        var target = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/HtmlSpec.Generated.cs");
-        if (!target.RefersToExistingLocalFile()) {
-            throw new($"Expected {target.LocalPath} to already exist; has the repo-layout changed?");
+    static string? AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
+    {
+        if (!GeneratedOutputFilePath.RefersToExistingLocalFile()) {
+            throw new($"Expected {GeneratedOutputFilePath.LocalPath} to already exist; has the repo-layout changed?");
         }
 
-        ApprovalTest.CreateForApprovedPath(target.LocalPath).AssertUnchangedAndSave(generatedCSharpContent);
+        return ApprovalTest.CreateForApprovedPath(GeneratedOutputFilePath.LocalPath).UpdateIfChangedFrom(generatedCSharpContent, out var diff)
+            ? diff
+            : null;
     }
 }
