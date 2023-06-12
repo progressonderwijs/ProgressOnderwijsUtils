@@ -1,5 +1,5 @@
 #nullable enable
-using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
 namespace ProgressOnderwijsUtils.Html;
 

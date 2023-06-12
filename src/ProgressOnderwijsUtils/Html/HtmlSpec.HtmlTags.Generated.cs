@@ -1,6 +1,4 @@
 #nullable enable
-using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
-
 namespace ProgressOnderwijsUtils.Html;
 
 public static class Tags
