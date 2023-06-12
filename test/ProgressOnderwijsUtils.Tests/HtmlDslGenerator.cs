@@ -236,7 +236,8 @@ public sealed class HtmlDslGenerator
 
         output.WriteLine(generatedCSharpContent);
 
-        var target = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/HtmlSpec.Generated.cs");
+        var target = new Uri(here.FilePath).Combine("../../src/ProgressOnderwijsUtils/Html/")
+            .Combine("HtmlSpec.Generated.cs");
         if (!target.RefersToExistingLocalFile()) {
             throw new($"Expected {target.LocalPath} to already exist; has the repo-layout changed?");
         }
