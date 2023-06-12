@@ -13,12 +13,10 @@
     "VarCharColumn": "xyz",
     "NCharColumn": "p",
     "NVarCharColumn": "pqr",
-    "BinaryColumn": "AQIDAAAAAAA=",
-    "UniqueIdentifierColumn": "82dbee37-3af8-46f2-a403-ae0a1950bc6e",
-    "RowVersionColumn": "AAAAAAAAB9M="
+    "BinaryColumn": "AQIDBAUGBwg=",
+    "UniqueIdentifierColumn": "82dbee37-3af8-46f2-a403-ae0a1950bc6e"
   },
   {
-    "ReadJsonTestId": 2,
-    "RowVersionColumn": "AAAAAAAAB9Q="
+    "ReadJsonTestId": 2
   }
 ]
