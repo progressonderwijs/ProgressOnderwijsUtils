@@ -102,7 +102,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonPocoTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         pipe.Writer.Complete();
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
@@ -162,7 +162,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
-        var query = SQL($"select t.* from #ReadJsonPocoTest t");
+        var query = SQL($"select t.* from #ReadJsonPocoTest t order by t.ReadJsonPocoTestId");
         var pocos = query.ReadPocos<ReadJsonPocoTest>(Connection);
 
         var pipe = new Pipe();
