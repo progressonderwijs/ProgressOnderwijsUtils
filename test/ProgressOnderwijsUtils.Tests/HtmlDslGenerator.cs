@@ -209,12 +209,10 @@ public sealed class HtmlDslGenerator
             using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
-            {{$$"""
 
             public static class HtmlTagKinds
             {{{elTagNameClasses.JoinStrings("")}}
             }
-            """}}
             """
             ),
 
@@ -225,12 +223,10 @@ public sealed class HtmlDslGenerator
             using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
-            {{$$"""
 
             public static class Tags
             {{{elFields.JoinStrings("")}}
             }
-            """}}
             """
             ),
 
@@ -241,12 +237,10 @@ public sealed class HtmlDslGenerator
             using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
-            {{$$"""
 
             public static class AttributeNameInterfaces
             {{{elAttrInterfaces.JoinStrings("")}}
             }
-            """}}
             """
             ),
 
@@ -257,12 +251,10 @@ public sealed class HtmlDslGenerator
             using static ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
             namespace ProgressOnderwijsUtils.Html;
-            {{$$"""
 
             public static class AttributeConstructionMethods
             {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
             }
-            """}}
             """
             ),
         }.WhereNotNull().ToArray();
