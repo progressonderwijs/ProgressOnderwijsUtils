@@ -40,6 +40,10 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
         => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, null).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
 
     [Fact]
+    public void NVarchar_ToSqlColumnDefinitionWithCollation_ExampleWorks()
+        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, "Latin1_General_100_BIN2_UTF8").ToSqlColumnDefinition() == "test3 NVarChar(42) null collate Latin1_General_100_BIN2_UTF8");
+
+    [Fact]
     public void NChar_ToSqlColumnDefinition_ExampleWorks()
         => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null, null).ToSqlColumnDefinition() == "test NChar(1) not null");
 }
