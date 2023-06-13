@@ -37,13 +37,13 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
 
     [Fact]
     public void NVarchar_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, null).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
+        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, null).ToSqlColumnDefinition() == $"test3 NVarChar(42) collate {DbColumnExtensions.DefaultDbCollation} null");
 
     [Fact]
     public void NVarchar_ToSqlColumnDefinitionWithCollation_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, "Latin1_General_100_BIN2_UTF8").ToSqlColumnDefinition() == "test3 NVarChar(42) null collate Latin1_General_100_BIN2_UTF8");
+        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, "Latin1_General_100_BIN2_UTF8").ToSqlColumnDefinition() == "test3 NVarChar(42) collate Latin1_General_100_BIN2_UTF8 null");
 
     [Fact]
     public void NChar_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null, null).ToSqlColumnDefinition() == "test NChar(1) not null");
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null, null).ToSqlColumnDefinition() == $"test NChar(1) collate {DbColumnExtensions.DefaultDbCollation} not null");
 }
