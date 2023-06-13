@@ -1,20 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>96.0.2</Version>
-    <PackageReleaseNotes>Add more details to failure exceptions when PInvoking win32 system functions</PackageReleaseNotes>
+    <Version>97.1.0</Version>
+    <PackageReleaseNotes>Added ParameterizedSql.ReadJson() method to read any SQL select statement as a JSON-array</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFramework>net7.0-windows</TargetFramework>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.1.378-beta">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="AngleSharp" Version="1.0.2" />
+    <PackageReference Include="AngleSharp" Version="1.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
@@ -27,5 +28,6 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
+    <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
