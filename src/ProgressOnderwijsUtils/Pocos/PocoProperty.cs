@@ -29,11 +29,9 @@ public interface IPocoProperty
     int Index { get; }
 }
 
-
 public interface IPocoProperty<TOwner> : IPocoProperty
 {
     Func<TOwner, object?>? Getter { get; }
-
     Setter<TOwner>? Setter { get; }
 }
 
