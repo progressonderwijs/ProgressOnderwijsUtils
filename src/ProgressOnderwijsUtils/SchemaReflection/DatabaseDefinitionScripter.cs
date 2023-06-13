@@ -10,14 +10,14 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         foreach (var colMetaData in table.Columns) {
             if (colMetaData.ComputedAs is { } computedColumn) {
                 var definition = computedColumn;
+                var collationClause = colMetaData.CollationName == null
+                    ? ""
+                    : " collate " + colMetaData.CollationName;
                 var persistedClause = !definition.IsPersisted
                     ? ""
                     : colMetaData.IsNullable
                         ? " persisted"
                         : " persisted not null";
-                var collationClause = colMetaData.CollationName == null
-                    ? ""
-                    : " collate " + colMetaData.CollationName;
                 var columnTrivia = "--"
                     + colMetaData.ToSqlTypeNameWithoutNullability()
                     + ";"
