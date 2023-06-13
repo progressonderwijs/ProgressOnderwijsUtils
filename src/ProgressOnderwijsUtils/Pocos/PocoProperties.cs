@@ -17,7 +17,6 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
         => typeof(T);
 
     public IReadOnlyDictionary<string, int> IndexByName { get; }
-
     public static readonly PocoProperties<T> Instance = new();
 
     PocoProperties()
@@ -44,12 +43,18 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
 
     static IPocoProperty<T>[] GetPropertiesImpl()
     {
-        var propertyInfos = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        var type = typeof(T);
+        var propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
         var properties = new IPocoProperty<T>[propertyInfos.Length];
+        var nullabilityContext = default(NullabilityInfoContext);
         for (var index = 0; index < propertyInfos.Length; index++) {
             var propertyInfo = propertyInfos[index];
             var customAttributes = propertyInfo.GetCustomAttributes(true);
-            properties[index] = new PocoProperty.Impl<T>(propertyInfo, index, customAttributes);
+            var canContainNull = propertyInfo.PropertyType.IsValueType
+                ? propertyInfo.PropertyType.IsNullableValueType()
+                : type.IsValueType || propertyInfo.CanRead && (nullabilityContext ??= new()).Create(propertyInfo).ReadState != NullabilityState.NotNull;
+
+            properties[index] = new PocoProperty.Impl<T>(propertyInfo, index, customAttributes, canContainNull);
         }
         return properties;
     }
@@ -64,8 +69,10 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
             }
         }
 
-        throw new ArgumentException($"To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
-            + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property");
+        throw new ArgumentException(
+            $"To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
+            + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property"
+        );
     }
 
     public IEnumerator<IPocoProperty<T>> GetEnumerator()

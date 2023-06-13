@@ -15,6 +15,15 @@ public interface IPocoProperty
     bool IsKey { get; }
     bool CanRead { get; }
     bool CanWrite { get; }
+
+    /// <summary>
+    /// Whether the property can return null when read (write state is not tracked).  Note that C# nullability isn't runtime checked; this boolean
+    /// tracks the type-systems belief about nullability OR is the container is a value-type some special case to deal with
+    /// https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references#known-pitfalls - but incorrectly or incompletely annotated
+    /// code may still result in situations where this is false yet an instance returns null for the given property.
+    /// </summary>
+    bool CanContainNull { get; }
+
     PropertyInfo PropertyInfo { get; }
 
     [UsefulToKeep("lib method")]
@@ -29,11 +38,9 @@ public interface IPocoProperty
     int Index { get; }
 }
 
-
 public interface IPocoProperty<TOwner> : IPocoProperty
 {
     Func<TOwner, object?>? Getter { get; }
-
     Setter<TOwner>? Setter { get; }
 }
 
@@ -43,6 +50,7 @@ public static class PocoProperty
     {
         public bool IsKey { get; }
         public string Name { get; }
+        public bool CanContainNull { get; }
         ParameterizedSql sqlColumnName;
 
         public ParameterizedSql SqlColumnName
@@ -87,10 +95,11 @@ public static class PocoProperty
         public Expression PropertyAccessExpression(Expression paramExpr)
             => Expression.Property(paramExpr, PropertyInfo);
 
-        public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
+        public Impl(PropertyInfo pi, int implicitOrder, object[] attrs, bool canContainNull)
         {
             PropertyInfo = pi;
             Name = pi.Name;
+            CanContainNull = canContainNull;
             Index = implicitOrder;
             CustomAttributes = attrs;
             getterMethod = pi.GetGetMethod();
