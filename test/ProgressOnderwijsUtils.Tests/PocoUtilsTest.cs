@@ -152,4 +152,38 @@ public sealed class PocoUtilsTest
         prop.Setter!(ref obj, "42");
         PAssert.That(() => (string?)prop.Getter!(obj) == "42");
     }
+
+    [Fact]
+    public void CanContainNull_SanityChecks()
+    {
+        var setterTestClassString = PocoUtils.GetByExpression((SetterTestClass o) => o.StringProperty);
+        PAssert.That(() => setterTestClassString.CanContainNull);
+
+        var setterTestStructString = PocoUtils.GetByExpression((SetterTestStruct o) => o.StringProperty);
+        var nullabilityContext = new NullabilityInfoContext();
+        PAssert.That(
+            () => setterTestStructString.CanContainNull
+                && nullabilityContext.Create(setterTestStructString.PropertyInfo).ReadState == NullabilityState.NotNull,
+            "Voor structs is C# nullability lek: non-nullable, non-required props zijn toegestaan. "
+            + "Dit lijkt een variatie op https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references#known-pitfalls"
+        );
+
+        var setterTestClassInt = PocoUtils.GetByExpression((SetterTestClass o) => o.IntProperty);
+        PAssert.That(() => !setterTestClassInt.CanContainNull);
+
+        var setterTestStructInt = PocoUtils.GetByExpression((SetterTestStruct o) => o.IntProperty);
+        PAssert.That(() => !setterTestStructInt.CanContainNull);
+
+        var hiddenProperty = PocoUtils.GetByExpression((SimpleObject o) => o.HiddenProperty);
+        PAssert.That(() => !hiddenProperty.CanContainNull);
+
+        var privateSetter = PocoUtils.GetByExpression((SimpleObject o) => o.PrivateSetter);
+        PAssert.That(() => privateSetter.CanContainNull);
+
+        var labelledProperty = PocoUtils.GetByExpression((SimpleObject o) => o.LabelledProperty);
+        PAssert.That(() => !labelledProperty.CanContainNull);
+
+        var mpReadonlyProperty = PocoUtils.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
+        PAssert.That(() => mpReadonlyProperty.CanContainNull);
+    }
 }

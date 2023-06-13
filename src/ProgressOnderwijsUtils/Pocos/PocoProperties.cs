@@ -43,12 +43,18 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
 
     static IPocoProperty<T>[] GetPropertiesImpl()
     {
-        var propertyInfos = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        var type = typeof(T);
+        var propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
         var properties = new IPocoProperty<T>[propertyInfos.Length];
+        var nullabilityContext = default(NullabilityInfoContext);
         for (var index = 0; index < propertyInfos.Length; index++) {
             var propertyInfo = propertyInfos[index];
             var customAttributes = propertyInfo.GetCustomAttributes(true);
-            properties[index] = new PocoProperty.Impl<T>(propertyInfo, index, customAttributes);
+            var canContainNull = propertyInfo.PropertyType.IsValueType
+                ? propertyInfo.PropertyType.IsNullableValueType()
+                : type.IsValueType || propertyInfo.CanRead && (nullabilityContext ??= new()).Create(propertyInfo).ReadState != NullabilityState.NotNull;
+
+            properties[index] = new PocoProperty.Impl<T>(propertyInfo, index, customAttributes, canContainNull);
         }
         return properties;
     }

@@ -15,6 +15,7 @@ public interface IPocoProperty
     bool IsKey { get; }
     bool CanRead { get; }
     bool CanWrite { get; }
+    bool CanContainNull { get; }
     PropertyInfo PropertyInfo { get; }
 
     [UsefulToKeep("lib method")]
@@ -41,6 +42,7 @@ public static class PocoProperty
     {
         public bool IsKey { get; }
         public string Name { get; }
+        public bool CanContainNull { get; }
         ParameterizedSql sqlColumnName;
 
         public ParameterizedSql SqlColumnName
@@ -85,10 +87,11 @@ public static class PocoProperty
         public Expression PropertyAccessExpression(Expression paramExpr)
             => Expression.Property(paramExpr, PropertyInfo);
 
-        public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
+        public Impl(PropertyInfo pi, int implicitOrder, object[] attrs, bool canContainNull)
         {
             PropertyInfo = pi;
             Name = pi.Name;
+            CanContainNull = canContainNull;
             Index = implicitOrder;
             CustomAttributes = attrs;
             getterMethod = pi.GetGetMethod();
