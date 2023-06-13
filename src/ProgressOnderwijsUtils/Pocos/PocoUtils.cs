@@ -24,14 +24,11 @@ public static class PocoUtils
         {
             var memberInfo = GetMemberInfo(propertyExpression);
             if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
-                var retval = PocoProperties<TPoco>.Instance.SingleOrNull(pocoProperty => pocoProperty.PropertyInfo == memberInfo);
-                if (retval == null) {
-                    throw new ArgumentException(
+                return PocoProperties<TPoco>.Instance.SingleOrNull(pocoProperty => pocoProperty.PropertyInfo == memberInfo)
+                    ?? throw new ArgumentException(
                         "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n"
                         + $"The argument lambda refers to a property {memberInfo.Name} that is not a poco-property"
                     );
-                }
-                return retval;
             } else if (typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TPoco))) {
                 var pi = (PropertyInfo)memberInfo;
                 var getter = pi.GetGetMethod();

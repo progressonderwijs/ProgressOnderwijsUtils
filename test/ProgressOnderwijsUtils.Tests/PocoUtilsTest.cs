@@ -9,21 +9,14 @@ public interface ISimpleInterface
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
 {
-#pragma warning disable 169
-#pragma warning disable 649
-#pragma warning disable CS8618 // Non-nullable field is uninitialized.
     public int Field;
-    public string Property { get; set; }
-    internal string IgnoredProperty { get; set; }
-    public string HiddenProperty { get; set; }
-    public string LabelledProperty { get; set; }
-    public string MpReadonlyProperty { get; set; }
-#pragma warning disable IDE0044 // Add readonly modifier
-#pragma warning disable IDE0051 // Remove unused private members
-    string PrivateProperty { get; }
+    public string? Property { get; set; }
+    internal string IgnoredProperty { get; set; } = "ignored";
+    public string HiddenProperty { get; set; } = "hidden";
+    public required string LabelledProperty { get; set; }
+    public string? MpReadonlyProperty { get; set; }
+    string PrivateProperty { get; } = "private";
     DateTime PrivateField;
-#pragma warning restore IDE0044 // Add readonly modifier
-#pragma warning restore IDE0051 // Remove unused private members
     public readonly double ReadonlyField;
 
     public double ReadonlyProperty
@@ -35,11 +28,8 @@ public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
         set { }
     }
 
-    public object PrivateSetter { get; private set; }
-    public object PrivateGetter { set; private get; }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized.
-#pragma warning restore 169
-#pragma warning restore 649
+    public object? PrivateSetter { get; private set; }
+    public object? PrivateGetter { set; private get; }
 }
 
 struct SetterTestStruct : IWrittenImplicitly
@@ -60,7 +50,7 @@ public sealed class PocoUtilsTest
     public void ReturnsSameProperties()
     {
         var mps = PocoUtils.GetProperties<SimpleObject>();
-        var mpsAlt = new SimpleObject().GetProperties();
+        var mpsAlt = new SimpleObject { LabelledProperty = "label", }.GetProperties();
         PAssert.That(() => mps.SequenceEqual(mpsAlt));
     }
 
@@ -161,5 +151,39 @@ public sealed class PocoUtilsTest
         PAssert.That(() => prop.Getter!(obj) == null);
         prop.Setter!(ref obj, "42");
         PAssert.That(() => (string?)prop.Getter!(obj) == "42");
+    }
+
+    [Fact]
+    public void CanContainNull_SanityChecks()
+    {
+        var setterTestClassString = PocoUtils.GetByExpression((SetterTestClass o) => o.StringProperty);
+        PAssert.That(() => setterTestClassString.CanContainNull);
+
+        var setterTestStructString = PocoUtils.GetByExpression((SetterTestStruct o) => o.StringProperty);
+        var nullabilityContext = new NullabilityInfoContext();
+        PAssert.That(
+            () => setterTestStructString.CanContainNull
+                && nullabilityContext.Create(setterTestStructString.PropertyInfo).ReadState == NullabilityState.NotNull,
+            "Voor structs is C# nullability lek: non-nullable, non-required props zijn toegestaan. "
+            + "Dit lijkt een variatie op https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references#known-pitfalls"
+        );
+
+        var setterTestClassInt = PocoUtils.GetByExpression((SetterTestClass o) => o.IntProperty);
+        PAssert.That(() => !setterTestClassInt.CanContainNull);
+
+        var setterTestStructInt = PocoUtils.GetByExpression((SetterTestStruct o) => o.IntProperty);
+        PAssert.That(() => !setterTestStructInt.CanContainNull);
+
+        var hiddenProperty = PocoUtils.GetByExpression((SimpleObject o) => o.HiddenProperty);
+        PAssert.That(() => !hiddenProperty.CanContainNull);
+
+        var privateSetter = PocoUtils.GetByExpression((SimpleObject o) => o.PrivateSetter);
+        PAssert.That(() => privateSetter.CanContainNull);
+
+        var labelledProperty = PocoUtils.GetByExpression((SimpleObject o) => o.LabelledProperty);
+        PAssert.That(() => !labelledProperty.CanContainNull);
+
+        var mpReadonlyProperty = PocoUtils.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
+        PAssert.That(() => mpReadonlyProperty.CanContainNull);
     }
 }
