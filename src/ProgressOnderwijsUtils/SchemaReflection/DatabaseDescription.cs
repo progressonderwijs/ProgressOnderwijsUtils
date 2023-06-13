@@ -230,7 +230,7 @@ public sealed class DatabaseDescription
         public bool HasAutoIncrementIdentity
             => ColumnMetaData.HasAutoIncrementIdentity;
 
-        public string CollationName
+        public string? CollationName
             => ColumnMetaData.CollationName;
     }
 

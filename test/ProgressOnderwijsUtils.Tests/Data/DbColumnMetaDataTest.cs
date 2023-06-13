@@ -16,7 +16,7 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
     [Fact]
     public void CreatedTempTableMetaDataRoundTrips()
     {
-        var columnsFromCode = PocoProperties<SamplePoco>.Instance.ArraySelect(prop => DbColumnMetaData.Create(prop.Name, prop.DataType, prop.IsKey, null));
+        var columnsFromCode = PocoProperties<SamplePoco>.Instance.ArraySelect(prop => DbColumnMetaData.Create(prop.Name, prop.DataType, prop.IsKey, null, null));
 
         var tempTableName = SQL($"#test");
         columnsFromCode.CreateNewTableQuery(tempTableName).ExecuteNonQuery(Connection);
@@ -29,17 +29,17 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
 
     [Fact]
     public void Varbinary_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, 42).ToSqlColumnDefinition() == "test VarBinary(42) null");
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, 42, null).ToSqlColumnDefinition() == "test VarBinary(42) null");
 
     [Fact]
     public void VarbinaryMax_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, null).ToSqlColumnDefinition() == "test VarBinary(max) null");
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(byte[]), false, null, null).ToSqlColumnDefinition() == "test VarBinary(max) null");
 
     [Fact]
     public void NVarchar_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
+        => PAssert.That(() => DbColumnMetaData.Create("test3", typeof(string), false, 42, null).ToSqlColumnDefinition() == "test3 NVarChar(42) null");
 
     [Fact]
     public void NChar_ToSqlColumnDefinition_ExampleWorks()
-        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null).ToSqlColumnDefinition() == "test NChar(1) not null");
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null, null).ToSqlColumnDefinition() == "test NChar(1) not null");
 }

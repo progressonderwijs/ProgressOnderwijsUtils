@@ -12,7 +12,7 @@ public sealed record DbColumnMetaData(
     short MaxLength,
     byte Precision,
     byte Scale,
-    string CollationName
+    string? CollationName
 ) : IWrittenImplicitly, IComparable<DbColumnMetaData>, IDbColumn
 {
     DbColumnMetaData IDbColumn.ColumnMetaData
@@ -53,7 +53,7 @@ public sealed record DbColumnMetaData(
         set => columnFlags[3] = value;
     }
 
-    public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
+    public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength, string? collation)
     {
         var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
 
@@ -72,7 +72,7 @@ public sealed record DbColumnMetaData(
                 _ => (0, 0),
             };
 
-        return new(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale) { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
+        return new(name, typeId, maxLengthForSqlServer, (byte)precision, (byte)scale, collation) { IsNullable = dataType.CanBeNull(), IsPrimaryKey = isKey, };
     }
 
     public bool IsString
