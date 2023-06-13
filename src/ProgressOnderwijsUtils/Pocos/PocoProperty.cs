@@ -15,7 +15,15 @@ public interface IPocoProperty
     bool IsKey { get; }
     bool CanRead { get; }
     bool CanWrite { get; }
+
+    /// <summary>
+    /// Whether the property can return null when read (write state is not tracked).  Note that C# nullability isn't runtime checked; this boolean
+    /// tracks the type-systems belief about nullability OR is the container is a value-type some special case to deal with
+    /// https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references#known-pitfalls - but incorrectly or incompletely annotated
+    /// code may still result in situations where this is false yet an instance returns null for the given property.
+    /// </summary>
     bool CanContainNull { get; }
+
     PropertyInfo PropertyInfo { get; }
 
     [UsefulToKeep("lib method")]
