@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>97.2.0</Version>
-    <PackageReleaseNotes>Added IPocoProperty.CanContainNull</PackageReleaseNotes>
+    <Version>97.3.0</Version>
+    <PackageReleaseNotes>Added collation to database string columns</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
