@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
                     ?? GetEnumStringRepresentationOrNull(o as Enum);
 
                 if (literalSqlRepresentation != null) {
-                    factory.AppendSql(literalSqlRepresentation, 0, literalSqlRepresentation.Length);
+                    factory.AppendSql(literalSqlRepresentation);
                 } else {
                     QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
                 }

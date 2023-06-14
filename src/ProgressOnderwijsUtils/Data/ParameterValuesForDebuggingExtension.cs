@@ -21,7 +21,7 @@ public static class ParameterValuesForDebuggingExtension
             return "";
         }
 
-        public void AppendSql(string sql, int startIndex, int length) { }
+        public void AppendSql(ReadOnlySpan<char> sql) { }
 
         public static EquatableParameterValueCollector Create()
             => new() { arguments = new(), };

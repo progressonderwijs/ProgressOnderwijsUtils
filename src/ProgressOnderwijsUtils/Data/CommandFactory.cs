@@ -12,7 +12,7 @@ interface ICommandFactory
     string RegisterParameterAndGetName<T>(T o)
         where T : IQueryParameter;
 
-    void AppendSql(string sql, int startIndex, int length);
+    void AppendSql(ReadOnlySpan<char> sql);
 }
 
 struct SqlParamArgs
@@ -152,8 +152,8 @@ struct CommandFactory : ICommandFactory
         }
     }
 
-    public void AppendSql(string sql, int startIndex, int length)
-        => queryText.AppendText(sql.AsSpan(startIndex, length));
+    public void AppendSql(ReadOnlySpan<char> sql)
+        => queryText.AppendText(sql);
 }
 
 /// <summary>
@@ -213,8 +213,8 @@ struct DebugCommandFactory : ICommandFactory
         where T : IQueryParameter
         => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
 
-    public void AppendSql(string sql, int startIndex, int length)
-        => debugText.AppendText(sql.AsSpan(startIndex, length));
+    public void AppendSql(ReadOnlySpan<char> sql)
+        => debugText.AppendText(sql);
 
     public static string DebugTextFor(ISqlComponent? impl)
     {
@@ -237,8 +237,8 @@ struct EqualityKeyCommandFactory : ICommandFactory
         return CommandFactory.IndexToParameterName(argOffset++);
     }
 
-    public void AppendSql(string sql, int startIndex, int length)
-        => debugText.AppendText(sql.AsSpan(startIndex, length));
+    public void AppendSql(ReadOnlySpan<char> sql)
+        => debugText.AppendText(sql);
 
     public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent? impl)
     {
