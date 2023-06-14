@@ -176,23 +176,23 @@ struct FastShortStringBuilder
     public static FastShortStringBuilder Create(int length)
         => new() { CurrentCharacterBuffer = Allocate(length), };
 
-    public void AppendText(string text)
-        => AppendText(text, 0, text.Length);
-
-    public void AppendText(string text, int startIndex, int length)
+    public void AppendText(ReadOnlySpan<char> text)
     {
         checked {
-            if (CurrentCharacterBuffer.Length < CurrentLength + length) {
-                var newLen = Math.Max(CurrentCharacterBuffer.Length * 2, CurrentLength + length);
+            if (CurrentCharacterBuffer.Length < CurrentLength + text.Length) {
+                var newLen = Math.Max(CurrentCharacterBuffer.Length * 2, CurrentLength + text.Length);
                 var newArray = Allocate(newLen);
                 Array.Copy(CurrentCharacterBuffer, newArray, CurrentLength);
                 Free();
                 CurrentCharacterBuffer = newArray;
             }
-            text.CopyTo(startIndex, CurrentCharacterBuffer, CurrentLength, length);
-            CurrentLength += length;
+            text.CopyTo(CurrentCharacterBuffer.AsSpan(CurrentLength));
+            CurrentLength += text.Length;
         }
     }
+
+    public void AppendText(string text, int startIndex, int length)
+        => AppendText(text.AsSpan(startIndex, length));
 
     public void DiscardBuilder()
     {
