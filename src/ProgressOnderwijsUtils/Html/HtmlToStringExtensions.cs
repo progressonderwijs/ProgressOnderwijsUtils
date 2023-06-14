@@ -134,22 +134,22 @@ public static class HtmlToStringExtensions
                 //https://html.spec.whatwg.org/#elements-2:normal-elements-4
                 //normal text must not contain < or & unescaped
                 if (c == '<') {
-                    stringBuilder.AppendText(stringContent, uptoIndex, textIndex - uptoIndex);
+                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
                     stringBuilder.AppendText("&lt;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '&') {
-                    stringBuilder.AppendText(stringContent, uptoIndex, textIndex - uptoIndex);
+                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
                     stringBuilder.AppendText("&amp;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '>') {
                     //not strictly necessary
-                    stringBuilder.AppendText(stringContent, uptoIndex, textIndex - uptoIndex);
+                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
                     stringBuilder.AppendText("&gt;");
                     uptoIndex = textIndex + 1;
                 }
             }
         }
-        stringBuilder.AppendText(stringContent, uptoIndex, stringContent.Length - uptoIndex);
+        stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
     }
 
     static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, string attrValue)
@@ -161,16 +161,16 @@ public static class HtmlToStringExtensions
                 //https://html.spec.whatwg.org/#attributes-2
                 //quoted attribute values must not contain " or & unescaped
                 if (c == '&') {
-                    stringBuilder.AppendText(attrValue, uptoIndex, textIndex - uptoIndex);
+                    stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
                     stringBuilder.AppendText("&amp;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '"') {
-                    stringBuilder.AppendText(attrValue, uptoIndex, textIndex - uptoIndex);
+                    stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
                     stringBuilder.AppendText("&quot;");
                     uptoIndex = textIndex + 1;
                 }
             }
         }
-        stringBuilder.AppendText(attrValue, uptoIndex, attrValue.Length - uptoIndex);
+        stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, attrValue.Length - uptoIndex));
     }
 }

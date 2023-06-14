@@ -153,7 +153,7 @@ struct CommandFactory : ICommandFactory
     }
 
     public void AppendSql(string sql, int startIndex, int length)
-        => queryText.AppendText(sql, startIndex, length);
+        => queryText.AppendText(sql.AsSpan(startIndex, length));
 }
 
 /// <summary>
@@ -191,9 +191,6 @@ struct FastShortStringBuilder
         }
     }
 
-    public void AppendText(string text, int startIndex, int length)
-        => AppendText(text.AsSpan(startIndex, length));
-
     public void DiscardBuilder()
     {
         Free();
@@ -217,7 +214,7 @@ struct DebugCommandFactory : ICommandFactory
         => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
 
     public void AppendSql(string sql, int startIndex, int length)
-        => debugText.AppendText(sql, startIndex, length);
+        => debugText.AppendText(sql.AsSpan(startIndex, length));
 
     public static string DebugTextFor(ISqlComponent? impl)
     {
@@ -241,7 +238,7 @@ struct EqualityKeyCommandFactory : ICommandFactory
     }
 
     public void AppendSql(string sql, int startIndex, int length)
-        => debugText.AppendText(sql, startIndex, length);
+        => debugText.AppendText(sql.AsSpan(startIndex, length));
 
     public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent? impl)
     {
