@@ -241,6 +241,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
                 property.Name,
                 property.DataType,
                 property.IsKey,
+                null,
                 null
             )
         );

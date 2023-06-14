@@ -21,6 +21,7 @@ public interface IDbColumn
 public static class DbColumnExtensions
 {
     static readonly Regex isSafeForSql = new("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
+    public static readonly string DefaultDbCollation = "SQL_Latin1_General_CP1_CI_AS";
 
     [Pure]
     public static ParameterizedSql SqlColumnName(this IDbColumn column)
@@ -33,7 +34,10 @@ public static class DbColumnExtensions
         => ParameterizedSql.CreateDynamic($"{column.ColumnName} {column.ToSqlTypeName()}");
 
     public static string ToSqlTypeName(this IDbColumn column)
-        => column.ToSqlTypeNameWithoutNullability() + column.NullabilityAnnotation();
+        => column.ToSqlTypeNameWithoutNullability() + CollationForStringColumn(column) + column.NullabilityAnnotation();
+
+    static string CollationForStringColumn(IDbColumn column)
+        => column.IsString ? $" collate {column.ColumnMetaData.CollationName ?? DefaultDbCollation}" : "";
 
     public static string ToSqlTypeNameWithoutNullability(this IDbColumn column)
         => column.UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + column.ColumnPrecisionSpecifier();

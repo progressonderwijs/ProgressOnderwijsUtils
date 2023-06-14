@@ -229,6 +229,9 @@ public sealed class DatabaseDescription
 
         public bool HasAutoIncrementIdentity
             => ColumnMetaData.HasAutoIncrementIdentity;
+
+        public string? CollationName
+            => ColumnMetaData.CollationName;
     }
 
     static Column<TObject> DefineColumn<TObject>(ObjectWithColumns<TObject> containingObject, DatabaseDescriptionById rawSchemaById, DbColumnMetaData col)
