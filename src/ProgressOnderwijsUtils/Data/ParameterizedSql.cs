@@ -205,9 +205,9 @@ static class ParameterizedSqlFactory
     public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery)
         => interpolatedQuery.Format == "" ? ParameterizedSql.Empty : new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
-    public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
+    public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, ReadOnlySpan<char> sql)
         where TCommandFactory : struct, ICommandFactory
-        => factory.AppendSql(sql, 0, sql.Length);
+        => factory.AppendSql(sql);
 }
 
 sealed class TwoSqlFragments : ISqlComponent
@@ -224,7 +224,7 @@ sealed class TwoSqlFragments : ISqlComponent
         where TCommandFactory : struct, ICommandFactory
     {
         a.AppendTo(ref factory);
-        factory.AppendSql(" ", 0, 1);
+        factory.AppendSql(" ");
         b.AppendTo(ref factory);
     }
 }
@@ -244,7 +244,7 @@ sealed class SeveralSqlFragments : ISqlComponent
         }
         kids[0].AppendTo(ref factory);
         for (var index = 1; index < kids.Length; index++) {
-            factory.AppendSql(" ", 0, 1);
+            factory.AppendSql(" ");
             kids[index].AppendTo(ref factory);
         }
     }
@@ -275,12 +275,12 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         var formatStringTokenization = GetFormatStringParamRefs(str);
         var pos = 0;
         foreach (var paramRefMatch in formatStringTokenization) {
-            factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
+            factory.AppendSql(str.AsSpan(pos, paramRefMatch.StartIndex - pos));
             var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
             SqlParameterComponent.AppendParamOrFragment(ref factory, argument);
             pos = paramRefMatch.EndIndex;
         }
-        factory.AppendSql(str, pos, str.Length - pos);
+        factory.AppendSql(str.AsSpan(pos, str.Length - pos));
     }
 
     static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings = new(new ReferenceEqualityComparer<string>());

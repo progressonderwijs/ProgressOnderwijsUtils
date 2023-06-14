@@ -70,7 +70,7 @@ public static class HtmlToCSharp
         => stringBuilder.AppendText("\n");
 
     static void AppendIndent(ref FastShortStringBuilder stringBuilder, int indent)
-        => stringBuilder.AppendText(new(' ', indent));
+        => stringBuilder.AppendText(new string(' ', indent));
 
     static bool AppendAttributesAsCSharp(ref FastShortStringBuilder stringBuilder, HtmlAttributes htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
     {
