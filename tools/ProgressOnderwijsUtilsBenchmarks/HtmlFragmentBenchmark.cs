@@ -1,3 +1,4 @@
+using System.IO.Pipelines;
 using AngleSharp;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
@@ -34,6 +35,8 @@ public class HtmlFragmentBenchmark
         }
     )();
 
+    static readonly Encoding utf8 = new UTF8Encoding(false);
+
     //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
     //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
 
@@ -45,14 +48,28 @@ public class HtmlFragmentBenchmark
     public void WriteToStream()
     {
         ms.SetLength(0);
-        htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
+        htmlFragment.SaveHtmlFragmentToStream(ms, utf8);
+    }
+
+    [Benchmark]
+    public void WriteToPipe()
+    {
+        var pipe = new Pipe();
+        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer, utf8);
+    }
+
+    [Benchmark]
+    public void WriteToStreamViaWriter()
+    {
+        ms.SetLength(0);
+        htmlFragment.SaveHtmlFragmentToStreamViaWriter(ms, utf8);
     }
 
     [Benchmark]
     public void JustConvertToUtf8()
     {
         using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream, Encoding.UTF8);
+        using var writer = new StreamWriter(stream, utf8);
         writer.Write(htmlString);
     }
 
@@ -60,7 +77,7 @@ public class HtmlFragmentBenchmark
     public void JustSerializeToUtf8LargeDocument()
     {
         using var stream = new MemoryStream();
-        htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
+        htmlFragment.SaveHtmlFragmentToStream(stream, utf8);
     }
 
     [Benchmark]

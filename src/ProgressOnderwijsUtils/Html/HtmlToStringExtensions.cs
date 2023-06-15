@@ -1,6 +1,19 @@
 using System.Buffers;
+using System.IO.Pipelines;
 
 namespace ProgressOnderwijsUtils.Html;
+
+readonly record struct PipeSink(Encoding Encoding, IBufferWriter<byte> writer) : IStringSink
+{
+    public void AppendText(ReadOnlySpan<char> text)
+        => Encoding.GetBytes(text, writer);
+}
+
+readonly record struct WriterSink(StreamWriter writer) : IStringSink
+{
+    public void AppendText(ReadOnlySpan<char> text)
+        => writer.Write(text);
+}
 
 public static class HtmlToStringExtensions
 {
@@ -24,6 +37,13 @@ public static class HtmlToStringExtensions
         return sink.Underlying.FinishBuilding();
     }
 
+    public static void SaveHtmlFragmentToPipe(this HtmlFragment rootElem, PipeWriter outputStream, Encoding contentEncoding)
+    {
+        var sink = new PipeSink(contentEncoding, outputStream);
+        sink.AppendText("<!DOCTYPE html>");
+        AppendFragment(sink, rootElem);
+    }
+
     public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
     {
         var sink = new FastShortStringSink(InitialBufferSize);
@@ -42,6 +62,14 @@ public static class HtmlToStringExtensions
             charsWritten += charsPerBuffer;
         }
         ArrayPool<byte>.Shared.Return(byteBuffer);
+    }
+
+    public static void SaveHtmlFragmentToStreamViaWriter(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
+    {
+        using var writer = new StreamWriter(outputStream, contentEncoding, leaveOpen: true);
+        var sink = new WriterSink(writer);
+        sink.AppendText("<!DOCTYPE html>");
+        AppendFragment(sink, rootElem);
     }
 
     static void AppendFragment<TSink>(TSink sink, HtmlFragment fragment)
