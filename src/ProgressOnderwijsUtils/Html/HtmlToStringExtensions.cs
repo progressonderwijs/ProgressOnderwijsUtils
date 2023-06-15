@@ -44,7 +44,8 @@ public static class HtmlToStringExtensions
         ArrayPool<byte>.Shared.Return(byteBuffer);
     }
 
-    static void AppendFragment(FastShortStringSink sink, HtmlFragment fragment)
+    static void AppendFragment<TSink>(TSink sink, HtmlFragment fragment)
+        where TSink : IStringSink
     {
         if (fragment.Implementation is string stringContent) {
             AppendEscapedText(sink, stringContent);
@@ -65,7 +66,8 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendTagContentAndEnd(FastShortStringSink sink, IHtmlElementAllowingContent htmlElementAllowingContent)
+    static void AppendTagContentAndEnd<TSink>(TSink sink, IHtmlElementAllowingContent htmlElementAllowingContent)
+        where TSink : IStringSink
     {
         var contents = htmlElementAllowingContent.GetContent();
         if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
@@ -88,7 +90,8 @@ public static class HtmlToStringExtensions
         sink.AppendText(htmlElementAllowingContent.EndTag);
     }
 
-    static void AppendAttributes(FastShortStringSink sink, HtmlAttributes attributes)
+    static void AppendAttributes<TSink>(TSink sink, HtmlAttributes attributes)
+        where TSink : IStringSink
     {
         var className = default(string);
         foreach (var htmlAttribute in attributes) {
@@ -103,7 +106,8 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendAttribute(FastShortStringSink sink, HtmlAttribute htmlAttribute)
+    static void AppendAttribute<TSink>(TSink sink, HtmlAttribute htmlAttribute)
+        where TSink : IStringSink
     {
         sink.AppendText(" ");
         sink.AppendText(htmlAttribute.Name);
@@ -114,7 +118,8 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendAsRawText(FastShortStringSink sink, HtmlFragment fragment)
+    static void AppendAsRawText<TSink>(TSink sink, HtmlFragment fragment)
+        where TSink : IStringSink
     {
         if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var childNode in fragments) {
@@ -127,7 +132,8 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendEscapedText(FastShortStringSink sink, string stringContent)
+    static void AppendEscapedText<TSink>(TSink sink, string stringContent)
+        where TSink : IStringSink
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < stringContent.Length; textIndex++) {
@@ -154,7 +160,8 @@ public static class HtmlToStringExtensions
         sink.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
     }
 
-    static void AppendEscapedAttributeValue(FastShortStringSink sink, string attrValue)
+    static void AppendEscapedAttributeValue<TSink>(TSink sink, string attrValue)
+        where TSink : IStringSink
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {
