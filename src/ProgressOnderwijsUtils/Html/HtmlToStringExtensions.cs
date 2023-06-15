@@ -8,10 +8,10 @@ public static class HtmlToStringExtensions
 
     public static string ToStringWithDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
-        fastStringBuilder.AppendText("<!DOCTYPE html>");
-        AppendToBuilder(fastStringBuilder, rootElem.AsFragment());
-        return fastStringBuilder.Underlying.FinishBuilding();
+        var sink = new FastShortStringSink(InitialBufferSize);
+        sink.AppendText("<!DOCTYPE html>");
+        AppendFragment(sink, rootElem.AsFragment());
+        return sink.Underlying.FinishBuilding();
     }
 
     public static string ToCSharp(this IConvertibleToFragment rootElem)
@@ -19,115 +19,115 @@ public static class HtmlToStringExtensions
 
     public static string ToStringWithoutDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
-        AppendToBuilder(fastStringBuilder, rootElem.AsFragment());
-        return fastStringBuilder.Underlying.FinishBuilding();
+        var sink = new FastShortStringSink(InitialBufferSize);
+        AppendFragment(sink, rootElem.AsFragment());
+        return sink.Underlying.FinishBuilding();
     }
 
     public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
     {
-        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
-        fastStringBuilder.AppendText("<!DOCTYPE html>");
-        AppendToBuilder(fastStringBuilder, rootElem);
+        var sink = new FastShortStringSink(InitialBufferSize);
+        sink.AppendText("<!DOCTYPE html>");
+        AppendFragment(sink, rootElem);
         const int charsPerBuffer = 2048;
         var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
         var byteBuffer = ArrayPool<byte>.Shared.Rent(maxBufferSize);
 
-        var charCount = fastStringBuilder.Underlying.CurrentLength;
+        var charCount = sink.Underlying.CurrentLength;
         var charsWritten = 0;
         while (charsWritten < charCount) {
             var charsToConvert = Math.Min(charCount - charsWritten, charsPerBuffer);
-            var bytesWritten = contentEncoding.GetBytes(fastStringBuilder.Underlying.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
+            var bytesWritten = contentEncoding.GetBytes(sink.Underlying.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
             outputStream.Write(byteBuffer, 0, bytesWritten);
             charsWritten += charsPerBuffer;
         }
         ArrayPool<byte>.Shared.Return(byteBuffer);
     }
 
-    static void AppendToBuilder(FastShortStringSink stringBuilder, HtmlFragment fragment)
+    static void AppendFragment(FastShortStringSink sink, HtmlFragment fragment)
     {
         if (fragment.Implementation is string stringContent) {
-            AppendEscapedText(stringBuilder, stringContent);
+            AppendEscapedText(sink, stringContent);
         } else if (fragment.Implementation is IHtmlElement htmlTag) {
-            stringBuilder.AppendText(htmlTag.TagStart);
+            sink.AppendText(htmlTag.TagStart);
             if (htmlTag.Attributes.Count > 0) {
-                AppendAttributes(stringBuilder, htmlTag.Attributes);
+                AppendAttributes(sink, htmlTag.Attributes);
             }
-            stringBuilder.AppendText(">");
+            sink.AppendText(">");
 
             if (htmlTag is IHtmlElementAllowingContent htmlTagAllowingContent) {
-                AppendTagContentAndEnd(stringBuilder, htmlTagAllowingContent);
+                AppendTagContentAndEnd(sink, htmlTagAllowingContent);
             }
         } else if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var child in fragments) {
-                AppendToBuilder(stringBuilder, child);
+                AppendFragment(sink, child);
             }
         }
     }
 
-    static void AppendTagContentAndEnd(FastShortStringSink stringBuilder, IHtmlElementAllowingContent htmlElementAllowingContent)
+    static void AppendTagContentAndEnd(FastShortStringSink sink, IHtmlElementAllowingContent htmlElementAllowingContent)
     {
         var contents = htmlElementAllowingContent.GetContent();
         if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
-                    AppendAsRawTextToBuilder(stringBuilder, childNode);
+                    AppendAsRawText(sink, childNode);
                 }
             } else if (!contents.IsEmpty) {
-                AppendAsRawTextToBuilder(stringBuilder, contents);
+                AppendAsRawText(sink, contents);
             }
         } else {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
-                    AppendToBuilder(stringBuilder, childNode);
+                    AppendFragment(sink, childNode);
                 }
             } else if (!contents.IsEmpty) {
-                AppendToBuilder(stringBuilder, contents);
+                AppendFragment(sink, contents);
             }
         }
-        stringBuilder.AppendText(htmlElementAllowingContent.EndTag);
+        sink.AppendText(htmlElementAllowingContent.EndTag);
     }
 
-    static void AppendAttributes(FastShortStringSink stringBuilder, HtmlAttributes attributes)
+    static void AppendAttributes(FastShortStringSink sink, HtmlAttributes attributes)
     {
         var className = default(string);
         foreach (var htmlAttribute in attributes) {
             if (htmlAttribute.Name == "class") {
                 className = className == null ? htmlAttribute.Value : $"{className} {htmlAttribute.Value}";
             } else {
-                AppendAttribute(stringBuilder, htmlAttribute);
+                AppendAttribute(sink, htmlAttribute);
             }
         }
         if (className != null) {
-            AppendAttribute(stringBuilder, new("class", className));
+            AppendAttribute(sink, new("class", className));
         }
     }
 
-    static void AppendAttribute(FastShortStringSink stringBuilder, HtmlAttribute htmlAttribute)
+    static void AppendAttribute(FastShortStringSink sink, HtmlAttribute htmlAttribute)
     {
-        stringBuilder.AppendText(" ");
-        stringBuilder.AppendText(htmlAttribute.Name);
+        sink.AppendText(" ");
+        sink.AppendText(htmlAttribute.Name);
         if (htmlAttribute.Value != "") {
-            stringBuilder.AppendText("=\"");
-            AppendEscapedAttributeValue(stringBuilder, htmlAttribute.Value);
-            stringBuilder.AppendText("\"");
+            sink.AppendText("=\"");
+            AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+            sink.AppendText("\"");
         }
     }
 
-    static void AppendAsRawTextToBuilder(FastShortStringSink stringBuilder, HtmlFragment fragment)
+    static void AppendAsRawText(FastShortStringSink sink, HtmlFragment fragment)
     {
         if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var childNode in fragments) {
-                AppendAsRawTextToBuilder(stringBuilder, childNode);
+                AppendAsRawText(sink, childNode);
             }
         } else if (fragment.Implementation is string contentString) {
-            stringBuilder.AppendText(contentString);
+            sink.AppendText(contentString);
         } else if (fragment.Implementation is IHtmlElement) {
             throw new InvalidOperationException("script and style tags cannot contain child elements");
         }
     }
 
-    static void AppendEscapedText(FastShortStringSink stringBuilder, string stringContent)
+    static void AppendEscapedText(FastShortStringSink sink, string stringContent)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < stringContent.Length; textIndex++) {
@@ -136,25 +136,25 @@ public static class HtmlToStringExtensions
                 //https://html.spec.whatwg.org/#elements-2:normal-elements-4
                 //normal text must not contain < or & unescaped
                 if (c == '<') {
-                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
-                    stringBuilder.AppendText("&lt;");
+                    sink.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
+                    sink.AppendText("&lt;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '&') {
-                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
-                    stringBuilder.AppendText("&amp;");
+                    sink.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
+                    sink.AppendText("&amp;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '>') {
                     //not strictly necessary
-                    stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
-                    stringBuilder.AppendText("&gt;");
+                    sink.AppendText(stringContent.AsSpan(uptoIndex, textIndex - uptoIndex));
+                    sink.AppendText("&gt;");
                     uptoIndex = textIndex + 1;
                 }
             }
         }
-        stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
+        sink.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
     }
 
-    static void AppendEscapedAttributeValue(FastShortStringSink stringBuilder, string attrValue)
+    static void AppendEscapedAttributeValue(FastShortStringSink sink, string attrValue)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {
@@ -163,16 +163,16 @@ public static class HtmlToStringExtensions
                 //https://html.spec.whatwg.org/#attributes-2
                 //quoted attribute values must not contain " or & unescaped
                 if (c == '&') {
-                    stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
-                    stringBuilder.AppendText("&amp;");
+                    sink.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
+                    sink.AppendText("&amp;");
                     uptoIndex = textIndex + 1;
                 } else if (c == '"') {
-                    stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
-                    stringBuilder.AppendText("&quot;");
+                    sink.AppendText(attrValue.AsSpan(uptoIndex, textIndex - uptoIndex));
+                    sink.AppendText("&quot;");
                     uptoIndex = textIndex + 1;
                 }
             }
         }
-        stringBuilder.AppendText(attrValue.AsSpan(uptoIndex, attrValue.Length - uptoIndex));
+        sink.AppendText(attrValue.AsSpan(uptoIndex, attrValue.Length - uptoIndex));
     }
 }
