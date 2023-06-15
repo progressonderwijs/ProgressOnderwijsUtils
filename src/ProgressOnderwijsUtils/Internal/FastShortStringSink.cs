@@ -5,7 +5,10 @@ namespace ProgressOnderwijsUtils.Internal;
 /// </summary>
 class FastShortStringSink : IStringSink
 {
-    public MutableShortStringBuilder Underlying = MutableShortStringBuilder.Create();
+    public FastShortStringSink(int initialBufferSize = MutableShortStringBuilder.InitialBufferSize)
+        => Underlying = MutableShortStringBuilder.Create(initialBufferSize);
+
+    public MutableShortStringBuilder Underlying;
 
     public void AppendText(ReadOnlySpan<char> text)
         => Underlying.AppendText(text);

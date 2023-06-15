@@ -7,20 +7,18 @@ namespace ProgressOnderwijsUtils.Internal;
 /// </summary>
 struct MutableShortStringBuilder
 {
+    public const int InitialBufferSize = 4096;
     public char[] CurrentCharacterBuffer;
     public int CurrentLength;
 
-    public static MutableShortStringBuilder Create()
-        => new() { CurrentCharacterBuffer = Allocate(4096), };
+    public static MutableShortStringBuilder Create(int length = InitialBufferSize)
+        => new() { CurrentCharacterBuffer = Allocate(length), };
 
     static char[] Allocate(int length)
         => ArrayPool<char>.Shared.Rent(length);
 
     void Free()
         => ArrayPool<char>.Shared.Return(CurrentCharacterBuffer);
-
-    public static MutableShortStringBuilder Create(int length)
-        => new() { CurrentCharacterBuffer = Allocate(length), };
 
     public void AppendText(ReadOnlySpan<char> text)
     {
