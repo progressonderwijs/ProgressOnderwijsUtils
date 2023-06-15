@@ -4,12 +4,14 @@ namespace ProgressOnderwijsUtils.Html;
 
 public static class HtmlToStringExtensions
 {
+    const int InitialBufferSize = 1 << 16;
+
     public static string ToStringWithDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
+        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
         fastStringBuilder.AppendText("<!DOCTYPE html>");
-        AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
-        return fastStringBuilder.FinishBuilding();
+        AppendToBuilder(fastStringBuilder, rootElem.AsFragment());
+        return fastStringBuilder.Underlying.FinishBuilding();
     }
 
     public static string ToCSharp(this IConvertibleToFragment rootElem)
@@ -17,106 +19,106 @@ public static class HtmlToStringExtensions
 
     public static string ToStringWithoutDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
-        AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
-        return fastStringBuilder.FinishBuilding();
+        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
+        AppendToBuilder(fastStringBuilder, rootElem.AsFragment());
+        return fastStringBuilder.Underlying.FinishBuilding();
     }
 
     public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
     {
-        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
+        var fastStringBuilder = new FastShortStringSink(InitialBufferSize);
         fastStringBuilder.AppendText("<!DOCTYPE html>");
-        AppendToBuilder(ref fastStringBuilder, rootElem);
+        AppendToBuilder(fastStringBuilder, rootElem);
         const int charsPerBuffer = 2048;
         var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
         var byteBuffer = ArrayPool<byte>.Shared.Rent(maxBufferSize);
 
-        var charCount = fastStringBuilder.CurrentLength;
+        var charCount = fastStringBuilder.Underlying.CurrentLength;
         var charsWritten = 0;
         while (charsWritten < charCount) {
             var charsToConvert = Math.Min(charCount - charsWritten, charsPerBuffer);
-            var bytesWritten = contentEncoding.GetBytes(fastStringBuilder.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
+            var bytesWritten = contentEncoding.GetBytes(fastStringBuilder.Underlying.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
             outputStream.Write(byteBuffer, 0, bytesWritten);
             charsWritten += charsPerBuffer;
         }
         ArrayPool<byte>.Shared.Return(byteBuffer);
     }
 
-    static void AppendToBuilder(ref MutableShortStringBuilder stringBuilder, HtmlFragment fragment)
+    static void AppendToBuilder(FastShortStringSink stringBuilder, HtmlFragment fragment)
     {
         if (fragment.Implementation is string stringContent) {
-            AppendEscapedText(ref stringBuilder, stringContent);
+            AppendEscapedText(stringBuilder, stringContent);
         } else if (fragment.Implementation is IHtmlElement htmlTag) {
             stringBuilder.AppendText(htmlTag.TagStart);
             if (htmlTag.Attributes.Count > 0) {
-                AppendAttributes(ref stringBuilder, htmlTag.Attributes);
+                AppendAttributes(stringBuilder, htmlTag.Attributes);
             }
             stringBuilder.AppendText(">");
 
             if (htmlTag is IHtmlElementAllowingContent htmlTagAllowingContent) {
-                AppendTagContentAndEnd(ref stringBuilder, htmlTagAllowingContent);
+                AppendTagContentAndEnd(stringBuilder, htmlTagAllowingContent);
             }
         } else if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var child in fragments) {
-                AppendToBuilder(ref stringBuilder, child);
+                AppendToBuilder(stringBuilder, child);
             }
         }
     }
 
-    static void AppendTagContentAndEnd(ref MutableShortStringBuilder stringBuilder, IHtmlElementAllowingContent htmlElementAllowingContent)
+    static void AppendTagContentAndEnd(FastShortStringSink stringBuilder, IHtmlElementAllowingContent htmlElementAllowingContent)
     {
         var contents = htmlElementAllowingContent.GetContent();
         if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
-                    AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+                    AppendAsRawTextToBuilder(stringBuilder, childNode);
                 }
             } else if (!contents.IsEmpty) {
-                AppendAsRawTextToBuilder(ref stringBuilder, contents);
+                AppendAsRawTextToBuilder(stringBuilder, contents);
             }
         } else {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
-                    AppendToBuilder(ref stringBuilder, childNode);
+                    AppendToBuilder(stringBuilder, childNode);
                 }
             } else if (!contents.IsEmpty) {
-                AppendToBuilder(ref stringBuilder, contents);
+                AppendToBuilder(stringBuilder, contents);
             }
         }
         stringBuilder.AppendText(htmlElementAllowingContent.EndTag);
     }
 
-    static void AppendAttributes(ref MutableShortStringBuilder stringBuilder, HtmlAttributes attributes)
+    static void AppendAttributes(FastShortStringSink stringBuilder, HtmlAttributes attributes)
     {
         var className = default(string);
         foreach (var htmlAttribute in attributes) {
             if (htmlAttribute.Name == "class") {
                 className = className == null ? htmlAttribute.Value : $"{className} {htmlAttribute.Value}";
             } else {
-                AppendAttribute(ref stringBuilder, htmlAttribute);
+                AppendAttribute(stringBuilder, htmlAttribute);
             }
         }
         if (className != null) {
-            AppendAttribute(ref stringBuilder, new("class", className));
+            AppendAttribute(stringBuilder, new("class", className));
         }
     }
 
-    static void AppendAttribute(ref MutableShortStringBuilder stringBuilder, HtmlAttribute htmlAttribute)
+    static void AppendAttribute(FastShortStringSink stringBuilder, HtmlAttribute htmlAttribute)
     {
         stringBuilder.AppendText(" ");
         stringBuilder.AppendText(htmlAttribute.Name);
         if (htmlAttribute.Value != "") {
             stringBuilder.AppendText("=\"");
-            AppendEscapedAttributeValue(ref stringBuilder, htmlAttribute.Value);
+            AppendEscapedAttributeValue(stringBuilder, htmlAttribute.Value);
             stringBuilder.AppendText("\"");
         }
     }
 
-    static void AppendAsRawTextToBuilder(ref MutableShortStringBuilder stringBuilder, HtmlFragment fragment)
+    static void AppendAsRawTextToBuilder(FastShortStringSink stringBuilder, HtmlFragment fragment)
     {
         if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var childNode in fragments) {
-                AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+                AppendAsRawTextToBuilder(stringBuilder, childNode);
             }
         } else if (fragment.Implementation is string contentString) {
             stringBuilder.AppendText(contentString);
@@ -125,7 +127,7 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendEscapedText(ref MutableShortStringBuilder stringBuilder, string stringContent)
+    static void AppendEscapedText(FastShortStringSink stringBuilder, string stringContent)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < stringContent.Length; textIndex++) {
@@ -152,7 +154,7 @@ public static class HtmlToStringExtensions
         stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
     }
 
-    static void AppendEscapedAttributeValue(ref MutableShortStringBuilder stringBuilder, string attrValue)
+    static void AppendEscapedAttributeValue(FastShortStringSink stringBuilder, string attrValue)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {
