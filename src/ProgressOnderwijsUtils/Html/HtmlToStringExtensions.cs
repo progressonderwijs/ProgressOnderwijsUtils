@@ -6,7 +6,7 @@ public static class HtmlToStringExtensions
 {
     public static string ToStringWithDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
+        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
         fastStringBuilder.AppendText("<!DOCTYPE html>");
         AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
         return fastStringBuilder.FinishBuilding();
@@ -17,14 +17,14 @@ public static class HtmlToStringExtensions
 
     public static string ToStringWithoutDoctype(this IConvertibleToFragment rootElem)
     {
-        var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
+        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
         AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
         return fastStringBuilder.FinishBuilding();
     }
 
     public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
     {
-        var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
+        var fastStringBuilder = MutableShortStringBuilder.Create(1 << 16);
         fastStringBuilder.AppendText("<!DOCTYPE html>");
         AppendToBuilder(ref fastStringBuilder, rootElem);
         const int charsPerBuffer = 2048;
@@ -42,7 +42,7 @@ public static class HtmlToStringExtensions
         ArrayPool<byte>.Shared.Return(byteBuffer);
     }
 
-    static void AppendToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
+    static void AppendToBuilder(ref MutableShortStringBuilder stringBuilder, HtmlFragment fragment)
     {
         if (fragment.Implementation is string stringContent) {
             AppendEscapedText(ref stringBuilder, stringContent);
@@ -63,7 +63,7 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, IHtmlElementAllowingContent htmlElementAllowingContent)
+    static void AppendTagContentAndEnd(ref MutableShortStringBuilder stringBuilder, IHtmlElementAllowingContent htmlElementAllowingContent)
     {
         var contents = htmlElementAllowingContent.GetContent();
         if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
@@ -86,7 +86,7 @@ public static class HtmlToStringExtensions
         stringBuilder.AppendText(htmlElementAllowingContent.EndTag);
     }
 
-    static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttributes attributes)
+    static void AppendAttributes(ref MutableShortStringBuilder stringBuilder, HtmlAttributes attributes)
     {
         var className = default(string);
         foreach (var htmlAttribute in attributes) {
@@ -101,7 +101,7 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendAttribute(ref FastShortStringBuilder stringBuilder, HtmlAttribute htmlAttribute)
+    static void AppendAttribute(ref MutableShortStringBuilder stringBuilder, HtmlAttribute htmlAttribute)
     {
         stringBuilder.AppendText(" ");
         stringBuilder.AppendText(htmlAttribute.Name);
@@ -112,7 +112,7 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendAsRawTextToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
+    static void AppendAsRawTextToBuilder(ref MutableShortStringBuilder stringBuilder, HtmlFragment fragment)
     {
         if (fragment.Implementation is HtmlFragment[] fragments) {
             foreach (var childNode in fragments) {
@@ -125,7 +125,7 @@ public static class HtmlToStringExtensions
         }
     }
 
-    static void AppendEscapedText(ref FastShortStringBuilder stringBuilder, string stringContent)
+    static void AppendEscapedText(ref MutableShortStringBuilder stringBuilder, string stringContent)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < stringContent.Length; textIndex++) {
@@ -152,7 +152,7 @@ public static class HtmlToStringExtensions
         stringBuilder.AppendText(stringContent.AsSpan(uptoIndex, stringContent.Length - uptoIndex));
     }
 
-    static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, string attrValue)
+    static void AppendEscapedAttributeValue(ref MutableShortStringBuilder stringBuilder, string attrValue)
     {
         var uptoIndex = 0;
         for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {
