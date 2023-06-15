@@ -13,25 +13,14 @@ public class HtmlFragmentBenchmark
     static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
     readonly MemoryStream ms = new();
 
-    [Benchmark]
-    public void SerializeLargeDocument()
-        => htmlFragment.ToStringWithDoctype();
-
-    [Benchmark]
-    public void WriteToStream()
-    {
-        ms.SetLength(0);
-        htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
-    }
-
     sealed class Config : ManualConfig
     {
         public Config()
         {
-            _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerClean"));
+            //_ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerClean"));
             _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
-            _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
-            _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
+            //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
+            //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
         }
     }
 
@@ -45,20 +34,19 @@ public class HtmlFragmentBenchmark
         }
     )();
 
-    static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
-    static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
+    //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
+    //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
 
     [Benchmark]
-    public void CreateLargeDocument()
-        => WikiPageHtml5.MakeHtml();
+    public void SerializeLargeDocument()
+        => htmlFragment.ToStringWithDoctype();
 
     [Benchmark]
-    public void CreateAndSerializeLargeDocument()
-        => WikiPageHtml5.MakeHtml().ToStringWithDoctype();
-
-    [Benchmark]
-    public void SerializeLargeDocumentToCSharp()
-        => htmlFragment.ToCSharp();
+    public void WriteToStream()
+    {
+        ms.SetLength(0);
+        htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
+    }
 
     [Benchmark]
     public void JustConvertToUtf8()
@@ -74,6 +62,19 @@ public class HtmlFragmentBenchmark
         using var stream = new MemoryStream();
         htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
     }
+
+    [Benchmark]
+    public void CreateLargeDocument()
+        => WikiPageHtml5.MakeHtml();
+
+    /*
+    [Benchmark]
+    public void CreateAndSerializeLargeDocument()
+        => WikiPageHtml5.MakeHtml().ToStringWithDoctype();
+
+    [Benchmark]
+    public void SerializeLargeDocumentToCSharp()
+        => htmlFragment.ToCSharp();
 
     [Benchmark]
     public void AngleSharpParseFromString()
