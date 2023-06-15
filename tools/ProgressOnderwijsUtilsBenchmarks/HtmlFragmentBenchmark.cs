@@ -12,7 +12,6 @@ namespace ProgressOnderwijsUtilsBenchmarks;
 public class HtmlFragmentBenchmark
 {
     static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
-    readonly MemoryStream ms = new();
 
     sealed class Config : ManualConfig
     {
@@ -35,8 +34,6 @@ public class HtmlFragmentBenchmark
         }
     )();
 
-    static readonly Encoding utf8 = new UTF8Encoding(false);
-
     //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
     //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
 
@@ -47,29 +44,29 @@ public class HtmlFragmentBenchmark
     [Benchmark]
     public void WriteToStream()
     {
-        ms.SetLength(0);
-        htmlFragment.SaveHtmlFragmentToStream(ms, utf8);
+        MemoryStream ms = new();
+        htmlFragment.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
     }
 
     [Benchmark]
     public void WriteToPipe()
     {
         var pipe = new Pipe();
-        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer, utf8);
+        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
     }
 
     [Benchmark]
     public void WriteToStreamViaWriter()
     {
-        ms.SetLength(0);
-        htmlFragment.SaveHtmlFragmentToStreamViaWriter(ms, utf8);
+        MemoryStream ms = new();
+        htmlFragment.SaveHtmlFragmentToStreamViaWriter(ms, StringUtils.Utf8WithoutBom);
     }
 
     [Benchmark]
     public void JustConvertToUtf8()
     {
         using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream, utf8);
+        using var writer = new StreamWriter(stream, StringUtils.Utf8WithoutBom);
         writer.Write(htmlString);
     }
 
@@ -77,7 +74,7 @@ public class HtmlFragmentBenchmark
     public void JustSerializeToUtf8LargeDocument()
     {
         using var stream = new MemoryStream();
-        htmlFragment.SaveHtmlFragmentToStream(stream, utf8);
+        htmlFragment.SaveHtmlFragmentToStream(stream, StringUtils.Utf8WithoutBom);
     }
 
     [Benchmark]
