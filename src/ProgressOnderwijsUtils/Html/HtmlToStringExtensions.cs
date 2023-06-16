@@ -144,7 +144,7 @@ public static class HtmlToStringExtensions
         where TSink : IStringSink
     {
         var contents = htmlElementAllowingContent.GetContent();
-        if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
+        if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("script") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("style")) {
             if (contents.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
                     AppendAsRawText(sink, childNode);
