@@ -18,7 +18,14 @@ public class HtmlFragmentBenchmark
         public Config()
         {
             //_ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerClean"));
-            _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
+            _ = AddJob(
+                Job.InProcess.WithGcServer(true).WithGcForce(false).WithId("Server")
+                    .WithUnrollFactor(16)
+                    .WithWarmupCount(1)
+                    .WithLaunchCount(1)
+                    .WithInvocationCount(64)
+                    .WithIterationCount(25)
+            );
             //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
             //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
         }
