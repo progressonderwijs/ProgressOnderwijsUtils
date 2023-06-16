@@ -18,4 +18,4 @@ public static class HtmlClassAttribute
     }
 }
 
-public sealed record CssClass(string ClassName);
+public record struct CssClass(string ClassName);
