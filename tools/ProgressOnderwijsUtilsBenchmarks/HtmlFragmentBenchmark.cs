@@ -32,20 +32,12 @@ public class HtmlFragmentBenchmark
     }
 
     //*
-    static readonly string htmlString = Utils.F(
-        () => {
-            var s = htmlFragment.ToStringWithDoctype();
-            //Console.WriteLine(s.Length);
-
-            return s;
-        }
-    )();
 
     //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
     //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
 
     [Benchmark]
-    public void SerializeLargeDocument()
+    public void WriteToString()
         => htmlFragment.ToStringWithDoctype();
 
     [Benchmark]
@@ -56,13 +48,6 @@ public class HtmlFragmentBenchmark
     }
 
     [Benchmark]
-    public void WriteToPipe()
-    {
-        var pipe = new Pipe();
-        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
-    }
-
-    [Benchmark]
     public void WriteToStreamViaWriter()
     {
         MemoryStream ms = new();
@@ -70,25 +55,30 @@ public class HtmlFragmentBenchmark
     }
 
     [Benchmark]
-    public void JustConvertToUtf8()
+    public void WriteToPipe()
     {
-        using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream, StringUtils.Utf8WithoutBom);
-        writer.Write(htmlString);
+        var pipe = new Pipe();
+        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
     }
 
+    /*
+    static readonly string htmlString = Utils.F(
+        () => {
+            var s = htmlFragment.ToStringWithDoctype();
+            //Console.WriteLine(s.Length);
+
+            return s;
+        }
+    )();
+
     [Benchmark]
-    public void JustSerializeToUtf8LargeDocument()
-    {
-        using var stream = new MemoryStream();
-        htmlFragment.SaveHtmlFragmentToStream(stream, StringUtils.Utf8WithoutBom);
-    }
+    public void JustConvertToUtf8()
+        => _ = StringUtils.Utf8WithoutBom.GetBytes(htmlString);
 
     [Benchmark]
     public void CreateLargeDocument()
         => WikiPageHtml5.MakeHtml();
 
-    /*
     [Benchmark]
     public void CreateAndSerializeLargeDocument()
         => WikiPageHtml5.MakeHtml().ToStringWithDoctype();
