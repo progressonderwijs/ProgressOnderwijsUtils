@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Tests;
 public interface ISimpleInterface
 {
     [UsedImplicitly]
-    string Property { get; set; }
+    string? Property { get; set; }
 }
 
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
