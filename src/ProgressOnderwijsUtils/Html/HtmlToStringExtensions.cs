@@ -3,10 +3,56 @@ using System.IO.Pipelines;
 
 namespace ProgressOnderwijsUtils.Html;
 
-readonly record struct PipeSink(Encoding Encoding, IBufferWriter<byte> writer) : IStringSink
+sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
 {
+    const int blockSize = 1 << 14;
+    static readonly Encoding Encoding = StringUtils.Utf8WithoutBom;
+    Memory<byte> buffer = Memory<byte>.Empty;
+    int bufferBytes;
+
     public void AppendText(ReadOnlySpan<char> text)
-        => Encoding.GetBytes(text, writer);
+    {
+        var byteCount = Encoding.GetByteCount(text);
+        if (buffer.Length <= byteCount) {
+            Flush();
+            if (byteCount >= blockSize) {
+                _ = Encoding.GetBytes(text, writer);
+                return;
+            }
+            buffer = writer.GetMemory(blockSize);
+        }
+        var actualBytesWritten = Encoding.GetBytes(text, buffer.Span);
+        bufferBytes += actualBytesWritten;
+        buffer = buffer.Slice(actualBytesWritten);
+    }
+
+    public void Flush()
+    {
+        if (bufferBytes > 0) {
+            writer.Advance(bufferBytes);
+            buffer = Memory<byte>.Empty;
+            bufferBytes = 0;
+        }
+    }
+
+    public void AppendUtf8(ReadOnlySpan<byte> text)
+    {
+        var byteCount = text.Length;
+        if (buffer.Length <= byteCount) {
+            Flush();
+            if (byteCount >= blockSize) {
+                writer.Write(text);
+                return;
+            }
+            buffer = writer.GetMemory(blockSize);
+        }
+        text.CopyTo(buffer.Span);
+        bufferBytes += byteCount;
+        buffer = buffer.Slice(byteCount);
+    }
+
+    public void Dispose()
+        => Flush();
 }
 
 readonly record struct WriterSink(StreamWriter writer) : IStringSink
