@@ -11,6 +11,13 @@ public interface IHtmlElement : IConvertibleToFragment
     string TagName { get; }
     string TagStart { get; }
     string EndTag { get; }
+
+    ReadOnlySpan<byte> TagStartUtf8
+        => Encoding.UTF8.GetBytes(TagStart);
+
+    ReadOnlySpan<byte> EndTagUtf8
+        => Encoding.UTF8.GetBytes(EndTag);
+
     HtmlAttributes Attributes { get; }
 
     /// <summary>
