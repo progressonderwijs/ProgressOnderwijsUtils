@@ -48,13 +48,6 @@ public class HtmlFragmentBenchmark
     }
 
     [Benchmark]
-    public void WriteToStreamViaWriter()
-    {
-        MemoryStream ms = new();
-        htmlFragment.SaveHtmlFragmentToStreamViaWriter(ms, StringUtils.Utf8WithoutBom);
-    }
-
-    [Benchmark]
     public void WriteToPipe()
     {
         var pipe = new Pipe();

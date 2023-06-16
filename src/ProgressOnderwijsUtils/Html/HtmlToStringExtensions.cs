@@ -94,26 +94,6 @@ public static class HtmlToStringExtensions
 
     public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
     {
-        var sink = new FastShortStringSink(InitialBufferSize);
-        sink.AppendText("<!DOCTYPE html>");
-        AppendFragment(sink, rootElem);
-        const int charsPerBuffer = 2048;
-        var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
-        var byteBuffer = ArrayPool<byte>.Shared.Rent(maxBufferSize);
-
-        var charCount = sink.Underlying.CurrentLength;
-        var charsWritten = 0;
-        while (charsWritten < charCount) {
-            var charsToConvert = Math.Min(charCount - charsWritten, charsPerBuffer);
-            var bytesWritten = contentEncoding.GetBytes(sink.Underlying.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
-            outputStream.Write(byteBuffer, 0, bytesWritten);
-            charsWritten += charsPerBuffer;
-        }
-        ArrayPool<byte>.Shared.Return(byteBuffer);
-    }
-
-    public static void SaveHtmlFragmentToStreamViaWriter(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
-    {
         using var writer = new StreamWriter(outputStream, contentEncoding, leaveOpen: true);
         var sink = new WriterSink(writer);
         sink.AppendText("<!DOCTYPE html>");
