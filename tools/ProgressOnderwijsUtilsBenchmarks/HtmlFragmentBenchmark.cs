@@ -24,7 +24,7 @@ public class HtmlFragmentBenchmark
                     .WithWarmupCount(1)
                     .WithLaunchCount(1)
                     .WithInvocationCount(64)
-                    .WithIterationCount(25)
+                    .WithIterationCount(50)
             );
             //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
             //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
