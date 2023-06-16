@@ -14,7 +14,7 @@ sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
 
     public void AppendText(ReadOnlySpan<char> text)
     {
-        var byteCount = Encoding.GetByteCount(text);
+        var byteCount = Encoding.GetMaxByteCount(text.Length); // Encoding.GetByteCount(text);
         if (buffer.Length <= byteCount) {
             Flush();
             if (byteCount >= blockSize) {
