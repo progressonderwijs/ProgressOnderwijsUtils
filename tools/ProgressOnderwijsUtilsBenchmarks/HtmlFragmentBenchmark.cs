@@ -36,16 +36,16 @@ public class HtmlFragmentBenchmark
     //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
     //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
 
-    //[Benchmark]
-    //public void WriteToString()
-    //    => htmlFragment.ToStringWithDoctype();
+    [Benchmark]
+    public void WriteToString()
+        => htmlFragment.ToStringWithDoctype();
 
-    //[Benchmark]
-    //public void WriteToStream()
-    //{
-    //    MemoryStream ms = new();
-    //    htmlFragment.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
-    //}
+    [Benchmark]
+    public void WriteToStream()
+    {
+        MemoryStream ms = new();
+        htmlFragment.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
+    }
 
     [Benchmark]
     public void WriteToPipe()
