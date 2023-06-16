@@ -1,5 +1,7 @@
+using System;
 using System.Buffers;
 using System.IO.Pipelines;
+using System.Text;
 
 namespace ProgressOnderwijsUtils.Html;
 
@@ -83,9 +85,9 @@ public static class HtmlToStringExtensions
         return sink.Underlying.FinishBuilding();
     }
 
-    public static void SaveHtmlFragmentToPipe(this HtmlFragment rootElem, PipeWriter outputStream, Encoding contentEncoding)
+    public static void SaveHtmlFragmentToPipe(this HtmlFragment rootElem, PipeWriter outputStream)
     {
-        var sink = new PipeSink(contentEncoding, outputStream);
+        using var sink = new PipeSink(outputStream);
         sink.AppendText("<!DOCTYPE html>");
         AppendFragment(sink, rootElem);
     }
@@ -124,11 +126,19 @@ public static class HtmlToStringExtensions
         if (fragment.Implementation is string stringContent) {
             AppendEscapedText(sink, stringContent);
         } else if (fragment.Implementation is IHtmlElement htmlTag) {
-            sink.AppendText(htmlTag.TagStart);
+            if (sink is PipeSink pipeSink) {
+                pipeSink.AppendUtf8(htmlTag.TagStartUtf8);
+            } else {
+                sink.AppendText(htmlTag.TagStart);
+            }
             if (htmlTag.Attributes.Count > 0) {
                 AppendAttributes(sink, htmlTag.Attributes);
             }
-            sink.AppendText(">");
+            if (sink is PipeSink pipeSink2) {
+                pipeSink2.AppendUtf8(">"u8);
+            } else {
+                sink.AppendText(">");
+            }
 
             if (htmlTag is IHtmlElementAllowingContent htmlTagAllowingContent) {
                 AppendTagContentAndEnd(sink, htmlTagAllowingContent);
@@ -161,7 +171,11 @@ public static class HtmlToStringExtensions
                 AppendFragment(sink, contents);
             }
         }
-        sink.AppendText(htmlElementAllowingContent.EndTag);
+        if (sink is PipeSink pipeSink) {
+            pipeSink.AppendUtf8(htmlElementAllowingContent.EndTagUtf8);
+        } else {
+            sink.AppendText(htmlElementAllowingContent.EndTag);
+        }
     }
 
     static void AppendAttributes<TSink>(TSink sink, HtmlAttributes attributes)
@@ -183,12 +197,22 @@ public static class HtmlToStringExtensions
     static void AppendAttribute<TSink>(TSink sink, HtmlAttribute htmlAttribute)
         where TSink : IStringSink
     {
-        sink.AppendText(" ");
-        sink.AppendText(htmlAttribute.Name);
-        if (htmlAttribute.Value != "") {
-            sink.AppendText("=\"");
-            AppendEscapedAttributeValue(sink, htmlAttribute.Value);
-            sink.AppendText("\"");
+        if (sink is PipeSink pipeSink) {
+            pipeSink.AppendUtf8(" "u8);
+            pipeSink.AppendText(htmlAttribute.Name);
+            if (htmlAttribute.Value != "") {
+                pipeSink.AppendUtf8("=\""u8);
+                AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+                pipeSink.AppendUtf8("\""u8);
+            }
+        } else {
+            sink.AppendText(" ");
+            sink.AppendText(htmlAttribute.Name);
+            if (htmlAttribute.Value != "") {
+                sink.AppendText("=\"");
+                AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+                sink.AppendText("\"");
+            }
         }
     }
 
