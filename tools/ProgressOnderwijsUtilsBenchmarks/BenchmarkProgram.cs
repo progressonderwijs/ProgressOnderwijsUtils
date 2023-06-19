@@ -7,11 +7,11 @@ public static class BenchmarkProgram
 {
     static void Main()
         // => RunTreeBenchmarks();
-        //=> BenchmarkRunner.Run<HtmlFragmentBenchmark>();
         //=> MicroOrmBenchmarkProgram.RunBenchmarks();
         //=> RunArrayBuilderBenchmarks();
         //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
-        => BenchmarkRunner.Run<NullabilityBenchmark>();
+        //=> BenchmarkRunner.Run<NullabilityBenchmark>();
+        => BenchmarkRunner.Run<HtmlFragmentBenchmark>();
 
     [UsedImplicitly]
     static void RunArrayBuilderBenchmarks()
