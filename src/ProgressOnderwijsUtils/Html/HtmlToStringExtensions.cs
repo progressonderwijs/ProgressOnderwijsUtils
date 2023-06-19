@@ -161,16 +161,40 @@ public static class HtmlToStringExtensions
     static void AppendAttributes<TSink>(TSink sink, HtmlAttributes attributes)
         where TSink : IStringSink
     {
-        var className = default(string);
+        var hasClassName = false;
         foreach (var htmlAttribute in attributes) {
             if (htmlAttribute.Name == "class") {
-                className = className == null ? htmlAttribute.Value : $"{className} {htmlAttribute.Value}";
+                hasClassName = true;
             } else {
                 AppendAttribute(sink, htmlAttribute);
             }
         }
-        if (className != null) {
-            AppendAttribute(sink, new("class", className));
+        if (hasClassName) {
+            if (sink is PipeSink pipeSink0) {
+                pipeSink0.AppendUtf8(" class=\""u8);
+            } else {
+                sink.AppendText(" class=\"");
+            }
+            var subsequent = false;
+            foreach (var htmlAttribute in attributes) {
+                if (htmlAttribute.Name == "class") {
+                    if (subsequent) {
+                        if (sink is PipeSink pipeSink1) {
+                            pipeSink1.AppendUtf8(" "u8);
+                        } else {
+                            sink.AppendText(" ");
+                        }
+                    } else {
+                        subsequent = true;
+                    }
+                    AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+                }
+            }
+            if (sink is PipeSink pipeSink2) {
+                pipeSink2.AppendUtf8("\""u8);
+            } else {
+                sink.AppendText("\"");
+            }
         }
     }
 
