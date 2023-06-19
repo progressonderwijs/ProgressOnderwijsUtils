@@ -177,20 +177,22 @@ public static class HtmlToStringExtensions
     static void AppendAttribute<TSink>(TSink sink, HtmlAttribute htmlAttribute)
         where TSink : IStringSink
     {
-        if (sink is PipeSink pipeSink) {
-            pipeSink.AppendUtf8(" "u8);
-            pipeSink.AppendText(htmlAttribute.Name);
-            if (htmlAttribute.Value != "") {
-                pipeSink.AppendUtf8("=\""u8);
-                AppendEscapedAttributeValue(sink, htmlAttribute.Value);
-                pipeSink.AppendUtf8("\""u8);
-            }
+        if (sink is PipeSink pipeSink0) {
+            pipeSink0.AppendUtf8(" "u8);
         } else {
             sink.AppendText(" ");
-            sink.AppendText(htmlAttribute.Name);
-            if (htmlAttribute.Value != "") {
+        }
+        sink.AppendText(htmlAttribute.Name);
+        if (htmlAttribute.Value != "") {
+            if (sink is PipeSink pipeSink1) {
+                pipeSink1.AppendUtf8("=\""u8);
+            } else {
                 sink.AppendText("=\"");
-                AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+            }
+            AppendEscapedAttributeValue(sink, htmlAttribute.Value);
+            if (sink is PipeSink pipeSink2) {
+                pipeSink2.AppendUtf8("\""u8);
+            } else {
                 sink.AppendText("\"");
             }
         }
