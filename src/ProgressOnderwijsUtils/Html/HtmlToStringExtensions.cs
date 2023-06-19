@@ -15,7 +15,7 @@ sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
     public void AppendText(ReadOnlySpan<char> text)
     {
         var byteCount = Encoding.GetMaxByteCount(text.Length); // Encoding.GetByteCount(text);
-        if (buffer.Length <= byteCount) {
+        if (buffer.Length <= byteCount + bufferBytes) {
             Flush();
             if (byteCount >= blockSize) {
                 _ = Encoding.GetBytes(text, writer);
@@ -23,9 +23,8 @@ sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
             }
             buffer = writer.GetMemory(blockSize);
         }
-        var actualBytesWritten = Encoding.GetBytes(text, buffer.Span);
+        var actualBytesWritten = Encoding.GetBytes(text, buffer.Span.Slice(bufferBytes));
         bufferBytes += actualBytesWritten;
-        buffer = buffer.Slice(actualBytesWritten);
     }
 
     public void Flush()
@@ -40,7 +39,7 @@ sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
     public void AppendUtf8(ReadOnlySpan<byte> text)
     {
         var byteCount = text.Length;
-        if (buffer.Length <= byteCount) {
+        if (buffer.Length <= byteCount + bufferBytes) {
             Flush();
             if (byteCount >= blockSize) {
                 writer.Write(text);
@@ -48,9 +47,8 @@ sealed record PipeSink(PipeWriter writer) : IStringSink, IDisposable
             }
             buffer = writer.GetMemory(blockSize);
         }
-        text.CopyTo(buffer.Span);
+        text.CopyTo(buffer.Span.Slice(bufferBytes));
         bufferBytes += byteCount;
-        buffer = buffer.Slice(byteCount);
     }
 
     public void Dispose()
