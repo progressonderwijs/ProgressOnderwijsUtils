@@ -11,7 +11,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<a";
         string IHtmlElement.EndTag => "</a>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<a"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</a>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</a>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         A IHtmlElement<A>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new A { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -30,7 +31,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<abbr";
         string IHtmlElement.EndTag => "</abbr>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<abbr"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</abbr>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</abbr>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         ABBR IHtmlElement<ABBR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new ABBR { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -49,7 +51,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<address";
         string IHtmlElement.EndTag => "</address>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<address"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</address>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</address>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         ADDRESS IHtmlElement<ADDRESS>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new ADDRESS { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -68,7 +71,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<area";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<area"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         AREA IHtmlElement<AREA>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new AREA { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -84,7 +88,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<article";
         string IHtmlElement.EndTag => "</article>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<article"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</article>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</article>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         ARTICLE IHtmlElement<ARTICLE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new ARTICLE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -103,7 +108,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<aside";
         string IHtmlElement.EndTag => "</aside>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<aside"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</aside>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</aside>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         ASIDE IHtmlElement<ASIDE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new ASIDE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -122,7 +128,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<audio";
         string IHtmlElement.EndTag => "</audio>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<audio"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</audio>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</audio>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         AUDIO IHtmlElement<AUDIO>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new AUDIO { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -141,7 +148,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<b";
         string IHtmlElement.EndTag => "</b>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<b"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</b>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</b>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         B IHtmlElement<B>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new B { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -160,7 +168,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<base";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<base"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BASE IHtmlElement<BASE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BASE { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -176,7 +185,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<bdi";
         string IHtmlElement.EndTag => "</bdi>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<bdi"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</bdi>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</bdi>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BDI IHtmlElement<BDI>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BDI { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -195,7 +205,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<bdo";
         string IHtmlElement.EndTag => "</bdo>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<bdo"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</bdo>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</bdo>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BDO IHtmlElement<BDO>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BDO { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -214,7 +225,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<blockquote";
         string IHtmlElement.EndTag => "</blockquote>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<blockquote"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</blockquote>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</blockquote>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BLOCKQUOTE IHtmlElement<BLOCKQUOTE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BLOCKQUOTE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -233,7 +245,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<body";
         string IHtmlElement.EndTag => "</body>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<body"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</body>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</body>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BODY IHtmlElement<BODY>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BODY { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -252,7 +265,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<br";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<br"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BR IHtmlElement<BR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BR { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -268,7 +282,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<button";
         string IHtmlElement.EndTag => "</button>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<button"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</button>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</button>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         BUTTON IHtmlElement<BUTTON>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new BUTTON { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -287,7 +302,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<canvas";
         string IHtmlElement.EndTag => "</canvas>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<canvas"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</canvas>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</canvas>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         CANVAS IHtmlElement<CANVAS>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new CANVAS { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -306,7 +322,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<caption";
         string IHtmlElement.EndTag => "</caption>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<caption"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</caption>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</caption>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         CAPTION IHtmlElement<CAPTION>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new CAPTION { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -325,7 +342,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<cite";
         string IHtmlElement.EndTag => "</cite>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<cite"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</cite>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</cite>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         CITE IHtmlElement<CITE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new CITE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -344,7 +362,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<code";
         string IHtmlElement.EndTag => "</code>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<code"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</code>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</code>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         CODE IHtmlElement<CODE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new CODE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -363,7 +382,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<col";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<col"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         COL IHtmlElement<COL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new COL { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -379,7 +399,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<colgroup";
         string IHtmlElement.EndTag => "</colgroup>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<colgroup"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</colgroup>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</colgroup>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         COLGROUP IHtmlElement<COLGROUP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new COLGROUP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -398,7 +419,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<data";
         string IHtmlElement.EndTag => "</data>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<data"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</data>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</data>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DATA IHtmlElement<DATA>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DATA { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -417,7 +439,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<datalist";
         string IHtmlElement.EndTag => "</datalist>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<datalist"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</datalist>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</datalist>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DATALIST IHtmlElement<DATALIST>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DATALIST { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -436,7 +459,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<dd";
         string IHtmlElement.EndTag => "</dd>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<dd"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</dd>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</dd>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DD IHtmlElement<DD>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DD { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -455,7 +479,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<del";
         string IHtmlElement.EndTag => "</del>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<del"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</del>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</del>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DEL IHtmlElement<DEL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DEL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -474,7 +499,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<details";
         string IHtmlElement.EndTag => "</details>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<details"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</details>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</details>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DETAILS IHtmlElement<DETAILS>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DETAILS { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -493,7 +519,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<dfn";
         string IHtmlElement.EndTag => "</dfn>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<dfn"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</dfn>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</dfn>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DFN IHtmlElement<DFN>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DFN { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -512,7 +539,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<dialog";
         string IHtmlElement.EndTag => "</dialog>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<dialog"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</dialog>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</dialog>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DIALOG IHtmlElement<DIALOG>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DIALOG { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -531,7 +559,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<div";
         string IHtmlElement.EndTag => "</div>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<div"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</div>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</div>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DIV IHtmlElement<DIV>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DIV { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -550,7 +579,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<dl";
         string IHtmlElement.EndTag => "</dl>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<dl"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</dl>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</dl>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DL IHtmlElement<DL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -569,7 +599,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<dt";
         string IHtmlElement.EndTag => "</dt>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<dt"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</dt>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</dt>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         DT IHtmlElement<DT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new DT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -588,7 +619,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<em";
         string IHtmlElement.EndTag => "</em>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<em"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</em>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</em>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         EM IHtmlElement<EM>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new EM { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -607,7 +639,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<embed";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<embed"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         EMBED IHtmlElement<EMBED>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new EMBED { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -623,7 +656,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<fieldset";
         string IHtmlElement.EndTag => "</fieldset>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<fieldset"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</fieldset>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</fieldset>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         FIELDSET IHtmlElement<FIELDSET>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new FIELDSET { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -642,7 +676,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<figcaption";
         string IHtmlElement.EndTag => "</figcaption>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<figcaption"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</figcaption>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</figcaption>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         FIGCAPTION IHtmlElement<FIGCAPTION>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new FIGCAPTION { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -661,7 +696,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<figure";
         string IHtmlElement.EndTag => "</figure>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<figure"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</figure>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</figure>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         FIGURE IHtmlElement<FIGURE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new FIGURE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -680,7 +716,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<footer";
         string IHtmlElement.EndTag => "</footer>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<footer"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</footer>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</footer>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         FOOTER IHtmlElement<FOOTER>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new FOOTER { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -699,7 +736,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<form";
         string IHtmlElement.EndTag => "</form>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<form"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</form>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</form>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         FORM IHtmlElement<FORM>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new FORM { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -718,7 +756,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h1";
         string IHtmlElement.EndTag => "</h1>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h1"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h1>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h1>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H1 IHtmlElement<H1>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H1 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -737,7 +776,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h2";
         string IHtmlElement.EndTag => "</h2>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h2"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h2>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h2>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H2 IHtmlElement<H2>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H2 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -756,7 +796,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h3";
         string IHtmlElement.EndTag => "</h3>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h3"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h3>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h3>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H3 IHtmlElement<H3>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H3 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -775,7 +816,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h4";
         string IHtmlElement.EndTag => "</h4>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h4"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h4>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h4>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H4 IHtmlElement<H4>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H4 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -794,7 +836,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h5";
         string IHtmlElement.EndTag => "</h5>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h5"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h5>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h5>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H5 IHtmlElement<H5>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H5 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -813,7 +856,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<h6";
         string IHtmlElement.EndTag => "</h6>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<h6"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</h6>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</h6>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         H6 IHtmlElement<H6>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new H6 { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -832,7 +876,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<head";
         string IHtmlElement.EndTag => "</head>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<head"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</head>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</head>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         HEAD IHtmlElement<HEAD>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new HEAD { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -851,7 +896,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<header";
         string IHtmlElement.EndTag => "</header>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<header"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</header>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</header>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         HEADER IHtmlElement<HEADER>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new HEADER { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -870,7 +916,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<hgroup";
         string IHtmlElement.EndTag => "</hgroup>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<hgroup"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</hgroup>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</hgroup>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         HGROUP IHtmlElement<HGROUP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new HGROUP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -889,7 +936,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<hr";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<hr"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         HR IHtmlElement<HR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new HR { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -905,7 +953,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<html";
         string IHtmlElement.EndTag => "</html>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<html"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</html>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</html>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         HTML IHtmlElement<HTML>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new HTML { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -924,7 +973,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<i";
         string IHtmlElement.EndTag => "</i>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<i"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</i>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</i>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         I IHtmlElement<I>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new I { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -943,7 +993,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<iframe";
         string IHtmlElement.EndTag => "</iframe>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<iframe"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</iframe>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</iframe>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         IFRAME IHtmlElement<IFRAME>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -962,7 +1013,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<img";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<img"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         IMG IHtmlElement<IMG>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new IMG { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -978,7 +1030,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<input";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<input"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         INPUT IHtmlElement<INPUT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new INPUT { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -994,7 +1047,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<ins";
         string IHtmlElement.EndTag => "</ins>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<ins"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</ins>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</ins>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         INS IHtmlElement<INS>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new INS { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1013,7 +1067,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<kbd";
         string IHtmlElement.EndTag => "</kbd>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<kbd"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</kbd>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</kbd>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         KBD IHtmlElement<KBD>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new KBD { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1032,7 +1087,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<label";
         string IHtmlElement.EndTag => "</label>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<label"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</label>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</label>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         LABEL IHtmlElement<LABEL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new LABEL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1051,7 +1107,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<legend";
         string IHtmlElement.EndTag => "</legend>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<legend"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</legend>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</legend>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         LEGEND IHtmlElement<LEGEND>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new LEGEND { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1070,7 +1127,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<li";
         string IHtmlElement.EndTag => "</li>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<li"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</li>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</li>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         LI IHtmlElement<LI>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new LI { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1089,7 +1147,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<link";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<link"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         LINK IHtmlElement<LINK>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new LINK { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1105,7 +1164,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<main";
         string IHtmlElement.EndTag => "</main>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<main"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</main>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</main>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         MAIN IHtmlElement<MAIN>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new MAIN { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1124,7 +1184,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<map";
         string IHtmlElement.EndTag => "</map>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<map"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</map>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</map>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         MAP IHtmlElement<MAP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new MAP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1143,7 +1204,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<mark";
         string IHtmlElement.EndTag => "</mark>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<mark"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</mark>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</mark>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         MARK IHtmlElement<MARK>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new MARK { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1162,7 +1224,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<menu";
         string IHtmlElement.EndTag => "</menu>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<menu"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</menu>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</menu>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         MENU IHtmlElement<MENU>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new MENU { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1181,7 +1244,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<meta";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<meta"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         META IHtmlElement<META>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new META { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1197,7 +1261,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<meter";
         string IHtmlElement.EndTag => "</meter>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<meter"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</meter>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</meter>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         METER IHtmlElement<METER>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new METER { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1216,7 +1281,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<nav";
         string IHtmlElement.EndTag => "</nav>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<nav"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</nav>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</nav>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         NAV IHtmlElement<NAV>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new NAV { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1235,7 +1301,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<noscript";
         string IHtmlElement.EndTag => "</noscript>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<noscript"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</noscript>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</noscript>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         NOSCRIPT IHtmlElement<NOSCRIPT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new NOSCRIPT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1254,7 +1321,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<object";
         string IHtmlElement.EndTag => "</object>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<object"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</object>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</object>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         OBJECT IHtmlElement<OBJECT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new OBJECT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1273,7 +1341,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<ol";
         string IHtmlElement.EndTag => "</ol>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<ol"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</ol>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</ol>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         OL IHtmlElement<OL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new OL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1292,7 +1361,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<optgroup";
         string IHtmlElement.EndTag => "</optgroup>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<optgroup"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</optgroup>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</optgroup>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         OPTGROUP IHtmlElement<OPTGROUP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new OPTGROUP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1311,7 +1381,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<option";
         string IHtmlElement.EndTag => "</option>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<option"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</option>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</option>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         OPTION IHtmlElement<OPTION>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new OPTION { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1330,7 +1401,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<output";
         string IHtmlElement.EndTag => "</output>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<output"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</output>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</output>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         OUTPUT IHtmlElement<OUTPUT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new OUTPUT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1349,7 +1421,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<p";
         string IHtmlElement.EndTag => "</p>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<p"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</p>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</p>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         P IHtmlElement<P>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new P { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1368,7 +1441,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<picture";
         string IHtmlElement.EndTag => "</picture>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<picture"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</picture>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</picture>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         PICTURE IHtmlElement<PICTURE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new PICTURE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1387,7 +1461,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<pre";
         string IHtmlElement.EndTag => "</pre>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<pre"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</pre>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</pre>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         PRE IHtmlElement<PRE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new PRE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1406,7 +1481,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<progress";
         string IHtmlElement.EndTag => "</progress>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<progress"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</progress>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</progress>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         PROGRESS IHtmlElement<PROGRESS>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new PROGRESS { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1425,7 +1501,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<q";
         string IHtmlElement.EndTag => "</q>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<q"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</q>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</q>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         Q IHtmlElement<Q>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new Q { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1444,7 +1521,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<rp";
         string IHtmlElement.EndTag => "</rp>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<rp"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</rp>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</rp>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         RP IHtmlElement<RP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new RP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1463,7 +1541,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<rt";
         string IHtmlElement.EndTag => "</rt>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<rt"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</rt>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</rt>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         RT IHtmlElement<RT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new RT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1482,7 +1561,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<ruby";
         string IHtmlElement.EndTag => "</ruby>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<ruby"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</ruby>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</ruby>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         RUBY IHtmlElement<RUBY>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new RUBY { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1501,7 +1581,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<s";
         string IHtmlElement.EndTag => "</s>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<s"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</s>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</s>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         S IHtmlElement<S>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new S { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1520,7 +1601,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<samp";
         string IHtmlElement.EndTag => "</samp>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<samp"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</samp>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</samp>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SAMP IHtmlElement<SAMP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SAMP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1539,7 +1621,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<script";
         string IHtmlElement.EndTag => "</script>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<script"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</script>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</script>"u8;
+        public bool ContainsUnescapedText => true;
         HtmlAttributes attrs;
         SCRIPT IHtmlElement<SCRIPT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SCRIPT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1558,7 +1641,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<search";
         string IHtmlElement.EndTag => "</search>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<search"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</search>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</search>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SEARCH IHtmlElement<SEARCH>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SEARCH { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1577,7 +1661,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<section";
         string IHtmlElement.EndTag => "</section>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<section"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</section>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</section>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SECTION IHtmlElement<SECTION>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SECTION { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1596,7 +1681,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<select";
         string IHtmlElement.EndTag => "</select>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<select"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</select>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</select>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SELECT IHtmlElement<SELECT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SELECT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1615,7 +1701,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<slot";
         string IHtmlElement.EndTag => "</slot>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<slot"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</slot>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</slot>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SLOT IHtmlElement<SLOT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SLOT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1634,7 +1721,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<small";
         string IHtmlElement.EndTag => "</small>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<small"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</small>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</small>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SMALL IHtmlElement<SMALL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SMALL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1653,7 +1741,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<source";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<source"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SOURCE IHtmlElement<SOURCE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SOURCE { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1669,7 +1758,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<span";
         string IHtmlElement.EndTag => "</span>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<span"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</span>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</span>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SPAN IHtmlElement<SPAN>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SPAN { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1688,7 +1778,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<strong";
         string IHtmlElement.EndTag => "</strong>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<strong"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</strong>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</strong>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         STRONG IHtmlElement<STRONG>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new STRONG { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1707,7 +1798,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<style";
         string IHtmlElement.EndTag => "</style>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<style"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</style>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</style>"u8;
+        public bool ContainsUnescapedText => true;
         HtmlAttributes attrs;
         STYLE IHtmlElement<STYLE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new STYLE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1726,7 +1818,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<sub";
         string IHtmlElement.EndTag => "</sub>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<sub"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</sub>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</sub>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SUB IHtmlElement<SUB>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SUB { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1745,7 +1838,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<summary";
         string IHtmlElement.EndTag => "</summary>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<summary"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</summary>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</summary>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SUMMARY IHtmlElement<SUMMARY>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SUMMARY { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1764,7 +1858,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<sup";
         string IHtmlElement.EndTag => "</sup>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<sup"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</sup>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</sup>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         SUP IHtmlElement<SUP>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SUP { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1783,7 +1878,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<table";
         string IHtmlElement.EndTag => "</table>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<table"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</table>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</table>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TABLE IHtmlElement<TABLE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TABLE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1802,7 +1898,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<tbody";
         string IHtmlElement.EndTag => "</tbody>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<tbody"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</tbody>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</tbody>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TBODY IHtmlElement<TBODY>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TBODY { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1821,7 +1918,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<td";
         string IHtmlElement.EndTag => "</td>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<td"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</td>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</td>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TD IHtmlElement<TD>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TD { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1840,7 +1938,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<template";
         string IHtmlElement.EndTag => "</template>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<template"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</template>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</template>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TEMPLATE IHtmlElement<TEMPLATE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TEMPLATE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1859,7 +1958,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<textarea";
         string IHtmlElement.EndTag => "</textarea>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<textarea"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</textarea>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</textarea>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TEXTAREA IHtmlElement<TEXTAREA>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TEXTAREA { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1878,7 +1978,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<tfoot";
         string IHtmlElement.EndTag => "</tfoot>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<tfoot"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</tfoot>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</tfoot>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TFOOT IHtmlElement<TFOOT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TFOOT { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1897,7 +1998,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<th";
         string IHtmlElement.EndTag => "</th>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<th"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</th>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</th>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TH IHtmlElement<TH>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TH { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1916,7 +2018,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<thead";
         string IHtmlElement.EndTag => "</thead>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<thead"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</thead>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</thead>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         THEAD IHtmlElement<THEAD>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new THEAD { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1935,7 +2038,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<time";
         string IHtmlElement.EndTag => "</time>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<time"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</time>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</time>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TIME IHtmlElement<TIME>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TIME { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1954,7 +2058,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<title";
         string IHtmlElement.EndTag => "</title>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<title"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</title>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</title>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TITLE IHtmlElement<TITLE>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TITLE { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1973,7 +2078,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<tr";
         string IHtmlElement.EndTag => "</tr>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<tr"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</tr>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</tr>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TR IHtmlElement<TR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TR { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -1992,7 +2098,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<track";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<track"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         TRACK IHtmlElement<TRACK>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new TRACK { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -2008,7 +2115,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<u";
         string IHtmlElement.EndTag => "</u>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<u"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</u>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</u>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         U IHtmlElement<U>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new U { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -2027,7 +2135,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<ul";
         string IHtmlElement.EndTag => "</ul>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<ul"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</ul>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</ul>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         UL IHtmlElement<UL>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new UL { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -2046,7 +2155,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<var";
         string IHtmlElement.EndTag => "</var>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<var"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</var>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</var>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         VAR IHtmlElement<VAR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new VAR { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -2065,7 +2175,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<video";
         string IHtmlElement.EndTag => "</video>";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<video"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => "</video>"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</video>"u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         VIDEO IHtmlElement<VIDEO>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new VIDEO { attrs = replacementAttributes, children = children };
         HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -2084,7 +2195,8 @@ public static class HtmlTagKinds
         string IHtmlElement.TagStart => "<wbr";
         string IHtmlElement.EndTag => "";
         ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<wbr"u8;
-        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8  => ""u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+        public bool ContainsUnescapedText => false;
         HtmlAttributes attrs;
         WBR IHtmlElement<WBR>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new WBR { attrs = replacementAttributes };
         HtmlAttributes IHtmlElement.Attributes => attrs;

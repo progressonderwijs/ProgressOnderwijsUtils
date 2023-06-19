@@ -18,6 +18,9 @@ public interface IHtmlElement : IConvertibleToFragment
     ReadOnlySpan<byte> EndTagUtf8
         => Encoding.UTF8.GetBytes(EndTag);
 
+    bool ContainsUnescapedText
+        => TagName.EqualsOrdinalCaseInsensitive("script") || TagName.EqualsOrdinalCaseInsensitive("style");
+
     HtmlAttributes Attributes { get; }
 
     /// <summary>
