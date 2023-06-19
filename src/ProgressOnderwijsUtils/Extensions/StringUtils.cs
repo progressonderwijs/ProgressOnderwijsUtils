@@ -2,6 +2,8 @@ namespace ProgressOnderwijsUtils;
 
 public static class StringUtils
 {
+    public static readonly Encoding Utf8WithoutBom = new UTF8Encoding(false);
+
     /// <summary>
     /// Removes all 'diakriet' from the string.
     /// </summary>

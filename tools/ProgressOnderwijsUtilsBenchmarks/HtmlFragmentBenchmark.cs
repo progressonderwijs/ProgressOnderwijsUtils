@@ -1,3 +1,4 @@
+using System.IO.Pipelines;
 using AngleSharp;
 using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
@@ -11,31 +12,49 @@ namespace ProgressOnderwijsUtilsBenchmarks;
 public class HtmlFragmentBenchmark
 {
     static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
-    readonly MemoryStream ms = new();
-
-    [Benchmark]
-    public void SerializeLargeDocument()
-        => htmlFragment.ToStringWithDoctype();
-
-    [Benchmark]
-    public void WriteToStream()
-    {
-        ms.SetLength(0);
-        htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
-    }
 
     sealed class Config : ManualConfig
     {
         public Config()
         {
-            _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerClean"));
-            _ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
-            _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
-            _ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
+            //_ = AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerClean"));
+            _ = AddJob(
+                Job.InProcess.WithGcServer(true).WithGcForce(false).WithId("Server")
+                    .WithUnrollFactor(16)
+                    .WithWarmupCount(1)
+                    .WithLaunchCount(1)
+                    .WithInvocationCount(256)
+                    .WithIterationCount(100)
+            );
+            //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("WorkstationClean"));
+            //_ = AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("Workstation"));
         }
     }
 
     //*
+
+    //static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
+    //static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
+
+    [Benchmark]
+    public void WriteToString()
+        => htmlFragment.ToStringWithDoctype();
+
+    [Benchmark]
+    public void WriteToStream()
+    {
+        MemoryStream ms = new();
+        htmlFragment.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
+    }
+
+    //[Benchmark]
+    //public void WriteToPipe()
+    //{
+    //    var pipe = new Pipe();
+    //    htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
+    //}
+
+    /*
     static readonly string htmlString = Utils.F(
         () => {
             var s = htmlFragment.ToStringWithDoctype();
@@ -45,8 +64,9 @@ public class HtmlFragmentBenchmark
         }
     )();
 
-    static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
-    static readonly IHtmlDocument angleSharpDocument = new HtmlParser().ParseDocument(htmlString);
+    [Benchmark]
+    public void JustConvertToUtf8()
+        => _ = StringUtils.Utf8WithoutBom.GetBytes(htmlString);
 
     [Benchmark]
     public void CreateLargeDocument()
@@ -59,21 +79,6 @@ public class HtmlFragmentBenchmark
     [Benchmark]
     public void SerializeLargeDocumentToCSharp()
         => htmlFragment.ToCSharp();
-
-    [Benchmark]
-    public void JustConvertToUtf8()
-    {
-        using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream, Encoding.UTF8);
-        writer.Write(htmlString);
-    }
-
-    [Benchmark]
-    public void JustSerializeToUtf8LargeDocument()
-    {
-        using var stream = new MemoryStream();
-        htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
-    }
 
     [Benchmark]
     public void AngleSharpParseFromString()
