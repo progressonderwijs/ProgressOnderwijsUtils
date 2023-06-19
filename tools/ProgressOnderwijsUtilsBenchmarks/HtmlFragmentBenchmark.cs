@@ -47,12 +47,12 @@ public class HtmlFragmentBenchmark
         htmlFragment.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
     }
 
-    //[Benchmark]
-    //public void WriteToPipe()
-    //{
-    //    var pipe = new Pipe();
-    //    htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
-    //}
+    [Benchmark]
+    public void WriteToPipe()
+    {
+        var pipe = new Pipe();
+        htmlFragment.SaveHtmlFragmentToPipe(pipe.Writer);
+    }
 
     /*
     static readonly string htmlString = Utils.F(

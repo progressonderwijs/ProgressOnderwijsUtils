@@ -159,6 +159,9 @@ public sealed class HtmlDslGenerator
                                     public string TagName => "{{el.elementName}}";
                                     string IHtmlElement.TagStart => "<{{el.elementName}}";
                                     string IHtmlElement.EndTag => "";
+                                    ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                                    ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+                                    public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
                                     HtmlAttributes attrs;
                                     {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
                                     HtmlAttributes IHtmlElement.Attributes => attrs;
@@ -176,6 +179,9 @@ public sealed class HtmlDslGenerator
                                     public string TagName => "{{el.elementName}}";
                                     string IHtmlElement.TagStart => "<{{el.elementName}}";
                                     string IHtmlElement.EndTag => "</{{el.elementName}}>";
+                                    ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                                    ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</{{el.elementName}}>"u8;
+                                    public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
                                     HtmlAttributes attrs;
                                     {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
                                     HtmlAttributes IHtmlElement.Attributes => attrs;

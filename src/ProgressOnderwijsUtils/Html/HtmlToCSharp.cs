@@ -4,12 +4,12 @@ public static class HtmlToCSharp
 {
     public static string ToCSharp(this HtmlFragment fragment)
     {
-        var builder = FastShortStringBuilder.Create();
+        var builder = MutableShortStringBuilder.Create();
         AppendCSharpTo(ref builder, fragment, 0);
         return builder.FinishBuilding();
     }
 
-    static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
+    static void AppendCSharpTo(ref MutableShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
     {
         if (fragment.Implementation is string stringContent) {
             stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent).AssertNotNull());
@@ -44,7 +44,7 @@ public static class HtmlToCSharp
         }
     }
 
-    static void AppendPlusSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
+    static void AppendPlusSeparatedFragments(ref MutableShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
     {
         if (contents.Implementation is HtmlFragment[] fragments) {
             var isSubsequent = false;
@@ -66,13 +66,13 @@ public static class HtmlToCSharp
         AppendNewline(ref stringBuilder);
     }
 
-    static void AppendNewline(ref FastShortStringBuilder stringBuilder)
+    static void AppendNewline(ref MutableShortStringBuilder stringBuilder)
         => stringBuilder.AppendText("\n");
 
-    static void AppendIndent(ref FastShortStringBuilder stringBuilder, int indent)
+    static void AppendIndent(ref MutableShortStringBuilder stringBuilder, int indent)
         => stringBuilder.AppendText(new string(' ', indent));
 
-    static bool AppendAttributesAsCSharp(ref FastShortStringBuilder stringBuilder, HtmlAttributes htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
+    static bool AppendAttributesAsCSharp(ref MutableShortStringBuilder stringBuilder, HtmlAttributes htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
     {
         if (htmlAttributes.Count == 0) {
             return false;

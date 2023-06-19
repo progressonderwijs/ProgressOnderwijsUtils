@@ -1,3 +1,5 @@
+using System.IO.Pipelines;
+
 namespace ProgressOnderwijsUtils.Tests;
 
 using Html;
@@ -132,4 +134,30 @@ public sealed class HtmlTests
         var example = _div._class(new CssClass("A"), new CssClass("B"), new CssClass("D")).AsFragment().ToStringWithoutDoctype();
         PAssert.That(() => example == @"<div class=""A B D""></div>");
     }
+
+    [Fact]
+    public void StringIsEquivalentToStreamOutput()
+    {
+        var html = WikiPageHtml5.MakeHtml();
+        var htmlToString =  html.ToStringWithDoctype();
+        using var ms = new MemoryStream();
+        html.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
+        var htmlToStreamToString = StringUtils.Utf8WithoutBom.GetString(ms.ToArray());
+        PAssert.That(() => htmlToString == htmlToStreamToString);
+    }
+
+    [Fact]
+    public void StringIsEquivalentToPipeOutput()
+    {
+        var html = WikiPageHtml5.MakeHtml();
+        var htmlToString =  html.ToStringWithDoctype();
+        var ms = new Pipe();
+        html.SaveHtmlFragmentToPipe(ms.Writer);
+        ms.Writer.Complete();
+        using var readerStream = ms.Reader.AsStream();
+        using var textReader = new StreamReader(readerStream, StringUtils.Utf8WithoutBom);
+        var htmlToPipeToString = textReader.ReadToEnd();
+        PAssert.That(() => htmlToString == htmlToPipeToString);
+    }
+
 }

@@ -1,4 +1,4 @@
-﻿// ReSharper disable RedundantNameQualifier
+// ReSharper disable RedundantNameQualifier
 
 global using global::ExpressionToCodeLib;
 global using global::FastExpressionCompiler;
@@ -24,5 +24,6 @@ global using global::System.Threading;
 global using global::System.IO;
 global using global::System.Runtime.CompilerServices;
 global using global::ProgressOnderwijsUtils.Collections;
+global using global::ProgressOnderwijsUtils.Internal;
 global using static global::ProgressOnderwijsUtils.SafeSql;
 global using PureAttribute = global::System.Diagnostics.Contracts.PureAttribute;
