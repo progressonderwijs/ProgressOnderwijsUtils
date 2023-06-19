@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>97.3.0</Version>
-    <PackageReleaseNotes>Added collation to database string columns</PackageReleaseNotes>
+    <Version>97.4.0</Version>
+    <PackageReleaseNotes>Optimize memory allocation of html->stream output, and add an even less memory hungry html->pipe version.</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
