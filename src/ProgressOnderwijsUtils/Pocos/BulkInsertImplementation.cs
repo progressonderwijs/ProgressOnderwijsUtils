@@ -16,7 +16,9 @@ static class BulkInsertImplementation
             throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
         }
 
-        using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null) { BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn), DestinationTableName = target.TableName, };
+        using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null);
+        sqlBulkCopy.BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn);
+        sqlBulkCopy.DestinationTableName = target.TableName;
         var mapping = CreateMapping(source, target, sourceNameForTracing);
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);

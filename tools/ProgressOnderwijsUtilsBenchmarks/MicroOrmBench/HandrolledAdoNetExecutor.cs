@@ -15,7 +15,9 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteQuery(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn, };
+        using var cmd = new SqlCommand();
+        cmd.CommandText = ExampleObject.RawQueryString;
+        cmd.Connection = sqlConn;
         var argP = new SqlParameter {
             SqlDbType = SqlDbType.BigInt,
             ParameterName = "@Arg",
@@ -188,7 +190,9 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteQuery2(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn, };
+        using var cmd = new SqlCommand();
+        cmd.CommandText = ExampleObject.RawQueryString;
+        cmd.Connection = sqlConn;
         var argP = new SqlParameter {
             SqlDbType = SqlDbType.BigInt,
             ParameterName = "@Arg",
@@ -255,7 +259,9 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteWideQuery2(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn, };
+        using var cmd = new SqlCommand();
+        cmd.CommandText = WideExampleObject.RawQueryString;
+        cmd.Connection = sqlConn;
         var topP = new SqlParameter {
             SqlDbType = SqlDbType.Int,
             ParameterName = "@Top",
@@ -302,7 +308,9 @@ static class HandrolledAdoNetExecutor
 
     static int ExecuteWideQuery(SqlConnection sqlConn, int rows)
     {
-        using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn, };
+        using var cmd = new SqlCommand();
+        cmd.CommandText = WideExampleObject.RawQueryString;
+        cmd.Connection = sqlConn;
         var topP = new SqlParameter {
             SqlDbType = SqlDbType.Int,
             ParameterName = "@Top",
