@@ -4,6 +4,38 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
 {
     public void TableDefinitionScript(StringBuilder sb, DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
+        _ = sb.Append(CreateTableScript(table, includeNondeterminisiticObjectIds));
+        _ = sb.Append(CreateIndexScripts(table));
+
+        foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
+            _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
+        }
+
+        foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
+            _ = sb.Append(ToCreationStatement(table, ck) + "\n");
+        }
+
+        var defaultConstraintsForTable = table.Columns
+            .Where(col => col.DefaultValueConstraint != null)
+            .Select(col => (col, defaultConstraint: col.DefaultValueConstraint.AssertNotNull()))
+            .OrderBy(dvc => dvc.defaultConstraint.Name);
+        foreach (var dfc in defaultConstraintsForTable) {
+            _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
+        }
+
+        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
+            _ = sb.Append("go\n");
+            _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
+            _ = sb.Append("go\n");
+        }
+
+        _ = sb.Append($"--end of {table.QualifiedName} definition\n");
+        _ = sb.Append('\n');
+    }
+
+    static string CreateTableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
+    {
+        var sb = new StringBuilder();
         var objectIdLineComment = includeNondeterminisiticObjectIds ? " --objectid:" + table.ObjectId : "";
         _ = sb.Append($"create table {table.QualifiedName} ({objectIdLineComment}\n");
         var separatorFromPreviousCol = "";
@@ -36,35 +68,16 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             }
             separatorFromPreviousCol = ", ";
         }
-        _ = sb.Append(")\n");
+        return sb.Append(")\n").ToString();
+    }
+
+    static string CreateIndexScripts(DatabaseDescription.Table table)
+    {
+        var sb = new StringBuilder();
         foreach (var index in table.Indexes.OrderByDescending(i => i.IndexType.IsClusteredIndex()).ThenBy(o => o.IndexName)) {
             _ = sb.Append(index.IndexCreationScript() + "\n");
         }
-
-        foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
-            _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
-        }
-
-        foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
-            _ = sb.Append(ToCreationStatement(table, ck) + "\n");
-        }
-
-        var defaultConstraintsForTable = table.Columns
-            .Where(col => col.DefaultValueConstraint != null)
-            .Select(col => (col, defaultConstraint: col.DefaultValueConstraint.AssertNotNull()))
-            .OrderBy(dvc => dvc.defaultConstraint.Name);
-        foreach (var dfc in defaultConstraintsForTable) {
-            _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
-        }
-
-        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
-            _ = sb.Append("go\n");
-            _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
-            _ = sb.Append("go\n");
-        }
-
-        _ = sb.Append($"--end of {table.QualifiedName} definition\n");
-        _ = sb.Append('\n');
+        return sb.ToString();
     }
 
     public static string ToCreationStatement(DatabaseDescription.Table table, CheckConstraintSqlDefinition checkConstraintDefinition)
