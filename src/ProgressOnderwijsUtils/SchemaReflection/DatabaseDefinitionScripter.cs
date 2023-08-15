@@ -6,7 +6,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     {
         _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds));
         _ = sb.Append(IndexesScript(table));
-        _ = sb.Append(ForeignKeyConstraintScript(table));
+        _ = sb.Append(ForeignKeyConstraintsScript(table));
         _ = sb.Append(CheckConstraintScripts(table));
         _ = sb.Append(DefaultConstraintsScript(table));
         _ = sb.Append(TriggerScripts(table));
@@ -61,7 +61,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb.ToString();
     }
 
-    static string ForeignKeyConstraintScript(DatabaseDescription.Table table)
+    static string ForeignKeyConstraintsScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
