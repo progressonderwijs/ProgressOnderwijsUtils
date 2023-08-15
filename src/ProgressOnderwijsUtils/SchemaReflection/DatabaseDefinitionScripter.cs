@@ -7,7 +7,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds));
         _ = sb.Append(IndexesScript(table));
         _ = sb.Append(ForeignKeyConstraintsScript(table));
-        _ = sb.Append(CheckConstraintScripts(table));
+        _ = sb.Append(CheckConstraintsScript(table));
         _ = sb.Append(DefaultConstraintsScript(table));
         _ = sb.Append(TriggerScripts(table));
         _ = sb.Append($"--end of {table.QualifiedName} definition\n");
@@ -70,7 +70,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb.ToString();
     }
 
-    static string CheckConstraintScripts(DatabaseDescription.Table table)
+    static string CheckConstraintsScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
