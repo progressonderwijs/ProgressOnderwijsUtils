@@ -4,7 +4,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
 {
     public void TableDefinitionScript(StringBuilder sb, DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
-        _ = sb.Append(CreateTableScript(table, includeNondeterminisiticObjectIds));
+        _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds));
         _ = sb.Append(CreateIndexScripts(table));
         _ = sb.Append(ForeignKeyConstraintScripts(table));
         _ = sb.Append(CheckConstraintScripts(table));
@@ -14,7 +14,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append('\n');
     }
 
-    static string CreateTableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
+    static string TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
         var sb = new StringBuilder();
         var objectIdLineComment = includeNondeterminisiticObjectIds ? " --objectid:" + table.ObjectId : "";
