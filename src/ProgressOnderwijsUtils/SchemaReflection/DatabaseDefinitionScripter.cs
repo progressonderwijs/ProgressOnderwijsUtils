@@ -6,10 +6,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     {
         _ = sb.Append(CreateTableScript(table, includeNondeterminisiticObjectIds));
         _ = sb.Append(CreateIndexScripts(table));
-
-        foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
-            _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
-        }
+        _ = sb.Append(ForeignKeyConstraintScripts(table));
 
         foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
             _ = sb.Append(ToCreationStatement(table, ck) + "\n");
@@ -76,6 +73,15 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         var sb = new StringBuilder();
         foreach (var index in table.Indexes.OrderByDescending(i => i.IndexType.IsClusteredIndex()).ThenBy(o => o.IndexName)) {
             _ = sb.Append(index.IndexCreationScript() + "\n");
+        }
+        return sb.ToString();
+    }
+
+    static string ForeignKeyConstraintScripts(DatabaseDescription.Table table)
+    {
+        var sb = new StringBuilder();
+        foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
+            _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
         }
         return sb.ToString();
     }
