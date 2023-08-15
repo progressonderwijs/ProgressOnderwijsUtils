@@ -7,18 +7,8 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append(CreateTableScript(table, includeNondeterminisiticObjectIds));
         _ = sb.Append(CreateIndexScripts(table));
         _ = sb.Append(ForeignKeyConstraintScripts(table));
-
-        foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
-            _ = sb.Append(ToCreationStatement(table, ck) + "\n");
-        }
-
-        var defaultConstraintsForTable = table.Columns
-            .Where(col => col.DefaultValueConstraint != null)
-            .Select(col => (col, defaultConstraint: col.DefaultValueConstraint.AssertNotNull()))
-            .OrderBy(dvc => dvc.defaultConstraint.Name);
-        foreach (var dfc in defaultConstraintsForTable) {
-            _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
-        }
+        _ = sb.Append(CheckConstraintScripts(table));
+        _ = sb.Append(DefaultConstraintsScript(table));
 
         foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
             _ = sb.Append("go\n");
@@ -82,6 +72,28 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         var sb = new StringBuilder();
         foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
             _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
+        }
+        return sb.ToString();
+    }
+
+    static string CheckConstraintScripts(DatabaseDescription.Table table)
+    {
+        var sb = new StringBuilder();
+        foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
+            _ = sb.Append(ToCreationStatement(table, ck) + "\n");
+        }
+        return sb.ToString();
+    }
+
+    static string DefaultConstraintsScript(DatabaseDescription.Table table)
+    {
+        var sb = new StringBuilder();
+        var defaultConstraintsForTable = table.Columns
+            .Where(col => col.DefaultValueConstraint != null)
+            .Select(col => (col, defaultConstraint: col.DefaultValueConstraint.AssertNotNull()))
+            .OrderBy(dvc => dvc.defaultConstraint.Name);
+        foreach (var dfc in defaultConstraintsForTable) {
+            _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
         }
         return sb.ToString();
     }
