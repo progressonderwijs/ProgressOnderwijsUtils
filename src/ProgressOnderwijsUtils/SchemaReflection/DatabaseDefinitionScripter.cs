@@ -125,4 +125,33 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         }
         return sb.ToString();
     }
+
+    public string StringifySchemaForDbCreation()
+    {
+        var sb = new StringBuilder();
+        foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
+            sequence.AppendCreationScript(sb);
+        }
+        _ = sb.Append('\n');
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(TableScript(table, false));
+        }
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(IndexesScript(table));
+        }
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(ForeignKeyConstraintsScript(table));
+        }
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(CheckConstraintsScript(table));
+        }
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(DefaultConstraintsScript(table));
+        }
+        foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(TriggersScript(table));
+        }
+        _ = sb.Append('\n');
+        return sb.ToString();
+    }
 }
