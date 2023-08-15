@@ -9,13 +9,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append(ForeignKeyConstraintScripts(table));
         _ = sb.Append(CheckConstraintScripts(table));
         _ = sb.Append(DefaultConstraintsScript(table));
-
-        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
-            _ = sb.Append("go\n");
-            _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
-            _ = sb.Append("go\n");
-        }
-
+        _ = sb.Append(TriggerScripts(table));
         _ = sb.Append($"--end of {table.QualifiedName} definition\n");
         _ = sb.Append('\n');
     }
@@ -94,6 +88,17 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             .OrderBy(dvc => dvc.defaultConstraint.Name);
         foreach (var dfc in defaultConstraintsForTable) {
             _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
+        }
+        return sb.ToString();
+    }
+
+    static string TriggerScripts(DatabaseDescription.Table table)
+    {
+        var sb = new StringBuilder();
+        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
+            _ = sb.Append("go\n");
+            _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
+            _ = sb.Append("go\n");
         }
         return sb.ToString();
     }
