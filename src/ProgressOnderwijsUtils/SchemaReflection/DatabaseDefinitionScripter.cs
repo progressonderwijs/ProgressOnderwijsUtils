@@ -14,7 +14,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append('\n');
     }
 
-    static string TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
+    static StringBuilder TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
         var sb = new StringBuilder();
         var objectIdLineComment = includeNondeterminisiticObjectIds ? " --objectid:" + table.ObjectId : "";
@@ -49,37 +49,37 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             }
             separatorFromPreviousCol = ", ";
         }
-        return sb.Append(")\n").ToString();
+        return sb.Append(")\n");
     }
 
-    static string IndexesScript(DatabaseDescription.Table table)
+    static StringBuilder IndexesScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var index in table.Indexes.OrderByDescending(i => i.IndexType.IsClusteredIndex()).ThenBy(o => o.IndexName)) {
             _ = sb.Append(index.IndexCreationScript() + "\n");
         }
-        return sb.ToString();
+        return sb;
     }
 
-    static string ForeignKeyConstraintsScript(DatabaseDescription.Table table)
+    static StringBuilder ForeignKeyConstraintsScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var fk in table.KeysToReferencedParents.OrderBy(o => o.UnqualifiedName)) {
             _ = sb.Append(Regex.Replace(fk.ScriptToAddConstraint().CommandText().Trim(), "[\r \t\n]+", " ").Replace(" on delete no action on update no action", "") + "\n");
         }
-        return sb.ToString();
+        return sb;
     }
 
-    static string CheckConstraintsScript(DatabaseDescription.Table table)
+    static StringBuilder CheckConstraintsScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var ck in table.CheckConstraints.OrderBy(ck => ck.Name)) {
             _ = sb.Append(ToCreationStatement(table, ck) + "\n");
         }
-        return sb.ToString();
+        return sb;
     }
 
-    static string DefaultConstraintsScript(DatabaseDescription.Table table)
+    static StringBuilder DefaultConstraintsScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         var defaultConstraintsForTable = table.Columns
@@ -89,10 +89,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         foreach (var dfc in defaultConstraintsForTable) {
             _ = sb.Append($"alter table {table.QualifiedName} add constraint {dfc.defaultConstraint.Name} default {SqlServerUtils.PrettifySqlExpression(dfc.defaultConstraint.Definition)} for {dfc.col.ColumnName}\n");
         }
-        return sb.ToString();
+        return sb;
     }
 
-    static string TriggersScript(DatabaseDescription.Table table)
+    static StringBuilder TriggersScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
@@ -100,7 +100,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
             _ = sb.Append("go\n");
         }
-        return sb.ToString();
+        return sb;
     }
 
     public static string ToCreationStatement(DatabaseDescription.Table table, CheckConstraintSqlDefinition checkConstraintDefinition)
