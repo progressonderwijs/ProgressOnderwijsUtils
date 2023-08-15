@@ -5,7 +5,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public void TableDefinitionScript(StringBuilder sb, DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
         _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds));
-        _ = sb.Append(IndexScript(table));
+        _ = sb.Append(IndexesScript(table));
         _ = sb.Append(ForeignKeyConstraintScript(table));
         _ = sb.Append(CheckConstraintScripts(table));
         _ = sb.Append(DefaultConstraintsScript(table));
@@ -52,7 +52,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb.Append(")\n").ToString();
     }
 
-    static string IndexScript(DatabaseDescription.Table table)
+    static string IndexesScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var index in table.Indexes.OrderByDescending(i => i.IndexType.IsClusteredIndex()).ThenBy(o => o.IndexName)) {
