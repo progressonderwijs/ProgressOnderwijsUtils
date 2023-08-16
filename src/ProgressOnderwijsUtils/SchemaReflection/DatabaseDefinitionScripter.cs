@@ -14,6 +14,9 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append('\n');
     }
 
+    static string SchemaScript(string SchemaName)
+        => $"create schema {SchemaName};\ngo\n";
+
     static StringBuilder TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
     {
         var sb = new StringBuilder();
@@ -129,6 +132,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public string StringifySchemaForDbCreation()
     {
         var sb = new StringBuilder();
+        foreach(var schema in db.RawDescription.Schemas) {
+            _ = sb.Append(SchemaScript(schema.AssertNotNull()));
+        }
+        
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
             sequence.AppendCreationScript(sb);
         }
