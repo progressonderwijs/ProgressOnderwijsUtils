@@ -34,9 +34,14 @@ public static class SqlServerUtils
 
     public static string PrettifySqlExpression(string sql)
     {
+        var withoutPointlessParens = Regex.Replace(sql, @"\((\w+)\)", m => m.Value[1..^1]);
+        return withoutPointlessParens;
+    }
+
+    public static string PrettifySqlExpressionLeaveParens(string sql)
+    {
         var uncappedKeyWords = Regex.Replace(sql, @"\b(NEXT|VALUE|FOR|IS|NOT|NULL|OR|AND|CONVERT|TRY_CAST|AS)\b", m => m.Value.ToLowerInvariant());
         var withoutPointlessBrackets = Regex.Replace(uncappedKeyWords, @"\[(\w+)\]", m => m.Value[1..^1]);
-        var withoutPointlessParens = Regex.Replace(withoutPointlessBrackets, @"\((\w+)\)", m => m.Value[1..^1]);
-        return withoutPointlessParens;
+        return withoutPointlessBrackets;
     }
 }

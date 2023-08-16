@@ -24,7 +24,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                     + (colMetaData.IsPrimaryKey ? "PK;" : "")
                     + "colId:"
                     + colMetaData.ColumnId;
-                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpression(definition.Definition) + collationClause + persistedClause + columnTrivia + "\n");
+                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + collationClause + persistedClause + columnTrivia + "\n");
             } else {
                 var identitySpecification = colMetaData.HasAutoIncrementIdentity ? " identity" : "";
                 var columnTrivia = "--"
