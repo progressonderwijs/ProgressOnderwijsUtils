@@ -34,7 +34,8 @@ public static class SqlServerUtils
 
     public static string PrettifySqlExpression(string sql)
     {
-        var withoutPointlessParens = Regex.Replace(sql, @"\((\w+)\)", m => m.Value[1..^1]);
+        var alomstPretty = PrettifySqlExpressionLeaveParens(sql);
+        var withoutPointlessParens = Regex.Replace(alomstPretty, @"\((\w+)\)", m => m.Value[1..^1]);
         return withoutPointlessParens;
     }
 
