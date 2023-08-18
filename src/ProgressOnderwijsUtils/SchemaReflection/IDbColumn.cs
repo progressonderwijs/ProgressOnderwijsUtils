@@ -37,7 +37,7 @@ public static class DbColumnExtensions
         => column.ToSqlTypeNameWithoutNullability() + CollationForStringColumn(column) + column.NullabilityAnnotation();
 
     static string CollationForStringColumn(IDbColumn column)
-        => column.IsString ? $" collate {column.ColumnMetaData.CollationName ?? DefaultDbCollation}" : "";
+        => column.IsString && column.UserTypeId != SqlSystemTypeId.Xml ? $" collate {column.ColumnMetaData.CollationName ?? DefaultDbCollation}" : "";
 
     public static string ToSqlTypeNameWithoutNullability(this IDbColumn column)
         => column.UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + column.ColumnPrecisionSpecifier();
