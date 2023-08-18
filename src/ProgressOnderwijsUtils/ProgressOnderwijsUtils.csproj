@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>97.5.1</Version>
-    <PackageReleaseNotes>Small fixes in database scripting</PackageReleaseNotes>
+    <Version>97.5.2</Version>
+    <PackageReleaseNotes>Fix regression in Sql prettify</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
