@@ -42,13 +42,9 @@ public sealed record RawDatabaseDescription
                 s.name 
             from sys.schemas s
             where 1=1
-                and s.schema_id in (
-                    select
-                        o.schema_id
-                    from sys.objects o
-                    where 1=1
-                        and o.is_ms_shipped = 0 -- to filter out the dbo.dtproperties system table
-                )
+                --no system schemas
+                and 4 < s.schema_id
+                and s.schema_id < 16384
             """
         ).ReadPlain<string>(conn);
 
