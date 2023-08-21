@@ -132,7 +132,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public string StringifySchemaForDbCreation()
     {
         var sb = new StringBuilder();
-        foreach(var schema in db.RawDescription.Schemas) {
+        foreach(var schema in db.RawDescription.Schemas.Order()) {
             _ = sb.Append(SchemaScript(schema.AssertNotNull()));
         }
         
