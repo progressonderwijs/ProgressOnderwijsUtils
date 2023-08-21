@@ -4,6 +4,7 @@ public sealed record RawDatabaseDescription
 {
     public sealed record ObjectDependency(DbObjectId referencing_id, DbObjectId referenced_id) : IWrittenImplicitly;
 
+    public required string?[] Schemas { get; init; }
     public required DbNamedObjectId[] Tables { get; init; }
     public required DbNamedObjectId[] Views { get; init; }
     public required ObjectDependency[] Dependencies { get; init; }
@@ -19,6 +20,7 @@ public sealed record RawDatabaseDescription
 
     public static RawDatabaseDescription Load(SqlConnection conn)
         => new() {
+            Schemas = Load_user_schemas(conn),
             Tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U"),
             Views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V"),
             Dependencies = Load_sql_expression_dependencies(conn),
@@ -32,6 +34,19 @@ public sealed record RawDatabaseDescription
             Indexes = DbObjectIndex.LoadAll(conn),
             IndexColumns = DbObjectIndexColumn.LoadAll(conn),
         };
+
+    static string?[] Load_user_schemas(SqlConnection conn)
+        => SQL(
+            $"""
+            select 
+                s.name 
+            from sys.schemas s
+            where 1=1
+                --no system schemas
+                and 4 < s.schema_id
+                and s.schema_id < 16384
+            """
+        ).ReadPlain<string>(conn);
 
     static ObjectDependency[] Load_sql_expression_dependencies(SqlConnection conn)
         => SQL(
