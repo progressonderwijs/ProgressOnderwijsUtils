@@ -1,12 +1,12 @@
 namespace ProgressOnderwijsUtils.Collections;
 
-public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>, T>
+public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStructure<TreeCursor<T>, T>
 {
-    public static RootedTree<T> RootTree(Tree<T> rootNode)
+    public static TreeCursor<T> RootTree(Tree<T> rootNode)
         => new(SList.SingleElement(new TreePathSegment(0, rootNode)));
 
-    public IEnumerable<RootedTree<T>> PathSelfToRoot()
-        => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
+    public IEnumerable<TreeCursor<T>> PathSelfToRoot()
+        => PathSegments.NonEmptySuffixes.Select(path => new TreeCursor<T>(path));
 
     public int IndexInParent()
         => PathSegments.Head.Index;
@@ -14,11 +14,11 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
     public Tree<T> UnrootedSubTree()
         => PathSegments.Head.ThisSubTree;
 
-    public IReadOnlyList<RootedTree<T>> Children
+    public IReadOnlyList<TreeCursor<T>> Children
     {
         get {
             var treePathSegments = PathSegments;
-            return UnrootedSubTree().Children.SelectIndexable((kid, i) => new RootedTree<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
+            return UnrootedSubTree().Children.SelectIndexable((kid, i) => new TreeCursor<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
         }
     }
 
@@ -31,19 +31,19 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
     public bool HasValue
         => !PathSegments.IsEmpty;
 
-    public RootedTree<T> Parent
+    public TreeCursor<T> Parent
         => new(PathSegments.Tail);
 
-    public RootedTree<T> Root
+    public TreeCursor<T> Root
         => PathSegments.Last().ThisSubTree.RootHere();
 
-    public RootedTree<T> PreviousSibling()
+    public TreeCursor<T> PreviousSibling()
         => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? new() : Parent.Children[IndexInParent() - 1];
 
-    public RootedTree<T> NextSibling()
+    public TreeCursor<T> NextSibling()
         => !HasValue || IsRoot || IndexInParent() + 1 >= Parent.Children.Count ? new() : Parent.Children[IndexInParent() + 1];
 
-    public bool Equals(RootedTree<T> other)
+    public bool Equals(TreeCursor<T> other)
         //two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
         => PathSegments.Last().ThisSubTree.Equals(other.PathSegments.Last().ThisSubTree)
             && PathSegments.SelectEager(segment => segment.Index).SequenceEqual(other.PathSegments.SelectEager(segment => segment.Index));
@@ -52,10 +52,10 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
         => PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
 
     public override bool Equals(object? obj)
-        => obj is RootedTree<T> rootedTree && Equals(rootedTree);
+        => obj is TreeCursor<T> rootedTree && Equals(rootedTree);
 
     // internal details:
-    RootedTree(SList<TreePathSegment> pathSegments)
+    TreeCursor(SList<TreePathSegment> pathSegments)
         => PathSegments = pathSegments;
 
     readonly SList<TreePathSegment> PathSegments;
@@ -73,7 +73,7 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
     }
 
     [Pure]
-    public RootedTree<T> ReplaceSubTree(Tree<T> newSubTree)
+    public TreeCursor<T> ReplaceSubTree(Tree<T> newSubTree)
     {
         if (IsRoot) {
             return newSubTree.RootHere();
@@ -95,12 +95,12 @@ public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStru
         return copy;
     }
 
-    RootedTree<T> IRecursiveStructure<RootedTree<T>>.TypedThis
+    TreeCursor<T> IRecursiveStructure<TreeCursor<T>>.TypedThis
         => this;
 
-    public static bool operator ==(RootedTree<T> left, RootedTree<T> right)
+    public static bool operator ==(TreeCursor<T> left, TreeCursor<T> right)
         => left.Equals(right);
 
-    public static bool operator !=(RootedTree<T> left, RootedTree<T> right)
+    public static bool operator !=(TreeCursor<T> left, TreeCursor<T> right)
         => !(left == right);
 }

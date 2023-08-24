@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.Tests;
 
-public sealed class RootedTreeTest
+public sealed class TreeCursorTest
 {
     [Fact]
     public void ReplaceSubTree_can_replace_single_root_node()
