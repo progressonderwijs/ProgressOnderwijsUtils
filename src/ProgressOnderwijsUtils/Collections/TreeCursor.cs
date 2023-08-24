@@ -11,19 +11,19 @@ public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStru
     public int IndexInParent()
         => PathSegments.Head.Index;
 
-    public Tree<T> UnrootedSubTree()
+    public Tree<T> ToSubTree()
         => PathSegments.Head.ThisSubTree;
 
     public IReadOnlyList<TreeCursor<T>> Children
     {
         get {
             var treePathSegments = PathSegments;
-            return UnrootedSubTree().Children.SelectIndexable((kid, i) => new TreeCursor<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
+            return ToSubTree().Children.SelectIndexable((kid, i) => new TreeCursor<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
         }
     }
 
     public T NodeValue
-        => UnrootedSubTree().NodeValue;
+        => ToSubTree().NodeValue;
 
     public bool IsRoot
         => PathSegments.Tail.IsEmpty;

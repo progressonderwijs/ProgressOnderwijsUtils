@@ -31,7 +31,7 @@ public sealed class TreeCursorTest
             .Single(node => node.NodeValue == 3);
 
         var newTree = toReplace
-            .ReplaceSubTree(Tree.Node(42, toReplace.UnrootedSubTree().Children))
+            .ReplaceSubTree(Tree.Node(42, toReplace.ToSubTree().Children))
             .Root;
 
         PAssert.That(() => !newTree.Equals(tree));
