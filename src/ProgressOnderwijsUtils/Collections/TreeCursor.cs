@@ -34,8 +34,8 @@ public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStru
     public TreeCursor<T> Parent
         => new(PathSegments.Tail);
 
-    public TreeCursor<T> Root
-        => PathSegments.Last().ThisSubTree.CursorForThisRoot();
+    public Tree<T> Root
+        => PathSegments.Last().ThisSubTree;
 
     public TreeCursor<T> PreviousSibling()
         => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? new() : Parent.Children[IndexInParent() - 1];
