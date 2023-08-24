@@ -2,7 +2,7 @@ namespace ProgressOnderwijsUtils.Collections;
 
 public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStructure<TreeCursor<T>, T>
 {
-    public static TreeCursor<T> RootTree(Tree<T> rootNode)
+    public static TreeCursor<T> CreateAtRoot(Tree<T> rootNode)
         => new(SList.SingleElement(new TreePathSegment(0, rootNode)));
 
     public IEnumerable<TreeCursor<T>> PathSelfToRoot()
@@ -35,7 +35,7 @@ public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStru
         => new(PathSegments.Tail);
 
     public TreeCursor<T> Root
-        => PathSegments.Last().ThisSubTree.RootHere();
+        => PathSegments.Last().ThisSubTree.CursorForThisRoot();
 
     public TreeCursor<T> PreviousSibling()
         => !HasValue || IsRoot || IndexInParent() == 0 || Parent.Children.Count <= 1 ? new() : Parent.Children[IndexInParent() - 1];
@@ -76,7 +76,7 @@ public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStru
     public TreeCursor<T> ReplaceSubTree(Tree<T> newSubTree)
     {
         if (IsRoot) {
-            return newSubTree.RootHere();
+            return newSubTree.CursorForThisRoot();
         } else {
             var parentSubTree = PathSegments.Tail.Head.ThisSubTree;
             var myIndex = PathSegments.Head.Index;

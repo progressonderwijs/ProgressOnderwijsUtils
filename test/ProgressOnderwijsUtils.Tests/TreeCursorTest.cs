@@ -5,11 +5,11 @@ public sealed class TreeCursorTest
     [Fact]
     public void ReplaceSubTree_can_replace_single_root_node()
     {
-        var tree = Tree.Node(42).RootHere();
+        var tree = Tree.Node(42).CursorForThisRoot();
         var newTree = tree.ReplaceSubTree(Tree.Node(11));
 
         PAssert.That(() => !newTree.Equals(tree));
-        PAssert.That(() => newTree.Equals(Tree.Node(11).RootHere()));
+        PAssert.That(() => newTree.Equals(Tree.Node(11).CursorForThisRoot()));
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public sealed class TreeCursorTest
                     Tree.Node(4),
                     Tree.Node(5)
                 )
-            ).RootHere();
+            ).CursorForThisRoot();
 
         var toReplace = tree
             .PreorderTraversal()
@@ -45,7 +45,7 @@ public sealed class TreeCursorTest
                         Tree.Node(4),
                         Tree.Node(5)
                     )
-                ).RootHere()
+                ).CursorForThisRoot()
             )
         );
     }
@@ -63,7 +63,7 @@ public sealed class TreeCursorTest
                     Tree.Node(5)
                 ),
                 Tree.Node(6)
-            ).RootHere();
+            ).CursorForThisRoot();
 
         PAssert.That(() => !tree.PreviousSibling().HasValue);
         PAssert.That(() => !tree.NextSibling().HasValue);

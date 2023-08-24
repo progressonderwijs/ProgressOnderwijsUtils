@@ -27,8 +27,8 @@ public static class TreeExtensions
     }
 
     [Pure]
-    public static TreeCursor<T> RootHere<T>(this Tree<T> tree)
-        => TreeCursor<T>.RootTree(tree);
+    public static TreeCursor<T> CursorForThisRoot<T>(this Tree<T> tree)
+        => TreeCursor<T>.CreateAtRoot(tree);
 
     [Pure]
     public static IEnumerable<T> PreorderTraversal<T>(this IRecursiveStructure<T> tree)
