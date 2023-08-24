@@ -45,7 +45,7 @@ public sealed class TreeCursorTest
                         Tree.Node(4),
                         Tree.Node(5)
                     )
-                ).CursorForThisRoot()
+                )
             )
         );
     }
