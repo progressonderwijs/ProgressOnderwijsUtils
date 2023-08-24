@@ -15,7 +15,7 @@ public interface IRecursiveStructure<out TTree>
 public interface IRecursiveStructure<out TTree, T> : IRecursiveStructure<TTree>, IHasNodeValue<T>
     where TTree : IRecursiveStructure<TTree>
 {
-    Tree<T> UnrootedSubTree();
+    Tree<T> ToSubTree();
 }
 
 public static class Tree
@@ -171,6 +171,6 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
     Tree<T> IRecursiveStructure<Tree<T>>.TypedThis
         => this;
 
-    Tree<T> IRecursiveStructure<Tree<T>, T>.UnrootedSubTree()
+    Tree<T> IRecursiveStructure<Tree<T>, T>.ToSubTree()
         => this;
 }

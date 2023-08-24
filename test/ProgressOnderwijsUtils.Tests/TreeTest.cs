@@ -106,7 +106,7 @@ public sealed class TreeTest
         PAssert.That(() => abcde.PreorderTraversal().Select(rooted => rooted.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e", }));
         PAssert.That(
             () =>
-                abcde.RootHere()
+                abcde.CursorForThisRoot()
                     .PreorderTraversal()
                     .Select(rooted => rooted.PathSelfToRoot().Select(node => node.NodeValue).JoinStrings())
                     .SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea", })

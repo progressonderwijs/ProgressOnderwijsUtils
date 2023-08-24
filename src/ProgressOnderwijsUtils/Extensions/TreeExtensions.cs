@@ -12,7 +12,7 @@ public static class TreeExtensions
     {
         var maxHeight = 0;
         var todo = new Stack<(Tree<T>, int)>(16);
-        todo.Push((tree.UnrootedSubTree(), 1));
+        todo.Push((tree.ToSubTree(), 1));
 
         while (todo.Count > 0) {
             var (next, height) = todo.Pop();
@@ -27,8 +27,8 @@ public static class TreeExtensions
     }
 
     [Pure]
-    public static RootedTree<T> RootHere<T>(this Tree<T> tree)
-        => RootedTree<T>.RootTree(tree);
+    public static TreeCursor<T> CursorForThisRoot<T>(this Tree<T> tree)
+        => TreeCursor<T>.CreateAtRoot(tree);
 
     [Pure]
     public static IEnumerable<T> PreorderTraversal<T>(this IRecursiveStructure<T> tree)

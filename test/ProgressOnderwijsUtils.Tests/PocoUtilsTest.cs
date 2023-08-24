@@ -6,6 +6,9 @@ public interface ISimpleInterface
     string? Property { get; set; }
 }
 
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable CS0169 // field unused
 [UsedImplicitly(ImplicitUseTargetFlags.Members)]
 public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
 {
@@ -31,6 +34,9 @@ public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
     public object? PrivateSetter { get; private set; }
     public object? PrivateGetter { set; private get; }
 }
+#pragma warning restore CS0169 // field unused
+#pragma warning restore IDE0044 // Add readonly modifier
+#pragma warning restore IDE0051 // Remove unused private members    
 
 struct SetterTestStruct : IWrittenImplicitly
 {
