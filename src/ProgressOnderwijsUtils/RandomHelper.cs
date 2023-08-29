@@ -11,6 +11,7 @@ public sealed class RandomHelper
     public static RandomHelper Insecure(int seed)
         => new(new Random(seed).NextBytes);
 
+    // ReSharper disable once UnusedParameter.Global
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
         => Insecure(GetNaiveHashCode(Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
