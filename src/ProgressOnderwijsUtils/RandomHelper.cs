@@ -104,7 +104,7 @@ public sealed class RandomHelper
             (min, max, this),
             static (buffer, o) => {
                 var (min, max, rnd) = o;
-                rnd.FillChars(buffer, max, min);
+                rnd.FillChars(buffer, min, max);
             }
         );
 
