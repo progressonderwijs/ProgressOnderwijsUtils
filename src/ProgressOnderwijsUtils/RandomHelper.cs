@@ -108,7 +108,7 @@ public sealed class RandomHelper
             }
         );
 
-    void FillChars(Span<char> buffer, char max, char min)
+    void FillChars(Span<char> buffer, char min, char max)
     {
         var letters = (uint)max - min + 1;
         foreach (ref var c in buffer) {
