@@ -14,15 +14,23 @@ public sealed class RandomHelperTest
     }
 
     [Fact]
-    public void CheckString()
+    public void Check_GetStringOfLatinLower()
     {
         for (var i = 0; i < 50; i++) {
             var len = (int)RandomHelper.Secure.GetUInt32(300);
             var str = RandomHelper.Secure.GetStringOfLatinLower(len);
-            var StR = RandomHelper.Secure.GetStringOfLatinUpperOrLower(len);
             PAssert.That(() => str.Length == len);
-            PAssert.That(() => StR.Length == len);
             PAssert.That(() => str.AsEnumerable().None(c => c < 'a' || c > 'z'));
+        }
+    }
+
+    [Fact]
+    public void Check_GetStringOfLatinUpperOrLower()
+    {
+        for (var i = 0; i < 50; i++) {
+            var len = (int)RandomHelper.Secure.GetUInt32(300);
+            var StR = RandomHelper.Secure.GetStringOfLatinUpperOrLower(len);
+            PAssert.That(() => StR.Length == len);
             PAssert.That(() => StR.AsEnumerable().None(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
         }
     }
