@@ -6,20 +6,35 @@ public sealed class RandomHelperTest
         => Enumerable.Repeat(0, 10000);
 
     [Fact]
-    public void CheckRandomBasic()
+    public void Check_AllNumbersHit()
     {
-        var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32());
-        PAssert.That(() => uint32s.Any(num => num > int.MaxValue));
-
-        var int64s = Iter10K().Select(i => RandomHelper.Secure.GetInt64());
-        PAssert.That(() => int64s.Any(num => num > uint.MaxValue));
-
-        var uint64s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64());
-        PAssert.That(() => uint64s.Any(num => num > long.MaxValue));
-
         var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
         var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32(37));
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
+    }
+
+    [Fact]
+    public void CheckBasic_UInt32()
+    {
+        var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32());
+        PAssert.That(() => uint32s.Any(num => num > uint.MaxValue / 4 * 3));
+        PAssert.That(() => uint32s.Any(num => num < uint.MaxValue / 4));
+    }
+
+    [Fact]
+    public void CheckBasic_UInt64()
+    {
+        var uint64s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64());
+        PAssert.That(() => uint64s.Any(num => num > ulong.MaxValue / 4 * 3));
+        PAssert.That(() => uint64s.Any(num => num < ulong.MaxValue / 4));
+    }
+
+    [Fact]
+    public void CheckBasic_Int64()
+    {
+        var int64s = Iter10K().Select(i => RandomHelper.Secure.GetInt64());
+        PAssert.That(() => int64s.Any(num => num > long.MaxValue / 4 * 3));
+        PAssert.That(() => int64s.Any(num => num < long.MinValue / 4 * 3));
     }
 
     [Fact]
