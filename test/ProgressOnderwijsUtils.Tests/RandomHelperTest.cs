@@ -21,12 +21,30 @@ public sealed class RandomHelperTest
         var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64(37));
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
+
+    [Fact]
+    public void CheckBasic_UInt8()
+    {
+        var uint64s = Iter10K().Select(i => RandomHelper.Secure.GetByte());
+        PAssert.That(() => uint64s.Any(num => num > byte.MaxValue / 4 * 3));
+        PAssert.That(() => uint64s.Any(num => num < byte.MaxValue / 4));
+    }
+
     [Fact]
     public void CheckBasic_UInt32()
     {
         var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32());
         PAssert.That(() => uint32s.Any(num => num > uint.MaxValue / 4 * 3));
         PAssert.That(() => uint32s.Any(num => num < uint.MaxValue / 4));
+    }
+
+    [Fact]
+    public void CheckBasic_NonNegativeInt32()
+    {
+        var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetNonNegativeInt32());
+        PAssert.That(() => uint32s.Any(num => num > int.MaxValue / 4 * 3));
+        PAssert.That(() => uint32s.Any(num => num < int.MaxValue / 4));
+        PAssert.That(() => uint32s.None(num => num < 0));
     }
 
     [Fact]
