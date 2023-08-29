@@ -95,9 +95,6 @@ public sealed class RandomHelper
     public string GetStringCapitalized(int length)
         => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
 
-    public string GetStringOfLatinUpperOrLower(int length)
-        => GetStringUpperAndLower(length, 'a', 'z');
-
     public string GetStringOfNumbers(int length)
         => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
 
@@ -114,16 +111,16 @@ public sealed class RandomHelper
             }
         );
 
-    public string GetStringUpperAndLower(int length, char min, char max)
+    public string GetStringOfLatinUpperOrLower(int length)
         => string.Create(
             length,
-            (min, max, this),
-            static (buffer, o) => {
-                var (min, max, rnd) = o;
-                var letters = (uint)max - min + 1;
-                var MIN = char.ToUpper(min);
+            this,
+            static (buffer, rnd) => {
+                const char lowerMin = 'a', lowerMax = 'z', upperMin = 'A';
+                const uint letters = ((uint)lowerMax - lowerMin) * 2 + 1;
                 foreach (ref var c in buffer) {
-                    c = (char)(rnd.GetUInt32(letters) + (rnd.GetUInt32(100) < 50 ? min : MIN));
+                    var num = rnd.GetUInt32(letters);
+                    c = (char)((num >> 1) + ((num & 1) == 0 ? lowerMin : upperMin));
                 }
             }
         );
