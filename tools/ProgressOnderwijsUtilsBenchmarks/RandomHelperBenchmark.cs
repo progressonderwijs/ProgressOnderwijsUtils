@@ -49,4 +49,8 @@ public class RandomHelperBenchmark
     [Benchmark]
     public void GetBytes_16()
         => randomHelper.GetBytes(16);
+
+    [Benchmark]
+    public void GetStringOfLatinUpperOrLower()
+        => randomHelper.GetStringOfLatinUpperOrLower(10);
 }
