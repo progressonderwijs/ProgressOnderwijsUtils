@@ -104,15 +104,15 @@ public sealed class RandomHelper
             (min, max, this),
             static (buffer, o) => {
                 var (min, max, rnd) = o;
-                var letters = (uint)max - min + 1;
-                FillChars(buffer, rnd, letters, min);
+                rnd.FillChars(buffer, max, min);
             }
         );
 
-    static void FillChars(Span<char> buffer, RandomHelper rnd, uint letterCount, char min)
+    void FillChars(Span<char> buffer, char max, char min)
     {
+        var letters = (uint)max - min + 1;
         foreach (ref var c in buffer) {
-            c = (char)(rnd.GetUInt32(letterCount) + min);
+            c = (char)(GetUInt32(letters) + min);
         }
     }
 
