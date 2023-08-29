@@ -13,7 +13,6 @@ public sealed class RandomHelperTest
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
 
-
     [Fact]
     public void Check_AllNumbersHit_UInt64()
     {
