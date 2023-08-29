@@ -119,9 +119,9 @@ public sealed class RandomHelper
     string GetString_SpecialCaseFirstChar(int length, char firstCharMin, char firstCharMax, char min, char max)
         => string.Create(
             length,
-            (min, max, firstCharMin, firstCharMax, this),
+            (firstCharMin, firstCharMax, min, max, this),
             static (buffer, o) => {
-                var (min, max, firstCharMin, firstCharMax, rnd) = o;
+                var (firstCharMin, firstCharMax, min, max, rnd) = o;
                 rnd.FillChars(buffer.Slice(0, 1), firstCharMin, firstCharMax);
                 rnd.FillChars(buffer.Slice(1), min, max);
             }
