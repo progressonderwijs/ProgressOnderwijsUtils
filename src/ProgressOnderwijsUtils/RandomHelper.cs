@@ -105,11 +105,16 @@ public sealed class RandomHelper
             static (buffer, o) => {
                 var (min, max, rnd) = o;
                 var letters = (uint)max - min + 1;
-                foreach (ref var c in buffer) {
-                    c = (char)(rnd.GetUInt32(letters) + min);
-                }
+                FillChars(buffer, rnd, letters, min);
             }
         );
+
+    static void FillChars(Span<char> buffer, RandomHelper rnd, uint letterCount, char min)
+    {
+        foreach (ref var c in buffer) {
+            c = (char)(rnd.GetUInt32(letterCount) + min);
+        }
+    }
 
     public string GetStringOfLatinUpperOrLower(int length)
         => string.Create(
