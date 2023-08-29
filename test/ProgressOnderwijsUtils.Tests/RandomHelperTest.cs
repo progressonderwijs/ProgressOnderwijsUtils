@@ -13,6 +13,14 @@ public sealed class RandomHelperTest
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
 
+
+    [Fact]
+    public void Check_AllNumbersHit_UInt64()
+    {
+        var numTo37 = Enumerable.Range(0, 37).Select(i => (ulong)i).ToHashSet();
+        var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64(37));
+        PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
+    }
     [Fact]
     public void CheckBasic_UInt32()
     {
