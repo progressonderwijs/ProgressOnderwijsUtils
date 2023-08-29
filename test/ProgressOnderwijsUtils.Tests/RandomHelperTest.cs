@@ -30,6 +30,15 @@ public sealed class RandomHelperTest
     }
 
     [Fact]
+    public void CheckBasic_GetBytes()
+    {
+        var bytes = RandomHelper.Secure.GetBytes(10_000);
+        PAssert.That(() => bytes.Any(num => num > byte.MaxValue / 4 * 3));
+        PAssert.That(() => bytes.Any(num => num < byte.MaxValue / 4));
+        PAssert.That(() => bytes.Length == 10_000);
+    }
+
+    [Fact]
     public void CheckBasic_UInt32()
     {
         var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32());
