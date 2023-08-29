@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace ProgressOnderwijsUtils;
 
 public sealed class RandomHelper
@@ -23,27 +25,41 @@ public sealed class RandomHelper
     public byte[] GetBytes(int numBytes)
     {
         var bytes = new byte[numBytes];
-        fillWithRandomBytes(bytes);
+        GetBytes(bytes);
         return bytes;
     }
 
+    public void GetBytes(Span<byte> bytes)
+        => fillWithRandomBytes(bytes);
+
     public byte GetByte()
-        => GetBytes(1)[0];
+        => GetSimpleType<byte>();
 
     public int GetNonNegativeInt32()
         => (int)GetUInt32((uint)int.MaxValue + 1);
 
     public int GetInt32()
-        => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+        => GetSimpleType<int>();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    T GetSimpleType<T>()
+        where T : struct
+    {
+        var num = default(T);
+        var span = new Span<T>(ref num);
+        var bytes = MemoryMarshal.AsBytes(span);
+        fillWithRandomBytes(bytes);
+        return num;
+    }
 
     public long GetInt64()
-        => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
+        => GetSimpleType<long>();
 
     public uint GetUInt32()
-        => BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
+        => GetSimpleType<uint>();
 
     public ulong GetUInt64()
-        => BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
+        => GetSimpleType<ulong>();
 
     public uint GetUInt32(uint excludedBound)
     {
