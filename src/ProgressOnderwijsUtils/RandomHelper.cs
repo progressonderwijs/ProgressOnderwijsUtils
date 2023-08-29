@@ -102,29 +102,43 @@ public sealed class RandomHelper
         => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
 
     public string GetString(int length, char min, char max)
-    {
-        var letters = (uint)max - min + 1;
-        var sb = new StringBuilder();
-        for (var i = 0; i < length; i++) {
-            _ = sb.Append((char)(GetUInt32(letters) + min));
-        }
-        return sb.ToString();
-    }
+        => string.Create(
+            length,
+            (min, max, this),
+            static (buffer, o) => {
+                var (min, max, rnd) = o;
+                var letters = (uint)max - min + 1;
+                foreach (ref var c in buffer) {
+                    c = (char)(rnd.GetUInt32(letters) + min);
+                }
+            }
+        );
 
     public string GetStringUpperAndLower(int length, char min, char max)
-    {
-        var letters = (uint)max - min + 1;
-        var MIN = char.ToUpper(min);
-        var sb = new StringBuilder();
-        for (var i = 0; i < length; i++) {
-            _ = sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
-        }
-        return sb.ToString();
-    }
+        => string.Create(
+            length,
+            (min, max, this),
+            static (buffer, o) => {
+                var (min, max, rnd) = o;
+                var letters = (uint)max - min + 1;
+                var MIN = char.ToUpper(min);
+                foreach (ref var c in buffer) {
+                    c = (char)(rnd.GetUInt32(letters) + (rnd.GetUInt32(100) < 50 ? min : MIN));
+                }
+            }
+        );
 
     static readonly char[] UriPrintableCharacters =
         Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
 
     public string GetStringOfUriPrintableCharacters(int length)
-        => new(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
+        => string.Create(
+            length,
+            this,
+            static (buffer, rnd) => {
+                foreach (ref var c in buffer) {
+                    c = UriPrintableCharacters[rnd.GetUInt32((uint)UriPrintableCharacters.Length)];
+                }
+            }
+        );
 }
