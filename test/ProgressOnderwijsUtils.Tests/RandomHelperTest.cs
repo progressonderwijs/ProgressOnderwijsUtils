@@ -38,6 +38,14 @@ public sealed class RandomHelperTest
     }
 
     [Fact]
+    public void CheckBasic_Int32()
+    {
+        var int64s = Iter10K().Select(i => RandomHelper.Secure.GetInt32());
+        PAssert.That(() => int64s.Any(num => num > int.MaxValue / 4 * 3));
+        PAssert.That(() => int64s.Any(num => num < int.MinValue / 4 * 3));
+    }
+
+    [Fact]
     public void Check_GetStringOfLatinLower()
     {
         for (var i = 0; i < 50; i++) {
