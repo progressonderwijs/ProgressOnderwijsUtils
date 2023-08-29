@@ -93,10 +93,10 @@ public sealed class RandomHelper
         => GetString(length, 'a', 'z');
 
     public string GetStringCapitalized(int length)
-        => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
+        => GetString_SpecialCaseFirstChar(length, 'A', 'Z', 'a', 'z');
 
     public string GetStringOfNumbers(int length)
-        => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
+        => GetString_SpecialCaseFirstChar(length, '1', '9', '0', '9');
 
     public string GetString(int length, char min, char max)
         => string.Create(
@@ -115,6 +115,17 @@ public sealed class RandomHelper
             c = (char)(GetUInt32(letters) + min);
         }
     }
+
+    string GetString_SpecialCaseFirstChar(int length, char firstCharMin, char firstCharMax, char min, char max)
+        => string.Create(
+            length,
+            (min, max, firstCharMin, firstCharMax, this),
+            static (buffer, o) => {
+                var (min, max, firstCharMin, firstCharMax, rnd) = o;
+                rnd.FillChars(buffer.Slice(0, 1), firstCharMin, firstCharMax);
+                rnd.FillChars(buffer.Slice(1), min, max);
+            }
+        );
 
     public string GetStringOfLatinUpperOrLower(int length)
         => string.Create(
