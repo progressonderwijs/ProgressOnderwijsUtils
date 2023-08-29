@@ -8,7 +8,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void Check_AllNumbersHit()
     {
-        var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
+        var numTo37 = Enumerable.Range(0, 37).Select(i => (uint)i).ToHashSet();
         var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32(37));
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
