@@ -11,7 +11,7 @@ public static class BenchmarkProgram
         //=> RunArrayBuilderBenchmarks();
         //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
         //=> BenchmarkRunner.Run<NullabilityBenchmark>();
-        => BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+        => BenchmarkRunner.Run<RandomHelperBenchmark>();
 
     [UsedImplicitly]
     static void RunArrayBuilderBenchmarks()

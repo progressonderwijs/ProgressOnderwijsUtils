@@ -1,8 +1,12 @@
+using System.Runtime.InteropServices;
+
 namespace ProgressOnderwijsUtils;
 
 public sealed class RandomHelper
 {
-    public static readonly RandomHelper Secure = new(bytes => RandomNumberGenerator.Fill(bytes));
+    delegate void FillBytes(Span<byte> bytes);
+
+    public static readonly RandomHelper Secure = new(RandomNumberGenerator.Fill);
 
     public static RandomHelper Insecure(int seed)
         => new(new Random(seed).NextBytes);
@@ -13,35 +17,49 @@ public sealed class RandomHelper
     static int GetNaiveHashCode(string str)
         => (int)ColumnOrdering.CaseInsensitiveHash(str);
 
-    readonly Action<byte[]> fillWithRandomBytes;
+    readonly FillBytes fillWithRandomBytes;
 
-    RandomHelper(Action<byte[]> fillWithRandomBytes)
+    RandomHelper(FillBytes fillWithRandomBytes)
         => this.fillWithRandomBytes = fillWithRandomBytes;
 
     public byte[] GetBytes(int numBytes)
     {
         var bytes = new byte[numBytes];
-        fillWithRandomBytes(bytes);
+        GetBytes(bytes);
         return bytes;
     }
 
+    public void GetBytes(Span<byte> bytes)
+        => fillWithRandomBytes(bytes);
+
     public byte GetByte()
-        => GetBytes(1)[0];
+        => GetSimpleType<byte>();
 
     public int GetNonNegativeInt32()
         => (int)GetUInt32((uint)int.MaxValue + 1);
 
     public int GetInt32()
-        => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+        => GetSimpleType<int>();
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    T GetSimpleType<T>()
+        where T : struct
+    {
+        var num = default(T);
+        var span = new Span<T>(ref num);
+        var bytes = MemoryMarshal.AsBytes(span);
+        fillWithRandomBytes(bytes);
+        return num;
+    }
 
     public long GetInt64()
-        => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
+        => GetSimpleType<long>();
 
     public uint GetUInt32()
-        => BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
+        => GetSimpleType<uint>();
 
     public ulong GetUInt64()
-        => BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
+        => GetSimpleType<ulong>();
 
     public uint GetUInt32(uint excludedBound)
     {
@@ -75,38 +93,65 @@ public sealed class RandomHelper
         => GetString(length, 'a', 'z');
 
     public string GetStringCapitalized(int length)
-        => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
-
-    public string GetStringOfLatinUpperOrLower(int length)
-        => GetStringUpperAndLower(length, 'a', 'z');
+        => GetString_SpecialCaseFirstChar(length, 'A', 'Z', 'a', 'z');
 
     public string GetStringOfNumbers(int length)
-        => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
+        => GetString_SpecialCaseFirstChar(length, '1', '9', '0', '9');
 
     public string GetString(int length, char min, char max)
+        => string.Create(
+            length,
+            (min, max, this),
+            static (buffer, o) => {
+                var (min, max, rnd) = o;
+                rnd.FillChars(buffer, min, max);
+            }
+        );
+
+    void FillChars(Span<char> buffer, char min, char max)
     {
         var letters = (uint)max - min + 1;
-        var sb = new StringBuilder();
-        for (var i = 0; i < length; i++) {
-            _ = sb.Append((char)(GetUInt32(letters) + min));
+        foreach (ref var c in buffer) {
+            c = (char)(GetUInt32(letters) + min);
         }
-        return sb.ToString();
     }
 
-    public string GetStringUpperAndLower(int length, char min, char max)
-    {
-        var letters = (uint)max - min + 1;
-        var MIN = char.ToUpper(min);
-        var sb = new StringBuilder();
-        for (var i = 0; i < length; i++) {
-            _ = sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
-        }
-        return sb.ToString();
-    }
+    string GetString_SpecialCaseFirstChar(int length, char firstCharMin, char firstCharMax, char min, char max)
+        => string.Create(
+            length,
+            (firstCharMin, firstCharMax, min, max, this),
+            static (buffer, o) => {
+                var (firstCharMin, firstCharMax, min, max, rnd) = o;
+                rnd.FillChars(buffer.Slice(0, 1), firstCharMin, firstCharMax);
+                rnd.FillChars(buffer.Slice(1), min, max);
+            }
+        );
+
+    public string GetStringOfLatinUpperOrLower(int length)
+        => string.Create(
+            length,
+            this,
+            static (buffer, rnd) => {
+                const char lowerMin = 'a', lowerMax = 'z', upperMin = 'A';
+                const uint letters = ((uint)lowerMax - lowerMin) * 2 + 1;
+                foreach (ref var c in buffer) {
+                    var num = rnd.GetUInt32(letters);
+                    c = (char)((num >> 1) + ((num & 1) == 0 ? lowerMin : upperMin));
+                }
+            }
+        );
 
     static readonly char[] UriPrintableCharacters =
         Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
 
     public string GetStringOfUriPrintableCharacters(int length)
-        => new(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
+        => string.Create(
+            length,
+            this,
+            static (buffer, rnd) => {
+                foreach (ref var c in buffer) {
+                    c = UriPrintableCharacters[rnd.GetUInt32((uint)UriPrintableCharacters.Length)];
+                }
+            }
+        );
 }
