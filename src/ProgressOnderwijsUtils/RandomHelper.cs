@@ -2,7 +2,9 @@ namespace ProgressOnderwijsUtils;
 
 public sealed class RandomHelper
 {
-    public static readonly RandomHelper Secure = new(bytes => RandomNumberGenerator.Fill(bytes));
+    delegate void FillBytes(Span<byte> bytes);
+
+    public static readonly RandomHelper Secure = new(RandomNumberGenerator.Fill);
 
     public static RandomHelper Insecure(int seed)
         => new(new Random(seed).NextBytes);
@@ -13,9 +15,9 @@ public sealed class RandomHelper
     static int GetNaiveHashCode(string str)
         => (int)ColumnOrdering.CaseInsensitiveHash(str);
 
-    readonly Action<byte[]> fillWithRandomBytes;
+    readonly FillBytes fillWithRandomBytes;
 
-    RandomHelper(Action<byte[]> fillWithRandomBytes)
+    RandomHelper(FillBytes fillWithRandomBytes)
         => this.fillWithRandomBytes = fillWithRandomBytes;
 
     public byte[] GetBytes(int numBytes)
