@@ -67,7 +67,7 @@ public sealed record RawDatabaseDescription
             DefaultValues = DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
             ComputedColumns = ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
             CheckConstraints = CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            DmlTableTriggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            DmlTableTriggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId.AssertNotNull(), (_, g) => g.ToArray()),
             Columns = Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
             SqlExpressionDependsOn = Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
             Indexes = Indexes.ToLookup(o => o.ObjectId),
