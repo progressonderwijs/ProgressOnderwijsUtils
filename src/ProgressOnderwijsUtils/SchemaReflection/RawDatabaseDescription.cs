@@ -12,6 +12,7 @@ public sealed record RawDatabaseDescription
     public required ForeignKeySqlDefinition[] ForeignKeys { get; init; }
     public required CheckConstraintSqlDefinition[] CheckConstraints { get; init; }
     public required TriggerSqlDefinition[] DmlTableTriggers { get; init; }
+    public required TriggerSqlDefinition[] DatabaseTriggers { get; init; }
     public required DefaultValueConstraintSqlDefinition[] DefaultConstraints { get; init; }
     public required ComputedColumnSqlDefinition[] ComputedColumnDefinitions { get; init; }
     public required SequenceSqlDefinition[] Sequences { get; init; }
@@ -28,6 +29,7 @@ public sealed record RawDatabaseDescription
             ForeignKeys = ForeignKeyColumnEntry.LoadAll(conn),
             CheckConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
             DmlTableTriggers = TriggerSqlDefinition.LoadAllDmlTableTriggers(conn),
+            DatabaseTriggers = TriggerSqlDefinition.LoadAllDatabaseTriggers(conn),
             DefaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
             ComputedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
             Sequences = SequenceSqlDefinition.LoadAll(conn),
