@@ -11,6 +11,7 @@ public sealed class RandomHelper
     public static RandomHelper Insecure(int seed)
         => new(new Random(seed).NextBytes);
 
+    // ReSharper disable once UnusedParameter.Global
     public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
         => Insecure(GetNaiveHashCode(Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
@@ -64,7 +65,6 @@ public sealed class RandomHelper
     public uint GetUInt32(uint excludedBound)
     {
         // Proved in: http://www.google.com/url?q=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F11758809%2Fwhat-is-the-optimal-algorithm-for-generating-an-unbiased-random-integer-within-a&sa=D&sntz=1&usg=AFQjCNEtQkf0HYEkTn6Npvmyu2TDKPQCxA
-        // ReSharper disable once UselessBinaryOperation Resharper bug: https://youtrack.jetbrains.com/issue/RSRP-486301
         var modErr = (uint.MaxValue % excludedBound + 1) % excludedBound;
         var safeIncBound = uint.MaxValue - modErr;
 
