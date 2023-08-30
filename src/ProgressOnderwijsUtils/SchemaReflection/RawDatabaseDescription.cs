@@ -27,7 +27,7 @@ public sealed record RawDatabaseDescription
             Columns = DbColumnMetaData.LoadAll(conn),
             ForeignKeys = ForeignKeyColumnEntry.LoadAll(conn),
             CheckConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
-            DmlTableTriggers = TriggerSqlDefinition.LoadAll(conn),
+            DmlTableTriggers = TriggerSqlDefinition.LoadAllDmlTableTriggers(conn),
             DefaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
             ComputedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
             Sequences = SequenceSqlDefinition.LoadAll(conn),

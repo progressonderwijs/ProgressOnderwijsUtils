@@ -2,7 +2,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
 {
-    public static TriggerSqlDefinition[] LoadAll(SqlConnection conn)
+    public static TriggerSqlDefinition[] LoadAllDmlTableTriggers(SqlConnection conn)
         => SQL(
             $@"
                     select
