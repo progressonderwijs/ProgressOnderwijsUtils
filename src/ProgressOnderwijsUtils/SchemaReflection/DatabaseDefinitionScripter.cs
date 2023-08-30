@@ -105,6 +105,15 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         }
         return sb;
     }
+    
+    static StringBuilder DatabaseTriggersScript(TriggerSqlDefinition dbTrigger)
+    {
+        var sb = new StringBuilder();
+        _ = sb.Append("go\n");
+        _ = sb.Append(dbTrigger.Definition.Trim() + "\n");
+        _ = sb.Append("go\n");
+        return sb;
+    }
 
     public static string ToCreationStatement(DatabaseDescription.Table table, CheckConstraintSqlDefinition checkConstraintDefinition)
     {
@@ -125,6 +134,9 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
 
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
             TableDefinitionScript(sb, table, includeNondeterminisiticObjectIds);
+        }
+        foreach (var trigger in db.RawDescription.DatabaseTriggers.OrderBy(o => o.Name)) {
+            _ = sb.Append(DatabaseTriggersScript(trigger));
         }
         return sb.ToString();
     }
@@ -157,6 +169,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         }
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
             _ = sb.Append(DmlTableTriggersScript(table));
+        }
+
+        foreach (var trigger in db.RawDescription.DatabaseTriggers.OrderBy(o => o.Name)) {
+            _ = sb.Append(DatabaseTriggersScript(trigger));
         }
         _ = sb.Append('\n');
         return sb.ToString();
