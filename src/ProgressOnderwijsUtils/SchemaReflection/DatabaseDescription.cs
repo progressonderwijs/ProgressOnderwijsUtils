@@ -270,7 +270,7 @@ public sealed class DatabaseDescription
 
         internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database) : base(namedTableId, rawSchemaById, database)
         {
-            Triggers = rawSchemaById.Triggers.GetValueOrDefault(ObjectId).EmptyIfNull();
+            Triggers = rawSchemaById.DmlTableTriggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
 

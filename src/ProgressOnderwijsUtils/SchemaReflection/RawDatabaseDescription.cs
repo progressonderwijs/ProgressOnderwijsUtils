@@ -67,7 +67,7 @@ public sealed record RawDatabaseDescription
             DefaultValues = DefaultConstraints.ToDictionary(o => (o.ParentObjectId, o.ParentColumnId)),
             ComputedColumns = ComputedColumnDefinitions.ToDictionary(o => (o.ObjectId, o.ColumnId)),
             CheckConstraints = CheckConstraints.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
-            Triggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
+            DmlTableTriggers = DmlTableTriggers.ToGroupedDictionary(o => o.TableObjectId, (_, g) => g.ToArray()),
             Columns = Columns.ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Order().ToArray()),
             SqlExpressionDependsOn = Dependencies.ToLookup(dep => dep.referencing_id, dep => dep.referenced_id),
             Indexes = Indexes.ToLookup(o => o.ObjectId),
@@ -80,7 +80,7 @@ sealed record DatabaseDescriptionById
     public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
     public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
     public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
-    public required IReadOnlyDictionary<DbObjectId, TriggerSqlDefinition[]> Triggers { get; init; }
+    public required IReadOnlyDictionary<DbObjectId, TriggerSqlDefinition[]> DmlTableTriggers { get; init; }
     public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
     public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
     public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
