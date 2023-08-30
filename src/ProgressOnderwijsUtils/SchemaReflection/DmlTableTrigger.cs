@@ -3,6 +3,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
 {
     public static TriggerSqlDefinition[] LoadAllDmlTableTriggers(SqlConnection conn)
+        => LoadAll(conn, 1);
+
+    static TriggerSqlDefinition[] LoadAll(SqlConnection conn, int parentClass)
         => SQL(
             $@"
                     select
@@ -13,7 +16,7 @@ public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbOb
                     from sys.triggers tr
                     join sys.tables t on t.object_id = tr.parent_id
                     where 1=1
-                        and tr.parent_class = 1
+                        and tr.parent_class = {parentClass}
                 "
         ).ReadPocos<TriggerSqlDefinition>(conn);
 }
