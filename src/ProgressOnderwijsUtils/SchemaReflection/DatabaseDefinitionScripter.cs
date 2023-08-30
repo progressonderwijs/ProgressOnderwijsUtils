@@ -9,7 +9,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append(ForeignKeyConstraintsScript(table));
         _ = sb.Append(CheckConstraintsScript(table));
         _ = sb.Append(DefaultConstraintsScript(table));
-        _ = sb.Append(TriggersScript(table));
+        _ = sb.Append(DmlTableTriggersScript(table));
         _ = sb.Append($"--end of {table.QualifiedName} definition\n");
         _ = sb.Append('\n');
     }
@@ -95,7 +95,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb;
     }
 
-    static StringBuilder TriggersScript(DatabaseDescription.Table table)
+    static StringBuilder DmlTableTriggersScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
         foreach (var dmlTrigger in table.DmlTableTriggers.OrderBy(tr => tr.Name)) {
@@ -156,7 +156,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             _ = sb.Append(DefaultConstraintsScript(table));
         }
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
-            _ = sb.Append(TriggersScript(table));
+            _ = sb.Append(DmlTableTriggersScript(table));
         }
         _ = sb.Append('\n');
         return sb.ToString();
