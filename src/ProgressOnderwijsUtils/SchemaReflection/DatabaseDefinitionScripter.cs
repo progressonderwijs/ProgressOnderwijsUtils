@@ -9,7 +9,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append(ForeignKeyConstraintsScript(table));
         _ = sb.Append(CheckConstraintsScript(table));
         _ = sb.Append(DefaultConstraintsScript(table));
-        _ = sb.Append(TriggersScript(table));
+        _ = sb.Append(DmlTableTriggersScript(table));
         _ = sb.Append($"--end of {table.QualifiedName} definition\n");
         _ = sb.Append('\n');
     }
@@ -95,14 +95,23 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb;
     }
 
-    static StringBuilder TriggersScript(DatabaseDescription.Table table)
+    static StringBuilder DmlTableTriggersScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
-        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
+        foreach (var dmlTrigger in table.DmlTableTriggers.OrderBy(tr => tr.Name)) {
             _ = sb.Append("go\n");
             _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
             _ = sb.Append("go\n");
         }
+        return sb;
+    }
+    
+    static StringBuilder DatabaseTriggersScript(TriggerSqlDefinition dbTrigger)
+    {
+        var sb = new StringBuilder();
+        _ = sb.Append("go\n");
+        _ = sb.Append(dbTrigger.Definition.Trim() + "\n");
+        _ = sb.Append("go\n");
         return sb;
     }
 
@@ -118,6 +127,9 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public string StringifySchema(bool includeNondeterminisiticObjectIds)
     {
         var sb = new StringBuilder();
+        foreach(var schema in db.RawDescription.Schemas.Order()) {
+            _ = sb.Append(SchemaScript(schema.AssertNotNull()));
+        }
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
             sequence.AppendCreationScript(sb);
         }
@@ -125,6 +137,9 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
 
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
             TableDefinitionScript(sb, table, includeNondeterminisiticObjectIds);
+        }
+        foreach (var trigger in db.RawDescription.DatabaseTriggers.OrderBy(o => o.Name)) {
+            _ = sb.Append(DatabaseTriggersScript(trigger));
         }
         return sb.ToString();
     }
@@ -156,7 +171,11 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
             _ = sb.Append(DefaultConstraintsScript(table));
         }
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
-            _ = sb.Append(TriggersScript(table));
+            _ = sb.Append(DmlTableTriggersScript(table));
+        }
+
+        foreach (var trigger in db.RawDescription.DatabaseTriggers.OrderBy(o => o.Name)) {
+            _ = sb.Append(DatabaseTriggersScript(trigger));
         }
         _ = sb.Append('\n');
         return sb.ToString();

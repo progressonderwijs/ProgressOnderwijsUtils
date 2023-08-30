@@ -1,8 +1,14 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
+public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
 {
-    public static DmlTableTriggerSqlDefinition[] LoadAll(SqlConnection conn)
+    public static TriggerSqlDefinition[] LoadAllDmlTableTriggers(SqlConnection conn)
+        => LoadAll(conn, 1);
+
+    public static TriggerSqlDefinition[] LoadAllDatabaseTriggers(SqlConnection conn)
+        => LoadAll(conn, 0);
+
+    static TriggerSqlDefinition[] LoadAll(SqlConnection conn, int parentClass)
         => SQL(
             $@"
                     select
@@ -13,7 +19,7 @@ public sealed record DmlTableTriggerSqlDefinition(DbObjectId ObjectId, string Na
                     from sys.triggers tr
                     join sys.tables t on t.object_id = tr.parent_id
                     where 1=1
-                        and tr.parent_class = 1
+                        and tr.parent_class = {parentClass}
                 "
-        ).ReadPocos<DmlTableTriggerSqlDefinition>(conn);
+        ).ReadPocos<TriggerSqlDefinition>(conn);
 }

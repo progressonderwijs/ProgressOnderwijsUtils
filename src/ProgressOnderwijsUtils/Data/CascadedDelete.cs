@@ -218,7 +218,7 @@ public static class CascadedDelete
                             return null;
                         }
 
-                        if (table.Triggers.None()) {
+                        if (table.DmlTableTriggers.None()) {
                             return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
                         }
 

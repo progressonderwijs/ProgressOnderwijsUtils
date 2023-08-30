@@ -96,7 +96,7 @@ end;";
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
         var table = db.GetTableByName("dbo.TableTriggerTest");
-        var trigger = table.Triggers.Single();
+        var trigger = table.DmlTableTriggers.Single();
 
         PAssert.That(() => trigger.Name == "EenTrigger");
         PAssert.That(() => trigger.TableObjectId == table.ObjectId);
