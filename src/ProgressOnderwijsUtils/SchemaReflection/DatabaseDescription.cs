@@ -265,7 +265,7 @@ public sealed class DatabaseDescription
 
     public sealed class Table : ObjectWithColumns<Table>
     {
-        public readonly DmlTableTriggerSqlDefinition[] Triggers;
+        public readonly TriggerSqlDefinition[] Triggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
 
         internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database) : base(namedTableId, rawSchemaById, database)

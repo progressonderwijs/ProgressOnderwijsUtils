@@ -11,7 +11,7 @@ public sealed record RawDatabaseDescription
     public required DbColumnMetaData[] Columns { get; init; }
     public required ForeignKeySqlDefinition[] ForeignKeys { get; init; }
     public required CheckConstraintSqlDefinition[] CheckConstraints { get; init; }
-    public required DmlTableTriggerSqlDefinition[] DmlTableTriggers { get; init; }
+    public required TriggerSqlDefinition[] DmlTableTriggers { get; init; }
     public required DefaultValueConstraintSqlDefinition[] DefaultConstraints { get; init; }
     public required ComputedColumnSqlDefinition[] ComputedColumnDefinitions { get; init; }
     public required SequenceSqlDefinition[] Sequences { get; init; }
@@ -27,7 +27,7 @@ public sealed record RawDatabaseDescription
             Columns = DbColumnMetaData.LoadAll(conn),
             ForeignKeys = ForeignKeyColumnEntry.LoadAll(conn),
             CheckConstraints = CheckConstraintSqlDefinition.LoadAll(conn),
-            DmlTableTriggers = DmlTableTriggerSqlDefinition.LoadAll(conn),
+            DmlTableTriggers = TriggerSqlDefinition.LoadAll(conn),
             DefaultConstraints = DefaultValueConstraintSqlDefinition.LoadAll(conn),
             ComputedColumnDefinitions = ComputedColumnSqlDefinition.LoadAll(conn),
             Sequences = SequenceSqlDefinition.LoadAll(conn),
@@ -78,7 +78,7 @@ sealed record DatabaseDescriptionById
     public required IReadOnlyDictionary<(DbObjectId ParentObjectId, DbColumnId ParentColumnId), DefaultValueConstraintSqlDefinition> DefaultValues { get; init; }
     public required IReadOnlyDictionary<(DbObjectId ObjectId, DbColumnId ColumnId), ComputedColumnSqlDefinition> ComputedColumns { get; init; }
     public required IReadOnlyDictionary<DbObjectId, CheckConstraintSqlDefinition[]> CheckConstraints { get; init; }
-    public required IReadOnlyDictionary<DbObjectId, DmlTableTriggerSqlDefinition[]> Triggers { get; init; }
+    public required IReadOnlyDictionary<DbObjectId, TriggerSqlDefinition[]> Triggers { get; init; }
     public required Dictionary<DbObjectId, DbColumnMetaData[]> Columns { get; init; }
     public required ILookup<DbObjectId, DbObjectId> SqlExpressionDependsOn { get; init; }
     public required ILookup<DbObjectId, DbObjectIndex> Indexes { get; init; }
