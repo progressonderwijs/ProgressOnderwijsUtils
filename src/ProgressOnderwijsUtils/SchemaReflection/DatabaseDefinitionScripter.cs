@@ -98,7 +98,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     static StringBuilder TriggersScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
-        foreach (var dmlTrigger in table.Triggers.OrderBy(tr => tr.Name)) {
+        foreach (var dmlTrigger in table.DmlTableTriggers.OrderBy(tr => tr.Name)) {
             _ = sb.Append("go\n");
             _ = sb.Append(dmlTrigger.Definition.Trim() + "\n");
             _ = sb.Append("go\n");

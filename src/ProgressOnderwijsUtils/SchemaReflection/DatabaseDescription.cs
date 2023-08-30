@@ -265,12 +265,12 @@ public sealed class DatabaseDescription
 
     public sealed class Table : ObjectWithColumns<Table>
     {
-        public readonly TriggerSqlDefinition[] Triggers;
+        public readonly TriggerSqlDefinition[] DmlTableTriggers;
         public readonly CheckConstraintSqlDefinition[] CheckConstraints;
 
         internal Table(DbNamedObjectId namedTableId, DatabaseDescriptionById rawSchemaById, DatabaseDescription database) : base(namedTableId, rawSchemaById, database)
         {
-            Triggers = rawSchemaById.DmlTableTriggers.GetValueOrDefault(ObjectId).EmptyIfNull();
+            DmlTableTriggers = rawSchemaById.DmlTableTriggers.GetValueOrDefault(ObjectId).EmptyIfNull();
             CheckConstraints = rawSchemaById.CheckConstraints.GetValueOrDefault(ObjectId).EmptyIfNull();
         }
 
