@@ -104,6 +104,23 @@ end;";
     }
 
     [Fact]
+    public void CheckDatabaseTriggers_works()
+    {
+        var definition = 
+            """
+            create trigger EenTrigger on database for create_table, alter_table as
+            begin
+                do_nothing:
+            end;
+            """;
+        SQL($"{ParameterizedSql.CreateDynamic(definition)}").ExecuteNonQuery(Connection);
+
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        var trigger = db.RawDescription.DatabaseTriggers.Single(o => o.Name == "EenTrigger");
+        PAssert.That(() => trigger.Definition == definition);
+    }
+
+    [Fact]
     public void SequencesAreLoadedAsExpected()
     {
         SQL($"create sequence dbo.TestSeq as Int minvalue 1").ExecuteNonQuery(Connection);
