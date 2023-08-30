@@ -5,6 +5,9 @@ public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbOb
     public static TriggerSqlDefinition[] LoadAllDmlTableTriggers(SqlConnection conn)
         => LoadAll(conn, 1);
 
+    public static TriggerSqlDefinition[] LoadAllDatabaseTriggers(SqlConnection conn)
+        => LoadAll(conn, 0);
+
     static TriggerSqlDefinition[] LoadAll(SqlConnection conn, int parentClass)
         => SQL(
             $@"
