@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId TableObjectId, string Definition) : IWrittenImplicitly
+public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbObjectId? TableObjectId, string Definition) : IWrittenImplicitly
 {
     public static TriggerSqlDefinition[] LoadAllDmlTableTriggers(SqlConnection conn)
         => LoadAll(conn, 1);
@@ -17,7 +17,7 @@ public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbOb
                         , TableObjectId = t.object_id
                         , Definition = OBJECT_DEFINITION(tr.object_id)
                     from sys.triggers tr
-                    join sys.tables t on t.object_id = tr.parent_id
+                    left join sys.tables t on t.object_id = tr.parent_id
                     where 1=1
                         and tr.parent_class = {parentClass}
                 "

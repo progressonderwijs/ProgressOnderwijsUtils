@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>98.2.0</Version>
-    <PackageReleaseNotes>Add database trigger definitions</PackageReleaseNotes>
+    <Version>98.3.0</Version>
+    <PackageReleaseNotes>Fix error in trigger query</PackageReleaseNotes>
 
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
