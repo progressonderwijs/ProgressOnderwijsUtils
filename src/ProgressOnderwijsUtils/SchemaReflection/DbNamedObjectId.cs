@@ -26,4 +26,14 @@ public struct DbNamedObjectId : IWrittenImplicitly, IDbNamedObject
                         and o.is_ms_shipped = {false} -- to filter out the dbo.dtproperties system table
                 "
         ).ReadPocos<DbNamedObjectId>(conn);
+
+    public static DbNamedObjectId[] LoadAllTableTypes(SqlConnection conn)
+        => SQL(
+            $"""
+            select
+                ObjectId = tt.type_table_object_id
+                , QualifiedName = schema_name(tt.schema_id) + '.' + tt.name
+            from sys.table_types tt
+            """
+        ).ReadPocos<DbNamedObjectId>(conn);
 }

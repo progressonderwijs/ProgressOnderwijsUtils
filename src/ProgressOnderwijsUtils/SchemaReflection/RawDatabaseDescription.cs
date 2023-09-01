@@ -6,6 +6,7 @@ public sealed record RawDatabaseDescription
 
     public required string?[] Schemas { get; init; }
     public required DbNamedObjectId[] Tables { get; init; }
+    public required DbNamedObjectId[] TableTypes { get; init; }
     public required DbNamedObjectId[] Views { get; init; }
     public required ObjectDependency[] Dependencies { get; init; }
     public required DbColumnMetaData[] Columns { get; init; }
@@ -23,6 +24,7 @@ public sealed record RawDatabaseDescription
         => new() {
             Schemas = Load_user_schemas(conn),
             Tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U"),
+            TableTypes = DbNamedObjectId.LoadAllTableTypes(conn),
             Views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V"),
             Dependencies = Load_sql_expression_dependencies(conn),
             Columns = DbColumnMetaData.LoadAll(conn),
