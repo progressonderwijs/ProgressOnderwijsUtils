@@ -5,6 +5,7 @@ public sealed class DatabaseDescription
     public RawDatabaseDescription RawDescription { get; }
     public readonly IReadOnlyDictionary<string, SequenceSqlDefinition> Sequences;
     readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
+    readonly IReadOnlyDictionary<DbObjectId, Table> tableTypeById;
     readonly IReadOnlyDictionary<DbObjectId, View> viewById;
     readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
     public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
@@ -18,6 +19,7 @@ public sealed class DatabaseDescription
 
         Sequences = rawDescription.Sequences.ToDictionary(s => s.QualifiedName, StringComparer.OrdinalIgnoreCase);
         tableById = rawDescription.Tables.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
+        tableTypeById = rawDescription.TableTypes.ToDictionary(o => o.ObjectId, o => new Table(o, rawSchemaById, this));
         viewById = rawDescription.Views.ToDictionary(o => o.ObjectId, o => new View(o, rawSchemaById, this));
         var fkObjects = rawDescription.ForeignKeys.ArraySelect(o => new ForeignKey(o, tableById));
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
@@ -31,6 +33,9 @@ public sealed class DatabaseDescription
 
     public IEnumerable<Table> AllTables
         => tableById.Values;
+
+    public IEnumerable<Table> AllTablesTypes
+        => tableTypeById.Values;
 
     public IEnumerable<View> AllViews
         => viewById.Values;

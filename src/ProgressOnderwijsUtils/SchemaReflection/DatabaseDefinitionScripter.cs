@@ -55,6 +55,25 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb.Append(")\n");
     }
 
+    static StringBuilder TableTypeScript(DatabaseDescription.Table tableType, bool includeNondeterminisiticObjectIds)
+    {
+        var sb = new StringBuilder();
+        var objectIdLineComment = includeNondeterminisiticObjectIds ? " --objectid:" + tableType.ObjectId : "";
+        _ = sb.Append($"create type {tableType.QualifiedName} as table ({objectIdLineComment}\n");
+        var separatorFromPreviousCol = "";
+        foreach (var colMetaData in tableType.Columns) {
+            var identitySpecification = colMetaData.HasAutoIncrementIdentity ? " identity" : "";
+            var columnTrivia = "--"
+                + (colMetaData.DefaultValueConstraint is not null ? "hasDefault;" : "")
+                + (colMetaData.IsPrimaryKey ? "PK;" : "")
+                + "colId:"
+                + colMetaData.ColumnId;
+            _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition() + identitySpecification + columnTrivia + "\n");
+            separatorFromPreviousCol = ", ";
+        }
+        return sb.Append(")\n");
+    }
+
     static StringBuilder IndexesScript(DatabaseDescription.Table table)
     {
         var sb = new StringBuilder();
@@ -130,6 +149,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         foreach(var schema in db.RawDescription.Schemas.Order()) {
             _ = sb.Append(SchemaScript(schema.AssertNotNull()));
         }
+        foreach (var tableType in db.AllTablesTypes.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(TableTypeScript(tableType, false));
+            _ = sb.Append(IndexesScript(tableType)); //doet niets
+        }
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
             sequence.AppendCreationScript(sb);
         }
@@ -150,7 +173,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         foreach(var schema in db.RawDescription.Schemas.Order()) {
             _ = sb.Append(SchemaScript(schema.AssertNotNull()));
         }
-        
+        foreach (var tableType in db.AllTablesTypes.OrderBy(o => o.QualifiedName)) {
+            _ = sb.Append(TableTypeScript(tableType, false));
+            _ = sb.Append(IndexesScript(tableType)); //doet niets
+        }
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
             sequence.AppendCreationScript(sb);
         }
