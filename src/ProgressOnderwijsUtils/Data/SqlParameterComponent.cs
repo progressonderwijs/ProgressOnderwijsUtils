@@ -87,7 +87,8 @@ namespace ProgressOnderwijsUtils
             if (elementType == null) {
                 return null;
             }
-            var underlyingType = elementType.GetUnderlyingType();
+            var converter = AutomaticValueConverters.GetOrNull(elementType);
+            var underlyingType = converter?.ProviderClrType ?? elementType.GetUnderlyingType();
             var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetValueOrDefault(underlyingType);
             if (sqlTableTypeName == null) {
                 return null;
