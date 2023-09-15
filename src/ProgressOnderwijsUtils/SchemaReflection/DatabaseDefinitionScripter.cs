@@ -37,17 +37,13 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                 var columnTrivia = "--"
                     + colMetaData.ToSqlTypeNameWithoutNullability()
                     + ";"
-                    + (colMetaData.IsPrimaryKey ? "PK;" : "")
-                    + "colId:"
-                    + colMetaData.ColumnId;
+                    + (colMetaData.IsPrimaryKey ? "PK;" : "");
                 _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + collationClause + persistedClause + columnTrivia + "\n");
             } else {
                 var identitySpecification = colMetaData.HasAutoIncrementIdentity ? " identity" : "";
                 var columnTrivia = "--"
                     + (colMetaData.DefaultValueConstraint is not null ? "hasDefault;" : "")
-                    + (colMetaData.IsPrimaryKey ? "PK;" : "")
-                    + "colId:"
-                    + colMetaData.ColumnId;
+                    + (colMetaData.IsPrimaryKey ? "PK;" : "");
                 _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition() + identitySpecification + columnTrivia + "\n");
             }
             separatorFromPreviousCol = ", ";
