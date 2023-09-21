@@ -26,9 +26,6 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         foreach (var colMetaData in table.Columns) {
             if (colMetaData.ComputedAs is { } computedColumn) {
                 var definition = computedColumn;
-                var collationClause = colMetaData.CollationName == null
-                    ? ""
-                    : " collate " + colMetaData.CollationName;
                 var persistedClause = !definition.IsPersisted
                     ? ""
                     : colMetaData.IsNullable
@@ -38,7 +35,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                     + colMetaData.ToSqlTypeNameWithoutNullability()
                     + ";"
                     + (colMetaData.IsPrimaryKey ? "PK;" : "");
-                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + collationClause + persistedClause + columnTrivia + "\n");
+                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + persistedClause + columnTrivia + "\n");
             } else {
                 var identitySpecification = colMetaData.HasAutoIncrementIdentity ? " identity" : "";
                 var columnTrivia = "--"
