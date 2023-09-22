@@ -86,10 +86,7 @@ resharper_trailing_comma_in_multiline_lists = true
 dotnet_diagnostic.IDE1006.severity = none #naming rule violation
 dotnet_diagnostic.CA2016.severity = warning
 dotnet_diagnostic.CA2208.severity = warning
-
-# IDE0058: Expression value is never used
-dotnet_diagnostic.IDE0058.severity = error
+dotnet_diagnostic.xUnit1031.severity = suggestion # xUnit1031: Do not use blocking task operations in test method
+dotnet_diagnostic.IDE0058.severity = error # IDE0058: Expression value is never used
 csharp_style_namespace_declarations=file_scoped:warning
-
-# xUnit1004: Test methods should not be skipped
-dotnet_diagnostic.xUnit1004.severity = none
+dotnet_diagnostic.xUnit1004.severity = suggestion # xUnit1004: Test methods should not be skipped
