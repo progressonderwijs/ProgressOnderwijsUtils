@@ -11,7 +11,7 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Selenium.WebDriver" Version="4.12.4" />
+        <PackageReference Include="Selenium.WebDriver" Version="4.13.1" />
 		<None Include="readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
