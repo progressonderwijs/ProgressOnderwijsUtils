@@ -237,6 +237,30 @@ public sealed class ParameterizedSqlTest
     }
 
     [Fact]
+    public void SupportsRawLiteralInterpolationsWithCurlyBraces()
+    {
+        var result = SQL(
+            $$"""
+              select a={{42}}
+                  , b = 'consider {}'
+                  , c = {{
+                      SQL($"[{'a'}{"$@"}]")
+                  }}
+              ;
+              """
+        );
+
+        using var cmd = result.CreateSqlCommand(new(), CommandTimeout.WithoutTimeout);
+
+        var expectedCommandText = @"select a=@par0
+    , b = 'consider {}'
+    , c = [@par1@par2]
+;";
+        PAssert.That(() => cmd.Command.CommandText == expectedCommandText);
+        PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 42, 'a', "$@", }));
+    }
+
+    [Fact]
     public void ParameterizedSqlToStringIsClearForEnumParams()
     {
         var sql = SQL($"select {42}, {DayOfWeek.Tuesday}");
