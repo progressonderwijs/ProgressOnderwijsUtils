@@ -310,6 +310,12 @@ sealed class InterpolatedSqlFragment : ISqlComponent
         while (pos < length) {
             var c = query[pos];
             if (c == '{') {
+                if (pos + 1 > length) {
+                    break;
+                } else if (query[pos + 1] == '{') {
+                    pos += 2;
+                    continue;
+                }
                 var startPos = pos;
                 var num = 0;
                 for (pos++; pos < length; pos++) {
