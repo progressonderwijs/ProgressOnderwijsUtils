@@ -83,7 +83,6 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }
 
-
     [Fact]
     public void ParameterizedSqlTvpsCanCountDaysOfWeek()
     {
@@ -126,14 +125,15 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
 
     [Fact]
     public void Binary_columns_can_be_used_in_tvps()
-        => PAssert.That(
-            () => SQL(
-                $@"
+    {
+        var dataLengthSumQuery = SQL(
+            $@"
                 select sum(datalength(hashes.QueryTableValue))
                 from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef"), }} hashes
             "
-            ).ReadPlain<long>(Connection).Single() == 16
         );
+        PAssert.That(() => dataLengthSumQuery.ReadPlain<long>(Connection).Single() == 16);
+    }
 
     public sealed class TestDataPoco : IReadImplicitly
     {

@@ -53,11 +53,16 @@ public sealed class TestSqlParameterComponent : TransactedLocalConnection
     [Fact]
     public void DeDuplication_of_convertable_parameters()
     {
-        PAssert.That(() => SQL($"select {3}, {3}").CommandText() == "select @par0, @par0");
-        PAssert.That(() => SQL($"select {Wrap(3)}, {Wrap(3)}").CommandText() == "select @par0, @par0");
-        PAssert.That(() => SQL($"select {3}, {Wrap(3)}").CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
-        PAssert.That(() => SQL($"select {3}, {TrivialConvertibleValue.Create(3)}").CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
-        PAssert.That(() => SQL($"select {Wrap(3)}, {TrivialConvertibleValue.Create(3)}").CommandText() == "select @par0, @par0");
+        var sql_double_3 = SQL($"select {3}, {3}");
+        PAssert.That(() => sql_double_3.CommandText() == "select @par0, @par0");
+        var sql_double_wrap_3 = SQL($"select {Wrap(3)}, {Wrap(3)}");
+        PAssert.That(() => sql_double_wrap_3.CommandText() == "select @par0, @par0");
+        var sql_3_wrap_3 = SQL($"select {3}, {Wrap(3)}");
+        PAssert.That(() => sql_3_wrap_3.CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
+        var sql_3_convertible_3 = SQL($"select {3}, {TrivialConvertibleValue.Create(3)}");
+        PAssert.That(() => sql_3_convertible_3.CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
+        var sql_wrap_3_convertible_3 = SQL($"select {Wrap(3)}, {TrivialConvertibleValue.Create(3)}");
+        PAssert.That(() => sql_wrap_3_convertible_3.CommandText() == "select @par0, @par0");
     }
 
     [Fact]
@@ -65,7 +70,8 @@ public sealed class TestSqlParameterComponent : TransactedLocalConnection
     {
         var asString = Wrap("Aap");
         using var transactedLocalConnection = new TransactedLocalConnection();
-        PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Connection) == "Aap");
+        var sql = SQL($"select {asString}");
+        PAssert.That(() => sql.ReadScalar<string>(transactedLocalConnection.Connection) == "Aap");
     }
 
     static ParameterizedSql Wrap<T>(T value)
