@@ -98,7 +98,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         }
         return sb;
     }
-    
+
     static StringBuilder DatabaseTriggersScript(TriggerSqlDefinition dbTrigger)
     {
         var sb = new StringBuilder();
@@ -120,7 +120,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public string StringifySchema(bool includeNondeterminisiticObjectIds)
     {
         var sb = new StringBuilder();
-        foreach(var schema in db.RawDescription.Schemas.Order()) {
+        foreach (var schema in db.RawDescription.Schemas.Order()) {
             _ = sb.Append(SchemaScript(schema.AssertNotNull()));
         }
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
@@ -140,10 +140,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     public string StringifySchemaForDbCreation()
     {
         var sb = new StringBuilder();
-        foreach(var schema in db.RawDescription.Schemas.Order()) {
+        foreach (var schema in db.RawDescription.Schemas.Order()) {
             _ = sb.Append(SchemaScript(schema.AssertNotNull()));
         }
-        
+
         foreach (var sequence in db.Sequences.Values.OrderBy(s => s.QualifiedName)) {
             sequence.AppendCreationScript(sb);
         }

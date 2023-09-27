@@ -36,7 +36,7 @@ public sealed record SimpleObject : IWrittenImplicitly, ISimpleInterface
 }
 #pragma warning restore CS0169 // field unused
 #pragma warning restore IDE0044 // Add readonly modifier
-#pragma warning restore IDE0051 // Remove unused private members    
+#pragma warning restore IDE0051 // Remove unused private members
 
 struct SetterTestStruct : IWrittenImplicitly
 {

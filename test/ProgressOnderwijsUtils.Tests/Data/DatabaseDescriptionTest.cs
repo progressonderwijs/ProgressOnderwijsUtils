@@ -106,7 +106,7 @@ end;";
     [Fact]
     public void CheckDatabaseTriggers_works()
     {
-        var definition = 
+        var definition =
             """
             create trigger EenTrigger on database for create_table, alter_table as
             begin
