@@ -6,16 +6,30 @@ public sealed class ConcatenateSqlTest
     public void ConcatenatationOfEmptySequenceIsEmpty()
     {
         PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
-        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
+        var bla = SQL($"bla");
+        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(bla) == ParameterizedSql.Empty);
     }
 
     [Fact]
     public void ConcatenateWithEmptySeparatorIsStillSpaced()
-        => PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie"), }.ConcatenateSql() == SQL($"een twee drie"));
+    {
+        var een = SQL($"een");
+        var twee = SQL($"twee");
+        var drie = SQL($"drie");
+        var expected = SQL($"een twee drie");
+        PAssert.That(() => new[] { een, twee, drie, }.ConcatenateSql() == expected);
+    }
 
     [Fact]
     public void ConcatenateWithSeparatorUsesSeparatorSpaced()
-        => PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie"), }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
+    {
+        var een = SQL($"een");
+        var twee = SQL($"twee");
+        var drie = SQL($"drie");
+        var separator = SQL($"!");
+        var expected = SQL($"een ! twee ! drie");
+        PAssert.That(() => new[] { een, twee, drie, }.ConcatenateSql(separator) == expected);
+    }
 
     [Fact]
     public void ConcatenateIsFastEnoughForLargeSequences()

@@ -156,25 +156,36 @@ public sealed class ParameterizedSqlTest
         var trueCondition = true;
         var falseCondition = false;
 
-        PAssert.That(() => (trueCondition && SQL($"test")) == SQL($"test"));
+        var testSql = SQL($"test");
+        PAssert.That(() => (trueCondition && testSql) == testSql);
         PAssert.That(() => ParameterizedSql.TruthyEmpty != ParameterizedSql.Empty);
         PAssert.That(() => falseCondition == ParameterizedSql.Empty);
         PAssert.That(() => trueCondition == ParameterizedSql.TruthyEmpty);
-        PAssert.That(() => (falseCondition && SQL($"test") || SQL($"test2")) == SQL($"test2"));
-        PAssert.That(() => SQL($"maybe-{falseCondition && SQL($"test")}") == SQL($"maybe-"));
-        PAssert.That(() => (trueCondition || SQL($"test")) == ParameterizedSql.TruthyEmpty);
-        PAssert.That(() => (trueCondition || SQL($"test")) != ParameterizedSql.Empty);
-        PAssert.That(() => (falseCondition || SQL($"test")) == SQL($"test"));
-        PAssert.That(() => (SQL($"test") + falseCondition || SQL($"WhenFalse")) == SQL($"test"));
-        PAssert.That(() => SQL($"{ParameterizedSql.TruthyEmpty}") == ParameterizedSql.Empty);
+        var test2Sql = SQL($"test2");
+        PAssert.That(() => (falseCondition && testSql || test2Sql) == test2Sql);
+        var maybeWithNested = SQL($"maybe-{falseCondition && testSql}");
+        var maybeJustDash = SQL($"maybe-");
+        PAssert.That(() => maybeWithNested == maybeJustDash);
+        PAssert.That(() => (trueCondition || testSql) == ParameterizedSql.TruthyEmpty);
+        PAssert.That(() => (trueCondition || testSql) != ParameterizedSql.Empty);
+        PAssert.That(() => (falseCondition || testSql) == testSql);
+        var whenFalseSql = SQL($"WhenFalse");
+        PAssert.That(() => (testSql + falseCondition || whenFalseSql) == testSql);
+        var nestedEmptySql = SQL($"{ParameterizedSql.TruthyEmpty}");
+        PAssert.That(() => nestedEmptySql == ParameterizedSql.Empty);
 
-        PAssert.That(() => SQL($"{trueCondition && SQL($"test")}") == SQL($"test"));
-        PAssert.That(() => SQL($"{trueCondition}") == ParameterizedSql.Param(true));
+        var nestedConditionalTest = SQL($"{trueCondition && testSql}");
+        PAssert.That(() => nestedConditionalTest == testSql);
+        var nestedParamTrue = SQL($"{trueCondition}");
+        PAssert.That(() => nestedParamTrue == ParameterizedSql.Param(true));
     }
 
     [Fact]
     public void PrependingEmptyHasNoEffect()
-        => PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
+    {
+        var abcSql = SQL($"abc");
+        PAssert.That(() => ParameterizedSql.Empty + abcSql == abcSql);
+    }
 
     [Fact]
     public void EmptyParameterizedSql()
@@ -197,10 +208,11 @@ public sealed class ParameterizedSqlTest
         PAssert.That(() => qEmpty1.GetHashCode() == qEmpty2.GetHashCode());
         PAssert.That(() => qEmpty3.GetHashCode() == qEmpty2.GetHashCode());
 
-        PAssert.That(() => SQL($"abc") + qEmpty2 == SQL($"abc"));
-        PAssert.That(() => SQL($"abc") + qEmpty3 == SQL($"abc"));
-        PAssert.That(() => (SQL($"abc") + qEmpty2).GetHashCode() == SQL($"abc").GetHashCode());
-        PAssert.That(() => (SQL($"abc") + qEmpty3).GetHashCode() == SQL($"abc").GetHashCode());
+        var abcSql = SQL($"abc");
+        PAssert.That(() => abcSql + qEmpty2 == abcSql);
+        PAssert.That(() => abcSql + qEmpty3 == abcSql);
+        PAssert.That(() => (abcSql + qEmpty2).GetHashCode() == abcSql.GetHashCode());
+        PAssert.That(() => (abcSql + qEmpty3).GetHashCode() == abcSql.GetHashCode());
     }
 
     [Fact]
@@ -226,23 +238,38 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void ParameterizedSqlToStringIsClearForEnumParams()
-        => PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\nselect 42, 2/*DayOfWeek.Tuesday*/");
+    {
+        var sql = SQL($"select {42}, {DayOfWeek.Tuesday}");
+        PAssert.That(() => sql.ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\nselect 42, 2/*DayOfWeek.Tuesday*/");
+    }
 
     [Fact]
     public void ParameterizedSqlUsesLiteralsForValidEnumConstants()
-        => PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
+    {
+        var sql = SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}");
+        PAssert.That(() => sql.CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
+    }
 
     [Fact]
     public void ParameterizedSqlUsesLiteralsForBooleanConstants()
-        => PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
+    {
+        var sql = SQL($"select {true}, {false}");
+        PAssert.That(() => sql.CommandText() == "select cast(1 as bit), cast(0 as bit)");
+    }
 
     [Fact]
     public void ParameterizedSqlSupportsNullParameters()
-        => PAssert.That(() => SQL($"select {null}").CommandText() == "select NULL");
+    {
+        var sql = SQL($"select {null}");
+        PAssert.That(() => sql.CommandText() == "select NULL");
+    }
 
     [Fact]
     public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
-        => PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
+    {
+        var sql = SQL($"select {ExampleNonLiteralEnum.SomeValue}");
+        PAssert.That(() => sql.CommandText() == "select @par0");
+    }
 
     [TestNotLiteral]
     enum ExampleNonLiteralEnum { SomeValue = 1, }
