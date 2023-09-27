@@ -219,9 +219,8 @@ public sealed class ParameterizedSqlTest
     public void DealsWithApparentlyNestedParameterPlaceholders()
     {
         var badQuery = SQL($@"A{{x{1}}}Z");
-        _ = Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
-        using var conn = new SqlConnection();
-        _ = Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
+        var debugText = badQuery.DebugText();
+        PAssert.That(() => debugText == "A{x1}Z");
     }
 
     [Fact]
