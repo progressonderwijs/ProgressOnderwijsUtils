@@ -197,17 +197,14 @@ interface IQueryParameter
 public static class SafeSql
 {
     [Pure]
-    public static ParameterizedSql SQL(FormattableString interpolatedQuery)
-        => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
+    public static ParameterizedSql SQL(InterpolatedSqlFragment interpolatedQuery)
+        => interpolatedQuery.ToComponent();
 }
 
 static class ParameterizedSqlFactory
 {
     public static ParameterizedSql BuildableToQuery(this ISqlComponent? q)
         => new(q);
-
-    public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery)
-        => ParameterizedSql.FromSqlInterpolated(interpolatedQuery);
 
     public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, ReadOnlySpan<char> sql)
         where TCommandFactory : struct, ICommandFactory
@@ -351,5 +348,77 @@ sealed class FormattableStringSqlComponent : ISqlComponent
             => ReferencedParameterIndex < 0;
 
         public static readonly ParamRefSubString NotFound = new() { ReferencedParameterIndex = -1, };
+    }
+}
+
+[InterpolatedStringHandler]
+public ref struct InterpolatedSqlFragment
+{
+    readonly (string prefix, object? arg)[] sqlArgs;
+    bool justAppendedSql;
+    int idx = 0;
+
+    public InterpolatedSqlFragment(int literalLength, int formattedCount)
+    {
+        sqlArgs = new (string prefix, object?)[formattedCount + 1];
+    }
+
+    public void AppendLiteral(string s)
+    {
+        if (justAppendedSql) {
+            throw new("appending literals twice in succession makes no sense!");
+        }
+        justAppendedSql = true;
+        sqlArgs[idx].prefix = s;
+    }
+
+    public void AppendFormatted(object? t)
+        => AppendFormatted<object?>(t);
+
+    public void AppendFormatted<T>(T t)
+    {
+        if (!justAppendedSql) {
+            sqlArgs[idx].prefix = "";
+        }
+        sqlArgs[idx].arg = t;
+        idx++;
+        justAppendedSql = false;
+    }
+
+    internal ParameterizedSql ToComponent()
+        => idx == 0 && !justAppendedSql ? ParameterizedSql.Empty : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
+
+    sealed class InterpolatedSqlComponent : ISqlComponent
+    {
+        readonly (string prefix, object? arg)[] sqlArgs;
+        readonly bool endsWithSql;
+
+        public InterpolatedSqlComponent((string prefix, object? arg)[] sqlArgs, bool endsWithSql)
+        {
+            this.sqlArgs = sqlArgs;
+            this.endsWithSql = endsWithSql;
+        }
+
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
+        {
+            var segmentIdx = 0;
+            var realLen = endsWithSql ? sqlArgs.Length : sqlArgs.Length - 1;
+            while (true) {
+                if (segmentIdx >= realLen) {
+                    break;
+                }
+                var sqlLiteral = sqlArgs[segmentIdx].prefix;
+                if (sqlLiteral is not "") {
+                    factory.AppendSql(sqlLiteral);
+                }
+                if (segmentIdx + 1 >= sqlArgs.Length && endsWithSql) {
+                    break;
+                }
+
+                SqlParameterComponent.AppendParamOrFragment(ref factory, sqlArgs[segmentIdx].arg);
+                segmentIdx++;
+            }
+        }
     }
 }
