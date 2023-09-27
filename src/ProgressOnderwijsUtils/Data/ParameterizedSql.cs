@@ -90,6 +90,10 @@ public struct ParameterizedSql
     }
 
     [Pure]
+    public static ParameterizedSql FromSqlInterpolated(FormattableString interpolatedQuery)
+        => interpolatedQuery.Format == "" ? Empty : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
+
+    [Pure]
     public override bool Equals(object? obj)
         => obj is ParameterizedSql parameterizedSql && parameterizedSql == this;
 
@@ -203,7 +207,7 @@ static class ParameterizedSqlFactory
         => new(q);
 
     public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery)
-        => interpolatedQuery.Format == "" ? ParameterizedSql.Empty : new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
+        => ParameterizedSql.FromSqlInterpolated(interpolatedQuery);
 
     public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, ReadOnlySpan<char> sql)
         where TCommandFactory : struct, ICommandFactory
@@ -250,11 +254,11 @@ sealed class SeveralSqlFragments : ISqlComponent
     }
 }
 
-sealed class InterpolatedSqlFragment : ISqlComponent
+sealed class FormattableStringSqlComponent : ISqlComponent
 {
     readonly FormattableString interpolatedQuery;
 
-    public InterpolatedSqlFragment(FormattableString interpolatedQuery)
+    public FormattableStringSqlComponent(FormattableString interpolatedQuery)
         => this.interpolatedQuery = interpolatedQuery;
 
     public void AppendTo<TCommandFactory>(ref TCommandFactory factory)

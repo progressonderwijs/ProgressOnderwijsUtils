@@ -30,7 +30,7 @@ public sealed class ExampleObject : IWrittenImplicitly
     public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Arg", "@Hehe");
 
     public static ParameterizedSql ParameterizedSqlForRows(int rows)
-        => SQL(InterpolatedQuery(rows));
+        => ParameterizedSql.FromSqlInterpolated(InterpolatedQuery(rows));
 
     public static FormattableString InterpolatedQuery(int rows)
         => FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe");
@@ -52,5 +52,5 @@ public sealed class ExampleObject : IWrittenImplicitly
     public static readonly long someInt64Value = int.MaxValue * (long)short.MinValue;
 
     public static ParameterizedSql ParameterizedSqliteForRows(int rows)
-        => SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
+        => ParameterizedSql.FromSqlInterpolated(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
 }
