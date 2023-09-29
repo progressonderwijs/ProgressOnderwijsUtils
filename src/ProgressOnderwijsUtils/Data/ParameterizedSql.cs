@@ -373,9 +373,6 @@ public ref struct InterpolatedSqlFragment
     }
 
     public void AppendFormatted(object? t)
-        => AppendFormatted<object?>(t);
-
-    public void AppendFormatted<T>(T t)
     {
         if (!justAppendedSql) {
             sqlArgs[idx].prefix = "";
