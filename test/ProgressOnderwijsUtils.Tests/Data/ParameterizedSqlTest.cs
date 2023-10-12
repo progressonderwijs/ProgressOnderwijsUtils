@@ -283,7 +283,7 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ParameterizedSqlSupportsNullParameters()
     {
-        var sql = SQL($"select {null}");
+        var sql = SQL($"select {default(int?)}");
         PAssert.That(() => sql.CommandText() == "select NULL");
     }
 
