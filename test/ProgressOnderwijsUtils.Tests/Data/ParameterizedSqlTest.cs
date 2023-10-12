@@ -219,9 +219,8 @@ public sealed class ParameterizedSqlTest
     public void DealsWithApparentlyNestedParameterPlaceholders()
     {
         var badQuery = SQL($@"A{{x{1}}}Z");
-        _ = Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
-        using var conn = new SqlConnection();
-        _ = Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
+        var debugText = badQuery.DebugText();
+        PAssert.That(() => debugText == "A{x1}Z");
     }
 
     [Fact]
@@ -234,6 +233,36 @@ public sealed class ParameterizedSqlTest
         var commandText = @"A@par0[@par1@par0]Z";
         PAssert.That(() => cmd.Command.CommandText == commandText);
         PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 0, 1, }));
+    }
+
+    [Fact]
+    public void SupportsRawLiteralInterpolationsWithCurlyBraces()
+    {
+        var result = SQL(
+            $$"""
+            select a={{42}}
+                , b = 'consider {}'
+                , c = {{
+                    SQL($"[{'a'}{"$@"}]")
+                }}
+            ;
+            """
+        );
+
+        using var cmd = result.CreateSqlCommand(new(), CommandTimeout.WithoutTimeout);
+
+        var expectedCommandText = @"select a=@par0
+    , b = 'consider {}'
+    , c = [@par1@par2]
+;";
+        PAssert.That(() => cmd.Command.CommandText == expectedCommandText);
+        var generatedParameters = cmd.Command.Parameters.Cast<SqlParameter>().Select(p => (p.Value, p.SqlDbType)).ToArray();
+        var expectedParameters = new[] {
+            (Value: (object)42, SqlDbType: SqlDbType.Int),
+            ('a', SqlDbType.NVarChar),
+            ("$@", SqlDbType.NVarChar),
+        };
+        PAssert.That(() => generatedParameters.SequenceEqual(expectedParameters));
     }
 
     [Fact]
@@ -260,7 +289,7 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ParameterizedSqlSupportsNullParameters()
     {
-        var sql = SQL($"select {null}");
+        var sql = SQL($"select {default(int?)}");
         PAssert.That(() => sql.CommandText() == "select NULL");
     }
 

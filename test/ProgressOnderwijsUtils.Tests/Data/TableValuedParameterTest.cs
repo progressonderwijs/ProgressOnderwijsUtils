@@ -78,7 +78,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlCanIncludeAutomaticallyConvertedTvps()
     {
-        var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(TrivialConvertibleValue.Create)} x");
+        var q = SQL($@"select sum(x.querytablevalue) from {AsSqlParam(Enumerable.Range(1, 100).Select(TrivialConvertibleValue.Create))} x");
         var sum = (int)q.ReadScalar<SomeEnum>(Connection);
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }

@@ -66,7 +66,7 @@ public sealed class WideExampleObject : IWrittenImplicitly
     public static readonly string RawQueryString = string.Format(formatString, "@Top");
 
     public static ParameterizedSql ParameterizedSqlForRows(int rows)
-        => SQL(InterpolatedQuery(rows));
+        => ParameterizedSql.FromSqlInterpolated(InterpolatedQuery(rows));
 
     public static FormattableString InterpolatedQuery(int rows)
         => FormattableStringFactory.Create(formatString, rows);

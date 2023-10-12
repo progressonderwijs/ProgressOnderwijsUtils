@@ -45,6 +45,9 @@ namespace ProgressOnderwijsUtils
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object? o)
             where TCommandFactory : struct, ICommandFactory
         {
+            while (o is SqlParam sp) {
+                o = sp.Value;
+            }
             if (o is IEnumerable enumerable and not string and not byte[]) {
                 ToTableValuedParameterFromPlainValues(enumerable).AppendTo(ref factory);
             } else {
@@ -75,7 +78,7 @@ namespace ProgressOnderwijsUtils
 
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IReadImplicitly, new()
-            => set is IReadOnlyList<TIn> { Count: 1 }
+            => set is IReadOnlyList<TIn> { Count: 1, }
                 ? new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
                 : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
