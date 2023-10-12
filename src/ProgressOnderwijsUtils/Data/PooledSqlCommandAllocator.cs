@@ -47,7 +47,7 @@ static class PooledSqlCommandAllocator
             parameters[i].Value = null;
             parameters[i].TypeName = null;
         }
-        cmd.CommandText = null;
+        cmd.CommandText = "";
         cmd.Connection = null;
         bag.Enqueue(cmd);
     }
