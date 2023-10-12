@@ -421,6 +421,9 @@ public ref struct InterpolatedSqlFragment
     public void AppendFormatted(Guid? t)
         => AppendParam(t);
 
+    public void AppendFormatted(char? t)
+        => AppendParam(t);
+
     public void AppendFormatted(int? t)
         => AppendParam(t);
 
