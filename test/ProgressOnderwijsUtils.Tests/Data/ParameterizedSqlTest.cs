@@ -240,13 +240,13 @@ public sealed class ParameterizedSqlTest
     {
         var result = SQL(
             $$"""
-              select a={{42}}
-                  , b = 'consider {}'
-                  , c = {{
-                      SQL($"[{'a'}{"$@"}]")
-                  }}
-              ;
-              """
+            select a={{42}}
+                , b = 'consider {}'
+                , c = {{
+                    SQL($"[{'a'}{"$@"}]")
+                }}
+            ;
+            """
         );
 
         using var cmd = result.CreateSqlCommand(new(), CommandTimeout.WithoutTimeout);
@@ -256,7 +256,13 @@ public sealed class ParameterizedSqlTest
     , c = [@par1@par2]
 ;";
         PAssert.That(() => cmd.Command.CommandText == expectedCommandText);
-        PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 42, 'a', "$@", }));
+        var generatedParameters = cmd.Command.Parameters.Cast<SqlParameter>().Select(p => (p.Value, p.SqlDbType)).ToArray();
+        var expectedParameters = new[] {
+            (Value: (object)42, SqlDbType: SqlDbType.Int),
+            ('a', SqlDbType.NVarChar),
+            ("$@", SqlDbType.NVarChar),
+        };
+        PAssert.That(() => generatedParameters.SequenceEqual(expectedParameters));
     }
 
     [Fact]
