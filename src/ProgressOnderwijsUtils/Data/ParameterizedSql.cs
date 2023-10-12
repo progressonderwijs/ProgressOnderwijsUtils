@@ -199,7 +199,13 @@ public static class SafeSql
     [Pure]
     public static ParameterizedSql SQL(InterpolatedSqlFragment interpolatedQuery)
         => interpolatedQuery.ToComponent();
+
+    [Pure]
+    public static SqlParam AsSqlParam(object? Value)
+        => new(Value);
 }
+
+public readonly record struct SqlParam(object? Value);
 
 static class ParameterizedSqlFactory
 {
@@ -372,7 +378,86 @@ public ref struct InterpolatedSqlFragment
         sqlArgs[idx].prefix = s;
     }
 
-    public void AppendFormatted(object? t)
+    public void AppendFormatted(ParameterizedSql t)
+        => AppendParam(t);
+
+    public void AppendFormatted(INestableSql t)
+        => AppendParam(t.Sql);
+
+    public void AppendFormatted(IHasValueConverter? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(Enum? t)
+        => AppendParam(t);
+
+    public void AppendFormatted<T>(IEnumerable<T> t)
+        where T : Enum
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<Guid> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<int> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<IHasValueConverter> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<string> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<DateTime> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<double> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(IEnumerable<byte[]> t)
+        => AppendParam(t);
+
+    public void AppendFormatted(bool t)
+        => AppendParam(t);
+
+    public void AppendFormatted(SqlParam t)
+        => AppendParam(t.Value);
+
+    public void AppendFormatted(byte[]? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(Guid? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(int? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(DateTime? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(DateOnly? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(decimal? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(string? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(double? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(long? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(ulong? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(uint? t)
+        => AppendParam(t);
+
+    public void AppendFormatted(CurrentTimeToken t)
+        => AppendParam(t);
+
+    void AppendParam(object? t)
     {
         if (!justAppendedSql) {
             sqlArgs[idx].prefix = "";

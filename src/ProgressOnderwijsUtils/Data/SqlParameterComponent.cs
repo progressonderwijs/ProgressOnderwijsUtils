@@ -45,6 +45,9 @@ namespace ProgressOnderwijsUtils
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object? o)
             where TCommandFactory : struct, ICommandFactory
         {
+            while (o is SqlParam sp) {
+                o = sp.Value;
+            }
             if (o is IEnumerable enumerable and not string and not byte[]) {
                 ToTableValuedParameterFromPlainValues(enumerable).AppendTo(ref factory);
             } else {

@@ -45,6 +45,6 @@ public static class ParameterizedSqlExtensions
     public static ParameterizedSql AsUnrolledSqlInExpression<T>(this IEnumerable<T> set)
         => set.Count() switch {
             0 => SQL($"(null)"),
-            _ => SQL($"(").Append(set.Select(item => SQL($"{item}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
+            _ => SQL($"(").Append(set.Select(item => SQL($"{AsSqlParam(item)}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
         };
 }
