@@ -170,8 +170,8 @@ public sealed class ParameterizedSqlTest
 
         var testSql = SQL($"test");
         PAssert.That(() => (trueCondition && testSql) == testSql);
-        PAssert.That(() => ParameterizedSql.TruthyEmpty != ParameterizedSql.EmptySql);
-        PAssert.That(() => falseCondition == ParameterizedSql.EmptySql);
+        PAssert.That(() => ParameterizedSql.TruthyEmpty != EmptySql);
+        PAssert.That(() => falseCondition == EmptySql);
         PAssert.That(() => trueCondition == ParameterizedSql.TruthyEmpty);
         var test2Sql = SQL($"test2");
         PAssert.That(() => (falseCondition && testSql || test2Sql) == test2Sql);
@@ -179,12 +179,12 @@ public sealed class ParameterizedSqlTest
         var maybeJustDash = SQL($"maybe-");
         PAssert.That(() => maybeWithNested == maybeJustDash);
         PAssert.That(() => (trueCondition || testSql) == ParameterizedSql.TruthyEmpty);
-        PAssert.That(() => (trueCondition || testSql) != ParameterizedSql.EmptySql);
+        PAssert.That(() => (trueCondition || testSql) != EmptySql);
         PAssert.That(() => (falseCondition || testSql) == testSql);
         var whenFalseSql = SQL($"WhenFalse");
         PAssert.That(() => (testSql + falseCondition || whenFalseSql) == testSql);
         var nestedEmptySql = SQL($"{ParameterizedSql.TruthyEmpty}");
-        PAssert.That(() => nestedEmptySql == ParameterizedSql.EmptySql);
+        PAssert.That(() => nestedEmptySql == EmptySql);
 
         var nestedConditionalTest = SQL($"{trueCondition && testSql}");
         PAssert.That(() => nestedConditionalTest == testSql);
@@ -196,7 +196,7 @@ public sealed class ParameterizedSqlTest
     public void PrependingEmptyHasNoEffect()
     {
         var abcSql = SQL($"abc");
-        PAssert.That(() => ParameterizedSql.EmptySql + abcSql == abcSql);
+        PAssert.That(() => EmptySql + abcSql == abcSql);
     }
 
     [Fact]
@@ -205,7 +205,7 @@ public sealed class ParameterizedSqlTest
         //we want to check that various subtly different ways of making empty ParameterizedSqls
         //all behave as expected.
         var qEmpty0 = default(ParameterizedSql);
-        var qEmpty1 = ParameterizedSql.EmptySql;
+        var qEmpty1 = EmptySql;
         var qEmpty2 = SQL($"");
         var qEmpty3 = SQL($"");
 

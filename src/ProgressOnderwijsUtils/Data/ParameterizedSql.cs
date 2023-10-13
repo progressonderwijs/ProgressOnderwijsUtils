@@ -26,12 +26,6 @@ public struct ParameterizedSql
         return factory.FinishBuilding(conn, timeout);
     }
 
-    /// <summary>
-    /// The empty sql string.
-    /// </summary>
-    public static ParameterizedSql EmptySql
-        => new();
-
     public static readonly ParameterizedSql TruthyEmpty = new(new StringSqlFragment(""));
 
     public bool IsEmpty
@@ -240,6 +234,12 @@ public static class SafeSql
     [Pure]
     public static SqlParam AsSqlParam(object? Value)
         => new(Value);
+
+    /// <summary>
+    /// The empty sql string.
+    /// </summary>
+    public static ParameterizedSql EmptySql
+        => new();
 }
 
 public readonly record struct SqlParam(object? Value);
@@ -502,7 +502,7 @@ public ref struct InterpolatedSqlFragment
     }
 
     internal ParameterizedSql ToComponent()
-        => idx == 0 && !justAppendedSql ? ParameterizedSql.EmptySql : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
+        => idx == 0 && !justAppendedSql ? EmptySql : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
 
     sealed class InterpolatedSqlComponent : ISqlComponent
     {
