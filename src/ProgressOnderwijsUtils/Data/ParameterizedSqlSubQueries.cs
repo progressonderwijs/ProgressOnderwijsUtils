@@ -21,6 +21,6 @@ public static class ParameterizedSqlSubQueries
     [Pure]
     public static ParameterizedSql CreateOrderByClause(OrderByColumns sortOrder)
         => sortOrder.Columns.None()
-            ? ParameterizedSql.Empty
+            ? ParameterizedSql.EmptySql
             : ParameterizedSql.RawSql_PotentialForSqlInjection($"order by {sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", ")}");
 }

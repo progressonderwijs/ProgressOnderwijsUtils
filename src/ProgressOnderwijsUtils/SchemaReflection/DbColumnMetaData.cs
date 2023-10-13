@@ -167,7 +167,7 @@ public static class DbColumnMetaDataExtensions
         );
         var primaryKeyDefinitionSql = keyColumns.Length > 1
             ? SQL($"\n    , primary key ({ParameterizedSql.RawSql_PotentialForSqlInjection(keyColumns.JoinStrings(", "))})")
-            : ParameterizedSql.Empty;
+            : ParameterizedSql.EmptySql;
 
         return SQL($"create table {tableName} (\n    {columnDefinitionSql}{primaryKeyDefinitionSql}\n);");
     }

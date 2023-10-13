@@ -29,16 +29,16 @@ public struct ParameterizedSql
     /// <summary>
     /// The empty sql string.
     /// </summary>
-    public static ParameterizedSql Empty
+    public static ParameterizedSql EmptySql
         => new();
 
     public static readonly ParameterizedSql TruthyEmpty = new(new StringSqlFragment(""));
 
     public bool IsEmpty
-        => impl == TruthyEmpty.impl || this == Empty;
+        => impl == TruthyEmpty.impl || this == EmptySql;
 
     public static implicit operator ParameterizedSql(bool present)
-        => present ? TruthyEmpty : Empty;
+        => present ? TruthyEmpty : EmptySql;
 
     /// <summary>
     /// Returns the provided sql only when the condition is true; empty otherwise.
@@ -85,7 +85,7 @@ public struct ParameterizedSql
             throw new ArgumentNullException(nameof(rawSqlString));
         }
         if (rawSqlString == "") {
-            return Empty;
+            return EmptySql;
         }
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
@@ -106,7 +106,7 @@ public struct ParameterizedSql
             throw new ArgumentNullException(nameof(rawSqlString));
         }
         if (rawSqlString == "") {
-            return Empty;
+            return EmptySql;
         }
         if (!ValidInitialIdentifierChar(rawSqlString[0])) {
             throw new($"Invalid SQL identifier @ index 0 ({rawSqlString[0]}): {rawSqlString}");
@@ -128,7 +128,7 @@ public struct ParameterizedSql
 
     [Pure]
     public static ParameterizedSql FromSqlInterpolated(FormattableString interpolatedQuery)
-        => interpolatedQuery.Format == "" ? Empty : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
+        => interpolatedQuery.Format == "" ? EmptySql : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
 
     [Pure]
     public override bool Equals(object? obj)
@@ -502,7 +502,7 @@ public ref struct InterpolatedSqlFragment
     }
 
     internal ParameterizedSql ToComponent()
-        => idx == 0 && !justAppendedSql ? ParameterizedSql.Empty : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
+        => idx == 0 && !justAppendedSql ? ParameterizedSql.EmptySql : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
 
     sealed class InterpolatedSqlComponent : ISqlComponent
     {

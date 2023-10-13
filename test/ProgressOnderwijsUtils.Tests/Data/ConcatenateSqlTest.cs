@@ -5,9 +5,9 @@ public sealed class ConcatenateSqlTest
     [Fact]
     public void ConcatenatationOfEmptySequenceIsEmpty()
     {
-        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
+        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.EmptySql);
         var bla = SQL($"bla");
-        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(bla) == ParameterizedSql.Empty);
+        PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(bla) == ParameterizedSql.EmptySql);
     }
 
     [Fact]
