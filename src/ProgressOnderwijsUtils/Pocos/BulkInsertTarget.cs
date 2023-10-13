@@ -12,7 +12,7 @@ public sealed class BulkInsertTarget
     public readonly SqlBulkCopyOptions Options;
 
     public ParameterizedSql TableNameSql
-        => ParameterizedSql.CreateDynamic(TableName);
+        => ParameterizedSql.RawSql_PotentialForSqlInjection(TableName);
 
     public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
         : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }

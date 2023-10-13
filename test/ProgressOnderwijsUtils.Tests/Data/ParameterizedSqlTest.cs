@@ -32,8 +32,8 @@ public sealed class ParameterizedSqlTest
     public void IdenticalDynamicSqlAreEquals()
     {
         ParameterizedSql
-            a1 = ParameterizedSql.CreateDynamic("a"),
-            a2 = ParameterizedSql.CreateDynamic("aa"[1..]); //substring to avoid reference equality
+            a1 = ParameterizedSql.RawSql_PotentialForSqlInjection("a"),
+            a2 = ParameterizedSql.RawSql_PotentialForSqlInjection("aa"[1..]); //substring to avoid reference equality
 
         PAssert.That(() => a1 == a2);
         PAssert.That(() => !(a1 != a2));
@@ -45,8 +45,8 @@ public sealed class ParameterizedSqlTest
     public void NonIdenticalDynamicSqlAreNotEquals()
     {
         ParameterizedSql
-            a = ParameterizedSql.CreateDynamic("a"),
-            b = ParameterizedSql.CreateDynamic("b");
+            a = ParameterizedSql.RawSql_PotentialForSqlInjection("a"),
+            b = ParameterizedSql.RawSql_PotentialForSqlInjection("b");
 
         PAssert.That(() => !(a == b));
         PAssert.That(() => a != b);
@@ -143,11 +143,23 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void ParameterizedSqlValidation()
+        => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
+
+    [Fact]
+    public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
-        // ReSharper disable once NotAccessedVariable
-        ParameterizedSql ignore;
-        // ReSharper disable once AssignNullToNotNullAttribute
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("--\n\n drop bobby tables"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(" bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("bl a"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("0bla"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("!iets"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("(expression)"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("a.b"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("$ab"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
     }
 
     [Fact]
@@ -158,8 +170,8 @@ public sealed class ParameterizedSqlTest
 
         var testSql = SQL($"test");
         PAssert.That(() => (trueCondition && testSql) == testSql);
-        PAssert.That(() => ParameterizedSql.TruthyEmpty != ParameterizedSql.Empty);
-        PAssert.That(() => falseCondition == ParameterizedSql.Empty);
+        PAssert.That(() => ParameterizedSql.TruthyEmpty != EmptySql);
+        PAssert.That(() => falseCondition == EmptySql);
         PAssert.That(() => trueCondition == ParameterizedSql.TruthyEmpty);
         var test2Sql = SQL($"test2");
         PAssert.That(() => (falseCondition && testSql || test2Sql) == test2Sql);
@@ -167,12 +179,12 @@ public sealed class ParameterizedSqlTest
         var maybeJustDash = SQL($"maybe-");
         PAssert.That(() => maybeWithNested == maybeJustDash);
         PAssert.That(() => (trueCondition || testSql) == ParameterizedSql.TruthyEmpty);
-        PAssert.That(() => (trueCondition || testSql) != ParameterizedSql.Empty);
+        PAssert.That(() => (trueCondition || testSql) != EmptySql);
         PAssert.That(() => (falseCondition || testSql) == testSql);
         var whenFalseSql = SQL($"WhenFalse");
         PAssert.That(() => (testSql + falseCondition || whenFalseSql) == testSql);
         var nestedEmptySql = SQL($"{ParameterizedSql.TruthyEmpty}");
-        PAssert.That(() => nestedEmptySql == ParameterizedSql.Empty);
+        PAssert.That(() => nestedEmptySql == EmptySql);
 
         var nestedConditionalTest = SQL($"{trueCondition && testSql}");
         PAssert.That(() => nestedConditionalTest == testSql);
@@ -184,7 +196,7 @@ public sealed class ParameterizedSqlTest
     public void PrependingEmptyHasNoEffect()
     {
         var abcSql = SQL($"abc");
-        PAssert.That(() => ParameterizedSql.Empty + abcSql == abcSql);
+        PAssert.That(() => EmptySql + abcSql == abcSql);
     }
 
     [Fact]
@@ -193,7 +205,7 @@ public sealed class ParameterizedSqlTest
         //we want to check that various subtly different ways of making empty ParameterizedSqls
         //all behave as expected.
         var qEmpty0 = default(ParameterizedSql);
-        var qEmpty1 = ParameterizedSql.Empty;
+        var qEmpty1 = EmptySql;
         var qEmpty2 = SQL($"");
         var qEmpty3 = SQL($"");
 

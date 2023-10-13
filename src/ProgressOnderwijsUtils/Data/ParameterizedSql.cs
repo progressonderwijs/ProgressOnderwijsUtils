@@ -1,5 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
+// ReSharper disable once StructCanBeMadeReadOnly - less efficient and pointless, because there's just 1 member!
 /// <summary>
 /// Represents a string of SQL including parameter values.
 /// </summary>
@@ -25,19 +26,13 @@ public struct ParameterizedSql
         return factory.FinishBuilding(conn, timeout);
     }
 
-    /// <summary>
-    /// The empty sql string.
-    /// </summary>
-    public static ParameterizedSql Empty
-        => new();
-
     public static readonly ParameterizedSql TruthyEmpty = new(new StringSqlFragment(""));
 
     public bool IsEmpty
-        => impl == TruthyEmpty.impl || this == Empty;
+        => impl == TruthyEmpty.impl || this == EmptySql;
 
     public static implicit operator ParameterizedSql(bool present)
-        => present ? TruthyEmpty : Empty;
+        => present ? TruthyEmpty : EmptySql;
 
     /// <summary>
     /// Returns the provided sql only when the condition is true; empty otherwise.
@@ -78,20 +73,62 @@ public struct ParameterizedSql
     public static string operator +(ParameterizedSql a, string b)
         => (object)a + b;
 
-    public static ParameterizedSql CreateDynamic(string rawSqlString)
+    public static ParameterizedSql RawSql_PotentialForSqlInjection(string rawSqlString)
     {
         if (rawSqlString == null) {
             throw new ArgumentNullException(nameof(rawSqlString));
         }
         if (rawSqlString == "") {
-            return Empty;
+            return EmptySql;
         }
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
 
+    static bool ValidInitialIdentifierChar(char c) //https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers
+        => c
+            is >= 'a' and <= 'z'
+            or >= 'A' and <= 'Z'
+            or '_' or '#' or '@';
+
+    static bool ValidSubsequentIdentifierChar(char c) //https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers
+        => ValidInitialIdentifierChar(c)
+            || c is >= '0' and <= '9' or '$';
+
+    /// <summary>
+    /// raw sql string, throws exception if the identifier does not follow https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers rules.
+    /// </summary>
+    public static ParameterizedSql UnescapedSqlIdentifier(string rawSqlString)
+    {
+        if (rawSqlString == null) {
+            throw new ArgumentNullException(nameof(rawSqlString));
+        }
+        if (rawSqlString == "") {
+            return EmptySql;
+        }
+        if (!ValidInitialIdentifierChar(rawSqlString[0])) {
+            throw new($"Invalid SQL identifier @ index 0 ({rawSqlString[0]}): {rawSqlString}");
+        }
+
+        for (var i = 1; i < rawSqlString.Length; i++) {
+            if (!ValidSubsequentIdentifierChar(rawSqlString[i])) {
+                throw new($"Invalid SQL identifier @ index {i} ({rawSqlString[i]}): {rawSqlString}");
+            }
+        }
+        return new StringSqlFragment(rawSqlString).BuildableToQuery();
+    }
+
+    public static ParameterizedSql EscapedSqlObjectName(string objectName)
+        => RawSql_PotentialForSqlInjection("[" + objectName.Replace("]", "]]") + "]");
+
+    public static ParameterizedSql EscapedLiteralString(string literalStringValue) // Escapen van quotes lijkt voldoende: http://stackoverflow.com/questions/10476252.
+        => RawSql_PotentialForSqlInjection("'" + literalStringValue.Replace("'", "''") + "'");
+
+    public static ParameterizedSql LiteralSqlNumericString(int value)
+        => RawSql_PotentialForSqlInjection(value.ToStringInvariant());
+
     [Pure]
     public static ParameterizedSql FromSqlInterpolated(FormattableString interpolatedQuery)
-        => interpolatedQuery.Format == "" ? Empty : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
+        => interpolatedQuery.Format == "" ? EmptySql : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
 
     [Pure]
     public override bool Equals(object? obj)
@@ -203,6 +240,12 @@ public static class SafeSql
     [Pure]
     public static SqlParam AsSqlParam(object? Value)
         => new(Value);
+
+    /// <summary>
+    /// The empty sql string.
+    /// </summary>
+    public static ParameterizedSql EmptySql
+        => new();
 }
 
 public readonly record struct SqlParam(object? Value);
@@ -465,7 +508,7 @@ public ref struct InterpolatedSqlFragment
     }
 
     internal ParameterizedSql ToComponent()
-        => idx == 0 && !justAppendedSql ? ParameterizedSql.Empty : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
+        => idx == 0 && !justAppendedSql ? EmptySql : new InterpolatedSqlComponent(sqlArgs, justAppendedSql).BuildableToQuery();
 
     sealed class InterpolatedSqlComponent : ISqlComponent
     {

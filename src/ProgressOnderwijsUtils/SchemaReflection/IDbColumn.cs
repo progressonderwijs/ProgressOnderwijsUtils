@@ -25,13 +25,13 @@ public static class DbColumnExtensions
 
     [Pure]
     public static ParameterizedSql SqlColumnName(this IDbColumn column)
-        => ParameterizedSql.CreateDynamic(isSafeForSql.IsMatch(column.ColumnName) ? column.ColumnName : throw new NotSupportedException("this isn't safe!"));
+        => ParameterizedSql.RawSql_PotentialForSqlInjection(isSafeForSql.IsMatch(column.ColumnName) ? column.ColumnName : throw new NotSupportedException("this isn't safe!"));
 
     public static string ToSqlColumnDefinition(this IDbColumn column)
         => $"{column.ColumnName} {column.ToSqlTypeName()}";
 
     public static ParameterizedSql ToSqlColumnDefinitionSql(this IDbColumn column)
-        => ParameterizedSql.CreateDynamic($"{column.ColumnName} {column.ToSqlTypeName()}");
+        => ParameterizedSql.RawSql_PotentialForSqlInjection($"{column.ColumnName} {column.ToSqlTypeName()}");
 
     public static string ToSqlTypeName(this IDbColumn column)
         => column.ToSqlTypeNameWithoutNullability() + CollationForStringColumn(column) + column.NullabilityAnnotation();

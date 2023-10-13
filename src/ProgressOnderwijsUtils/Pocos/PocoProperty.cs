@@ -54,7 +54,7 @@ public static class PocoProperty
         ParameterizedSql sqlColumnName;
 
         public ParameterizedSql SqlColumnName
-            => sqlColumnName ? sqlColumnName : sqlColumnName = ParameterizedSql.CreateDynamic(Name);
+            => sqlColumnName ? sqlColumnName : sqlColumnName = ParameterizedSql.RawSql_PotentialForSqlInjection(Name);
 
         public IReadOnlyList<object> CustomAttributes { get; }
         public int Index { get; }
