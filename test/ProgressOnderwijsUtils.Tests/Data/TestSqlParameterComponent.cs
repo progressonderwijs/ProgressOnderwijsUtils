@@ -6,11 +6,11 @@ public sealed class TestSqlParameterComponent : TransactedLocalConnection
     public void ValidatesArgumentsOK()
     {
         // ReSharper disable once AssignNullToNotNullAttribute
-        _ = Assert.Throws<ArgumentNullException>(() => ParameterizedSql.CreateDynamic(null!));
+        _ = Assert.Throws<ArgumentNullException>(() => ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
 
-        PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() == ParameterizedSql.CreateDynamic("bla0").GetHashCode());
-        PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() != ParameterizedSql.CreateDynamic("bla").GetHashCode());
-        PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).Equals(ParameterizedSql.CreateDynamic("bla0")));
+        PAssert.That(() => ParameterizedSql.RawSql_PotentialForSqlInjection("bla" + 0).GetHashCode() == ParameterizedSql.RawSql_PotentialForSqlInjection("bla0").GetHashCode());
+        PAssert.That(() => ParameterizedSql.RawSql_PotentialForSqlInjection("bla" + 0).GetHashCode() != ParameterizedSql.RawSql_PotentialForSqlInjection("bla").GetHashCode());
+        PAssert.That(() => ParameterizedSql.RawSql_PotentialForSqlInjection("bla" + 0).Equals(ParameterizedSql.RawSql_PotentialForSqlInjection("bla0")));
 
         PAssert.That(() => ParameterizedSql.Param("bla" + 0).GetHashCode() == ParameterizedSql.Param("bla0").GetHashCode());
         PAssert.That(() => ParameterizedSql.Param("bla" + 0).GetHashCode() != ParameterizedSql.Param("bla").GetHashCode());

@@ -92,7 +92,7 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
 begin
     do_nothing:
 end;";
-        SQL($"{ParameterizedSql.CreateDynamic(definition)}").ExecuteNonQuery(Connection);
+        SQL($"{ParameterizedSql.RawSql_PotentialForSqlInjection(definition)}").ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
         var table = db.GetTableByName("dbo.TableTriggerTest");
@@ -113,7 +113,7 @@ end;";
                 do_nothing:
             end;
             """;
-        SQL($"{ParameterizedSql.CreateDynamic(definition)}").ExecuteNonQuery(Connection);
+        SQL($"{ParameterizedSql.RawSql_PotentialForSqlInjection(definition)}").ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
         var trigger = db.RawDescription.DatabaseTriggers.Single(o => o.Name == "EenTrigger");

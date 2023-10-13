@@ -36,7 +36,7 @@ public static class SmallBatchInsertImplementation
             throw new InvalidOperationException($"Failed to map source {typeof(T).ToCSharpFriendlyTypeName()} to the table {target.TableName}. Errors:\n{error}");
         }
         foreach (var row in rows) {
-            var destinationColumns = mapping.Select(o => ParameterizedSql.CreateDynamic(o.Dst.Name));
+            var destinationColumns = mapping.Select(o => ParameterizedSql.RawSql_PotentialForSqlInjection(o.Dst.Name));
             var sourceValues = mapping.Select(
                 o => {
                     var fieldVal = PocoProperties<T>.Instance[o.Src.Index].Getter.AssertNotNull()(row);
@@ -45,7 +45,7 @@ public static class SmallBatchInsertImplementation
             );
             SQL(
                 $@"
-                    insert into {ParameterizedSql.CreateDynamic(target.TableName)} ({destinationColumns.ConcatenateSql(SQL($","))})
+                    insert into {ParameterizedSql.RawSql_PotentialForSqlInjection(target.TableName)} ({destinationColumns.ConcatenateSql(SQL($","))})
                     values ({sourceValues.ConcatenateSql(SQL($", "))});
                 "
             ).OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
