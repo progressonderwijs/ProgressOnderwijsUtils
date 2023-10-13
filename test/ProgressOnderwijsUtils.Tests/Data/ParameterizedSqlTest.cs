@@ -143,11 +143,23 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void ParameterizedSqlValidation()
+        => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
+
+    [Fact]
+    public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
-        // ReSharper disable once NotAccessedVariable
-        ParameterizedSql ignore;
-        // ReSharper disable once AssignNullToNotNullAttribute
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("--\n\n drop bobby tables"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly(" bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("bl a"));
+        _ = ParameterizedSql.ValidIdentifierCharsOnly("bla");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("0bla"));
+        _ = ParameterizedSql.ValidIdentifierCharsOnly("bla0");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("!iets"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("(expression)"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("a.b"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("$ab"));
+        _ = ParameterizedSql.ValidIdentifierCharsOnly("a$b");//assert does not throw
+        _ = ParameterizedSql.ValidIdentifierCharsOnly("#tempTable");//assert does not throw
     }
 
     [Fact]

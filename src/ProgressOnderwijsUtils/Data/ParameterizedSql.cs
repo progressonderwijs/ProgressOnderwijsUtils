@@ -89,6 +89,36 @@ public struct ParameterizedSql
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
 
+    static bool ValidInitialIdentifierChar(char c) //https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers
+        => c
+            is >= 'a' and <= 'z'
+            or >= 'A' and <= 'Z'
+            or '_' or '#' or '@';
+
+    static bool ValidSubsequentIdentifierChar(char c) //https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers
+        => ValidInitialIdentifierChar(c)
+            || c is >= '0' and <= '9' or '$';
+
+    public static ParameterizedSql ValidIdentifierCharsOnly(string rawSqlString)
+    {
+        if (rawSqlString == null) {
+            throw new ArgumentNullException(nameof(rawSqlString));
+        }
+        if (rawSqlString == "") {
+            return Empty;
+        }
+        if (!ValidInitialIdentifierChar(rawSqlString[0])) {
+            throw new($"Invalid SQL identifier @ index 0 ({rawSqlString[0]}): {rawSqlString}");
+        }
+
+        for (var i = 1; i < rawSqlString.Length; i++) {
+            if (!ValidSubsequentIdentifierChar(rawSqlString[i])) {
+                throw new($"Invalid SQL identifier @ index {i} ({rawSqlString[i]}): {rawSqlString}");
+            }
+        }
+        return new StringSqlFragment(rawSqlString).BuildableToQuery();
+    }
+
     public static ParameterizedSql EscapedSqlObjectName(string objectName)
         => RawSql_PotentialForSqlInjection("[" + objectName.Replace("]", "]]") + "]");
 
