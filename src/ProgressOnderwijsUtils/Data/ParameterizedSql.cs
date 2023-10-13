@@ -89,6 +89,12 @@ public struct ParameterizedSql
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
 
+    public static ParameterizedSql EscapedSqlObjectName(string objectName)
+        => RawSql_PotentialForSqlInjection("[" + objectName.Replace("]", "]]") + "]");
+
+    public static ParameterizedSql EscapedLiteralString(string literalStringValue) // Escapen van quotes lijkt voldoende: http://stackoverflow.com/questions/10476252.
+        => RawSql_PotentialForSqlInjection("'" + literalStringValue.Replace("'", "''") + "'");
+
     [Pure]
     public static ParameterizedSql FromSqlInterpolated(FormattableString interpolatedQuery)
         => interpolatedQuery.Format == "" ? Empty : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
