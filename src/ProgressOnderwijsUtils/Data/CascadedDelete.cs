@@ -15,7 +15,7 @@ public static class CascadedDelete
         params TId[] pksToDelete)
         where TId : Enum
     {
-        var pkColumnSql = ParameterizedSql.CreateDynamic(pkColumn);
+        var pkColumnSql = ParameterizedSql.RawSql_PotentialForSqlInjection(pkColumn);
         return RecursivelyDelete(
             conn,
             initialTableAsEntered,
@@ -44,7 +44,7 @@ public static class CascadedDelete
     {
         var pksTable = SQL($"#pksTable");
         var pkColumns = PocoUtils.GetProperties<TId>().Select(pocoProperty => pocoProperty.Name).ToArray();
-        var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
+        var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.RawSql_PotentialForSqlInjection);
 
         var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
@@ -82,7 +82,7 @@ public static class CascadedDelete
     {
         var pksTable = SQL($"#pksTable");
         var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
-        var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
+        var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.RawSql_PotentialForSqlInjection);
 
         var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
@@ -245,7 +245,7 @@ public static class CascadedDelete
             foreach (var fk in table.KeysFromReferencingChildren) {
                 var childTable = fk.ReferencingChildTable;
                 var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
-                var newDelTable = ParameterizedSql.CreateDynamic($"[#del_{delBatch}]");
+                var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
                 var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
                     ? SQL($"where 1=1")
                     : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))}");
