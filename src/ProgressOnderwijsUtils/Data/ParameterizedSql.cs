@@ -123,6 +123,9 @@ public struct ParameterizedSql
     public static ParameterizedSql EscapedLiteralString(string literalStringValue) // Escapen van quotes lijkt voldoende: http://stackoverflow.com/questions/10476252.
         => RawSql_PotentialForSqlInjection("'" + literalStringValue.Replace("'", "''") + "'");
 
+    public static ParameterizedSql LiteralSqlNumericString(int value)
+        => RawSql_PotentialForSqlInjection(value.ToStringInvariant());
+
     [Pure]
     public static ParameterizedSql FromSqlInterpolated(FormattableString interpolatedQuery)
         => interpolatedQuery.Format == "" ? EmptySql : new FormattableStringSqlComponent(interpolatedQuery).BuildableToQuery();
