@@ -148,18 +148,18 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("--\n\n drop bobby tables"));
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly(" bla"));
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("bl a"));
-        _ = ParameterizedSql.ValidIdentifierCharsOnly("bla");//assert does not throw
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("0bla"));
-        _ = ParameterizedSql.ValidIdentifierCharsOnly("bla0");//assert does not throw
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("!iets"));
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("(expression)"));
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("a.b"));
-        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.ValidIdentifierCharsOnly("$ab"));
-        _ = ParameterizedSql.ValidIdentifierCharsOnly("a$b");//assert does not throw
-        _ = ParameterizedSql.ValidIdentifierCharsOnly("#tempTable");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("--\n\n drop bobby tables"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(" bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("bl a"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("0bla"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("!iets"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("(expression)"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("a.b"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("$ab"));
+        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
     }
 
     [Fact]

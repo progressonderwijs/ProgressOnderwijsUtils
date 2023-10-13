@@ -94,7 +94,10 @@ public struct ParameterizedSql
         => ValidInitialIdentifierChar(c)
             || c is >= '0' and <= '9' or '$';
 
-    public static ParameterizedSql ValidIdentifierCharsOnly(string rawSqlString)
+    /// <summary>
+    /// raw sql string, throws exception if the identifier does not follow https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers rules.
+    /// </summary>
+    public static ParameterizedSql UnescapedSqlIdentifier(string rawSqlString)
     {
         if (rawSqlString == null) {
             throw new ArgumentNullException(nameof(rawSqlString));
