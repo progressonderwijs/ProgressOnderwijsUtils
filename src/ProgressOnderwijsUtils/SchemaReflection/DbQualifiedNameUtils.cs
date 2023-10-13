@@ -6,7 +6,7 @@ public static class DbQualifiedNameUtils
         => table[(table.IndexOf('.') + 1)..];
 
     public static ParameterizedSql UnqualifiedTableName(ParameterizedSql table)
-        => ParameterizedSql.CreateDynamic(UnqualifiedTableName(table.CommandText()));
+        => ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedTableName(table.CommandText()));
 
     public static bool IsNameInSchema(string tabel, string schema)
         => tabel.StartsWith($"{schema}.", StringComparison.OrdinalIgnoreCase);

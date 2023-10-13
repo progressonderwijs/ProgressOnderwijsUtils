@@ -78,7 +78,7 @@ public struct ParameterizedSql
     public static string operator +(ParameterizedSql a, string b)
         => (object)a + b;
 
-    public static ParameterizedSql CreateDynamic(string rawSqlString)
+    public static ParameterizedSql RawSql_PotentialForSqlInjection(string rawSqlString)
     {
         if (rawSqlString == null) {
             throw new ArgumentNullException(nameof(rawSqlString));

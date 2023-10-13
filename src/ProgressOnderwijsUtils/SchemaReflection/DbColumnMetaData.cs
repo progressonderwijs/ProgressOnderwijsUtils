@@ -160,13 +160,13 @@ public static class DbColumnMetaDataExtensions
             .ToArray();
         // in een contained db mag er geen named PK worden gedefinieerd voor een temp. table
         // zolang er dus geen pk's over meerdere kolommen worden gedefinieerd gaat onderstaande ook goed voor temp. tables in een contained db
-        var columnDefinitionSql = ParameterizedSql.CreateDynamic(
+        var columnDefinitionSql = ParameterizedSql.RawSql_PotentialForSqlInjection(
             columns
                 .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
                 .JoinStrings("\n    , ")
         );
         var primaryKeyDefinitionSql = keyColumns.Length > 1
-            ? SQL($"\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
+            ? SQL($"\n    , primary key ({ParameterizedSql.RawSql_PotentialForSqlInjection(keyColumns.JoinStrings(", "))})")
             : ParameterizedSql.Empty;
 
         return SQL($"create table {tableName} (\n    {columnDefinitionSql}{primaryKeyDefinitionSql}\n);");

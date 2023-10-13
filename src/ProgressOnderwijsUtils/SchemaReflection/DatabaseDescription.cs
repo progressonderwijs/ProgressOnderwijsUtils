@@ -75,17 +75,17 @@ public sealed class DatabaseDescription
             => SQL(
                 $@"
                     alter table {ReferencingChildTable.QualifiedNameSql}
-                    add constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)}
-                        foreign key ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
+                    add constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)}
+                        foreign key ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
                         references {ReferencedParentTable.QualifiedNameSql}
-                            ({ParameterizedSql.CreateDynamic(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
+                            ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
                         on delete {DeleteReferentialAction.AsSql()}
                         on update {UpdateReferentialAction.AsSql()};
                     "
             );
 
         public ParameterizedSql ScriptToDropConstraint()
-            => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.CreateDynamic(UnqualifiedName)};\n");
+            => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)};\n");
     }
 
     public sealed class Index<TObject>
@@ -281,7 +281,7 @@ public sealed class DatabaseDescription
             => DbQualifiedNameUtils.UnqualifiedTableName(QualifiedName);
 
         public ParameterizedSql QualifiedNameSql
-            => ParameterizedSql.CreateDynamic(QualifiedName);
+            => ParameterizedSql.RawSql_PotentialForSqlInjection(QualifiedName);
 
         public IEnumerable<Column<Table>> PrimaryKey
             => Columns.Where(c => c.IsPrimaryKey);
@@ -324,6 +324,6 @@ public sealed class DatabaseDescription
             => DbQualifiedNameUtils.UnqualifiedTableName(QualifiedName);
 
         public ParameterizedSql QualifiedNameSql
-            => ParameterizedSql.CreateDynamic(QualifiedName);
+            => ParameterizedSql.RawSql_PotentialForSqlInjection(QualifiedName);
     }
 }

@@ -137,9 +137,9 @@ namespace ProgressOnderwijsUtils
                     begin tran;
                     {All
                         .Select(o => SQL($@"
-                            drop type if exists {ParameterizedSql.CreateDynamic(o.SqlTypeName)};
-                            create type {ParameterizedSql.CreateDynamic(o.SqlTypeName)}
-                            as table ({ParameterizedSql.CreateDynamic(o.TableDeclaration)});
+                            drop type if exists {ParameterizedSql.RawSql_PotentialForSqlInjection(o.SqlTypeName)};
+                            create type {ParameterizedSql.RawSql_PotentialForSqlInjection(o.SqlTypeName)}
+                            as table ({ParameterizedSql.RawSql_PotentialForSqlInjection(o.TableDeclaration)});
                         "))
                         .ConcatenateSql()
                     }

@@ -34,7 +34,7 @@ public sealed class ConcatenateSqlTest
     [Fact]
     public void ConcatenateIsFastEnoughForLargeSequences()
     {
-        var someSqls = Enumerable.Range(0, 10000).Select(i => ParameterizedSql.CreateDynamic(i.ToStringInvariant())).ToArray();
+        var someSqls = Enumerable.Range(0, 10000).Select(i => ParameterizedSql.RawSql_PotentialForSqlInjection(i.ToStringInvariant())).ToArray();
         var time = BenchTimer.Time(() => _ = someSqls.ConcatenateSql().CommandText(), 6, 1).Min;
         //At 1ns per op (equiv to approx 4 clock cycles), a quadratic implementation would use some multiple of 100 ms.  Even with an extremely low
         //scaling factor, if it's faster than 25ms, it's almost certainly better than quadratic, and in any case fast enough.

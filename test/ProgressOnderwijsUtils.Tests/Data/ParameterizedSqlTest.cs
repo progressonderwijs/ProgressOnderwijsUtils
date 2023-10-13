@@ -32,8 +32,8 @@ public sealed class ParameterizedSqlTest
     public void IdenticalDynamicSqlAreEquals()
     {
         ParameterizedSql
-            a1 = ParameterizedSql.CreateDynamic("a"),
-            a2 = ParameterizedSql.CreateDynamic("aa"[1..]); //substring to avoid reference equality
+            a1 = ParameterizedSql.RawSql_PotentialForSqlInjection("a"),
+            a2 = ParameterizedSql.RawSql_PotentialForSqlInjection("aa"[1..]); //substring to avoid reference equality
 
         PAssert.That(() => a1 == a2);
         PAssert.That(() => !(a1 != a2));
@@ -45,8 +45,8 @@ public sealed class ParameterizedSqlTest
     public void NonIdenticalDynamicSqlAreNotEquals()
     {
         ParameterizedSql
-            a = ParameterizedSql.CreateDynamic("a"),
-            b = ParameterizedSql.CreateDynamic("b");
+            a = ParameterizedSql.RawSql_PotentialForSqlInjection("a"),
+            b = ParameterizedSql.RawSql_PotentialForSqlInjection("b");
 
         PAssert.That(() => !(a == b));
         PAssert.That(() => a != b);
@@ -147,7 +147,7 @@ public sealed class ParameterizedSqlTest
         // ReSharper disable once NotAccessedVariable
         ParameterizedSql ignore;
         // ReSharper disable once AssignNullToNotNullAttribute
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
+        _ = Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
     }
 
     [Fact]
