@@ -1,5 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
+// ReSharper disable once StructCanBeMadeReadOnly - less efficient and pointless, because there's just 1 member!
 /// <summary>
 /// Represents a string of SQL including parameter values.
 /// </summary>
