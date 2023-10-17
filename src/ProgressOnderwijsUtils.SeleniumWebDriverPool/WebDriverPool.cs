@@ -21,7 +21,6 @@ public sealed class WebDriverPool : IDisposable
     public static WebDriverPool ChromePool((string Name, object Value)[] profilePreferences, string[] arguments)
     {
         var driverService = ChromeDriverService.CreateDefaultService();
-        driverService.Start();
         var driverOptions = new ChromeOptions { AcceptInsecureCertificates = true, Proxy = null, };
         driverOptions.SetLoggingPreference(LogType.Browser, LogLevel.All);
         driverOptions.SetLoggingPreference(LogType.Driver, LogLevel.Warning);
