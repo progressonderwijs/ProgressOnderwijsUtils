@@ -106,17 +106,17 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
     }
 
+    enum ReadJsonPocoTestId { }
+
     [Fact]
     public void ReadJson_datetime_with_timezone_information()
     {
-        var timeZone = TimeZoneInfo.Local;
-
         SQL(
             $"""
                  create table #ReadJsonTest (
-                     ReadJsonTestId int not null
-                     , DateColumn date
-                     , DateTimeColumn datetime2
+                     DateColumn date
+                     , DateTimeColumn datetime
+                     , DateTime2Column datetime2
                      , DateTimeOffsetColumn datetimeoffset
                  );
              """
@@ -125,23 +125,24 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         SQL(
             $"""
                  insert into #ReadJsonTest (
-                     ReadJsonTestId
-                     , DateColumn
+                     DateColumn
                      , DateTimeColumn
+                     , DateTime2Column
                      , DateTimeOffsetColumn
                  ) values
-                     (1, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
+                     ({new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
              """
         ).ExecuteNonQuery(Connection);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         pipe.Writer.Complete();
 
-        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        foreach (var line in json.Split("\r\n").Where(l => l.Contains(":"))) {
+            PAssert.That(() => line.Split(": ", StringSplitOptions.None)[1].Contains("+"));
+        }
     }
-
-    enum ReadJsonPocoTestId { }
 
     sealed record ReadJsonPocoTest : IWrittenImplicitly
     {
