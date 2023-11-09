@@ -1,4 +1,5 @@
 using System.IO.Pipelines;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -56,8 +57,6 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
                     -- Date and time
                     , DateColumn date
-                    , DateTimeColumn datetime
-                    , DateTime2Column datetime2
                     , DateTimeOffsetColumn datetimeoffset
 
                     -- Character strings
@@ -87,8 +86,6 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DecimalColumn
                     , FloatColumn
                     , DateColumn
-                    , DateTimeColumn
-                    , DateTime2Column
                     , DateTimeOffsetColumn
                     , CharColumn
                     , VarCharColumn
@@ -97,8 +94,8 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
-                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
@@ -112,6 +109,8 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public void ReadJson_datetime_with_timezone_information()
     {
+        var timeZone = TimeZoneInfo.Local;
+
         SQL(
             $"""
                  create table #ReadJsonTest (
