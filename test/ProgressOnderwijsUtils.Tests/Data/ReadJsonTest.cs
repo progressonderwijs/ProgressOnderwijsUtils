@@ -107,6 +107,37 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
     }
 
+    [Fact]
+    public void ReadJson_datetime_with_timezone_information()
+    {
+        SQL(
+            $"""
+                 create table #ReadJsonTest (
+                     ReadJsonTestId int not null
+                     , DateColumn date
+                     , DateTimeColumn datetime2
+                 );
+             """
+        ).ExecuteNonQuery(Connection);
+
+        SQL(
+            $"""
+                 insert into #ReadJsonTest (
+                     ReadJsonTestId
+                     , DateColumn
+                     , DateTimeColumn
+                 ) values
+                     (1, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)})
+             """
+        ).ExecuteNonQuery(Connection);
+
+        var pipe = new Pipe();
+        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        pipe.Writer.Complete();
+
+        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
+    }
+
     enum ReadJsonPocoTestId { }
 
     sealed record ReadJsonPocoTest : IWrittenImplicitly

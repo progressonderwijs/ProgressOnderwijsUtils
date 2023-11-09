@@ -1,0 +1,7 @@
+[
+  {
+    "ReadJsonTestId": 1,
+    "DateColumn": "2008-04-01T00:00:00+00:00",
+    "DateTimeColumn": "2023-05-06T16:13:55+02:00"
+  }
+]
