@@ -58,6 +58,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DateColumn date
                     , DateTimeColumn datetime
                     , DateTime2Column datetime2
+                    , DateTimeOffsetColumn datetimeoffset
 
                     -- Character strings
                     , CharColumn char
@@ -88,6 +89,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DateColumn
                     , DateTimeColumn
                     , DateTime2Column
+                    , DateTimeOffsetColumn
                     , CharColumn
                     , VarCharColumn
                     , NCharColumn
@@ -95,8 +97,8 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
-                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
@@ -116,6 +118,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                      ReadJsonTestId int not null
                      , DateColumn date
                      , DateTimeColumn datetime2
+                     , DateTimeOffsetColumn datetimeoffset
                  );
              """
         ).ExecuteNonQuery(Connection);
@@ -126,8 +129,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                      ReadJsonTestId
                      , DateColumn
                      , DateTimeColumn
+                     , DateTimeOffsetColumn
                  ) values
-                     (1, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)})
+                     (1, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
              """
         ).ExecuteNonQuery(Connection);
 

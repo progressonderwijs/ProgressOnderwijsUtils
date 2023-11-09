@@ -203,6 +203,8 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                         } else {
                             writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Local)));
                         }
+                    } else if (type == typeof(DateTimeOffset)) {
+                        writer.WriteString(name, reader.GetDateTimeOffset(i));
                     } else if (type == typeof(string)) {
                         writer.WriteString(name, reader.GetString(i));
                     } else if (type == typeof(byte[])) {
