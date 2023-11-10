@@ -1,9 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>99.1.0</Version>
-    <PackageReleaseNotes>Add auto converter for long enums</PackageReleaseNotes>
-
+    <Version>99.2.0</Version>
+    <PackageReleaseNotes>Always specify datetime-offset when serializing SQL-column value to JSON.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

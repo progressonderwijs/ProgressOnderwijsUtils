@@ -56,8 +56,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
                     -- Date and time
                     , DateColumn date
-                    , DateTimeColumn datetime
-                    , DateTime2Column datetime2
+                    , DateTimeOffsetColumn datetimeoffset
 
                     -- Character strings
                     , CharColumn char
@@ -86,8 +85,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , DecimalColumn
                     , FloatColumn
                     , DateColumn
-                    , DateTimeColumn
-                    , DateTime2Column
+                    , DateTimeOffsetColumn
                     , CharColumn
                     , VarCharColumn
                     , NCharColumn
@@ -95,8 +93,8 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                     , BinaryColumn
                     , UniqueIdentifierColumn
                 ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
-                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null);
             "
         ).ExecuteNonQuery(Connection);
 
@@ -108,6 +106,43 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     }
 
     enum ReadJsonPocoTestId { }
+
+    [Fact]
+    public void ReadJson_datetime_with_timezone_information()
+    {
+        SQL(
+            $"""
+                 create table #ReadJsonTest (
+                     DateTimeColumn datetime
+                     , DateTime2Column datetime2
+                     , DateTime2Column_Utc datetime2
+                     , DateTimeOffsetColumn datetimeoffset
+                 );
+             """
+        ).ExecuteNonQuery(Connection);
+
+        var dateTime = new DateTime(1, 2, 3, 4, 5, 6, 7);
+        SQL(
+            $"""
+                 insert into #ReadJsonTest (
+                     DateTimeColumn
+                     , DateTime2Column
+                     , DateTime2Column_Utc
+                     , DateTimeOffsetColumn
+                 ) values
+                     ({new DateTime(2023, 5, 6, 16, 13, 55)}, {dateTime}, {dateTime.ToUniversalTime()}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
+             """
+        ).ExecuteNonQuery(Connection);
+
+        var pipe = new Pipe();
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        pipe.Writer.Complete();
+
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        foreach (var line in json.Split("\r\n").Where(l => l.Contains(":"))) {
+            PAssert.That(() => line.Split(": ", StringSplitOptions.None)[1].Contains("+"));
+        }
+    }
 
     sealed record ReadJsonPocoTest : IWrittenImplicitly
     {

@@ -174,7 +174,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         }
         using var disposeReader = reader;
         var table = reader.GetColumnSchema()
-            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType))
+            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName))
             .ToArray();
 
         using var writer = new Utf8JsonWriter(buffer, options);
@@ -185,6 +185,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                 if (!reader.IsDBNull(i)) {
                     var name = table[i].ColumnName;
                     var type = table[i].DataType;
+                    var sqlType = table[i].DataTypeName;
                     if (type == typeof(bool)) {
                         writer.WriteBoolean(name, reader.GetBoolean(i));
                     } else if (type == typeof(int)) {
@@ -196,7 +197,16 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(double)) {
                         writer.WriteNumber(name, reader.GetDouble(i));
                     } else if (type == typeof(DateTime)) {
-                        writer.WriteString(name, reader.GetDateTime(i));
+                        var dateTime = reader.GetDateTime(i);
+                        if (sqlType == "date") {
+                            writer.WriteString(name, dateTime.ToString("yyyy-MM-dd"));
+                        } else if (name.ToString().EndsWith("_Utc", StringComparison.OrdinalIgnoreCase)) {
+                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)));
+                        } else {
+                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Local)));
+                        }
+                    } else if (type == typeof(DateTimeOffset)) {
+                        writer.WriteString(name, reader.GetDateTimeOffset(i));
                     } else if (type == typeof(string)) {
                         writer.WriteString(name, reader.GetString(i));
                     } else if (type == typeof(byte[])) {
