@@ -199,7 +199,9 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(DateTime)) {
                         var dateTime = reader.GetDateTime(i);
                         if (sqlType == "date") {
-                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime.Date, DateTimeKind.Utc)));
+                            writer.WriteString(name, dateTime.ToString("yyyy-MM-dd"));
+                        } else if (name.ToString().EndsWith("_Utc", StringComparison.OrdinalIgnoreCase)) {
+                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)));
                         } else {
                             writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Local)));
                         }

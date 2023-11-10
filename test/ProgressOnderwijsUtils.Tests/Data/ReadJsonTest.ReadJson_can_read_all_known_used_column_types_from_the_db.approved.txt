@@ -6,7 +6,7 @@
     "BigIntColumn": 9223372036854775807,
     "DecimalColumn": 0.99,
     "FloatColumn": 1.234,
-    "DateColumn": "2008-04-01T00:00:00+00:00",
+    "DateColumn": "2008-04-01",
     "DateTimeOffsetColumn": "2023-11-09T08:25:01+00:00",
     "CharColumn": "x",
     "VarCharColumn": "xyz",

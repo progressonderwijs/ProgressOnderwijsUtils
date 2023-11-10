@@ -1,5 +1,4 @@
 using System.IO.Pipelines;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
@@ -114,23 +113,24 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         SQL(
             $"""
                  create table #ReadJsonTest (
-                     DateColumn date
-                     , DateTimeColumn datetime
+                     DateTimeColumn datetime
                      , DateTime2Column datetime2
+                     , DateTime2Column_Utc datetime2
                      , DateTimeOffsetColumn datetimeoffset
                  );
              """
         ).ExecuteNonQuery(Connection);
 
+        var dateTime = new DateTime(1, 2, 3, 4, 5, 6, 7);
         SQL(
             $"""
                  insert into #ReadJsonTest (
-                     DateColumn
-                     , DateTimeColumn
+                     DateTimeColumn
                      , DateTime2Column
+                     , DateTime2Column_Utc
                      , DateTimeOffsetColumn
                  ) values
-                     ({new DateTime(2008, 4, 1)}, {new DateTime(2023, 5, 6, 16, 13, 55)}, {new DateTime(1, 2, 3, 4, 5, 6, 7)}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
+                     ({new DateTime(2023, 5, 6, 16, 13, 55)}, {dateTime}, {dateTime.ToUniversalTime()}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
              """
         ).ExecuteNonQuery(Connection);
 
