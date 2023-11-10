@@ -40,6 +40,7 @@ public static class AutomaticValueConverters
     static readonly ValueConverter<ulong, byte[]> ulongConverter = Define<ulong, byte[]>(codeVal => QueryScalarParameterComponent.UInt64ToSqlBinary(codeVal), dbVal => ParameterizedSqlObjectMapper.SqlBinaryToUInt64(dbVal));
     static readonly ValueConverter<uint, byte[]> uintConverter = Define<uint, byte[]>(codeVal => QueryScalarParameterComponent.UInt32ToSqlBinary(codeVal), dbVal => ParameterizedSqlObjectMapper.SqlBinaryToUInt32(dbVal));
     static readonly ValueConverter<int, int> intPassThroughConverter = Define<int, int>(codeVal => codeVal, dbVal => dbVal);
+    static readonly ValueConverter<long, long> longPassThroughConverter = Define<long, long>(codeVal => codeVal, dbVal => dbVal);
     static readonly ConcurrentDictionary<Type, ValueConverter?> propertyConverterCache = new();
 
     static readonly Func<Type, ValueConverter?> cachedFactoryDelegate = type => {
@@ -57,6 +58,8 @@ public static class AutomaticValueConverters
                 return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, uintConverter.ProviderClrType).Invoke(null, new object[] { uintConverter, }).AssertNotNull();
             } else if (underlyingType == typeof(int)) {
                 return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, intPassThroughConverter.ProviderClrType).Invoke(null, new object[] { intPassThroughConverter, }).AssertNotNull();
+            } else if (underlyingType == typeof(long)) {
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, longPassThroughConverter.ProviderClrType).Invoke(null, new object[] { longPassThroughConverter, }).AssertNotNull();
             }
         }
 
