@@ -200,7 +200,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
-        bool StopCascading(string onTable)
+        static bool StopCascading(string onTable)
             => onTable == "dbo.T2";
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
