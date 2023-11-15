@@ -227,9 +227,6 @@ public sealed class DatabaseDescription
         public byte Scale
             => ColumnMetaData.Scale;
 
-        public bool HasAutoIncrementIdentity
-            => ColumnMetaData.HasAutoIncrementIdentity;
-
         public string? CollationName
             => ColumnMetaData.CollationName;
     }

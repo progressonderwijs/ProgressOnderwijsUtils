@@ -37,11 +37,10 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                     + (colMetaData.IsPrimaryKey ? "PK;" : "");
                 _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + persistedClause + columnTrivia + "\n");
             } else {
-                var identitySpecification = colMetaData.HasAutoIncrementIdentity ? " identity" : "";
                 var columnTrivia = "--"
                     + (colMetaData.DefaultValueConstraint is not null ? "hasDefault;" : "")
                     + (colMetaData.IsPrimaryKey ? "PK;" : "");
-                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition() + identitySpecification + columnTrivia + "\n");
+                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition() + columnTrivia + "\n");
             }
             separatorFromPreviousCol = ", ";
         }

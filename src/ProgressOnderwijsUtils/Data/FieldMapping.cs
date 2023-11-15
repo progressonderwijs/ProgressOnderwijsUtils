@@ -54,7 +54,6 @@ public struct FieldMappingValidation
 {
     public bool AllowExtraSourceColumns;
     public bool AllowExtraTargetColumns;
-    public bool OverwriteAutoIncrement;
 
     public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping.Suggestion[] mapping)
     {
@@ -75,10 +74,6 @@ public struct FieldMappingValidation
                     if (!AllowExtraTargetColumns) {
                         errors.Add($"Target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                     }
-                } else if (dst.ColumnAccessibility == ColumnAccessibility.AutoIncrementIdentity) {
-                    if (OverwriteAutoIncrement) {
-                        errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
-                    }
                 } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly) {
                     throw new($"impossible value {dst.ColumnAccessibility}");
                 }
@@ -89,7 +84,7 @@ public struct FieldMappingValidation
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                     errors.Add($"Cannot fill readonly field {dst.Name}.");
-                } else if (dst.ColumnAccessibility is ColumnAccessibility.Normal || OverwriteAutoIncrement) {
+                } else if (dst.ColumnAccessibility is ColumnAccessibility.Normal) {
                     mapped.Add(new(src, dst));
                 }
             }

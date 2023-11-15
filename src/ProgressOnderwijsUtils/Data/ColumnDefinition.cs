@@ -6,7 +6,6 @@ namespace ProgressOnderwijsUtils;
 public enum ColumnAccessibility
 {
     Normal,
-    AutoIncrementIdentity,
     Readonly,
 }
 
@@ -17,7 +16,6 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     static ColumnAccessibility DataColumnAccessibility(DataColumn col)
         => col switch {
-            { AutoIncrement: true, } => ColumnAccessibility.AutoIncrementIdentity,
             { ReadOnly: true, } => ColumnAccessibility.Readonly,
             _ => ColumnAccessibility.Normal,
         };
@@ -45,7 +43,6 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     static ColumnAccessibility DbColumnMetaDataAccessibility(IDbColumn col)
         => col switch {
-            { HasAutoIncrementIdentity : true, } => ColumnAccessibility.AutoIncrementIdentity,
             { IsRowVersion : true, } => ColumnAccessibility.Readonly,
             { IsComputed : true, } => ColumnAccessibility.Readonly,
             _ => ColumnAccessibility.Normal,

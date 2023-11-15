@@ -60,6 +60,5 @@ public sealed class BulkInsertTarget
         => new FieldMappingValidation {
             AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
-            OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
         }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
 }

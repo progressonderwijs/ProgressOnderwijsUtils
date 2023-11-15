@@ -5,7 +5,7 @@ public interface IPropertyMapper
     Func<TRow, TRow> CreateRowMapper<TRow>()
         where TRow : IWrittenImplicitly;
 
-    public (Func<TId, TId> mapper, bool idNonIdentityMap) CreateIdMapper<TId>();
+    public Func<TId, TId> CreateIdMapper<TId>();
     Type MappedPropertyType();
 }
 
@@ -36,10 +36,6 @@ public static class PropertyMapper
             }
         );
 
-    public static PropertyMappers CreateForIdentityMap<TProperty>()
-        where TProperty : struct, Enum
-        => CreateForFunc(NoopLambda<TProperty>.Instance);
-
     public static PropertyMappers CreateForFunc<TProperty>(Func<TProperty, TProperty> func)
         where TProperty : struct, Enum
         => new(
@@ -62,8 +58,8 @@ public sealed class PropertyMapper<TProperty> : IPropertyMapper
     public Type MappedPropertyType()
         => typeof(TProperty);
 
-    public (Func<TId, TId> mapper, bool idNonIdentityMap) CreateIdMapper<TId>()
-        => mapper is Func<TId, TId> reTyped ? (reTyped, true) : (NoopLambda<TId>.Instance, false);
+    public Func<TId, TId> CreateIdMapper<TId>()
+        => mapper is Func<TId, TId> reTyped ? reTyped : NoopLambda<TId>.Instance;
 
     Func<T, T> IPropertyMapper.CreateRowMapper<T>()
         => Mappers<T>.Instance.Invoke(mapper);
@@ -141,13 +137,13 @@ public sealed class PropertyMappers
         };
     }
 
-    public (Func<TId, TId> mapper, bool idNonIdentityMap) GetIdMapper<TId>()
+    public Func<TId, TId> GetIdMapper<TId>()
         where TId : struct, Enum
-        => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>() : (NoopLambda<TId>.Instance, false);
+        => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>() : NoopLambda<TId>.Instance;
 
     public TId MapId<TId>(TId id)
         where TId : struct, Enum
-        => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>().mapper(id) : id;
+        => mapperByPropertyType.TryGetValue(typeof(TId), out var pMapper) ? pMapper.CreateIdMapper<TId>()(id) : id;
 }
 
 public static class PropertyMappersExtensions

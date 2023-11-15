@@ -55,20 +55,6 @@ public sealed class PropertyMappingTest
     }
 
     [Fact]
-    public void MapProperties_Identity_does_nothing()
-    {
-        var objects = new[] {
-            new TestObject {
-                EnumIntProperty = DayOfWeek.Wednesday,
-            },
-        };
-
-        var mapped = PropertyMapper.CreateForIdentityMap<DayOfWeek>().Map(objects);
-
-        PAssert.That(() => objects.SequenceEqual(mapped));
-    }
-
-    [Fact]
     public void MapProperties_CreateForValue_ignores_input()
     {
         var objects = new[] {
@@ -222,9 +208,8 @@ public sealed class PropertyMappingTest
     {
         var dayOfWeekMapper = PropertyMapper.CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7));
 
-        var (func, isMapped) = dayOfWeekMapper.GetIdMapper<DateTimeKind>();
+        var func = dayOfWeekMapper.GetIdMapper<DateTimeKind>();
 
-        PAssert.That(() => !isMapped);
         PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Local);
         PAssert.That(() => dayOfWeekMapper.MapId(DateTimeKind.Local) == DateTimeKind.Local);
     }
@@ -236,9 +221,8 @@ public sealed class PropertyMappingTest
             .CreateForFunc((DayOfWeek day) => (DayOfWeek)(((int)day + 1) % 7))
             .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)));
 
-        var (func, isMapped) = mapper.GetIdMapper<DateTimeKind>();
+        var func = mapper.GetIdMapper<DateTimeKind>();
 
-        PAssert.That(() => isMapped);
         PAssert.That(() => func(DateTimeKind.Local) == DateTimeKind.Utc);
         PAssert.That(() => mapper.MapId(DateTimeKind.Local) == DateTimeKind.Utc);
     }

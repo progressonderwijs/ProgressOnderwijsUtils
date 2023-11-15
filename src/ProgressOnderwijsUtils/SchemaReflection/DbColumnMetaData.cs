@@ -47,12 +47,6 @@ public sealed record DbColumnMetaData(
         set => columnFlags[2] = value;
     }
 
-    public bool HasAutoIncrementIdentity
-    {
-        get => columnFlags[3];
-        set => columnFlags[3] = value;
-    }
-
     public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength, string? collation)
     {
         var typeId = SqlSystemTypeIdExtensions.DotnetTypeToSqlType(dataType);
@@ -125,7 +119,6 @@ public sealed record DbColumnMetaData(
                         + 1*c.is_nullable 
                         + 2*c.is_computed
                         + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                        + 8*c.is_identity
                         )
                     , CollationName = c.collation_name
                 from {fromTempDb && SQL($"tempdb.")}sys.columns c
