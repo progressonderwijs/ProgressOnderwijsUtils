@@ -1,7 +1,7 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 [DbIdEnum]
-public enum DbObjectId { }
+public enum DbObjectId;
 
 public interface IDbNamedObject
 {

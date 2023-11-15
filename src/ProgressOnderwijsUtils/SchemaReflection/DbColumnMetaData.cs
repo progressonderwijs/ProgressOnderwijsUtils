@@ -4,7 +4,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 /// This id is 1-based and may contain gaps due to dropping of columns.
 /// </summary>
 [DbIdEnum]
-public enum DbColumnId { }
+public enum DbColumnId;
 
 public sealed record DbColumnMetaData(
     string ColumnName,

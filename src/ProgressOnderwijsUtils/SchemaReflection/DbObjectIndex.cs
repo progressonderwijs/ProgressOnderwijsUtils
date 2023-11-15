@@ -1,7 +1,7 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
 [DbIdEnum]
-public enum DbIndexId { }
+public enum DbIndexId;
 
 public sealed record DbObjectIndex : IWrittenImplicitly
 {
@@ -36,7 +36,7 @@ public sealed record DbObjectIndex : IWrittenImplicitly
 }
 
 [DbIdEnum]
-public enum DbIndexColumnId { }
+public enum DbIndexColumnId;
 
 public sealed record DbObjectIndexColumn : IWrittenImplicitly
 {

@@ -317,4 +317,4 @@ public sealed class ParameterizedSqlTest
 }
 
 [AttributeUsage(AttributeTargets.Enum)]
-sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
+sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute;

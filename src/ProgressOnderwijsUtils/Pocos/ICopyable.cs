@@ -1,7 +1,7 @@
 namespace ProgressOnderwijsUtils;
 
 public interface ICopyable<T>
-    where T : ICopyable<T>, IEquatable<T> { }
+    where T : ICopyable<T>, IEquatable<T>;
 
 public static class CopyableExtensions
 {

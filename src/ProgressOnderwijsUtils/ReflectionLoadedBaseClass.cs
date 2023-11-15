@@ -2,7 +2,7 @@ namespace ProgressOnderwijsUtils;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface)]
 [MeansImplicitUse(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Itself)]
-public sealed class ConstructedImplicitlyAttribute : Attribute { }
+public sealed class ConstructedImplicitlyAttribute : Attribute;
 
 [ConstructedImplicitly]
 public abstract class ReflectionLoadedBaseClass<T>

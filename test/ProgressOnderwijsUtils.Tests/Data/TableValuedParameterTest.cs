@@ -6,7 +6,7 @@ namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class TableValuedParameterTest : TransactedLocalConnection
 {
-    public enum SomeEnum { }
+    public enum SomeEnum;
 
     [Fact]
     public void ConvertibleProperty()

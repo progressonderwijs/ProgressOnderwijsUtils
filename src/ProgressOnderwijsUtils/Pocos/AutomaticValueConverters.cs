@@ -29,7 +29,7 @@ public static class AutomaticValueConverters
 
     internal static readonly MethodInfo LiftToEnum_OpenGenericMethod = ((Func<ValueConverter<int, int>, ValueConverter<int, int>>)LiftToEnum<int, int, int>).Method.GetGenericMethodDefinition();
 
-    struct UnusedTypeTemplate1 : IHasValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2> { }
+    struct UnusedTypeTemplate1 : IHasValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2>;
 
     struct UnusedTypeTemplate2 : IValueConverterSource<UnusedTypeTemplate1, int>
     {

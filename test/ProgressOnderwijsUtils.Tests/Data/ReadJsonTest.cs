@@ -105,7 +105,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
     }
 
-    enum ReadJsonPocoTestId { }
+    enum ReadJsonPocoTestId;
 
     [Fact]
     public void ReadJson_datetime_with_timezone_information()

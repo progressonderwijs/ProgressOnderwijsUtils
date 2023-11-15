@@ -2,21 +2,21 @@ namespace ProgressOnderwijsUtils;
 
 [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Class)]
 [MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Members)]
-public sealed class ReadImplicitlyAttribute : Attribute { }
+public sealed class ReadImplicitlyAttribute : Attribute;
 
 [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Class)]
 [MeansImplicitUse(ImplicitUseKindFlags.Assign | ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
-public sealed class WrittenImplicitlyAttribute : Attribute { }
+public sealed class WrittenImplicitlyAttribute : Attribute;
 
-public interface IPoco { }
+public interface IPoco;
 
 [ReadImplicitly]
-public interface IReadImplicitly : IPoco { }
+public interface IReadImplicitly : IPoco;
 
 [WrittenImplicitly]
-public interface IWrittenImplicitly : IPoco { }
+public interface IWrittenImplicitly : IPoco;
 
-public interface IUsedImplicitly : IReadImplicitly, IWrittenImplicitly { }
+public interface IUsedImplicitly : IReadImplicitly, IWrittenImplicitly;
 
 [AttributeUsage(AttributeTargets.All)]
 [UsefulToKeep("library attribute")]
@@ -32,4 +32,4 @@ public sealed class UsefulToKeepAttribute : Attribute
 [AttributeUsage(AttributeTargets.All)]
 [UsefulToKeep("library attribute")]
 [MeansImplicitUse(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
-public sealed class UsedImplicitlyBySerializationAttribute : Attribute { }
+public sealed class UsedImplicitlyBySerializationAttribute : Attribute;

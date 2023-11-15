@@ -18,12 +18,12 @@ public sealed class TypeExtensionTest
         PAssert.That(() => typeof(Enum).CanBeNull()); //WTF???? maar goed, dit is dan ook wel een heel gek type.
     }
 
-    class SampleBase : ArrayList { }
+    class SampleBase : ArrayList;
 
     // ReSharper disable once UnusedTypeParameter
-    class Sample<T> : SampleBase { }
+    class Sample<T> : SampleBase;
 
-    sealed class SampleX<T> : Sample<T> { }
+    sealed class SampleX<T> : Sample<T>;
 
     [Fact]
     public void TestBases()
@@ -40,11 +40,11 @@ public sealed class TypeExtensionTest
         PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object), }));
     }
 
-    enum SampleEnum { }
+    enum SampleEnum;
 
-    sealed class SampleClass { }
+    sealed class SampleClass;
 
-    struct SampleStruct { }
+    struct SampleStruct;
 
     [Fact]
     public void TestIsNullableValueType()

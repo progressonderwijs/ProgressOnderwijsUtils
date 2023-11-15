@@ -104,4 +104,4 @@ public abstract class NullablityTestBaseClass
     public object[] SomeFilledObjectArray = { null!, };
 }
 
-public sealed class NullabilityTestSubClass : NullablityTestBaseClass { }
+public sealed class NullabilityTestSubClass : NullablityTestBaseClass;

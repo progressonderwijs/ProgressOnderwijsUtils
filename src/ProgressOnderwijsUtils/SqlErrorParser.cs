@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils;
 
-public interface ISqlErrorParseResult { }
+public interface ISqlErrorParseResult;
 
 public struct KeyConstraintViolation : ISqlErrorParseResult
 {

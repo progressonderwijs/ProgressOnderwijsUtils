@@ -1,4 +1,4 @@
 namespace ProgressOnderwijsUtils;
 
 [AttributeUsage(AttributeTargets.All, Inherited = false, AllowMultiple = true)]
-public sealed class CodeThatsOnlyUsedForTests : Attribute { }
+public sealed class CodeThatsOnlyUsedForTests : Attribute;

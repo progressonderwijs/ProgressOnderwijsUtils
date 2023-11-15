@@ -247,7 +247,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         PAssert.That(() => retval.Select(o => o.AccountNumber).Distinct().SetEqual(new[] { "abracadabra fee fi fo fum", "abcdef", }));
     }
 
-    public enum Enum64Bit : ulong { }
+    public enum Enum64Bit : ulong;
 
     public sealed record PocoWithRowVersions([property: DatabaseGenerated(DatabaseGeneratedOption.Computed)] ulong Version) : IWrittenImplicitly, IReadImplicitly
     {
