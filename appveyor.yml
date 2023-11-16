@@ -2,7 +2,7 @@ version: build-{build}
 branches:
   only:
   - master
-image: Visual Studio 2022
+image: Visual Studio 2022 Preview
 environment:
   CONNECTION_STRING: Server=(local)\SQL2019;Database=master;User ID=sa;Password=Password12!;Encrypt=False
 init:
