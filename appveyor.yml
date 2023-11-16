@@ -6,7 +6,7 @@ image: Visual Studio 2022
 environment:
   CONNECTION_STRING: Server=(local)\SQL2019;Database=master;User ID=sa;Password=Password12!;Encrypt=False
 install:
-- choco install dotnet-sdk
+- choco upgrade dotnet
 init:
 - net start MSSQL$SQL2019
 build_script:
