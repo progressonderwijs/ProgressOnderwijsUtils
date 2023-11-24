@@ -10,9 +10,9 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <OutputType>library</OutputType>
-    <LangVersion>11.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <Nullable>enable</Nullable>
     <NoWarn>CS1591, IDE1006, IDE0039</NoWarn>
     <Features>strict</Features>
