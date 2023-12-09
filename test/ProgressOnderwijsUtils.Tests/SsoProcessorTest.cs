@@ -44,7 +44,7 @@ public sealed class SsoProcessorTest
         doc.LoadXml(rawRequest);
         var signedXml = new SignedXml(doc);
         signedXml.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-        PAssert.That(() => signedXml.CheckSignature(certificate.GetRSAPublicKey()));
+        PAssert.That(() => signedXml.CheckSignature(certificate.GetRSAPublicKey().AssertNotNull()));
     }
 
     [Fact(Skip = "for manual use")]
