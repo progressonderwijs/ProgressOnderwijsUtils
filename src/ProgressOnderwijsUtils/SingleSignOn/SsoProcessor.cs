@@ -80,7 +80,12 @@ public static class SsoProcessor
 
         var dsig = new SignedXml(doc);
         dsig.LoadXml(signatureElements.Single());
-        if (!dsig.CheckSignature(certificate.GetRSAPublicKey())) {
+        var key = certificate.GetRSAPublicKey();
+        if (key is null) {
+            return Maybe.Error("Public key missing");
+        }
+
+        if (!dsig.CheckSignature(key)) {
             return Maybe.Error("Signature invalid");
         }
 
