@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>99.2.1</Version>
-    <PackageReleaseNotes>Fix bitlocker detection issue in which INPLACE_S_TRUNCATED was incorrectly interpreted as an error.</PackageReleaseNotes>
+    <Version>100.0.0</Version>
+    <PackageReleaseNotes>Upgrade to .net 8.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
