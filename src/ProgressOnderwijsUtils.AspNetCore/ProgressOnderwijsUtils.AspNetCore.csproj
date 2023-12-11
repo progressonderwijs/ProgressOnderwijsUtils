@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>8.1.2</Version>
+    <Version>8.2.0</Version>
+    <PackageReleaseNotes>Upgrade to .net 8</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add NumericEnumBinder and ModelStateFilter.</Description>
-    <PackageReleaseNotes>Added NumericEnumBinder and ModelStateFilter</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
