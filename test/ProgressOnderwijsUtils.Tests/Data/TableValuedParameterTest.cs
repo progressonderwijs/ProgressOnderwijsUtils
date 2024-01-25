@@ -19,7 +19,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     public void ConvertibleNullablePropertyWitValue()
     {
         var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
-        PAssert.That(() => value!.Value.Value == "aap");
+        PAssert.That(() => value.AssertNotNull().Value == "aap");
     }
 
     [Fact]
