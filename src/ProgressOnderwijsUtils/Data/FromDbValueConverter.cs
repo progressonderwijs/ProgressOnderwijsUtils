@@ -62,11 +62,11 @@ public static class DbValueConverter
                 return ForConvertible(type, converter);
             }
             if (!type.IsValueType) {
-                return obj => (T)obj!;
+                return obj => (T?)obj;
             }
             var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
             if (nonnullableUnderlyingType == null) {
-                return obj => (T)obj!;
+                return obj => (T?)obj;
             }
 
             return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
