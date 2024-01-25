@@ -2,8 +2,9 @@ namespace ProgressOnderwijsUtils.Html;
 
 public record struct HtmlAttribute(string Name, string Value)
 {
-    public string Name = Name; 
+    public string Name = Name;
     public string Value = Value;
+
     public override string ToString()
         => $"{Name}={Value}";
 }
@@ -107,7 +108,7 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         var array = attributes;
         if (array != null) {
-            if (Count < array.Length 
+            if (Count < array.Length
                 // ReSharper disable NullableWarningSuppressionIsUsed
                 // when growing the array of structs, semantically non-nullable field "Name" is null.
                 // this is the indication that the array member is still uninitialized.
