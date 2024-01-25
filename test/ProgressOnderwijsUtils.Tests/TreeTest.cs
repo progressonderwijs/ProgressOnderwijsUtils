@@ -74,6 +74,7 @@ public sealed class TreeTest
         var equalityComparer = EqualityComparer<Tree<int>>.Default;
         PAssert.That(() => equalityComparer.GetHashCode(tree2) == equalityComparer.GetHashCode(tree1));
         PAssert.That(() => equalityComparer.GetHashCode(tree2) != equalityComparer.GetHashCode(leaf2));
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null!));
     }
 
