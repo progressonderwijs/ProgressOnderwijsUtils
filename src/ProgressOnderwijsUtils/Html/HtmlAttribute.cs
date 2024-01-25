@@ -2,6 +2,8 @@ namespace ProgressOnderwijsUtils.Html;
 
 public record struct HtmlAttribute(string Name, string Value)
 {
+    public string Name = Name; 
+    public string Value = Value;
     public override string ToString()
         => $"{Name}={Value}";
 }
