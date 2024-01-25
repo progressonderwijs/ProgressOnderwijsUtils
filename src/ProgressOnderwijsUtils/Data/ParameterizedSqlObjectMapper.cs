@@ -138,18 +138,18 @@ public static class ParameterizedSqlObjectMapper
 
     static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
         new() {
-            { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
-            { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding)! },
-            { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding)! },
-            { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding)! },
-            { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding)! },
-            { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding)! },
-            { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding)! },
-            { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding)! },
-            { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding)! },
-            { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding)! },
-            { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding)! },
-            { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding)! },
+            { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding).AssertNotNull() },
+            { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding).AssertNotNull() },
+            { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding).AssertNotNull() },
+            { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding).AssertNotNull() },
+            { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding).AssertNotNull() },
+            { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding).AssertNotNull() },
+            { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding).AssertNotNull() },
+            { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding).AssertNotNull() },
+            { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding).AssertNotNull() },
+            { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding).AssertNotNull() },
+            { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding).AssertNotNull() },
+            { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding).AssertNotNull() },
         };
 
     static Dictionary<MethodInfo, MethodInfo> MakeMap(params InterfaceMapping[] mappings)
