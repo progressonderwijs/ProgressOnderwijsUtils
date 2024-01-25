@@ -74,15 +74,11 @@ public struct ParameterizedSql
         => (object)a + b;
 
     public static ParameterizedSql RawSql_PotentialForSqlInjection(string rawSqlString)
-    {
-        if (rawSqlString == null) {
-            throw new ArgumentNullException(nameof(rawSqlString));
-        }
-        if (rawSqlString == "") {
-            return EmptySql;
-        }
-        return new StringSqlFragment(rawSqlString).BuildableToQuery();
-    }
+        => rawSqlString switch {
+            null => throw new ArgumentNullException(nameof(rawSqlString)),
+            "" => EmptySql,
+            _ => new StringSqlFragment(rawSqlString).BuildableToQuery()
+        };
 
     static bool ValidInitialIdentifierChar(char c) //https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers
         => c
