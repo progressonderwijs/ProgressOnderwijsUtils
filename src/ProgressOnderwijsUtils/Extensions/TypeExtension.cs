@@ -46,7 +46,7 @@ public static class TypeExtension
         } else if (maybeNonNullable == null) {
             return type.GetEnumUnderlyingType();
         } else {
-            return maybeNonNullable.GetEnumUnderlyingType().MakeNullableType()! /*not null, since previous cases handle reference types and nullable value types*/;
+            return typeof(Nullable<>).MakeGenericType(maybeNonNullable.GetEnumUnderlyingType());
         }
     }
 
