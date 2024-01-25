@@ -42,7 +42,9 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     public int Count { get; }
 
     public HtmlAttribute this[int i]
-        => attributes![i]; //only null if default, but then count is null... so this *should* crash.
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        //only null if default, but then count is null... so this *should* crash.
+        => attributes![i];
 
     public string? this[string attrName]
     {
