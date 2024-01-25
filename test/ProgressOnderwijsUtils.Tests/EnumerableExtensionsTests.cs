@@ -18,11 +18,11 @@ public sealed class EnumerableExtensionsTests
         PAssert.That(() => new[] { 1, 2, 3, }.IndexOf(x => x < 3) == 0);
         PAssert.That(() => new[] { 1, 2, 3, }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
         PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3, }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
-        // ReSharper disable AssignNullToNotNullAttribute
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[])!.IndexOf(2));
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[])!.IndexOf(x => x == 2));
-        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[])!.IndexOf(null!));
-        // ReSharper restore AssignNullToNotNullAttribute
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(2));
+        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(x => x == 2));
+        _ = Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(null));
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 
     [Fact]
