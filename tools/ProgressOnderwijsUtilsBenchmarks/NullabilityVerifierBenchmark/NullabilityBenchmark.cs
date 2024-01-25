@@ -31,8 +31,8 @@ public sealed class NullabilityBenchmark
         Name = nameof(ValidTestCase),
         SomeObject = new(),
         SomeNullableObject = null,
-        SomeObjectArray = new object[] { },
-        SomeFilledObjectArray = new object[] { },
+        SomeObjectArray = [new(),],
+        SomeFilledObjectArray = [new(),],
     };
 
     static readonly NullablityTestClass OneNullInNonNullTestCase = new() {
@@ -41,8 +41,8 @@ public sealed class NullabilityBenchmark
         Name = nameof(OneNullInNonNullTestCase),
         SomeObject = new(),
         SomeNullableObject = null,
-        SomeObjectArray = new object[] { },
-        SomeFilledObjectArray = new object[] { },
+        SomeObjectArray = [new(),],
+        SomeFilledObjectArray = [new(),],
     };
 
     public static NullablityTestClass[] ObjectsToTest { get; set; } = { EverythingInvalidTestCase, ValidTestCase, OneNullInNonNullTestCase, };
