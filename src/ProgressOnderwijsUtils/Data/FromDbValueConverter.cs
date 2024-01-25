@@ -29,7 +29,7 @@ public static class DbValueConverter
     /// - it supports casting ToDb when the passed value is <see cref="IHasValueConverter"/>.
     /// </summary>
     [Pure]
-    [return: NotNullIfNotNull("valueFromCode")]
+    [return: NotNullIfNotNull(nameof(valueFromCode))]
     public static T ToDb<T>(object? valueFromCode)
     {
         try {
