@@ -161,7 +161,7 @@ public static class ParameterizedSqlObjectMapper
 
     static byte[] GetBytes(this IDataRecord row, int colIndex)
     {
-        var byteCount = row.GetBytes(colIndex, 0L, null!, 0, 0);
+        var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
         if (byteCount > int.MaxValue) {
             throw new NotSupportedException("Array too large!");
         }
@@ -175,7 +175,7 @@ public static class ParameterizedSqlObjectMapper
 
     static char[] GetChars(this IDataRecord row, int colIndex)
     {
-        var charCount = row.GetChars(colIndex, 0L, null!, 0, 0);
+        var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
         if (charCount > int.MaxValue) {
             throw new NotSupportedException("Array too large!");
         }
