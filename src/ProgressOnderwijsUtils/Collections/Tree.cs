@@ -52,7 +52,6 @@ public static class Tree
 public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
 {
     readonly Tree<T>[] kidArray;
-
     public T NodeValue { get; }
 
     public IReadOnlyList<Tree<T>> Children
@@ -75,18 +74,14 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
     public Tree(T value, Tree<T>[]? children)
     {
         NodeValue = value;
-        kidArray = children ?? Array.Empty<Tree<T>>();
+        kidArray = children ?? [];
     }
 
     public static readonly Comparer DefaultComparer = new(EqualityComparer<T>.Default);
 
-    public sealed class Comparer : IEqualityComparer<Tree<T>?>
+    public sealed class Comparer(IEqualityComparer<T> ValueComparer) : IEqualityComparer<Tree<T>?>
     {
         static readonly int typeHash = typeof(Tree<T>).GetHashCode();
-        readonly IEqualityComparer<T> ValueComparer;
-
-        public Comparer(IEqualityComparer<T> valueComparer)
-            => ValueComparer = valueComparer;
 
         struct NodePair
         {
@@ -124,17 +119,13 @@ public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, 
         [Pure]
         public int GetHashCode(Tree<T>? obj)
         {
-            // ReSharper disable ConditionIsAlwaysTrueOrFalse
-            // ReSharper disable HeuristicUnreachableCode
             if (obj == null) {
                 return typeHash;
             }
-            // ReSharper restore HeuristicUnreachableCode
-            // ReSharper restore ConditionIsAlwaysTrueOrFalse
             ulong hash = obj.NodeValue is null ? 0 : (uint)ValueComparer.GetHashCode(obj.NodeValue);
             ulong offset = 1; //keep offset odd to ensure no bits are lost in scaling.
             foreach (var node in obj.PreorderTraversal()) {
-                hash += offset * ((uint)(node.NodeValue is null ? 0 : ValueComparer.GetHashCode(node.NodeValue!)) + ((ulong)node.Children.Count << 32));
+                hash += offset * ((uint)(node.NodeValue is null ? 0 : ValueComparer.GetHashCode(node.NodeValue)) + ((ulong)node.Children.Count << 32));
                 offset += 2;
             }
             return (int)((uint)(hash >> 32) + (uint)hash);
