@@ -143,6 +143,7 @@ public sealed class ParameterizedSqlTest
 
     [Fact]
     public void ParameterizedSqlValidation()
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
 
     [Fact]
