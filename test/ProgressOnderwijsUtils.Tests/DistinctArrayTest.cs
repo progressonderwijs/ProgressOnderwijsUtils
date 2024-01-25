@@ -49,9 +49,11 @@ public sealed class DistinctArrayTest
     {
         var defaultValue = default(DistinctArray<string>);
         PAssert.That(() => defaultValue.None());
+        // ReSharper disable NotDisposedResource
         PAssert.That(() => !((IEnumerable)defaultValue).GetEnumerator().MoveNext());
         PAssert.That(() => !((IEnumerable<string>)defaultValue).GetEnumerator().MoveNext());
         PAssert.That(() => !defaultValue.GetEnumerator().MoveNext());
+        // ReSharper restore NotDisposedResource
         PAssert.That(() => defaultValue.UnderlyingArrayThatShouldNeverBeMutated().None());
         PAssert.That(() => defaultValue.Count == 0);
     }
