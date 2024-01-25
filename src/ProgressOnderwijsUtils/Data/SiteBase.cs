@@ -10,8 +10,8 @@ public abstract class SiteBase : ISite
     public virtual IComponent Component
         => throw new NotSupportedException();
 
-    public virtual IContainer Container
-        => null!;
+    public virtual IContainer? Container
+        => null;
 
     public virtual bool DesignMode
         => throw new NotSupportedException();
