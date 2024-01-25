@@ -283,12 +283,12 @@ public sealed class EqualsEqualityComparer<T>(Func<T, T, bool> equals, Func<T, i
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
-        => x == null ? y == null : y != null && equals(x, y);
+        => x is null ? y is null : y is not null && equals(x, y);
 
     public int GetHashCode(T obj)
         => hashCode != null
             ? hashCode(obj)
-            : obj != null
+            : obj is not null
                 ? obj.GetHashCode()
                 : 0;
 }
