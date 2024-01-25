@@ -36,7 +36,8 @@ public sealed class NullabilityBenchmark
     };
 
     static readonly NullablityTestClass OneNullInNonNullTestCase = new() {
-        SomeNullString = null!,
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        SomeNullString = null!, //intentionally corrupt for testing purposes
         Name = nameof(OneNullInNonNullTestCase),
         SomeObject = new(),
         SomeNullableObject = null,
