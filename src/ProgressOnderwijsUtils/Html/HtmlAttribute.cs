@@ -105,7 +105,13 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         var array = attributes;
         if (array != null) {
-            if (Count < array.Length && Interlocked.CompareExchange(ref array[Count].Name, name, null! /*null is placeholder*/) == null!) {
+            if (Count < array.Length 
+                // ReSharper disable NullableWarningSuppressionIsUsed
+                // when growing the array of structs, semantically non-nullable field "Name" is null.
+                // this is the indication that the array member is still uninitialized.
+                && Interlocked.CompareExchange(ref array[Count].Name, name, null! /*null is placeholder*/) == null!
+                // ReSharper restore NullableWarningSuppressionIsUsed
+            ) {
                 array[Count].Value = val;
                 return new(array, Count + 1);
             } else {
