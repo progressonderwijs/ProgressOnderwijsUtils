@@ -27,7 +27,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
     public sealed class ExampleWithJustSetters : IWrittenImplicitly
     {
         public int SalesOrderId { get; set; }
-        public string AccountNumber { get; set; } = null!;
+        public required string AccountNumber { get; set; }
         public string? Comment { get; set; }
         public DateTime DueDate { get; set; }
         public bool OnlineOrderFlag { get; set; }
@@ -36,7 +36,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         public DateTime? ShipDate { get; set; }
         public byte Status { get; set; }
         public decimal TotalDue { get; set; }
-        public byte[] SomeBlob { get; set; } = null!;
+        public required byte[] SomeBlob { get; set; }
         public byte[]? SomeNullableBlob { get; set; }
     }
 
@@ -53,7 +53,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
     {
         public int ExtraExtra { get; set; }
         public int SalesOrderId { get; set; }
-        public string AccountNumber { get; set; } = null!;
+        public required string AccountNumber { get; set; }
         public string? Comment { get; set; }
         public DateTime DueDate { get; set; }
         public bool OnlineOrderFlag { get; set; }
@@ -62,7 +62,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         public DateTime? ShipDate { get; set; }
         public byte Status { get; set; }
         public decimal TotalDue { get; set; }
-        public byte[] SomeBlob { get; set; } = null!;
+        public required byte[] SomeBlob { get; set; }
         public byte[]? SomeNullableBlob { get; set; }
     }
 
@@ -104,7 +104,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
     public sealed class ExampleWithJustSettersWithMissingProperties : IWrittenImplicitly
     {
-        public string AccountNumber { get; set; } = null!;
+        public required string AccountNumber { get; set; }
         public int SalesOrderId { get; set; }
     }
 
@@ -249,7 +249,9 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
     public enum Enum64Bit : ulong { }
 
-    public sealed record PocoWithRowVersions([property: DatabaseGenerated(DatabaseGeneratedOption.Computed)] ulong Version) : IWrittenImplicitly, IReadImplicitly
+    public sealed record PocoWithRowVersions(
+        [property: DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        ulong Version) : IWrittenImplicitly, IReadImplicitly
     {
         public ulong AnotherVersion { get; init; }
         public uint? AshorterVersion { get; init; }
@@ -396,10 +398,10 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
     {
         var okQuery = SQL($"Select AccountNumber = 'bla', SalesOrderID = 1").OfPocos<NullablityVerifierPoco>();
         var poco = okQuery.Execute(Connection).Single();
-        PAssert.That(() => poco == new NullablityVerifierPoco { AccountNumber = "bla", SalesOrderId = 1 });
+        PAssert.That(() => poco == new NullablityVerifierPoco { AccountNumber = "bla", SalesOrderId = 1, });
 
         var badQuery = SQL($"Select AccountNumber = null, SalesOrderID = 1").OfPocos<NullablityVerifierPoco>();
-        var exc = Assert.ThrowsAny<Exception>(() =>badQuery.Execute(Connection).Single());
+        var exc = Assert.ThrowsAny<Exception>(() => badQuery.Execute(Connection).Single());
         var message = exc.Message;
         PAssert.That(() => message.Contains("PocoObjectMapperTest.NullablityVerifierPoco.AccountNumber contains NULL despite being non-nullable"));
         PAssert.That(() => !message.Contains("+"));
