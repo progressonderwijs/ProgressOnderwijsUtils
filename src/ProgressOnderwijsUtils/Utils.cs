@@ -279,17 +279,8 @@ public sealed class ComparisonComparer<T>(Comparison<T?> comparer) : IComparer<T
         => comparer(x, y);
 }
 
-public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
+public sealed class EqualsEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int>? hashCode = null) : IEqualityComparer<T>
 {
-    readonly Func<T, T, bool> equals;
-    readonly Func<T, int>? hashCode;
-
-    public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int>? hashCode = null)
-    {
-        this.equals = equals;
-        this.hashCode = hashCode;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
         => x == null ? y == null : y != null && equals(x, y);
