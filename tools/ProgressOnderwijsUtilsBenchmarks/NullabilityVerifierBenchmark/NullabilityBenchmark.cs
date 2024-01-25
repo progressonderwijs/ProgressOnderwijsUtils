@@ -1,3 +1,5 @@
+// ReSharper disable ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+
 using System.Reflection;
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
@@ -49,7 +51,7 @@ public sealed class NullabilityBenchmark
 
     [ParamsSource(nameof(ObjectsToTest))]
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public NullablityTestClass ObjToTest = null!;
+    public NullablityTestClass ObjToTest = new();
 
     static readonly NullabilityInfoContext context = new();
 
@@ -66,10 +68,10 @@ public sealed class NullabilityBenchmark
     [Benchmark]
     public void NaiveHardCoded()
         => _ = new[] {
-            ObjToTest.SomeNullString == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString) : null,
-            ObjToTest.SomeObject == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject) : null,
-            ObjToTest.SomeObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObjectArray) : null,
-            ObjToTest.SomeFilledObjectArray == null! ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeFilledObjectArray) : null,
+            ObjToTest.SomeNullString is null ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeNullString) : null,
+            ObjToTest.SomeObject is null ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObject) : null,
+            ObjToTest.SomeObjectArray is null ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeObjectArray) : null,
+            ObjToTest.SomeFilledObjectArray is null ? "Found null value in non nullable field in ProgressOnderwijsUtils.Tests.NullablityTestClass." + nameof(NullablityTestClass.SomeFilledObjectArray) : null,
         }.WhereNotNull().ToArray();
 
     [Benchmark]
@@ -77,16 +79,16 @@ public sealed class NullabilityBenchmark
     {
         var errCount = 0;
 
-        if (ObjToTest.SomeNullString == null!) {
+        if (ObjToTest.SomeNullString is null) {
             errCount++;
         }
-        if (ObjToTest.SomeObject == null!) {
+        if (ObjToTest.SomeObject is null) {
             errCount++;
         }
-        if (ObjToTest.SomeObjectArray == null!) {
+        if (ObjToTest.SomeObjectArray is null) {
             errCount++;
         }
-        if (ObjToTest.SomeFilledObjectArray == null!) {
+        if (ObjToTest.SomeFilledObjectArray is null) {
             errCount++;
         }
         if (errCount == 0) {
