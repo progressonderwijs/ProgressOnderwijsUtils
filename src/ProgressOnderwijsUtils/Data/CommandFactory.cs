@@ -206,10 +206,10 @@ struct EqualityKeyCommandFactory : ICommandFactory
     }
 }
 
-struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
+readonly struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
 {
-    public string? SqlTextKey;
-    public object[]? Params;
+    public required string SqlTextKey { get; init; }
+    public required object[] Params { get; init; }
 
     public bool Equals(ParameterizedSqlEquatableKey other)
         => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
@@ -218,5 +218,5 @@ struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
         => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
     public override int GetHashCode()
-        => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params!);
+        => SqlTextKey.GetHashCode() + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
 }
