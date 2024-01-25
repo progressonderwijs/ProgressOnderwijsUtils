@@ -55,12 +55,7 @@ struct CommandFactory : ICommandFactory
     static readonly ArrayPool<SqlParamArgs> sqlParamsArgsPool = ArrayPool<SqlParamArgs>.Shared;
 
     static Dictionary<object, string> GetLookup()
-    {
-        if (nameLookupBag.TryDequeue(out var lookup)) {
-            return lookup;
-        }
-        return new(8);
-    }
+        => nameLookupBag.TryDequeue(out var lookup) ? lookup : new(8);
 
     MutableShortStringBuilder queryText;
     SqlParamArgs[] paramObjs;
