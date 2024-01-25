@@ -141,18 +141,11 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     public Enumerator GetEnumerator()
         => new(this);
 
-    public struct Enumerator : IEnumerator<HtmlAttribute>
+    public struct Enumerator(HtmlAttributes attrs) : IEnumerator<HtmlAttribute>
     {
-        readonly HtmlAttribute[] attributes;
-        readonly int count;
-        int pos;
-
-        public Enumerator(HtmlAttributes attrs)
-        {
-            attributes = attrs.attributes!;
-            count = attrs.Count;
-            pos = -1;
-        }
+        readonly HtmlAttribute[] attributes = attrs.attributes ?? [];
+        readonly int count = attrs.Count;
+        int pos = -1;
 
         public HtmlAttribute Current
             => attributes[pos];
