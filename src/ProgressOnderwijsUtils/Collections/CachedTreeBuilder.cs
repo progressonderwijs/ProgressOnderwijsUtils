@@ -2,15 +2,12 @@ namespace ProgressOnderwijsUtils.Collections;
 
 static class CachedTreeBuilder<TInput, TNodeValue>
 {
-    sealed class TreeNodeBuilder
+    sealed class TreeNodeBuilder(TInput value)
     {
-        public readonly TInput value;
+        public readonly TInput value = value;
         public TreeNodeBuilder? parent;
         public int idxInParent;
         public Tree<TNodeValue>[]? kids;
-
-        public TreeNodeBuilder(TInput value)
-            => this.value = value;
     }
 
     [Pure]
@@ -46,7 +43,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
 
             var toGenerate = nodeBuilderThatWantsKids;
             while (true) {
-                var finishedNode = map(toGenerate.value, toGenerate.kids ?? EmptyKids());
+                var finishedNode = map(toGenerate.value, toGenerate.kids ?? []);
                 if (toGenerate.idxInParent == 0) {
                     if (toGenerate.parent == null) {
                         return finishedNode;
@@ -62,7 +59,4 @@ static class CachedTreeBuilder<TInput, TNodeValue>
             }
         }
     }
-
-    static Tree<TNodeValue>[] EmptyKids()
-        => Array.Empty<Tree<TNodeValue>>();
 }
