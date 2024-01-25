@@ -233,8 +233,8 @@ public static class ParameterizedSqlObjectMapper
         return uint32val;
     }
 
-    static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
-    static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
+    static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding).AssertNotNull();
+    static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding).AssertNotNull();
     static readonly MethodInfo getUInt64 = ((Func<IDataRecord, int, ulong>)ReadUInt64).Method;
     static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
     static readonly MethodInfo getBytes = ((Func<IDataRecord, int, byte[]>)GetBytes).Method;
@@ -244,7 +244,7 @@ public static class ParameterizedSqlObjectMapper
         where TReader : IDataReader
     {
         static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)));
-        static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
+        static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding).AssertNotNull()];
         static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
         static bool IsSupportedType(Type type)
@@ -460,7 +460,7 @@ public static class ParameterizedSqlObjectMapper
                         && memberTuple is var (property, propType)
                         && propType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                       ) {
+                    ) {
                         if (propertyFlags.TryGetValue(property, out var mapping) && mapping.ViaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }
