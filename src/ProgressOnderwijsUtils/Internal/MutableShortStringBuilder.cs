@@ -38,7 +38,8 @@ struct MutableShortStringBuilder
     public void DiscardBuilder()
     {
         Free();
-        CurrentCharacterBuffer = null!;
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        CurrentCharacterBuffer = null!; // intentionally corrupt state on dispose so that invalid use-after-dispose fails fast
     }
 
     public string FinishBuilding()
