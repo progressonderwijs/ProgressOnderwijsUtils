@@ -23,7 +23,7 @@ public static class BackingFieldDetector
 
     public static FieldInfo? BackingFieldOfPropertyOrNull(PropertyInfo propertyInfo)
         => IsAutoProp(propertyInfo)
-            && propertyInfo.DeclaringType!.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is { } backingField
+            && propertyInfo.DeclaringType?.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is { } backingField
             && IsCompilerGenerated(backingField)
                 ? backingField
                 : null;
@@ -32,7 +32,7 @@ public static class BackingFieldDetector
     public static PropertyInfo? AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
         => IsCompilerGenerated(fieldInfo)
             && AutoPropNameFromBackingField(fieldInfo.Name) is { } autoPropertyName
-            && fieldInfo.DeclaringType!.GetProperty(autoPropertyName, anyInstance) is { } autoProperty
+            && fieldInfo.DeclaringType?.GetProperty(autoPropertyName, anyInstance) is { } autoProperty
             && IsAutoProp(autoProperty)
                 ? autoProperty
                 : null;
