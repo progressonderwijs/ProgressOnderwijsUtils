@@ -84,7 +84,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     [Fact]
     public void CascadedDeleteWorksWithIdentityKey()
     {
-        DataTable PksToDelete(string name, params int[] pks)
+        static DataTable PksToDelete(string name, params int[] pks)
         {
             var table = new DataTable();
             _ = table.Columns.Add(name, typeof(int));
