@@ -83,7 +83,7 @@ public static class PocoUtils
 
     [Pure]
     static Expression UnwrapCast(Expression bodyExpr)
-        => bodyExpr is UnaryExpression { NodeType: ExpressionType.Convert } unaryExpression ? unaryExpression.Operand : bodyExpr;
+        => bodyExpr is UnaryExpression { NodeType: ExpressionType.Convert, } unaryExpression ? unaryExpression.Operand : bodyExpr;
 
     [Pure]
     public static IPocoProperties<IPocoProperty> GetProperties(Type t)
