@@ -111,10 +111,14 @@ struct CommandFactory : ICommandFactory
     {
         Array.Clear(paramObjs, 0, paramCount);
         sqlParamsArgsPool.Return(paramObjs);
-        paramObjs = null!;
         lookup.Clear();
         nameLookupBag.Enqueue(lookup);
+        // ReSharper disable NullableWarningSuppressionIsUsed
+        //intentionally corrupt object state: this has been disposed; and reuse now is a critical bug.
+        //To ensure things fail fast, leave this behind in an invalid state.
+        paramObjs = null!;
         lookup = null!;
+        // ReSharper restore NullableWarningSuppressionIsUsed
     }
 
     const int ParameterNameCacheSize = 100;
