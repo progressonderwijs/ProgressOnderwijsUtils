@@ -33,7 +33,10 @@ public static class DbValueConverter
     public static T ToDb<T>(object? valueFromCode)
     {
         try {
-            return ToDbHelper<T>.Convert(valueFromCode)!;
+#pragma warning disable CS8603 // Possible null reference return.
+            //by construction, convert never returns null except on input null.
+            return ToDbHelper<T>.Convert(valueFromCode);
+#pragma warning restore CS8603 // Possible null reference return.
         } catch (Exception e) {
             var valTypeString = valueFromCode?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
             throw new InvalidCastException($"Cannot cast {valTypeString} to type {typeof(T).ToCSharpFriendlyTypeName()}", e);
