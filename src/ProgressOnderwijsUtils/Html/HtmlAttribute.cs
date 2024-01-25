@@ -1,32 +1,9 @@
 namespace ProgressOnderwijsUtils.Html;
 
-public struct HtmlAttribute : IEquatable<HtmlAttribute>
+public record struct HtmlAttribute(string Name, string Value)
 {
-    public string Name, Value;
-
-    public HtmlAttribute(string name, string value)
-    {
-        Name = name;
-        Value = value;
-    }
-
     public override string ToString()
         => $"{Name}={Value}";
-
-    public bool Equals(HtmlAttribute other)
-        => Name == other.Name && Value == other.Value;
-
-    public override bool Equals(object? obj)
-        => obj is HtmlAttribute other && Equals(other);
-
-    public override int GetHashCode()
-        => HashCode.Combine(Name, Value);
-
-    public static bool operator ==(HtmlAttribute a, HtmlAttribute b)
-        => a.Equals(b);
-
-    public static bool operator !=(HtmlAttribute a, HtmlAttribute b)
-        => !(a == b);
 }
 
 public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
