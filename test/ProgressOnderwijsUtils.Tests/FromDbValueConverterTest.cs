@@ -188,7 +188,7 @@ public sealed class FromDbValueConverterTest
 
     [Fact]
     public void CanCastToNullableConvertibleOfReferenceType()
-        => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<string>?>(new TrivialValue<string>("asdf"))!.Value.Value == "asdf");
+        => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<string>?>(new TrivialValue<string>("asdf")).AssertNotNull().Value == "asdf");
 
     [Fact]
     public void CanDynamicCastToNullableConvertibleOfReferenceType()
@@ -253,5 +253,5 @@ public sealed class FromDbValueConverterTest
 
     [Fact]
     public void CanCastToNullableConvertibleOfValueType()
-        => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123))!.Value.Value == -123);
+        => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123)).AssertNotNull().Value == -123);
 }

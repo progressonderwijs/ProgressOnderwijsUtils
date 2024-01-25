@@ -99,11 +99,11 @@ public sealed class PocoUtilsTest
     {
         var o = new SimpleObject { Property = "foo", LabelledProperty = "bar", };
         var moDef = PocoUtils.GetProperties<SimpleObject>();
-        PAssert.That(() => (string?)moDef.GetByName("Property").Getter!(o) == "foo");
-        PAssert.That(() => (string?)moDef.GetByName("labelledProperty").Getter!(o) == "bar");
+        PAssert.That(() => (string?)moDef.GetByName("Property").Getter.AssertNotNull()(o) == "foo");
+        PAssert.That(() => (string?)moDef.GetByName("labelledProperty").Getter.AssertNotNull()(o) == "bar");
 
-        moDef.GetByName("property").Setter!(ref o, "aha");
-        moDef.GetByName("LabelledProperty").Setter!(ref o, "really");
+        moDef.GetByName("property").Setter.AssertNotNull()(ref o, "aha");
+        moDef.GetByName("LabelledProperty").Setter.AssertNotNull()(ref o, "really");
 
         PAssert.That(() => o.Equals(new() { Property = "aha", LabelledProperty = "really", }));
     }
@@ -121,9 +121,9 @@ public sealed class PocoUtilsTest
         var obj = new SetterTestStruct();
         var prop = PocoUtils.GetByExpression((SetterTestStruct o) => o.IntProperty);
 
-        PAssert.That(() => (int?)prop.Getter!(obj) == 0);
-        prop.Setter!(ref obj, 42);
-        PAssert.That(() => (int?)prop.Getter!(obj) == 42);
+        PAssert.That(() => (int?)prop.Getter.AssertNotNull()(obj) == 0);
+        prop.Setter.AssertNotNull()(ref obj, 42);
+        PAssert.That(() => (int?)prop.Getter.AssertNotNull()(obj) == 42);
     }
 
     [Fact]
@@ -132,9 +132,9 @@ public sealed class PocoUtilsTest
         var obj = new SetterTestStruct();
         var prop = PocoUtils.GetByExpression((SetterTestStruct o) => o.StringProperty);
 
-        PAssert.That(() => prop.Getter!(obj) == null);
-        prop.Setter!(ref obj, "42");
-        PAssert.That(() => (string?)prop.Getter!(obj) == "42");
+        PAssert.That(() => prop.Getter.AssertNotNull()(obj) == null);
+        prop.Setter.AssertNotNull()(ref obj, "42");
+        PAssert.That(() => (string?)prop.Getter.AssertNotNull()(obj) == "42");
     }
 
     [Fact]
@@ -143,9 +143,9 @@ public sealed class PocoUtilsTest
         var obj = new SetterTestClass();
         var prop = PocoUtils.GetByExpression((SetterTestClass o) => o.IntProperty);
 
-        PAssert.That(() => (int?)prop.Getter!(obj) == 0);
-        prop.Setter!(ref obj, 42);
-        PAssert.That(() => (int?)prop.Getter!(obj) == 42);
+        PAssert.That(() => (int?)prop.Getter.AssertNotNull()(obj) == 0);
+        prop.Setter.AssertNotNull()(ref obj, 42);
+        PAssert.That(() => (int?)prop.Getter.AssertNotNull()(obj) == 42);
     }
 
     [Fact]
@@ -154,9 +154,9 @@ public sealed class PocoUtilsTest
         var obj = new SetterTestClass();
         var prop = PocoUtils.GetByExpression((SetterTestClass o) => o.StringProperty);
 
-        PAssert.That(() => prop.Getter!(obj) == null);
-        prop.Setter!(ref obj, "42");
-        PAssert.That(() => (string?)prop.Getter!(obj) == "42");
+        PAssert.That(() => prop.Getter.AssertNotNull()(obj) == null);
+        prop.Setter.AssertNotNull()(ref obj, "42");
+        PAssert.That(() => (string?)prop.Getter.AssertNotNull()(obj) == "42");
     }
 
     [Fact]
