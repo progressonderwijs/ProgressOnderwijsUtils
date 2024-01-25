@@ -80,7 +80,7 @@ public sealed class TreeTest
     [Fact]
     public void CustomizableGetHashCodeWorks()
     {
-        var comparer = Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase);
+        var comparer = Tree.EqualityComparer<string>(StringComparer.OrdinalIgnoreCase);
 
         var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
         var tree2 = Tree.Node("a", Tree.Node("x"), Tree.Node("B"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
@@ -91,8 +91,8 @@ public sealed class TreeTest
         PAssert.That(() => tree1.GetHashCode() == tree3.GetHashCode());
         PAssert.That(() => tree2.GetHashCode() != tree3.GetHashCode());
 
-        PAssert.That(() => comparer.GetHashCode(tree1!) == comparer.GetHashCode(tree2!));
-        PAssert.That(() => comparer.GetHashCode(tree1!) != comparer.GetHashCode(tree4!));
+        PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
+        PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
     }
 
     [Fact]
