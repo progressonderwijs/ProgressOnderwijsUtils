@@ -192,14 +192,14 @@ public static class PocoProperty
 
         public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
         {
-            var f = MkDelegate<Action<TObj, TOut>>(method);
-            return (ref TObj o, object? v) => f(o, (TOut)v!);
+            var f = MkDelegate<Action<TObj, TOut?>>(method);
+            return (ref TObj o, object? v) => f(o, (TOut?)v);
         }
 
         public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
         {
-            var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
-            return (ref TObj o, object? v) => f(ref o, (TOut)v!);
+            var f = MkDelegate<StructSetterDel<TObj, TOut?>>(method);
+            return (ref TObj o, object? v) => f(ref o, (TOut?)v);
         }
     }
 

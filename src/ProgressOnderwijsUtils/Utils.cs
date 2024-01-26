@@ -273,36 +273,22 @@ public static class Utils
                 : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
 }
 
-public sealed class ComparisonComparer<T> : IComparer<T>
+public sealed class ComparisonComparer<T>(Comparison<T?> comparer) : IComparer<T>
 {
-    readonly Comparison<T> comparer;
-
-    public ComparisonComparer(Comparison<T> comparer)
-        => this.comparer = comparer;
-
     public int Compare(T? x, T? y)
-        => comparer(x!, y!);
+        => comparer(x, y);
 }
 
-public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
+public sealed class EqualsEqualityComparer<T>(Func<T, T, bool> equals, Func<T, int>? hashCode = null) : IEqualityComparer<T>
 {
-    readonly Func<T, T, bool> equals;
-    readonly Func<T, int>? hashCode;
-
-    public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int>? hashCode = null)
-    {
-        this.equals = equals;
-        this.hashCode = hashCode;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(T? x, T? y)
-        => x == null ? y == null : y != null && equals(x, y);
+        => x is null ? y is null : y is not null && equals(x, y);
 
     public int GetHashCode(T obj)
         => hashCode != null
             ? hashCode(obj)
-            : obj != null
+            : obj is not null
                 ? obj.GetHashCode()
                 : 0;
 }

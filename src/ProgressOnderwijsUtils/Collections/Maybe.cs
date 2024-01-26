@@ -107,10 +107,12 @@ public readonly struct Maybe<TOk, TError>
     {
         switch (okOrError) {
             case Maybe_Ok<TOk> okValue:
-                (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError)! /*errorValueIfError is annotated MaybeNull*/);
+                okValueIfOk = okValue.Value;
+                errorValueIfError = default(TError);
                 return true;
             case Maybe_Error<TError> errValue:
-                (okValueIfOk, errorValueIfError) = (default(TOk)! /*okValueIfOk is annotated MaybeNull*/, errValue.Error);
+                okValueIfOk = default(TOk);
+                errorValueIfError = errValue.Error;
                 return false;
             default:
                 throw new("Maybe is neither Ok nor Error.");

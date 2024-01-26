@@ -29,11 +29,14 @@ public static class DbValueConverter
     /// - it supports casting ToDb when the passed value is <see cref="IHasValueConverter"/>.
     /// </summary>
     [Pure]
-    [return: NotNullIfNotNull("valueFromCode")]
+    [return: NotNullIfNotNull(nameof(valueFromCode))]
     public static T ToDb<T>(object? valueFromCode)
     {
         try {
-            return ToDbHelper<T>.Convert(valueFromCode)!;
+#pragma warning disable CS8603 // Possible null reference return.
+            //by construction, convert never returns null except on input null.
+            return ToDbHelper<T>.Convert(valueFromCode);
+#pragma warning restore CS8603 // Possible null reference return.
         } catch (Exception e) {
             var valTypeString = valueFromCode?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
             throw new InvalidCastException($"Cannot cast {valTypeString} to type {typeof(T).ToCSharpFriendlyTypeName()}", e);
@@ -59,11 +62,11 @@ public static class DbValueConverter
                 return ForConvertible(type, converter);
             }
             if (!type.IsValueType) {
-                return obj => (T)obj!;
+                return obj => (T?)obj;
             }
             var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
             if (nonnullableUnderlyingType == null) {
-                return obj => (T)obj!;
+                return obj => (T?)obj;
             }
 
             return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
@@ -135,7 +138,7 @@ public static class DbValueConverter
         } else if (AutomaticValueConverters.GetOrNull(val.GetType()) is { } sourceConvertible && sourceConvertible.ProviderClrType == type.GetNonNullableType()) {
             return sourceConvertible.ConvertToProvider(val);
         } else {
-            return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val, });
+            return genericCastMethod.MakeGenericMethod(type).Invoke(null, [val,]);
         }
     }
 

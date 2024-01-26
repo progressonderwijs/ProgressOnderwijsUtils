@@ -66,7 +66,7 @@ public static class PocoUtils
 
     static void AssertMemberMightMatchAProperty<TObject, TProperty>(Expression<Func<TObject, TProperty>> property, MemberInfo memberInfo, MemberExpression membExpr)
     {
-        if (!memberInfo.DeclaringType!.IsAssignableFrom(typeof(TObject))) {
+        if (memberInfo.DeclaringType is null || !memberInfo.DeclaringType.IsAssignableFrom(typeof(TObject))) {
             throw new ArgumentException(
                 "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n"
                 + $"Actual input: {ExpressionToCode.ToCode(property)}\n(The type of {ExpressionToCode.ToCode(membExpr.Expression.AssertNotNull())} should be {typeof(TObject).ToCSharpFriendlyTypeName()} or a base type.)"
@@ -83,12 +83,12 @@ public static class PocoUtils
 
     [Pure]
     static Expression UnwrapCast(Expression bodyExpr)
-        => bodyExpr is UnaryExpression { NodeType: ExpressionType.Convert } unaryExpression ? unaryExpression.Operand : bodyExpr;
+        => bodyExpr is UnaryExpression { NodeType: ExpressionType.Convert, } unaryExpression ? unaryExpression.Operand : bodyExpr;
 
     [Pure]
     public static IPocoProperties<IPocoProperty> GetProperties(Type t)
         => memoizedGetProperties(t);
 
     static readonly MethodInfo genericMethodInfo_GetProperties = Utils.F(GetProperties<object>).Method.GetGenericMethodDefinition();
-    static readonly Func<Type, IPocoProperties<IPocoProperty>> memoizedGetProperties = Utils.F((Type t) => (IPocoProperties<IPocoProperty>)genericMethodInfo_GetProperties.MakeGenericMethod(t).Invoke(null, null)!).ThreadSafeMemoize();
+    static readonly Func<Type, IPocoProperties<IPocoProperty>> memoizedGetProperties = Utils.F((Type t) => (IPocoProperties<IPocoProperty>)genericMethodInfo_GetProperties.MakeGenericMethod(t).Invoke(null, null).AssertNotNull()).ThreadSafeMemoize();
 }

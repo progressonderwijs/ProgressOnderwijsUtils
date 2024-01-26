@@ -1,20 +1,21 @@
 using System.Linq.Expressions;
 
+//Intentionally violate nullability assumptions so we can test this:
 #pragma warning disable CS8625
-
+// ReSharper disable NullableWarningSuppressionIsUsed
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class NonNullableNullabilityCheck
 {
-    readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, new object[] { null, });
+    readonly NullablityTestPropertyClass containingAllNullPropertyClass = new(null!, null, null!, null!, null, [null,]);
 
     readonly NullablityTestClass OneContainingNull = new() {
         SomeNullString = null, //non nullable
         Name = null,
         SomeObject = new(),
         SomeNullableObject = null,
-        SomeObjectArray = new object[] { },
-        SomeFilledObjectArray = new object[] { },
+        SomeObjectArray = [new(),],
+        SomeFilledObjectArray = [new(),],
     };
 
     readonly NullablityTestClass AllContainingNull = new();
@@ -25,8 +26,8 @@ public sealed class NonNullableNullabilityCheck
         Name = null,
         SomeObject = new(),
         SomeNullableObject = null,
-        SomeObjectArray = new object[] { },
-        SomeFilledObjectArray = new object[] { },
+        SomeObjectArray = [new(),],
+        SomeFilledObjectArray = [new(),],
     };
 
     readonly NullabilityTestSubClass ContainingAllNullSubClass = new();
@@ -66,42 +67,42 @@ public sealed class NonNullableNullabilityCheck
         => ValidateExpectedNullabilityErrors(AllContainingNull_struct, o => o.SomeNullString, o => o.SomeObject, o => o.SomeObjectArray);
 }
 
+[UsedImplicitlyBySerialization]
 public sealed class NullablityTestClass
 {
-    //Intentionally violate nullability assumptions so we can test this:
     public string SomeNullString = null!;
     public string? Name = "Everything null";
     public object SomeObject = null!;
     public object? SomeNullableObject;
     public object[] SomeObjectArray = null!;
-    public object[] SomeFilledObjectArray = { null!, };
+    public object[] SomeFilledObjectArray = [null!,];
 
     public override string? ToString()
         => Name;
 }
 
+[UsedImplicitlyBySerialization]
 public sealed class NullablityTestStruct
 {
-    //Intentionally violate nullability assumptions so we can test this:
     public string SomeNullString = null!;
     public string? Name;
     public object SomeObject = null!;
     public object? SomeNullableObject;
     public object[] SomeObjectArray { get; set; } = null!;
-    public object[] SomeFilledObjectArray = { null!, };
+    public object[] SomeFilledObjectArray = [null!,];
 }
 
+[UsedImplicitlyBySerialization]
 public sealed record NullablityTestPropertyClass(string SomeNullString, string? SomeNullableField, object SomeObject, object? SomeNullableObject, object[] SomeObjectArray, object[] SomeFilledObjectArray);
 
+[UsedImplicitlyBySerialization]
 public abstract class NullablityTestBaseClass
 {
-    //Intentionally violate nullability assumptions so we can test this:
     public string SomeNullString = null!;
-    public string? SomeNullableField = null;
     public object SomeObject = null!;
-    public object? SomeNullableObject = null;
+    public object? SomeNullableObject;
     public object[] SomeObjectArray = null!;
-    public object[] SomeFilledObjectArray = { null!, };
+    public object[] SomeFilledObjectArray = [null!,];
 }
 
 public sealed class NullabilityTestSubClass : NullablityTestBaseClass { }

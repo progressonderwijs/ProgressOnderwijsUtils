@@ -84,7 +84,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     [Fact]
     public void CascadedDeleteWorksWithIdentityKey()
     {
-        DataTable PksToDelete(string name, params int[] pks)
+        static DataTable PksToDelete(string name, params int[] pks)
         {
             var table = new DataTable();
             _ = table.Columns.Add(name, typeof(int));
@@ -150,8 +150,8 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         var finalTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Connection);
         PAssert.That(() => finalTLeafKeys.SetEqual(new[] { 3, 4, }));
 
-        var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray();
-        PAssert.That(() => rowsFromT1.Single().DeletedRows!.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5, }));
+        var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray().Single().DeletedRows.AssertNotNull().Rows.Cast<DataRow>();
+        PAssert.That(() => rowsFromT1.Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5, }));
     }
 
     [Fact]

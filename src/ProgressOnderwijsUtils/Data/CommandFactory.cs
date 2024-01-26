@@ -55,12 +55,7 @@ struct CommandFactory : ICommandFactory
     static readonly ArrayPool<SqlParamArgs> sqlParamsArgsPool = ArrayPool<SqlParamArgs>.Shared;
 
     static Dictionary<object, string> GetLookup()
-    {
-        if (nameLookupBag.TryDequeue(out var lookup)) {
-            return lookup;
-        }
-        return new(8);
-    }
+        => nameLookupBag.TryDequeue(out var lookup) ? lookup : new(8);
 
     MutableShortStringBuilder queryText;
     SqlParamArgs[] paramObjs;
@@ -111,10 +106,14 @@ struct CommandFactory : ICommandFactory
     {
         Array.Clear(paramObjs, 0, paramCount);
         sqlParamsArgsPool.Return(paramObjs);
-        paramObjs = null!;
         lookup.Clear();
         nameLookupBag.Enqueue(lookup);
+        // ReSharper disable NullableWarningSuppressionIsUsed
+        //intentionally corrupt object state: this has been disposed; and reuse now is a critical bug.
+        //To ensure things fail fast, leave this behind in an invalid state.
+        paramObjs = null!;
         lookup = null!;
+        // ReSharper restore NullableWarningSuppressionIsUsed
     }
 
     const int ParameterNameCacheSize = 100;
@@ -207,10 +206,10 @@ struct EqualityKeyCommandFactory : ICommandFactory
     }
 }
 
-struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
+readonly struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
 {
-    public string? SqlTextKey;
-    public object[]? Params;
+    public required string SqlTextKey { get; init; }
+    public required object[] Params { get; init; }
 
     public bool Equals(ParameterizedSqlEquatableKey other)
         => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
@@ -219,5 +218,5 @@ struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
         => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
     public override int GetHashCode()
-        => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params!);
+        => SqlTextKey.GetHashCode() + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
 }

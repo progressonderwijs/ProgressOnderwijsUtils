@@ -1,32 +1,12 @@
 namespace ProgressOnderwijsUtils.Html;
 
-public struct HtmlAttribute : IEquatable<HtmlAttribute>
+public record struct HtmlAttribute(string Name, string Value)
 {
-    public string Name, Value;
-
-    public HtmlAttribute(string name, string value)
-    {
-        Name = name;
-        Value = value;
-    }
+    public string Name = Name;
+    public string Value = Value;
 
     public override string ToString()
         => $"{Name}={Value}";
-
-    public bool Equals(HtmlAttribute other)
-        => Name == other.Name && Value == other.Value;
-
-    public override bool Equals(object? obj)
-        => obj is HtmlAttribute other && Equals(other);
-
-    public override int GetHashCode()
-        => HashCode.Combine(Name, Value);
-
-    public static bool operator ==(HtmlAttribute a, HtmlAttribute b)
-        => a.Equals(b);
-
-    public static bool operator !=(HtmlAttribute a, HtmlAttribute b)
-        => !(a == b);
 }
 
 public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
@@ -42,7 +22,9 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     public int Count { get; }
 
     public HtmlAttribute this[int i]
-        => attributes![i]; //only null if default, but then count is null... so this *should* crash.
+        // ReSharper disable once NullableWarningSuppressionIsUsed
+        //only null if default, but then count is null... so this *should* crash.
+        => attributes![i];
 
     public string? this[string attrName]
     {
@@ -126,7 +108,13 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         var array = attributes;
         if (array != null) {
-            if (Count < array.Length && Interlocked.CompareExchange(ref array[Count].Name, name, null! /*null is placeholder*/) == null!) {
+            if (Count < array.Length
+                // ReSharper disable NullableWarningSuppressionIsUsed
+                // when growing the array of structs, semantically non-nullable field "Name" is null.
+                // this is the indication that the array member is still uninitialized.
+                && Interlocked.CompareExchange(ref array[Count].Name, name, null! /*null is placeholder*/) == null!
+                // ReSharper restore NullableWarningSuppressionIsUsed
+            ) {
                 array[Count].Value = val;
                 return new(array, Count + 1);
             } else {
@@ -153,18 +141,11 @@ public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     public Enumerator GetEnumerator()
         => new(this);
 
-    public struct Enumerator : IEnumerator<HtmlAttribute>
+    public struct Enumerator(HtmlAttributes attrs) : IEnumerator<HtmlAttribute>
     {
-        readonly HtmlAttribute[] attributes;
-        readonly int count;
-        int pos;
-
-        public Enumerator(HtmlAttributes attrs)
-        {
-            attributes = attrs.attributes!;
-            count = attrs.Count;
-            pos = -1;
-        }
+        readonly HtmlAttribute[] attributes = attrs.attributes ?? [];
+        readonly int count = attrs.Count;
+        int pos = -1;
 
         public HtmlAttribute Current
             => attributes[pos];

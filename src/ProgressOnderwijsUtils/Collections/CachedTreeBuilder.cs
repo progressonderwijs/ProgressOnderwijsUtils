@@ -4,13 +4,10 @@ static class CachedTreeBuilder<TInput, TNodeValue>
 {
     sealed class TreeNodeBuilder
     {
-        public readonly TInput value;
+        public required TInput value;
         public TreeNodeBuilder? parent;
         public int idxInParent;
-        public Tree<TNodeValue>[]? kids;
-
-        public TreeNodeBuilder(TInput value)
-            => this.value = value;
+        public Tree<TNodeValue>[] kids = [];
     }
 
     [Pure]
@@ -19,7 +16,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
         var needsKids = new Stack<TreeNodeBuilder>();
 
         var generatedNodes = 0;
-        var rootBuilder = new TreeNodeBuilder(rootNodeValue);
+        var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
         generatedNodes++;
 
         needsKids.Push(rootBuilder);
@@ -30,7 +27,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
             if (kids != null) { //allow null to represent absence of kids
                 var kidIdx = 0;
                 foreach (var kid in kids) {
-                    var builderForKid = new TreeNodeBuilder(kid) { idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids, };
+                    var builderForKid = new TreeNodeBuilder { value = kid, idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids, };
                     generatedNodes++;
 
                     if (generatedNodes >= 10_000_000) {
@@ -46,23 +43,20 @@ static class CachedTreeBuilder<TInput, TNodeValue>
 
             var toGenerate = nodeBuilderThatWantsKids;
             while (true) {
-                var finishedNode = map(toGenerate.value, toGenerate.kids ?? EmptyKids());
-                if (toGenerate.idxInParent == 0) {
-                    if (toGenerate.parent == null) {
-                        return finishedNode;
-                    }
-                    Debug.Assert(toGenerate.parent.kids?[toGenerate.idxInParent] == null, "has already been generated");
-                    toGenerate.parent.kids![toGenerate.idxInParent] = finishedNode;
-                    toGenerate = toGenerate.parent;
+                var finishedNode = map(toGenerate.value, toGenerate.kids);
+                var parent = toGenerate.parent;
+                if (parent == null) {
+                    return finishedNode;
+                } else if (toGenerate.idxInParent == 0) {
+                    Debug.Assert(parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                    parent.kids[toGenerate.idxInParent] = finishedNode;
+                    toGenerate = parent;
                 } else {
-                    Debug.Assert(toGenerate.parent?.kids?[toGenerate.idxInParent] == null, "has already been generated");
-                    toGenerate.parent!.kids![toGenerate.idxInParent] = finishedNode;
+                    Debug.Assert(parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                    parent.kids[toGenerate.idxInParent] = finishedNode;
                     break;
                 }
             }
         }
     }
-
-    static Tree<TNodeValue>[] EmptyKids()
-        => Array.Empty<Tree<TNodeValue>>();
 }

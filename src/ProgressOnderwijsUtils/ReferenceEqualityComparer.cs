@@ -10,7 +10,7 @@ public sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T>, IEquali
         => ReferenceEquals(one, other);
 
     public int GetHashCode(T? obj)
-        => RuntimeHelpers.GetHashCode(obj! /*not really non-nullable; parameter is incorrectly labelled as not null*/);
+        => RuntimeHelpers.GetHashCode(obj);
 
     bool IEqualityComparer.Equals(object? x, object? y)
         => ReferenceEquals(x, y);

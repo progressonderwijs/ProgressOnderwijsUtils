@@ -27,16 +27,14 @@ public static class ParameterizedSqlExtensions
         var builder = new ArrayBuilder<ISqlComponent>();
         var isBuilderEmpty = true;
         foreach (var expr in sqlExpressions) {
-            if (expr.IsEmpty) {
-                continue;
+            if (expr is { impl: not null, IsEmpty: false, }) {
+                if (isBuilderEmpty) {
+                    isBuilderEmpty = false;
+                } else if (separator is { impl: not null, IsEmpty: false, }) {
+                    builder.Add(separator.impl);
+                }
+                builder.Add(expr.impl);
             }
-
-            if (isBuilderEmpty) {
-                isBuilderEmpty = false;
-            } else if (!separator.IsEmpty) {
-                builder.Add(separator.impl!);
-            }
-            builder.Add(expr.impl!);
         }
         return new SeveralSqlFragments(builder.ToArray()).BuildableToQuery();
     }

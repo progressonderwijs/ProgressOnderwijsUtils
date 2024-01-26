@@ -1,13 +1,15 @@
 namespace ProgressOnderwijsUtilsBenchmarks;
 
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class TreeBenchmark
 {
     [Params(3, 33, 400)]
+    // ReSharper disable once UnassignedField.Global
     public int MaxSize;
 
     public int iters;
-    Tree<int> tree = null!;
+    Tree<int> tree = Tree.Node(0);
 
     [GlobalSetup]
     public void Setup()

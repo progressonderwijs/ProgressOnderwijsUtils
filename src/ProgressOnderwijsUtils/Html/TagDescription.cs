@@ -15,7 +15,7 @@ struct TagDescription
     static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
         typeof(Tags).GetTypeInfo()
             .GetFields(BindingFlags.Static | BindingFlags.Public)
-            .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)!, })
+            .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null).AssertNotNull(), })
             .ToDictionary(
                 field => field.FieldValue.TagName.AssertNotNull(),
                 field => new TagDescription {
@@ -43,7 +43,7 @@ struct TagDescription
                 }
             )
             .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", })!).Attributes[^1].Name,
+                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", }).AssertNotNull()).Attributes[^1].Name,
                 method => method.Name,
                 StringComparer.OrdinalIgnoreCase
             );

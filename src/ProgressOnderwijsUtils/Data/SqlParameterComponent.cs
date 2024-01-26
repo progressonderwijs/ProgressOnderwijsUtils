@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
                 }
                 var literalSqlByEnumValue = new Dictionary<long, string>();
                 foreach (var v in enumValues) {
-                    var valueAsLong = ((IConvertible)v!).ToInt64(null);
+                    var valueAsLong = ((IConvertible)v).ToInt64(null);
                     literalSqlByEnumValue.Add(valueAsLong, $"{valueAsLong.ToStringInvariant()}/*{ObjectToCode.PlainObjectToCode(v)}*/");
                 }
                 return literalSqlByEnumValue;

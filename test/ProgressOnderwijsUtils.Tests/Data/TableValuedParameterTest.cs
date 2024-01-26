@@ -19,7 +19,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     public void ConvertibleNullablePropertyWitValue()
     {
         var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
-        PAssert.That(() => value!.Value.Value == "aap");
+        PAssert.That(() => value.AssertNotNull().Value == "aap");
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     {
         var nullStringReturningQuery = SQL($@"select cast(null as nvarchar(max))");
 
-        var unused = nullStringReturningQuery.ReadScalar<string>(Connection); //assert query OK.
+        _ = nullStringReturningQuery.ReadScalar<string>(Connection);
 
         _ = Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialValue<string>>(Connection));
     }

@@ -138,18 +138,18 @@ public static class ParameterizedSqlObjectMapper
 
     static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
         new() {
-            { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
-            { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding)! },
-            { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding)! },
-            { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding)! },
-            { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding)! },
-            { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding)! },
-            { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding)! },
-            { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding)! },
-            { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding)! },
-            { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding)! },
-            { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding)! },
-            { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding)! },
+            { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding).AssertNotNull() },
+            { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding).AssertNotNull() },
+            { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding).AssertNotNull() },
+            { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding).AssertNotNull() },
+            { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding).AssertNotNull() },
+            { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding).AssertNotNull() },
+            { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding).AssertNotNull() },
+            { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding).AssertNotNull() },
+            { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding).AssertNotNull() },
+            { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding).AssertNotNull() },
+            { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding).AssertNotNull() },
+            { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding).AssertNotNull() },
         };
 
     static Dictionary<MethodInfo, MethodInfo> MakeMap(params InterfaceMapping[] mappings)
@@ -161,7 +161,7 @@ public static class ParameterizedSqlObjectMapper
 
     static byte[] GetBytes(this IDataRecord row, int colIndex)
     {
-        var byteCount = row.GetBytes(colIndex, 0L, null!, 0, 0);
+        var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
         if (byteCount > int.MaxValue) {
             throw new NotSupportedException("Array too large!");
         }
@@ -175,7 +175,7 @@ public static class ParameterizedSqlObjectMapper
 
     static char[] GetChars(this IDataRecord row, int colIndex)
     {
-        var charCount = row.GetChars(colIndex, 0L, null!, 0, 0);
+        var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
         if (charCount > int.MaxValue) {
             throw new NotSupportedException("Array too large!");
         }
@@ -233,8 +233,8 @@ public static class ParameterizedSqlObjectMapper
         return uint32val;
     }
 
-    static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
-    static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
+    static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding).AssertNotNull();
+    static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding).AssertNotNull();
     static readonly MethodInfo getUInt64 = ((Func<IDataRecord, int, ulong>)ReadUInt64).Method;
     static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
     static readonly MethodInfo getBytes = ((Func<IDataRecord, int, byte[]>)GetBytes).Method;
@@ -244,7 +244,7 @@ public static class ParameterizedSqlObjectMapper
         where TReader : IDataReader
     {
         static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)));
-        static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
+        static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding).AssertNotNull()];
         static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
         static bool IsSupportedType(Type type)
@@ -460,7 +460,7 @@ public static class ParameterizedSqlObjectMapper
                         && memberTuple is var (property, propType)
                         && propType == parameter.ParameterType
                         && IsSupportedType(parameter.ParameterType)
-                       ) {
+                    ) {
                         if (propertyFlags.TryGetValue(property, out var mapping) && mapping.ViaConstructor) {
                             propsWithoutSetterWithoutConstructorArg--;
                         }

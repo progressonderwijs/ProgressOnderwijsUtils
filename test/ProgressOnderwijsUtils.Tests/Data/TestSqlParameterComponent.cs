@@ -5,7 +5,7 @@ public sealed class TestSqlParameterComponent : TransactedLocalConnection
     [Fact]
     public void ValidatesArgumentsOK()
     {
-        // ReSharper disable once AssignNullToNotNullAttribute
+        // ReSharper disable once NullableWarningSuppressionIsUsed
         _ = Assert.Throws<ArgumentNullException>(() => ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
 
         PAssert.That(() => ParameterizedSql.RawSql_PotentialForSqlInjection("bla" + 0).GetHashCode() == ParameterizedSql.RawSql_PotentialForSqlInjection("bla0").GetHashCode());
