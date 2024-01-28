@@ -92,7 +92,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
                         sortedSubSet = sortedSubSet[1..];
                         subValue = sortedSubSet[0];
                     } else {
-                        return true; //found the last subValue in sortedSuperSet; sortedSubSet is a true subset of sortedSuperSet; 
+                        return true; //found the last subValue in sortedSuperSet; sortedSubSet is a true subset of sortedSuperSet;
                     }
                 } else {
                     return false; //i.e. subValue < supValue, and since all further elements of sortedSuperSet are even greater, subValue cannot exist in sortedSuperSet: subset isn't a subset of superset.

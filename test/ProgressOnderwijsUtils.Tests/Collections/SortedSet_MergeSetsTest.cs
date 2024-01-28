@@ -96,14 +96,14 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void Exhaustive5bitTwoWayMergeCheck()
     {
-        PAssert.That(() => ToOrderedSetOfBits((1<<1) + (1<<2) + (1<<4) + (1<<7)).SequenceEqual(new[] { 1, 2, 4, 7, }));
+        PAssert.That(() => ToOrderedSetOfBits((1 << 1) + (1 << 2) + (1 << 4) + (1 << 7)).SequenceEqual(new[] { 1, 2, 4, 7, }));
         var sets = Enumerable.Range(0, 32).Select(num => new { num, setOfBits = ToOrderedSetOfBits(num), }).ToArray();
 
         foreach (var a in sets) {
             foreach (var b in sets) {
                 var expected = sets[a.num | b.num].setOfBits;
-                var setA = a.setOfBits; 
-                var setB = b.setOfBits; 
+                var setA = a.setOfBits;
+                var setB = b.setOfBits;
                 PAssert.That(() => IntSet.Algorithms.Merge_RemovingDuplicates(setA, setB).SequenceEqual(expected));
             }
         }
