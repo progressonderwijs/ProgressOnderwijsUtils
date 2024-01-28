@@ -53,37 +53,28 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
 
     [Pure]
     public bool IsSubsetOf(SortedSet<T, TOrder> potentialSuperset)
-    {
-        ReadOnlySpan<T> sortedSuperSet = potentialSuperset.sortedDistinctValues;
-        ReadOnlySpan<T> sortedSubSet = sortedDistinctValues;
+        => IsSubset_OfLargeSuperset_Recursive(sortedDistinctValues, potentialSuperset.sortedDistinctValues);
 
-        if (sortedSuperSet.Length < sortedSubSet.Length) {
-            return false;
-        } else if (sortedSuperSet.Length < sortedSubSet.Length * 10 + 10) {
+    static bool IsSubset_OfLargeSuperset_Recursive(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet)
+    {
+        if (sortedSubSet.Length == 0) {
+            return true;
+        }
+        if ((sortedSuperSet.Length >> 1) - 9 <= sortedSubSet.Length) {
             return IsSubset_Scan(sortedSubSet, sortedSuperSet);
-        } else {
-            return IsSubset_OfLargeSuperset(sortedSubSet, sortedSuperSet);
         }
-    }
-
-    static bool IsSubset_OfLargeSuperset(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet)
-    {
-        foreach (var value in sortedSubSet) {
-            var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedSuperSet, value);
-            if (idxAfterLastLtNode < sortedSuperSet.Length && !Ordering.LessThan(value, sortedSuperSet[idxAfterLastLtNode])) {
-                sortedSuperSet = sortedSuperSet[(idxAfterLastLtNode + 1)..];
-            } else {
-                return false;
-            }
+        var midIdx = sortedSubSet.Length >> 1;
+        var value = sortedSubSet[midIdx];
+        var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedSuperSet, value);
+        if (idxAfterLastLtNode >= sortedSuperSet.Length || Ordering.LessThan(value, sortedSuperSet[idxAfterLastLtNode])) {
+            return false;
         }
-        return true;
+        return IsSubset_OfLargeSuperset_Recursive(sortedSubSet[..midIdx], sortedSuperSet[..idxAfterLastLtNode])
+            && IsSubset_OfLargeSuperset_Recursive(sortedSubSet[(midIdx + 1)..], sortedSuperSet[(idxAfterLastLtNode + 1)..]);
     }
 
     static bool IsSubset_Scan(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet)
     {
-        if (sortedSubSet.Length <= 0) {
-            return true;
-        }
         var subValue = sortedSubSet[0];
         foreach (var supValue in sortedSuperSet) {
             if (!Ordering.LessThan(supValue, subValue)) {
