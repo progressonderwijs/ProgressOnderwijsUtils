@@ -66,29 +66,11 @@ public sealed class SortedSetTest
     }
 
     [Fact]
-    public void IsSubSet_smallSets()
+    public void IsSubSet_manyTests()
     {
         for (var size = 0; size < 100; size++) {
-            for (var largerSize = size; largerSize < size * 10 + 10; largerSize += 1 + (largerSize >> 2)) {
+            for (var largerSize = size; largerSize < size * 20 + 100; largerSize += 1 + (largerSize >> 2)) {
                 var r = new Random(42 + 13 * size + 37 * largerSize);
-                var largeSetValues = Enumerable.Range(0, largerSize).Select(_ => r.Next(100_000) * 2).ToArray();
-                var smallContainedSet = IntSet.FromValues(largeSetValues[..size]);
-                var smallNonContainedSet = IntSet.FromValues(largeSetValues[..size].Append(r.Next(100_000) * 2 + 1));
-                var largeSet = IntSet.FromValues(largeSetValues);
-
-                PAssert.That(() => smallContainedSet.IsSubsetOf(largeSet));
-                PAssert.That(() => !smallNonContainedSet.IsSubsetOf(largeSet));
-                PAssert.That(() => smallContainedSet.IsSubsetOf(smallNonContainedSet));
-            }
-        }
-    }
-
-    [Fact]
-    public void IsSubSet_largeSets()
-    {
-        for (var size = 0; size < 100; size++) {
-            for (var largerSize = size * 10 + 10; largerSize < size * 30 + 30; largerSize += 1 + (largerSize >> 1)) {
-                var r = new Random(37 + 11 * size + 31 * largerSize);
                 var largeSetValues = Enumerable.Range(0, largerSize).Select(_ => r.Next(100_000) * 2).ToArray();
                 var smallContainedSet = IntSet.FromValues(largeSetValues[..size]);
                 var smallNonContainedSet = IntSet.FromValues(largeSetValues[..size].Append(r.Next(100_000) * 2 + 1));
