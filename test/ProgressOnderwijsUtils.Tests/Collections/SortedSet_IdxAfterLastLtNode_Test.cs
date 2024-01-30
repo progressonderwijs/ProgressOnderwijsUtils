@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections;
 public sealed class SortedSet_IdxAfterLastLtNode_Test
 {
     static int IdxAfterLastLtNode(int[] sortedArray, int needle) //Just to make this test read a little nicer.
-        => SortedSet<int, IntOrdering>.BinarySearchAlgorithm.IdxAfterLastLtNode(sortedArray, needle);
+        => SortedSet<int, IntOrdering>.Algorithms.IdxAfterLastLtNode(sortedArray, needle);
 
     [Fact]
     public void IndexIs0ForEmptyArray()

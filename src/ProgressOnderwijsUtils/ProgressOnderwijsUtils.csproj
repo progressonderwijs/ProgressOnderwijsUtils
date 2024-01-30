@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>100.2.0</Version>
-    <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
+    <Version>100.3.0</Version>
+    <PackageReleaseNotes>Add IsSubsetOf and MergeWith to SortedSet</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
