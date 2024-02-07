@@ -1,9 +1,9 @@
 namespace ProgressOnderwijsUtils.Tests.Collections;
 
-public sealed class SortedSet_IdxAfterLastLtNode_Test
+public sealed class SortedArraySet_IdxAfterLastLtNode_Test
 {
     static int IdxAfterLastLtNode(int[] sortedArray, int needle) //Just to make this test read a little nicer.
-        => SortedSet<int, IntOrdering>.Algorithms.IdxAfterLastLtNode(sortedArray, needle);
+        => SortedArraySet<int>.Algorithms.IdxAfterLastLtNode(sortedArray, needle, Comparer<int>.Default);
 
     [Fact]
     public void IndexIs0ForEmptyArray()

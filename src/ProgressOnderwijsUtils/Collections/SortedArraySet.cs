@@ -1,84 +1,107 @@
 namespace ProgressOnderwijsUtils.Collections;
 
-public interface IOrdering<in T>
+public static class SortedArraySet
 {
-    bool LessThan(T a, T b);
-}
+    public static SortedArraySet<T> MergeSets<T>(this IEnumerable<SortedArraySet<T>> inputSets)
+        => SortedArraySet<T>.Algorithms.MergeSets(inputSets);
 
-public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, IReadOnlyList<T>
-    where TOrder : struct, IOrdering<T>
-{
-    readonly T[]? sortedDistinctValues;
-    static readonly T[] empty = [];
+    public static bool LessThan<T>(this IComparer<T> comparer, T a, T b)
+        => comparer.Compare(a, b) < 0;
 
-    static TOrder Ordering
-        => new();
+    public static SortedArraySet<T> Empty<T>()
+        => FromSortedValues([], Comparer<T>.Default);
 
-    SortedSet(T[] sortedDistinctValues)
-        => this.sortedDistinctValues = sortedDistinctValues;
+    public static SortedArraySet<T> Empty<T>(IComparer<T> comparer)
+        => FromSortedValues([], comparer);
 
-    public static SortedSet<T, TOrder> Empty
-        => new([]);
+    static SortedArraySet<T> FromSortedValues<T>(T[] comparables, IComparer<T> comparer)
+        => new(comparables, comparer);
 
-    public static SortedSet<T, TOrder> FromValues(IEnumerable<T> values)
-        => FromValues(values as T[] ?? values.ToArray());
+    public static SortedArraySet<T> FromValues<T>(IEnumerable<T> values)
+        => FromValues(values, Comparer<T>.Default);
 
-    public static SortedSet<T, TOrder> FromValues(T[] values)
+    public static SortedArraySet<T> FromValues<T>(IEnumerable<T> values, IComparer<T> comparer)
+        => FromValues(values as T[] ?? values.ToArray(), comparer);
+
+    public static SortedArraySet<T> FromValues<T>(T[] values)
+        => FromValues(values, Comparer<T>.Default);
+
+    public static SortedArraySet<T> FromValues<T>(T[] values, IComparer<T> comparer)
     {
         for (var i = 1; i < values.Length; i++) {
-            if (!Ordering.LessThan(values[i - 1], values[i])) {
-                return FromMutableUnsortedTmpArray(values.ToArray());
+            if (!comparer.LessThan(values[i - 1], values[i])) {
+                return FromMutableUnsortedTmpArray(values.ToArray(), comparer);
             }
         }
-        return new(values);
+        return FromSortedValues(values, comparer);
     }
 
-    static SortedSet<T, TOrder> FromMutableUnsortedTmpArray(T[] privateMutableArray)
+    internal static SortedArraySet<T> FromMutableUnsortedTmpArray<T>(T[] privateMutableArray, IComparer<T> comparer)
     {
-        Array.Sort(privateMutableArray, 0, privateMutableArray.Length);
-        var newLength = Algorithms.CountAndMoveDistinctValuesToFront(privateMutableArray, privateMutableArray.Length);
+        privateMutableArray.AsSpan().Sort(comparer);
+        var newLength = SortedArraySet<T>.Algorithms.CountAndMoveDistinctValuesToFront(privateMutableArray, comparer);
         Array.Resize(ref privateMutableArray, newLength);
-        return new(privateMutableArray);
+        return FromSortedValues(privateMutableArray, comparer);
     }
+}
+
+public readonly struct SortedArraySet<T> : IEquatable<SortedArraySet<T>>, IReadOnlyList<T>
+{
+    public SortedArraySet() { 
+        comparer = Comparer<T>.Default;
+        sortedDistinctValues = [];
+    }
+    internal SortedArraySet(T[] sortedDistinctValues, IComparer<T> comparer)
+    {
+        this.sortedDistinctValues = sortedDistinctValues;
+        this.comparer = comparer;
+    }
+
+    readonly IComparer<T> comparer;
+    readonly T[] sortedDistinctValues;
 
     public T[] ValuesInOrder
-        => sortedDistinctValues ?? empty;
+        => sortedDistinctValues;
 
     [Pure]
     public bool Contains(T value)
         => sortedDistinctValues is not null
-            && Algorithms.IdxAfterLastLtNode(sortedDistinctValues, value) is var idxAfterLastLtNode
+            && Algorithms.IdxAfterLastLtNode(sortedDistinctValues, value, comparer) is var idxAfterLastLtNode
             && idxAfterLastLtNode < sortedDistinctValues.Length
-            && !Ordering.LessThan(value, sortedDistinctValues[idxAfterLastLtNode]);
+            && !comparer.LessThan(value, sortedDistinctValues[idxAfterLastLtNode]);
 
     [Pure]
-    public bool IsSubsetOf(SortedSet<T, TOrder> potentialSuperset)
-        => IsSubset_OfLargeSuperset_Recursive(sortedDistinctValues, potentialSuperset.sortedDistinctValues);
+    public bool IsSubsetOf(SortedArraySet<T> potentialSuperset)
+        => IsSubset_OfLargeSuperset_Recursive(sortedDistinctValues, potentialSuperset.sortedDistinctValues, comparer);
 
-    static bool IsSubset_OfLargeSuperset_Recursive(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet)
+    public static SortedArraySet<T> Create(ReadOnlySpan<T> content) 
+        => SortedArraySet.FromMutableUnsortedTmpArray(content.ToArray(), Comparer<T>.Default);
+
+    static bool IsSubset_OfLargeSuperset_Recursive(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet, IComparer<T> comparer)
     {
         if (sortedSubSet.Length == 0) {
             return true;
         }
         if ((sortedSuperSet.Length >> 1) - 9 <= sortedSubSet.Length) {
-            return IsSubset_Scan(sortedSubSet, sortedSuperSet);
+            return IsSubset_Scan(sortedSubSet, sortedSuperSet, comparer);
         }
         var midIdx = sortedSubSet.Length >> 1;
         var value = sortedSubSet[midIdx];
-        var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedSuperSet, value);
-        if (idxAfterLastLtNode >= sortedSuperSet.Length || Ordering.LessThan(value, sortedSuperSet[idxAfterLastLtNode])) {
+        var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedSuperSet, value, comparer);
+        if (idxAfterLastLtNode >= sortedSuperSet.Length || comparer.LessThan(value, sortedSuperSet[idxAfterLastLtNode])) {
             return false;
         }
-        return IsSubset_OfLargeSuperset_Recursive(sortedSubSet[..midIdx], sortedSuperSet[..idxAfterLastLtNode])
-            && IsSubset_OfLargeSuperset_Recursive(sortedSubSet[(midIdx + 1)..], sortedSuperSet[(idxAfterLastLtNode + 1)..]);
+        return IsSubset_OfLargeSuperset_Recursive(sortedSubSet[..midIdx], sortedSuperSet[..idxAfterLastLtNode], comparer)
+            && IsSubset_OfLargeSuperset_Recursive(sortedSubSet[(midIdx + 1)..], sortedSuperSet[(idxAfterLastLtNode + 1)..], comparer);
     }
 
-    static bool IsSubset_Scan(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet)
+    static bool IsSubset_Scan(ReadOnlySpan<T> sortedSubSet, ReadOnlySpan<T> sortedSuperSet, IComparer<T> comparer)
     {
         var subValue = sortedSubSet[0];
         foreach (var supValue in sortedSuperSet) {
-            if (!Ordering.LessThan(supValue, subValue)) {
-                if (!Ordering.LessThan(subValue, supValue)) {
+            var compare = comparer.Compare(supValue, subValue);
+            if (compare >= 0) {
+                if (compare == 0) {
                     if (sortedSubSet.Length > 1) {
                         sortedSubSet = sortedSubSet[1..];
                         subValue = sortedSubSet[0];
@@ -95,24 +118,24 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
 
     public static class Algorithms
     {
-        public static int CountAndMoveDistinctValuesToFront(T[] arr, int len)
+        public static int CountAndMoveDistinctValuesToFront(Span<T> arr, IComparer<T> comparer)
         {
-            if (len < 2) {
-                return len;
+            if (arr.Length < 2) {
+                return arr.Length;
             }
             var distinctUptoIdx = 0;
             var readIdx = 1;
             do {
-                if (Ordering.LessThan(arr[distinctUptoIdx], arr[readIdx])) {
+                if (comparer.Compare(arr[distinctUptoIdx], arr[readIdx]) != 0) {
                     distinctUptoIdx++;
                     arr[distinctUptoIdx] = arr[readIdx];
                 }
                 readIdx++;
-            } while (readIdx < len);
+            } while (readIdx < arr.Length);
             return distinctUptoIdx + 1;
         }
 
-        public static int IdxAfterLastLtNode(ReadOnlySpan<T> sortedArray, T needle)
+        public static int IdxAfterLastLtNode(ReadOnlySpan<T> sortedArray, T needle, IComparer<T> comparer)
         {
             int start = 0, end = sortedArray.Length;
             //invariant: only LT nodes before start
@@ -121,7 +144,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
             while (end != start) {
                 var midpoint = end + start >> 1;
                 // start <= midpoint < end
-                if (Ordering.LessThan(sortedArray[midpoint], needle)) {
+                if (comparer.LessThan(sortedArray[midpoint], needle)) {
                     start = midpoint + 1; //i.e.  midpoint < start1 so start0 < start1
                 } else {
                     end = midpoint; //i.e end1 = midpoint so end1 < end0
@@ -130,7 +153,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
             return end;
         }
 
-        public static T[] Merge_RemovingDuplicates(T[] aInput, T[] bInput)
+        public static T[] Merge_RemovingDuplicates(T[] aInput, T[] bInput, IComparer<T> comparer)
         {
             if (aInput.Length == 0) {
                 return bInput;
@@ -144,7 +167,8 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
             var writePtr = outputArr.AsSpan();
 
             while (true) {
-                if (Ordering.LessThan(b[0], a[0])) {
+                var compare = comparer.Compare(b[0], a[0]);
+                if (compare < 0) {
                     writePtr[0] = b[0];
                     writePtr = writePtr[1..];
                     if (b.Length > 1) {
@@ -155,7 +179,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
                         break;
                     }
                 } else {
-                    if (Ordering.LessThan(a[0], b[0])) {
+                    if (compare > 0) {
                         writePtr[0] = a[0];
                         writePtr = writePtr[1..];
                     }
@@ -175,12 +199,12 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
             return outputArr;
         }
 
-        public static SortedSet<T, TOrder> MergeSets(IEnumerable<SortedSet<T, TOrder>> inputSets)
+        public static SortedArraySet<T> MergeSets(IEnumerable<SortedArraySet<T>> inputSets)
         {
-            var inputSetArray = inputSets as IReadOnlyList<SortedSet<T, TOrder>> ?? inputSets.ToArray();
+            var inputSetArray = inputSets as IReadOnlyList<SortedArraySet<T>> ?? inputSets.ToArray();
             if (inputSetArray.Count <= 2) {
                 return inputSetArray.Count switch {
-                    0 => Empty,
+                    0 => SortedArraySet.Empty<T>(),
                     1 => inputSetArray[0],
                     _ => inputSetArray[0].MergeWith(inputSetArray[1]),
                 };
@@ -196,17 +220,17 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
                 input.CopyTo(outputCursor);
                 outputCursor = outputCursor[input.Length..];
             }
-            return FromMutableUnsortedTmpArray(output);
+            return SortedArraySet.FromMutableUnsortedTmpArray(output, inputSetArray[0].comparer);
         }
     }
 
-    public bool Equals(SortedSet<T, TOrder> other)
+    public bool Equals(SortedArraySet<T> other)
     {
         if (ValuesInOrder.Length != other.ValuesInOrder.Length) {
             return false;
         }
         for (var i = 0; i < ValuesInOrder.Length; i++) {
-            if (Ordering.LessThan(ValuesInOrder[i], other.ValuesInOrder[i]) || Ordering.LessThan(other.ValuesInOrder[i], ValuesInOrder[i])) {
+            if (comparer.Compare(ValuesInOrder[i], other.ValuesInOrder[i]) != 0) {
                 return false;
             }
         }
@@ -225,13 +249,6 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
     public T this[int index]
         => ValuesInOrder[index];
 
-    public SortedSet<T, TOrder> MergeWith(SortedSet<T, TOrder> b)
-        => new(Algorithms.Merge_RemovingDuplicates(ValuesInOrder, b.ValuesInOrder));
-}
-
-public static class SortedSetHelpers
-{
-    public static SortedSet<T, TOrder> MergeSets<T, TOrder>(this IEnumerable<SortedSet<T, TOrder>> inputSets)
-        where TOrder : struct, IOrdering<T>
-        => SortedSet<T, TOrder>.Algorithms.MergeSets(inputSets);
+    public SortedArraySet<T> MergeWith(SortedArraySet<T> b)
+        => new(Algorithms.Merge_RemovingDuplicates(ValuesInOrder, b.ValuesInOrder, comparer), comparer);
 }
