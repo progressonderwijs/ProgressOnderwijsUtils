@@ -34,6 +34,6 @@ public static class DiagnosticHelper
             .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Maybe).Assembly.Location));
         var documentId = DocumentId.CreateNewId(projectId);
         solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
-        return solution.GetProject(projectId).AssertNotNull();
+        return solution.Projects.Single();
     }
 }
