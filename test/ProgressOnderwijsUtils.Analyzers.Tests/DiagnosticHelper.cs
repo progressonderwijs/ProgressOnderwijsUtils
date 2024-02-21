@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -15,8 +14,8 @@ public static class DiagnosticHelper
     {
         var project = CreateProject(source);
         var compilation = project.GetCompilationAsync().GetAwaiter().GetResult().AssertNotNull();
-        var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer));
-        return compilationWithAnalyzers.GetAllDiagnosticsAsync().GetAwaiter().GetResult().ToArray();
+        var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer,]);
+        return [.. compilationWithAnalyzers.GetAllDiagnosticsAsync().GetAwaiter().GetResult(),];
     }
 
     static Project CreateProject(string source)
