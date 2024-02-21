@@ -67,6 +67,47 @@ public sealed class RedundantAssertNotNullAnalyzerTest
         );
     }
 
+
+    
+    [Fact]
+    public async Task OnNestedField_Detected_Fixed()
+    {
+        var source = """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly (string A, int B) test = ("test", 42);
+                public static void Test()
+                    => Console.WriteLine(test.A.AssertNotNull());
+            }
+            """;
+
+        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
+        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+
+        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
+        PAssert.That(() => fixesMade == 1);
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        Assert.Equal(
+            """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly (string A, int B) test = ("test", 42);
+                public static void Test()
+                    => Console.WriteLine(test.A);
+            }
+            """,
+            result.ToString()
+        );
+    }
+
     [Fact]
     public void OnField_DifferentMethod_NotDetected()
     {
