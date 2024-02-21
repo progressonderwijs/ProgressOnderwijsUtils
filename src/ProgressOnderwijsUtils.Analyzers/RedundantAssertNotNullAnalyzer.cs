@@ -42,7 +42,7 @@ public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
                 Expression: MemberAccessExpressionSyntax memberAccess,
             }
             && memberAccess.Name.IsEquivalentTo(AssertNotNull_Name)
-            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsReferenceType: true, } type
+            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsValueType: false, } type
             && context.SemanticModel.GetSymbolInfo(memberAccess.Name, token) is {
                 Symbol: {
                     ContainingNamespace: { Name: "ProgressOnderwijsUtils", ContainingNamespace.IsGlobalNamespace: true, },
