@@ -36,7 +36,7 @@ public class RedundantAssertNotNullCodeFix : CodeFixProvider
                         return document;
                     }
                     // find the token at the additional location we reported in the analyzer
-                    var syntaxNode = root.FindToken(diagnostic.Location.SourceSpan.Start).Parent ?? throw new("syntax node not found?");
+                    var syntaxNode = root.FindToken(diagnostic.Location.SourceSpan.End - 1).Parent ?? throw new("syntax node not found?");
                     var invocationExpression = (InvocationExpressionSyntax)syntaxNode.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().First().Ancestors().First();
                     var memberAccess = (MemberAccessExpressionSyntax)invocationExpression.Expression;
                     var memberExpressionWithTrivia = memberAccess.Expression

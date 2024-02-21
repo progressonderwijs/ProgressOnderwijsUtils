@@ -67,8 +67,6 @@ public sealed class RedundantAssertNotNullAnalyzerTest
         );
     }
 
-
-    
     [Fact]
     public async Task OnNestedField_Detected_Fixed()
     {
