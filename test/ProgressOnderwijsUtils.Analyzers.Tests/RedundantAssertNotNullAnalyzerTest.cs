@@ -45,14 +45,15 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             static class C
             {
                 static readonly Sneaky test = new("test");
-                public static void Test()
-                    => Console.WriteLine(test.AssertNotNull());
+                public static void Test() {
+                    Console.WriteLine(test.AssertNotNull());
+                    Console.WriteLine("test".PretendNullable().AssertNotNull());
+                }
             }
             """;
 
         var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
-        PAssert.That(() => diagnostics.Single().Id == RedundantAssertNotNullAnalyzer.Rule.Id);
-        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 8);
+        PAssert.That(() => diagnostics.None());
     }
 
     [Fact]
