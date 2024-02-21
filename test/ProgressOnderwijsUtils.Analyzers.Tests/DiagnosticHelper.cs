@@ -11,19 +11,24 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests;
 public static class DiagnosticHelper
 {
     public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
+        => GetDiagnostics(analyzer, CreateProjectWithTestFile(source));
+
+    public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, AdhocWorkspace workspace)
     {
-        var project = CreateProject(source);
+        var project = workspace.CurrentSolution.Projects.Single();
         var compilation = project.GetCompilationAsync().GetAwaiter().GetResult().AssertNotNull();
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer,]);
         return [.. compilationWithAnalyzers.GetAllDiagnosticsAsync().GetAwaiter().GetResult(),];
     }
 
-    static Project CreateProject(string source)
+    public static AdhocWorkspace CreateProjectWithTestFile(string source)
     {
         var assemblyPath = new Uri(typeof(object).Assembly.Location).Combine("./");
 
         var projectId = ProjectId.CreateNewId();
-        var solution = new AdhocWorkspace()
+        var adhocWorkspace = new AdhocWorkspace();
+
+        var solution = adhocWorkspace
             .CurrentSolution
             .AddProject(projectId, "TestProject", "TestProject", LanguageNames.CSharp)
             .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
@@ -33,7 +38,9 @@ public static class DiagnosticHelper
             .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location))
             .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(Maybe).Assembly.Location));
         var documentId = DocumentId.CreateNewId(projectId);
-        solution = solution.AddDocument(documentId, "Test.cs", SourceText.From(source));
-        return solution.Projects.Single();
+        if (!adhocWorkspace.TryApplyChanges(solution.AddDocument(documentId, "Test.cs", SourceText.From(source)))) {
+            throw new();
+        }
+        return adhocWorkspace;
     }
 }
