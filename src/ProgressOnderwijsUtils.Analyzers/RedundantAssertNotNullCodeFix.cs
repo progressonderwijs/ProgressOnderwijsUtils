@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Analyzers;
 [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RedundantAssertNotNullCodeFix))]
 [Shared]
 // ReSharper disable once UnusedType.Global - implicitly via host reflection
-public class RedundantAssertNotNullCodeFix : CodeFixProvider
+public sealed class RedundantAssertNotNullCodeFix : CodeFixProvider
 {
     public override FixAllProvider GetFixAllProvider()
         => WellKnownFixAllProviders.BatchFixer;
