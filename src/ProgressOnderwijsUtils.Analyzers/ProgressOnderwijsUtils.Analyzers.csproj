@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
+    <Description>Add analyzer and codefix for redundant usage of AssertNotNull</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageReleaseNotes>Added (minimal) readme file</PackageReleaseNotes>
-    <Version>2.0.1</Version>
+    <Version>2.1.1</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
