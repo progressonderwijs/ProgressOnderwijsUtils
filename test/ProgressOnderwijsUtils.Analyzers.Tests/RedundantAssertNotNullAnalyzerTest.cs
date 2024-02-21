@@ -1,8 +1,5 @@
-using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using Microsoft.CodeAnalysis;
-using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests;
