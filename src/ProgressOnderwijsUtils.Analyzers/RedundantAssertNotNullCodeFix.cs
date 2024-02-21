@@ -45,9 +45,9 @@ public sealed class RedundantAssertNotNullCodeFix : CodeFixProvider
                                 memberAccess.Expression.GetTrailingTrivia(),
                                 memberAccess.OperatorToken.LeadingTrivia,
                                 memberAccess.OperatorToken.TrailingTrivia,
-                                memberAccess.Name.GetLeadingTrivia(),
-                                memberAccess.Name.GetTrailingTrivia(),
+                                memberAccess.Name.DescendantTrivia(),
                                 memberAccess.GetTrailingTrivia(),
+                                invocationExpression.ArgumentList.DescendantTrivia(),
                             }.SelectMany(x => x)
                         );
 
