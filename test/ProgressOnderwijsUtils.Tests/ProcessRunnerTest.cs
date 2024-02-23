@@ -13,47 +13,49 @@ public sealed class ProcessRunnerTest
         => this.output = output;
 
     [Fact]
-    public void CanCollectOutputErrorAndCode()
+    public async Task CanCollectOutputErrorAndCode()
     {
-        void DoTest()
+        async Task DoTest()
         {
             var result = new ProcessStartSettings {
                 ExecutableName = "xcopy",
             }.StartProcess(CancellationToken.None);
 
-            result.ExitCode.GetAwaiter().GetResult();
-
-            PAssert.That(() => result.ExitCode.GetAwaiter().GetResult() == 4);
-            PAssert.That(() => result.StdError().GetAwaiter().GetResult().SequenceEqual(new[] { "Invalid number of parameters", }));
-            PAssert.That(() => result.StdOutput().GetAwaiter().GetResult().SequenceEqual(new[] { "0 File(s) copied", }));
+            var exitCode = await result.ExitCode;
+            var stdErr = await result.StdError();
+            var stdOut = await result.StdOutput();
+            PAssert.That(() => exitCode == 4);
+            PAssert.That(() => stdErr.SequenceEqual(new[] { "Invalid number of parameters", }));
+            PAssert.That(() => stdOut.SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {
-            DoTest();
+            await DoTest();
         } catch {
             //very rarely processes are flaky outside of our control; that's out of scope for this test.
-            DoTest();
+            await DoTest();
         }
     }
 
     [Fact(Timeout = 5000)]
-    public void CanCollectOutputAfterUsingWriteToConsoleWithPrefix()
+    public async Task CanCollectOutputAfterUsingWriteToConsoleWithPrefix()
     {
-        void DoTest()
+        async Task DoTest()
         {
             var result = new ProcessStartSettings {
                 ExecutableName = "xcopy",
             }.StartProcess(CancellationToken.None);
 
             result.WriteToConsoleWithPrefix("x");
-            PAssert.That(() => result.StdOutput().GetAwaiter().GetResult().SequenceEqual(new[] { "0 File(s) copied", }));
+            var stdOut = await result.StdOutput();
+            PAssert.That(() => stdOut.SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {
-            DoTest();
+            await DoTest();
         } catch {
             //very rarely processes are flaky outside of our control; that's out of scope for this test.
-            DoTest();
+            await DoTest();
         }
     }
 
