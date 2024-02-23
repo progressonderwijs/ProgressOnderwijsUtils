@@ -21,6 +21,6 @@ deploy:
     # to regenerate, log in to https://www.nuget.org/packages/ProgressOnderwijsUtils/ as ProgressOnderwijs, (re)generate the key
     # that needs to be encrypted so only appveyor can read it, which you can do here: https://ci.appveyor.com/account/progressonderwijs/tools/encrypt
     # login to appveyor with your github account, and select the progressonderwijs persona in the leftmost column to act on behalf of the org, not yourself.
-    secure: 8KIs/YgtGhLiw5Y5HG66OQ3oKh+/ijAqPpqmsmtgYpJ7fMBALtwfIAzsq/Q4aUw/
+    secure: JbZ0foM067cSNmECbJEtdgkMbP1PON+LJb+L5iqw+tSOuJAOz0+5bjk0GMHTgtz/
   on:
     branch: master
