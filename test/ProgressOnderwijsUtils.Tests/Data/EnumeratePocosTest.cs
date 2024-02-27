@@ -31,8 +31,7 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     [Fact]
     public void Executing_ToLazilyEnumeratedCommand_creates_no_row_objects()
     {
-        // ReSharper disable once UnusedVariable
-        var unused = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
+        _ = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
         Assert.Equal(0, ExampleRow.HackyHackyCounter);
     }
 
@@ -49,8 +48,7 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     public void Stopping_early_creates_fewer_objects()
     {
         var enumerable = ExampleQuery.OfPocos<ExampleRow>().ToLazilyEnumeratedCommand().Execute(Connection);
-        // ReSharper disable once UnusedVariable
-        var value = enumerable.Skip(1).First();
+        _ = enumerable.Skip(1).First();
         Assert.Equal(2, ExampleRow.HackyHackyCounter);
     }
 
