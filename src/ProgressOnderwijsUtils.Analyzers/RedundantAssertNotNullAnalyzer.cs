@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -9,6 +10,8 @@ namespace ProgressOnderwijsUtils.Analyzers;
 [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
 public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
 {
+    internal const string isValueTypeKey = "isValueType";
+
     public static readonly DiagnosticDescriptor Rule = new(
 #pragma warning disable RS2008 // Enable analyzer release tracking - why would we care?
         "POU1002",
@@ -42,7 +45,7 @@ public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
                 Expression: MemberAccessExpressionSyntax memberAccess,
             }
             && memberAccess.Name.IsEquivalentTo(AssertNotNull_Name)
-            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsValueType: false, } type
+            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsValueType: { } isValueType } type
             && context.SemanticModel.GetSymbolInfo(memberAccess.Name, token) is {
                 Symbol: {
                     ContainingNamespace: { Name: "ProgressOnderwijsUtils", ContainingNamespace.IsGlobalNamespace: true, },
@@ -53,10 +56,7 @@ public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
                 Diagnostic.Create(
                     Rule,
                     memberAccess.GetLocation(),
-                    type,
-                    new[] {
-                        memberAccess.OperatorToken.GetLocation(), memberAccess.Name.GetLocation(),
-                    }
+                    new[] { (isValueTypeKey, isValueType ? "y" : null) }.ToImmutableDictionary(o => o.isValueTypeKey, o => o.Item2)
                 )
             );
         }

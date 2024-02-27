@@ -317,4 +317,111 @@ public sealed class RedundantAssertNotNullAnalyzerTest
         var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
     }
+
+    [Fact]
+    public void OnValueField_Detected()
+    {
+        var source = """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly int? test = 1;
+                public static void Test()
+                    => Console.WriteLine(test.HasValue ? test.AssertNotNull().ToString() : "nope");
+            }
+            """;
+
+        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        PAssert.That(() => diagnostics.Single().Id == RedundantAssertNotNullAnalyzer.Rule.Id);
+        PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 8);
+    }
+
+    [Fact]
+    public async Task OnValueField_Detected_Fixed()
+    {
+        var source = """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly int? test = 1;
+                public static void Test()
+                    => Console.WriteLine(test.HasValue ? test.AssertNotNull().ToString() : "nope");
+            }
+            """;
+
+        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
+        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+
+        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
+        PAssert.That(() => fixesMade == 1);
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        Assert.Equal(
+            """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly int? test = 1;
+                public static void Test()
+                    => Console.WriteLine(test.HasValue ? test.Value.ToString() : "nope");
+            }
+            """,
+            result.ToString()
+        );
+    }
+
+    [Fact]
+    public async Task OnValueField_Detected_Fixed_with_weird_comments()
+    {
+        var source = """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly int? test = 1;
+                public static void Test()
+                    => Console.WriteLine(test.HasValue ? test
+                       //comment 1
+                       . /* comment 2 */AssertNotNull(// comment 3
+                       ) /*comment */
+                       : "nope");
+            }
+            """;
+
+        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
+        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+
+        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
+        PAssert.That(() => fixesMade == 1);
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        Assert.Equal(
+            """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly int? test = 1;
+                public static void Test()
+                    => Console.WriteLine(test.HasValue ? test
+                       //comment 1
+                       . /* comment 2 */Value// comment 3
+                       /*comment */
+                       : "nope");
+            }
+            """,
+            result.ToString().Replace("\r", "")
+        );
+    }
 }
