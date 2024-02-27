@@ -68,6 +68,51 @@ public sealed class RedundantAssertNotNullAnalyzerTest
     }
 
     [Fact]
+    public async Task OnField_Detected_Fixed_with_weird_comments()
+    {
+        var source = """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly string test = "test";
+                public static void Test()
+                    => Console.WriteLine(test
+                       //comment 1
+                       . /* comment 2 */AssertNotNull(// comment 3
+                       ) /*comment */);
+            }
+            """;
+
+        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
+        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+
+        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
+        PAssert.That(() => fixesMade == 1);
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        Assert.Equal(
+            """
+            #nullable enable
+            using ProgressOnderwijsUtils;
+            using System;
+
+            static class C
+            {
+                static readonly string test = "test";
+                public static void Test()
+                    => Console.WriteLine(test
+                       //comment 1
+                        /* comment 2 */// comment 3
+                        /*comment */);
+            }
+            """,
+            result.ToString()
+        );
+    }
+
+    [Fact]
     public async Task OnNestedField_Detected_Fixed()
     {
         var source = """
