@@ -17,7 +17,9 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     {
         public int Id { get; set; }
         public string? Content { get; set; }
+#pragma warning disable CA2211
         public static int HackyHackyCounter;
+#pragma warning restore CA2211
 
         public ExampleRow()
             => HackyHackyCounter++;
