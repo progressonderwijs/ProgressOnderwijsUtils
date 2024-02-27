@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		How-to-push-to-nuget.txt = How-to-push-to-nuget.txt
 		src\NugetPackagesCommon.props = src\NugetPackagesCommon.props
 		Performance1.psess = Performance1.psess
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
@@ -34,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Anal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers.Tests", "test\ProgressOnderwijsUtils.Analyzers.Tests\ProgressOnderwijsUtils.Analyzers.Tests.csproj", "{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressOnderwijsUtils.SeleniumWebDriverPool", "src\ProgressOnderwijsUtils.SeleniumWebDriverPool\ProgressOnderwijsUtils.SeleniumWebDriverPool.csproj", "{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.SeleniumWebDriverPool", "src\ProgressOnderwijsUtils.SeleniumWebDriverPool\ProgressOnderwijsUtils.SeleniumWebDriverPool.csproj", "{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
