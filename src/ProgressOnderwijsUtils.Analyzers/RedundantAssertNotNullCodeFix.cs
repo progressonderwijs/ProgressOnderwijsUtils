@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProgressOnderwijsUtils.Analyzers;
@@ -39,12 +40,14 @@ public sealed class RedundantAssertNotNullCodeFix : CodeFixProvider
                     var syntaxNode = root.FindToken(diagnostic.Location.SourceSpan.End - 1).Parent ?? throw new("syntax node not found?");
                     var invocationExpression = (InvocationExpressionSyntax)syntaxNode.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().First().Ancestors().First();
                     var memberAccess = (MemberAccessExpressionSyntax)invocationExpression.Expression;
-                    var memberExpressionWithTrivia = memberAccess.Expression
+                    var isValueType = diagnostic.Properties.TryGetValue(RedundantAssertNotNullAnalyzer.isValueTypeKey, out var isValueTypeVal) && isValueTypeVal is not null;
+                    var replacement = isValueType ? memberAccess.WithName(SyntaxFactory.IdentifierName("Value")) : memberAccess.Expression;
+                    var memberExpressionWithTrivia = replacement
                         .WithTrailingTrivia(
                             new[] {
-                                memberAccess.Expression.GetTrailingTrivia(),
-                                memberAccess.OperatorToken.LeadingTrivia,
-                                memberAccess.OperatorToken.TrailingTrivia,
+                                isValueType ? [] : memberAccess.Expression.GetTrailingTrivia(),
+                                isValueType ? [] : memberAccess.OperatorToken.LeadingTrivia,
+                                isValueType ? [] : memberAccess.OperatorToken.TrailingTrivia,
                                 memberAccess.Name.DescendantTrivia(),
                                 memberAccess.GetTrailingTrivia(),
                                 invocationExpression.ArgumentList.DescendantTrivia(),
