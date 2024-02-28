@@ -265,7 +265,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         PAssert.That(() => notAllowed.AssertError().Message.Contains("Cannot fill readonly field ReadOnly", StringComparison.InvariantCulture));
 
         // but we can allow it
-        (target with { ReadOnlyTarget = BulkInsertTarget.ReadOnlyTargetError.Suppressed, }).BulkInsert(Connection, new[] { record, });
+        (target with { SilentlySkipReadonlyTargetColumns = BulkInsertTarget.ReadOnlyTargetError.Suppressed, }).BulkInsert(Connection, new[] { record, });
 
         var allowed = SQL($"select * from {tableName}").ReadPocos<TableWithReadOnlyColumn>(Connection).Single();
         PAssert.That(() => !allowed.ReadOnly.SequenceEqual(record.ReadOnly));
