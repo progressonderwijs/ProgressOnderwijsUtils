@@ -3,7 +3,7 @@ using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;
 
-public sealed class BulkInsertTarget
+public sealed record BulkInsertTarget
 {
     public enum ReadOnlyTargetError { Given, Suppressed, }
 
