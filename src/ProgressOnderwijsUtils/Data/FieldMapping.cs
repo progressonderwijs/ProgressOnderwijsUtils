@@ -55,7 +55,7 @@ public struct FieldMappingValidation
     public bool AllowExtraSourceColumns;
     public bool AllowExtraTargetColumns;
     public bool OverwriteAutoIncrement;
-    public bool AllowReadOnlyTarget;
+    public bool SilentlySkipReadonlyTargetColumns;
 
     public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping.Suggestion[] mapping)
     {
