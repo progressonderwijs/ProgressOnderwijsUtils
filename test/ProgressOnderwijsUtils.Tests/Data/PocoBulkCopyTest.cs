@@ -110,7 +110,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 )
             "
             ).ExecuteNonQuery(conn);
-            return BulkInsertTarget.LoadFromTable(conn, tableName);
+            return BulkInsertTarget.LoadFromTable(conn, tableName).With(BulkInsertTarget.ReadOnlyTargetMode.Allowed);
         }
     }
 
@@ -149,7 +149,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
     [Fact]
     public void BulkCopyWontInsertComputedColumns()
     {
-        var target = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#tmp"));
+        var target = ComputedColumnExample.CreateTargetTable(Connection, SQL($"#tmp")).With(BulkInsertTarget.ReadOnlyTargetMode.NotAllowed);
 
         _ = Assert.ThrowsAny<Exception>(() => new ComputedColumnExample_LackingAnnotation[] { new() { Bla = "ja", Computed = true, Id = 13, }, }.BulkCopyToSqlServer(Connection, target));
     }
@@ -359,7 +359,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
-        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName);
+        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkInsertTarget.ReadOnlyTargetMode.Allowed);
 
         new[] {
             new ComputedColumnExample {
