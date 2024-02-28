@@ -343,7 +343,11 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var rowsAfterDelete = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
         PAssert.That(() => rowsAfterDelete.None());
 
-        initialPocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
+            Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
+            SilentlySkipReadonlyTargetColumns = true,
+        };
+        initialPocos.BulkCopyToSqlServer(Connection, target);
 
         var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
 
@@ -379,7 +383,11 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
             )
             .ToArray();
 
-        srcData.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(BulkCopyFieldMappingMode.AllowExtraPocoProperties));
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
+            Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
+            SilentlySkipReadonlyTargetColumns = true,
+        };
+        srcData.BulkCopyToSqlServer(Connection, target);
 
         var rowsAfterBulkInsert = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
         var expected = srcData.Select((o, i) => o with { Counter = i + 6, });

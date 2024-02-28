@@ -52,5 +52,5 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         };
 
     public static bool ShouldIncludePropertyInSqlInsert(IPocoProperty o)
-        => o.CanRead && o.PropertyInfo.Attr<DatabaseGeneratedAttribute>() is not { DatabaseGeneratedOption: not DatabaseGeneratedOption.None, };
+        => o.CanRead && o.PropertyInfo.Attr<DatabaseGeneratedAttribute>() is not { DatabaseGeneratedOption: DatabaseGeneratedOption.Identity, };
 }

@@ -194,7 +194,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", }, }
             .BulkCopyToSqlServer(Connection, target);
         new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test", }, }
-            .BulkCopyToSqlServer(Connection, target.With(target.Options ^ SqlBulkCopyOptions.KeepNulls));
+            .BulkCopyToSqlServer(Connection, target with { Options = target.Options ^ SqlBulkCopyOptions.KeepNulls, });
 
         var fromDb = SQL($"select * from #tmp").ReadPocos<SampleRow2>(Connection);
 
@@ -246,5 +246,28 @@ public sealed class BulkInsertTest : TransactedLocalConnection
             )
         );
         PAssert.That(() => pocoProperties.Count == dbProps.Count());
+    }
+
+    sealed record TableWithReadOnlyColumn(int X, byte[] ReadOnly) : IReadImplicitly, IWrittenImplicitly;
+
+    [Fact]
+    public void Writing_to_read_only_column_error_can_be_disabled()
+    {
+        var tableName = SQL($"#TableWithReadOnlyColumn");
+        SQL($"create table {tableName} (X int not null, ReadOnly rowversion not null);").ExecuteNonQuery(Connection);
+        var record = new TableWithReadOnlyColumn(1, [1, 2, 3, 4, 5, 6, 7, 8,]);
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName);
+
+        // by default, writing to read-only column is not allowed
+        var notAllowed = Maybe.Try(() => target.BulkInsert(Connection, new[] { record, }))
+            .Catch<InvalidOperationException>();
+
+        PAssert.That(() => notAllowed.AssertError().Message.Contains("Cannot fill readonly field ReadOnly", StringComparison.InvariantCulture));
+
+        // but we can allow it
+        (target with { SilentlySkipReadonlyTargetColumns = true, }).BulkInsert(Connection, new[] { record, });
+
+        var allowed = SQL($"select * from {tableName}").ReadPocos<TableWithReadOnlyColumn>(Connection).Single();
+        PAssert.That(() => !allowed.ReadOnly.SequenceEqual(record.ReadOnly));
     }
 }
