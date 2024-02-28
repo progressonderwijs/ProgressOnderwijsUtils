@@ -50,7 +50,4 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
             { IsComputed : true, } => ColumnAccessibility.Readonly,
             _ => ColumnAccessibility.Normal,
         };
-
-    public static bool ShouldIncludePropertyInSqlInsert(IPocoProperty o)
-        => o.CanRead && o.PropertyInfo.Attr<DatabaseGeneratedAttribute>() is not { DatabaseGeneratedOption: DatabaseGeneratedOption.Identity, };
 }

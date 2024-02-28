@@ -170,7 +170,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
         schemaTable = CreateEmptySchemaTable();
         var i = 0;
         foreach (var pocoProperty in properties) {
-            if (ColumnDefinition.ShouldIncludePropertyInSqlInsert(pocoProperty)) {
+            if (pocoProperty.CanRead) {
                 var columnInfo = new ColumnInfo(pocoProperty);
                 var isKey = pocoProperty.IsKey;
                 var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
