@@ -89,7 +89,7 @@ public struct FieldMappingValidation
                 if (src.DataType.GetNonNullableUnderlyingType() != dst.DataType.GetNonNullableUnderlyingType()) {
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
-                    if (!AllowReadOnlyTarget) {
+                    if (!SilentlySkipReadonlyTargetColumns) {
                         errors.Add($"Cannot fill readonly field {dst.Name}.");
                     }
                 } else if (dst.ColumnAccessibility is ColumnAccessibility.Normal || OverwriteAutoIncrement) {

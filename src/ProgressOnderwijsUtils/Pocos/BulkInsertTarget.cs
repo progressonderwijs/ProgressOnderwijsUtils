@@ -67,6 +67,6 @@ public sealed class BulkInsertTarget
             AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
             OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            AllowReadOnlyTarget = ReadOnlyTarget == ReadOnlyTargetMode.Allowed,
+            SilentlySkipReadonlyTargetColumns = ReadOnlyTarget == ReadOnlyTargetMode.Allowed,
         }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
 }
