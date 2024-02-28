@@ -6,8 +6,8 @@ namespace ProgressOnderwijsUtils;
 public sealed record BulkInsertTarget
 {
     public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
-    public string TableName { get; init; }
-    public ColumnDefinition[] Columns { get; init; }
+    public string TableName { get; }
+    public ColumnDefinition[] Columns { get; }
     public BulkCopyFieldMappingMode Mode { get; init; }
     public SqlBulkCopyOptions Options { get; init; }
     public bool SilentlySkipReadonlyTargetColumns { get; init; }
