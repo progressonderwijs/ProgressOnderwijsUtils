@@ -35,9 +35,6 @@ public sealed record BulkInsertTarget
     public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns)
         => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
-    public BulkInsertTarget With(ReadOnlyTargetError error)
-        => new(TableName, Columns, Mode, Options, error);
-
     public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancellationToken = new())
         where T : IReadImplicitly
     {
