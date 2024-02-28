@@ -326,7 +326,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 Id = 11,
                 Bla = "Something",
             },
-        }.BulkCopyToSqlServer(Connection, bulkInsertTarget.With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
+        }.BulkCopyToSqlServer(Connection, bulkInsertTarget with { Options = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints, });
 
         var fromDb = SQL(
             $@"

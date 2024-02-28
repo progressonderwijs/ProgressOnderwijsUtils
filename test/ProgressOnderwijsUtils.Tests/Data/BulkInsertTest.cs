@@ -194,7 +194,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", }, }
             .BulkCopyToSqlServer(Connection, target);
         new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test", }, }
-            .BulkCopyToSqlServer(Connection, target.With(target.Options ^ SqlBulkCopyOptions.KeepNulls));
+            .BulkCopyToSqlServer(Connection, target with { Options = target.Options ^ SqlBulkCopyOptions.KeepNulls, });
 
         var fromDb = SQL($"select * from #tmp").ReadPocos<SampleRow2>(Connection);
 

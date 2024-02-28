@@ -35,9 +35,6 @@ public sealed record BulkInsertTarget
     public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns)
         => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
-    public BulkInsertTarget With(SqlBulkCopyOptions options)
-        => new(TableName, Columns, Mode, options, ReadOnlyTarget);
-
     public BulkInsertTarget With(ReadOnlyTargetError error)
         => new(TableName, Columns, Mode, Options, error);
 
