@@ -8,11 +8,11 @@ public sealed record BulkInsertTarget
     public enum ReadOnlyTargetError { Given, Suppressed, }
 
     public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
-    public readonly string TableName;
-    public readonly ColumnDefinition[] Columns;
-    public readonly BulkCopyFieldMappingMode Mode;
-    public readonly SqlBulkCopyOptions Options;
-    public readonly ReadOnlyTargetError ReadOnlyTarget;
+    public string TableName { get; init; }
+    public ColumnDefinition[] Columns { get; init; }
+    public BulkCopyFieldMappingMode Mode { get; init; }
+    public SqlBulkCopyOptions Options { get; init; }
+    public ReadOnlyTargetError ReadOnlyTarget { get; init; }
 
     public ParameterizedSql TableNameSql
         => ParameterizedSql.RawSql_PotentialForSqlInjection(TableName);
