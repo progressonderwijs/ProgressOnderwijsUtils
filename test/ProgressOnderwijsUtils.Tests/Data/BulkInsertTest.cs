@@ -262,7 +262,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         var notAllowed = Maybe.Try(() => target.BulkInsert(Connection, new[] { record, }))
             .Catch<InvalidOperationException>();
 
-        PAssert.That(() => notAllowed.ErrorOrNull().AssertNotNull().Message.Contains("Cannot fill readonly field ReadOnly", StringComparison.InvariantCulture));
+        PAssert.That(() => notAllowed.AssertError().Message.Contains("Cannot fill readonly field ReadOnly", StringComparison.InvariantCulture));
 
         // but we can allow it
         (target with { ReadOnlyTarget = BulkInsertTarget.ReadOnlyTargetError.Suppressed, }).BulkInsert(Connection, new[] { record, });
