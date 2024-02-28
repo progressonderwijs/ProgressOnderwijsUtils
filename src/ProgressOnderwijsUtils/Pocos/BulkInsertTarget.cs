@@ -5,23 +5,21 @@ namespace ProgressOnderwijsUtils;
 
 public sealed record BulkInsertTarget
 {
-    public enum ReadOnlyTargetError { Given, Suppressed, }
-
     public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
     public string TableName { get; init; }
     public ColumnDefinition[] Columns { get; init; }
     public BulkCopyFieldMappingMode Mode { get; init; }
     public SqlBulkCopyOptions Options { get; init; }
-    public ReadOnlyTargetError SilentlySkipReadonlyTargetColumns { get; init; }
+    public bool SilentlySkipReadonlyTargetColumns { get; init; }
 
     public ParameterizedSql TableNameSql
         => ParameterizedSql.RawSql_PotentialForSqlInjection(TableName);
 
     public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-        : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior, ReadOnlyTargetError.Given) { }
+        : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }
 
-    BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, ReadOnlyTargetError readOnlyTarget)
-        => (TableName, Columns, Mode, Options, SilentlySkipReadonlyTargetColumns) = (tableName, columnDefinition, mode, options, readOnlyTarget);
+    BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+        => (TableName, Columns, Mode, Options, SilentlySkipReadonlyTargetColumns) = (tableName, columnDefinition, mode, options, false);
 
     public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table)
         => new(table.QualifiedName, table.Columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
@@ -58,6 +56,6 @@ public sealed record BulkInsertTarget
             AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
             OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            SilentlySkipReadonlyTargetColumns = SilentlySkipReadonlyTargetColumns == ReadOnlyTargetError.Suppressed,
+            SilentlySkipReadonlyTargetColumns = SilentlySkipReadonlyTargetColumns,
         }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
 }

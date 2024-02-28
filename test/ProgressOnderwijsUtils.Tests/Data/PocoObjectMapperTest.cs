@@ -345,7 +345,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
         var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
             Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
-            SilentlySkipReadonlyTargetColumns = BulkInsertTarget.ReadOnlyTargetError.Suppressed,
+            SilentlySkipReadonlyTargetColumns = true,
         };
         initialPocos.BulkCopyToSqlServer(Connection, target);
 
@@ -385,7 +385,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
         var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
             Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
-            SilentlySkipReadonlyTargetColumns = BulkInsertTarget.ReadOnlyTargetError.Suppressed,
+            SilentlySkipReadonlyTargetColumns = true,
         };
         srcData.BulkCopyToSqlServer(Connection, target);
 
