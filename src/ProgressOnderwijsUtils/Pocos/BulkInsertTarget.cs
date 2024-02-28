@@ -5,20 +5,23 @@ namespace ProgressOnderwijsUtils;
 
 public sealed class BulkInsertTarget
 {
+    public enum ReadOnlyTargetMode { NotAllowed, Allowed, }
+
     public const SqlBulkCopyOptions DefaultOptionsCorrespondingToInsertIntoBehavior = SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.KeepNulls;
     public readonly string TableName;
     public readonly ColumnDefinition[] Columns;
     public readonly BulkCopyFieldMappingMode Mode;
     public readonly SqlBulkCopyOptions Options;
+    public readonly ReadOnlyTargetMode ReadOnlyTarget;
 
     public ParameterizedSql TableNameSql
         => ParameterizedSql.RawSql_PotentialForSqlInjection(TableName);
 
     public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-        : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior) { }
+        : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, DefaultOptionsCorrespondingToInsertIntoBehavior, ReadOnlyTargetMode.NotAllowed) { }
 
-    BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
-        => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
+    BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, ReadOnlyTargetMode readOnlyTarget)
+        => (TableName, Columns, Mode, Options, ReadOnlyTarget) = (tableName, columnDefinition, mode, options, readOnlyTarget);
 
     public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table)
         => new(table.QualifiedName, table.Columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
@@ -33,10 +36,13 @@ public sealed class BulkInsertTarget
         => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
     public BulkInsertTarget With(BulkCopyFieldMappingMode mode)
-        => new(TableName, Columns, mode, Options);
+        => new(TableName, Columns, mode, Options, ReadOnlyTarget);
 
     public BulkInsertTarget With(SqlBulkCopyOptions options)
-        => new(TableName, Columns, Mode, options);
+        => new(TableName, Columns, Mode, options, ReadOnlyTarget);
+
+    public BulkInsertTarget With(ReadOnlyTargetMode mode)
+        => new(TableName, Columns, Mode, Options, mode);
 
     public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancellationToken = new())
         where T : IReadImplicitly
@@ -61,5 +67,6 @@ public sealed class BulkInsertTarget
             AllowExtraSourceColumns = Mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             AllowExtraTargetColumns = Mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
             OverwriteAutoIncrement = Options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            AllowReadOnlyTarget = ReadOnlyTarget == ReadOnlyTargetMode.Allowed,
         }.ValidateAndFilter(BulkInsertFieldMapping.Create(sourceFields, Columns));
 }

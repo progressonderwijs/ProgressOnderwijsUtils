@@ -55,6 +55,7 @@ public struct FieldMappingValidation
     public bool AllowExtraSourceColumns;
     public bool AllowExtraTargetColumns;
     public bool OverwriteAutoIncrement;
+    public bool AllowReadOnlyTarget;
 
     public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping.Suggestion[] mapping)
     {
@@ -88,7 +89,9 @@ public struct FieldMappingValidation
                 if (src.DataType.GetNonNullableUnderlyingType() != dst.DataType.GetNonNullableUnderlyingType()) {
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
-                    errors.Add($"Cannot fill readonly field {dst.Name}.");
+                    if (!AllowReadOnlyTarget) {
+                        errors.Add($"Cannot fill readonly field {dst.Name}.");
+                    }
                 } else if (dst.ColumnAccessibility is ColumnAccessibility.Normal || OverwriteAutoIncrement) {
                     mapped.Add(new(src, dst));
                 }
