@@ -239,7 +239,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(BLOCKQUOTE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BLOCKQUOTE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct BODY : IHtmlElementAllowingContent<BODY>, IHasAttr_onafterprint, IHasAttr_onbeforeprint, IHasAttr_onbeforeunload, IHasAttr_onhashchange, IHasAttr_onlanguagechange, IHasAttr_onmessage, IHasAttr_onmessageerror, IHasAttr_onoffline, IHasAttr_ononline, IHasAttr_onpagehide, IHasAttr_onpageshow, IHasAttr_onpopstate, IHasAttr_onrejectionhandled, IHasAttr_onstorage, IHasAttr_onunhandledrejection, IHasAttr_onunload
+    public struct BODY : IHtmlElementAllowingContent<BODY>, IHasAttr_onafterprint, IHasAttr_onbeforeprint, IHasAttr_onbeforeunload, IHasAttr_onhashchange, IHasAttr_onlanguagechange, IHasAttr_onmessage, IHasAttr_onmessageerror, IHasAttr_onoffline, IHasAttr_ononline, IHasAttr_onpageswap, IHasAttr_onpagehide, IHasAttr_onpagereveal, IHasAttr_onpageshow, IHasAttr_onpopstate, IHasAttr_onrejectionhandled, IHasAttr_onstorage, IHasAttr_onunhandledrejection, IHasAttr_onunload
     {
         public string TagName => "body";
         string IHtmlElement.TagStart => "<body";
@@ -493,7 +493,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(DEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DEL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct DETAILS : IHtmlElementAllowingContent<DETAILS>, IHasAttr_open
+    public struct DETAILS : IHtmlElementAllowingContent<DETAILS>, IHasAttr_name, IHasAttr_open
     {
         public string TagName => "details";
         string IHtmlElement.TagStart => "<details";

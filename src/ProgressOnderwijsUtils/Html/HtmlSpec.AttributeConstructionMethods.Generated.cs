@@ -171,9 +171,15 @@ public static class AttributeConstructionMethods
     public static THtmlTag _ononline<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_ononline, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("ononline", attrValue);
+    public static THtmlTag _onpageswap<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_onpageswap, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("onpageswap", attrValue);
     public static THtmlTag _onpagehide<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_onpagehide, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("onpagehide", attrValue);
+    public static THtmlTag _onpagereveal<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_onpagereveal, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("onpagereveal", attrValue);
     public static THtmlTag _onpageshow<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_onpageshow, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("onpageshow", attrValue);
