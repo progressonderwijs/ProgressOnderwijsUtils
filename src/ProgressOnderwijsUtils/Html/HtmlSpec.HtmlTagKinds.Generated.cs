@@ -22,6 +22,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(A tag) => tag.AsFragment();
+        public static HtmlFragment operator +(A unary) => unary;
         public static HtmlFragment operator +(A head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, A tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -42,6 +43,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(ABBR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(ABBR unary) => unary;
         public static HtmlFragment operator +(ABBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, ABBR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -62,6 +64,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(ADDRESS tag) => tag.AsFragment();
+        public static HtmlFragment operator +(ADDRESS unary) => unary;
         public static HtmlFragment operator +(ADDRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, ADDRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -79,6 +82,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(AREA tag) => tag.AsFragment();
+        public static HtmlFragment operator +(AREA unary) => unary;
         public static HtmlFragment operator +(AREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, AREA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -99,6 +103,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(ARTICLE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(ARTICLE unary) => unary;
         public static HtmlFragment operator +(ARTICLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, ARTICLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -119,6 +124,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(ASIDE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(ASIDE unary) => unary;
         public static HtmlFragment operator +(ASIDE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, ASIDE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -139,6 +145,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(AUDIO tag) => tag.AsFragment();
+        public static HtmlFragment operator +(AUDIO unary) => unary;
         public static HtmlFragment operator +(AUDIO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, AUDIO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -159,6 +166,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(B tag) => tag.AsFragment();
+        public static HtmlFragment operator +(B unary) => unary;
         public static HtmlFragment operator +(B head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, B tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -176,6 +184,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BASE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BASE unary) => unary;
         public static HtmlFragment operator +(BASE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BASE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -196,6 +205,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BDI tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BDI unary) => unary;
         public static HtmlFragment operator +(BDI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BDI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -216,6 +226,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BDO tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BDO unary) => unary;
         public static HtmlFragment operator +(BDO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BDO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -236,6 +247,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BLOCKQUOTE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BLOCKQUOTE unary) => unary;
         public static HtmlFragment operator +(BLOCKQUOTE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BLOCKQUOTE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -256,6 +268,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BODY tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BODY unary) => unary;
         public static HtmlFragment operator +(BODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BODY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -273,6 +286,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BR unary) => unary;
         public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -293,6 +307,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(BUTTON tag) => tag.AsFragment();
+        public static HtmlFragment operator +(BUTTON unary) => unary;
         public static HtmlFragment operator +(BUTTON head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BUTTON tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -313,6 +328,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(CANVAS tag) => tag.AsFragment();
+        public static HtmlFragment operator +(CANVAS unary) => unary;
         public static HtmlFragment operator +(CANVAS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, CANVAS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -333,6 +349,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(CAPTION tag) => tag.AsFragment();
+        public static HtmlFragment operator +(CAPTION unary) => unary;
         public static HtmlFragment operator +(CAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, CAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -353,6 +370,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(CITE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(CITE unary) => unary;
         public static HtmlFragment operator +(CITE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, CITE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -373,6 +391,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(CODE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(CODE unary) => unary;
         public static HtmlFragment operator +(CODE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, CODE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -390,6 +409,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(COL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(COL unary) => unary;
         public static HtmlFragment operator +(COL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, COL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -410,6 +430,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(COLGROUP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(COLGROUP unary) => unary;
         public static HtmlFragment operator +(COLGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, COLGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -430,6 +451,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DATA tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DATA unary) => unary;
         public static HtmlFragment operator +(DATA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DATA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -450,6 +472,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DATALIST tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DATALIST unary) => unary;
         public static HtmlFragment operator +(DATALIST head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DATALIST tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -470,6 +493,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DD tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DD unary) => unary;
         public static HtmlFragment operator +(DD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -490,6 +514,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DEL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DEL unary) => unary;
         public static HtmlFragment operator +(DEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DEL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -510,6 +535,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DETAILS tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DETAILS unary) => unary;
         public static HtmlFragment operator +(DETAILS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DETAILS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -530,6 +556,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DFN tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DFN unary) => unary;
         public static HtmlFragment operator +(DFN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DFN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -550,6 +577,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DIALOG tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DIALOG unary) => unary;
         public static HtmlFragment operator +(DIALOG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DIALOG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -570,6 +598,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DIV tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DIV unary) => unary;
         public static HtmlFragment operator +(DIV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DIV tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -590,6 +619,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DL unary) => unary;
         public static HtmlFragment operator +(DL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -610,6 +640,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(DT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(DT unary) => unary;
         public static HtmlFragment operator +(DT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, DT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -630,6 +661,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(EM tag) => tag.AsFragment();
+        public static HtmlFragment operator +(EM unary) => unary;
         public static HtmlFragment operator +(EM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, EM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -647,6 +679,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(EMBED tag) => tag.AsFragment();
+        public static HtmlFragment operator +(EMBED unary) => unary;
         public static HtmlFragment operator +(EMBED head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, EMBED tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -667,6 +700,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(FIELDSET tag) => tag.AsFragment();
+        public static HtmlFragment operator +(FIELDSET unary) => unary;
         public static HtmlFragment operator +(FIELDSET head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, FIELDSET tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -687,6 +721,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(FIGCAPTION tag) => tag.AsFragment();
+        public static HtmlFragment operator +(FIGCAPTION unary) => unary;
         public static HtmlFragment operator +(FIGCAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, FIGCAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -707,6 +742,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(FIGURE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(FIGURE unary) => unary;
         public static HtmlFragment operator +(FIGURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, FIGURE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -727,6 +763,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(FOOTER tag) => tag.AsFragment();
+        public static HtmlFragment operator +(FOOTER unary) => unary;
         public static HtmlFragment operator +(FOOTER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, FOOTER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -747,6 +784,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(FORM tag) => tag.AsFragment();
+        public static HtmlFragment operator +(FORM unary) => unary;
         public static HtmlFragment operator +(FORM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, FORM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -767,6 +805,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H1 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H1 unary) => unary;
         public static HtmlFragment operator +(H1 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H1 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -787,6 +826,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H2 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H2 unary) => unary;
         public static HtmlFragment operator +(H2 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H2 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -807,6 +847,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H3 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H3 unary) => unary;
         public static HtmlFragment operator +(H3 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H3 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -827,6 +868,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H4 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H4 unary) => unary;
         public static HtmlFragment operator +(H4 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H4 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -847,6 +889,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H5 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H5 unary) => unary;
         public static HtmlFragment operator +(H5 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H5 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -867,6 +910,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(H6 tag) => tag.AsFragment();
+        public static HtmlFragment operator +(H6 unary) => unary;
         public static HtmlFragment operator +(H6 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, H6 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -887,6 +931,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(HEAD tag) => tag.AsFragment();
+        public static HtmlFragment operator +(HEAD unary) => unary;
         public static HtmlFragment operator +(HEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -907,6 +952,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(HEADER tag) => tag.AsFragment();
+        public static HtmlFragment operator +(HEADER unary) => unary;
         public static HtmlFragment operator +(HEADER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HEADER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -927,6 +973,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(HGROUP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(HGROUP unary) => unary;
         public static HtmlFragment operator +(HGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -944,6 +991,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(HR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(HR unary) => unary;
         public static HtmlFragment operator +(HR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -964,6 +1012,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(HTML tag) => tag.AsFragment();
+        public static HtmlFragment operator +(HTML unary) => unary;
         public static HtmlFragment operator +(HTML head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HTML tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -984,6 +1033,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
+        public static HtmlFragment operator +(I unary) => unary;
         public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1004,6 +1054,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();
+        public static HtmlFragment operator +(IFRAME unary) => unary;
         public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1021,6 +1072,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(IMG tag) => tag.AsFragment();
+        public static HtmlFragment operator +(IMG unary) => unary;
         public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1038,6 +1090,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(INPUT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(INPUT unary) => unary;
         public static HtmlFragment operator +(INPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, INPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1058,6 +1111,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(INS tag) => tag.AsFragment();
+        public static HtmlFragment operator +(INS unary) => unary;
         public static HtmlFragment operator +(INS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, INS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1078,6 +1132,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(KBD tag) => tag.AsFragment();
+        public static HtmlFragment operator +(KBD unary) => unary;
         public static HtmlFragment operator +(KBD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, KBD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1098,6 +1153,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(LABEL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(LABEL unary) => unary;
         public static HtmlFragment operator +(LABEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, LABEL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1118,6 +1174,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(LEGEND tag) => tag.AsFragment();
+        public static HtmlFragment operator +(LEGEND unary) => unary;
         public static HtmlFragment operator +(LEGEND head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, LEGEND tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1138,6 +1195,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(LI tag) => tag.AsFragment();
+        public static HtmlFragment operator +(LI unary) => unary;
         public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1155,6 +1213,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(LINK tag) => tag.AsFragment();
+        public static HtmlFragment operator +(LINK unary) => unary;
         public static HtmlFragment operator +(LINK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, LINK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1175,6 +1234,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(MAIN tag) => tag.AsFragment();
+        public static HtmlFragment operator +(MAIN unary) => unary;
         public static HtmlFragment operator +(MAIN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, MAIN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1195,6 +1255,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(MAP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(MAP unary) => unary;
         public static HtmlFragment operator +(MAP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, MAP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1215,6 +1276,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(MARK tag) => tag.AsFragment();
+        public static HtmlFragment operator +(MARK unary) => unary;
         public static HtmlFragment operator +(MARK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, MARK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1235,6 +1297,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(MENU tag) => tag.AsFragment();
+        public static HtmlFragment operator +(MENU unary) => unary;
         public static HtmlFragment operator +(MENU head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, MENU tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1252,6 +1315,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(META tag) => tag.AsFragment();
+        public static HtmlFragment operator +(META unary) => unary;
         public static HtmlFragment operator +(META head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, META tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1272,6 +1336,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(METER tag) => tag.AsFragment();
+        public static HtmlFragment operator +(METER unary) => unary;
         public static HtmlFragment operator +(METER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, METER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1292,6 +1357,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(NAV tag) => tag.AsFragment();
+        public static HtmlFragment operator +(NAV unary) => unary;
         public static HtmlFragment operator +(NAV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, NAV tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1312,6 +1378,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(NOSCRIPT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(NOSCRIPT unary) => unary;
         public static HtmlFragment operator +(NOSCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, NOSCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1332,6 +1399,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(OBJECT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(OBJECT unary) => unary;
         public static HtmlFragment operator +(OBJECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, OBJECT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1352,6 +1420,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(OL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(OL unary) => unary;
         public static HtmlFragment operator +(OL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, OL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1372,6 +1441,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(OPTGROUP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(OPTGROUP unary) => unary;
         public static HtmlFragment operator +(OPTGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, OPTGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1392,6 +1462,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(OPTION tag) => tag.AsFragment();
+        public static HtmlFragment operator +(OPTION unary) => unary;
         public static HtmlFragment operator +(OPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, OPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1412,6 +1483,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(OUTPUT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(OUTPUT unary) => unary;
         public static HtmlFragment operator +(OUTPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, OUTPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1432,6 +1504,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
+        public static HtmlFragment operator +(P unary) => unary;
         public static HtmlFragment operator +(P head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, P tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1452,6 +1525,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(PICTURE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(PICTURE unary) => unary;
         public static HtmlFragment operator +(PICTURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, PICTURE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1472,6 +1546,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(PRE unary) => unary;
         public static HtmlFragment operator +(PRE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, PRE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1492,6 +1567,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(PROGRESS tag) => tag.AsFragment();
+        public static HtmlFragment operator +(PROGRESS unary) => unary;
         public static HtmlFragment operator +(PROGRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, PROGRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1512,6 +1588,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(Q tag) => tag.AsFragment();
+        public static HtmlFragment operator +(Q unary) => unary;
         public static HtmlFragment operator +(Q head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, Q tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1532,6 +1609,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(RP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(RP unary) => unary;
         public static HtmlFragment operator +(RP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, RP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1552,6 +1630,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(RT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(RT unary) => unary;
         public static HtmlFragment operator +(RT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, RT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1572,6 +1651,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(RUBY tag) => tag.AsFragment();
+        public static HtmlFragment operator +(RUBY unary) => unary;
         public static HtmlFragment operator +(RUBY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, RUBY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1592,6 +1672,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(S tag) => tag.AsFragment();
+        public static HtmlFragment operator +(S unary) => unary;
         public static HtmlFragment operator +(S head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, S tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1612,6 +1693,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SAMP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SAMP unary) => unary;
         public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1632,6 +1714,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SCRIPT unary) => unary;
         public static HtmlFragment operator +(SCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1652,6 +1735,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SEARCH tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SEARCH unary) => unary;
         public static HtmlFragment operator +(SEARCH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SEARCH tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1672,6 +1756,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SECTION tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SECTION unary) => unary;
         public static HtmlFragment operator +(SECTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SECTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1692,6 +1777,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SELECT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SELECT unary) => unary;
         public static HtmlFragment operator +(SELECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SELECT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1712,6 +1798,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SLOT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SLOT unary) => unary;
         public static HtmlFragment operator +(SLOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SLOT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1732,6 +1819,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SMALL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SMALL unary) => unary;
         public static HtmlFragment operator +(SMALL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SMALL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1749,6 +1837,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SOURCE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SOURCE unary) => unary;
         public static HtmlFragment operator +(SOURCE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SOURCE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1769,6 +1858,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SPAN tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SPAN unary) => unary;
         public static HtmlFragment operator +(SPAN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SPAN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1789,6 +1879,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(STRONG tag) => tag.AsFragment();
+        public static HtmlFragment operator +(STRONG unary) => unary;
         public static HtmlFragment operator +(STRONG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, STRONG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1809,6 +1900,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(STYLE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(STYLE unary) => unary;
         public static HtmlFragment operator +(STYLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, STYLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1829,6 +1921,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SUB tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SUB unary) => unary;
         public static HtmlFragment operator +(SUB head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SUB tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1849,6 +1942,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SUMMARY tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SUMMARY unary) => unary;
         public static HtmlFragment operator +(SUMMARY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SUMMARY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1869,6 +1963,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(SUP tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SUP unary) => unary;
         public static HtmlFragment operator +(SUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1889,6 +1984,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TABLE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TABLE unary) => unary;
         public static HtmlFragment operator +(TABLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TABLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1909,6 +2005,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TBODY tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TBODY unary) => unary;
         public static HtmlFragment operator +(TBODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TBODY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1929,6 +2026,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TD tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TD unary) => unary;
         public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1949,6 +2047,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TEMPLATE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TEMPLATE unary) => unary;
         public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1969,6 +2068,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TEXTAREA tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TEXTAREA unary) => unary;
         public static HtmlFragment operator +(TEXTAREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TEXTAREA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -1989,6 +2089,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TFOOT unary) => unary;
         public static HtmlFragment operator +(TFOOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TFOOT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2009,6 +2110,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TH tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TH unary) => unary;
         public static HtmlFragment operator +(TH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TH tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2029,6 +2131,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(THEAD tag) => tag.AsFragment();
+        public static HtmlFragment operator +(THEAD unary) => unary;
         public static HtmlFragment operator +(THEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, THEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2049,6 +2152,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TIME tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TIME unary) => unary;
         public static HtmlFragment operator +(TIME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TIME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2069,6 +2173,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TITLE tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TITLE unary) => unary;
         public static HtmlFragment operator +(TITLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TITLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2089,6 +2194,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TR unary) => unary;
         public static HtmlFragment operator +(TR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2106,6 +2212,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(TRACK tag) => tag.AsFragment();
+        public static HtmlFragment operator +(TRACK unary) => unary;
         public static HtmlFragment operator +(TRACK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TRACK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2126,6 +2233,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(U tag) => tag.AsFragment();
+        public static HtmlFragment operator +(U unary) => unary;
         public static HtmlFragment operator +(U head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, U tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2146,6 +2254,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(UL tag) => tag.AsFragment();
+        public static HtmlFragment operator +(UL unary) => unary;
         public static HtmlFragment operator +(UL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, UL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2166,6 +2275,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(VAR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(VAR unary) => unary;
         public static HtmlFragment operator +(VAR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, VAR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2186,6 +2296,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(VIDEO tag) => tag.AsFragment();
+        public static HtmlFragment operator +(VIDEO unary) => unary;
         public static HtmlFragment operator +(VIDEO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, VIDEO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
@@ -2203,6 +2314,7 @@ public static class HtmlTagKinds
         IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
         [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
         public static implicit operator HtmlFragment(WBR tag) => tag.AsFragment();
+        public static HtmlFragment operator +(WBR unary) => unary;
         public static HtmlFragment operator +(WBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, WBR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
