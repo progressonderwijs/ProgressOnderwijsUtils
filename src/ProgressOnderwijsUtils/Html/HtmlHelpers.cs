@@ -101,7 +101,7 @@ public static class HtmlHelpers
         return HtmlFragment.Fragment(retval.ToArray());
     }
 
-    public static HtmlFragment Contents(this IHtmlElement? element)
+    public static HtmlFragment GetContent(this IHtmlElement? element)
         => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.GetContent() : HtmlFragment.Empty;
 
     public static HtmlFragment[] ChildNodes(this IHtmlElement? element)
