@@ -192,7 +192,7 @@ public static class HtmlFragmentSanitizeExtension
         }
         if (node.Implementation is IHtmlElement elem) {
             var safety = filter.AllowTag(elem);
-            var elemChildren = elem.Contents().NodesOfFragment();
+            var elemChildren = elem.GetContent().NodesOfFragment();
             var safeChildren = elemChildren.Select(childnode => FilterElem(childnode, filter)).Where(frag => !frag.IsEmpty).ToArray();
             if (safety == TagSafety.ShouldRemoveButKeepContent) {
                 return safeChildren.AsFragment();

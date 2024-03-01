@@ -168,6 +168,7 @@ public sealed class HtmlDslGenerator
                                     IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
                                     [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
                                     public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                    public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
                                     public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
                                     public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
                                 }
@@ -191,6 +192,7 @@ public sealed class HtmlDslGenerator
                                     IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
                                     [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
                                     public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                    public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
                                     public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
                                     public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
                                 }

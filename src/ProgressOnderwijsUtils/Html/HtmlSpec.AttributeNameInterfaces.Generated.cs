@@ -29,7 +29,9 @@ public interface IHasAttr_onmessage { }
 public interface IHasAttr_onmessageerror { }
 public interface IHasAttr_onoffline { }
 public interface IHasAttr_ononline { }
+public interface IHasAttr_onpageswap { }
 public interface IHasAttr_onpagehide { }
+public interface IHasAttr_onpagereveal { }
 public interface IHasAttr_onpageshow { }
 public interface IHasAttr_onpopstate { }
 public interface IHasAttr_onrejectionhandled { }
