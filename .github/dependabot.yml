@@ -5,13 +5,3 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 10
-  ignore:
-  - dependency-name: Microsoft.CodeAnalysis.CSharp
-    versions:
-    - 3.9.0
-  - dependency-name: Microsoft.CodeAnalysis.CSharp.Workspaces
-    versions:
-    - 3.9.0
-  - dependency-name: Microsoft.CodeAnalysis.Common
-    versions:
-    - 3.9.0
