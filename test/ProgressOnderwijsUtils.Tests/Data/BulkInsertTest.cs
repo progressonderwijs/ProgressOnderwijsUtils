@@ -89,6 +89,24 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     }
 
     [Fact]
+    public void BulkInsertIsTraceable()
+    {
+        var sqlCommandTracer = SqlCommandTracer.CreateAlwaysOnTracer(SqlTracerAgumentInclusion.IncludingArgumentValues);
+        var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
+        Connection.Site = new SqlConnectionContext(sqlCommandTracer, CommandTimeoutDefaults.NoScalingNoTimeout);
+        var rowCountToInsert = 40;
+        BulkInsertTestSampleRow.SampleRows(rowCountToInsert).BulkCopyToSqlServer(Connection, target);
+        var fromDb = SQL($"select * from #test").ReadPocos<BulkInsertTestSampleRow>(Connection);
+        var tracedCommands = sqlCommandTracer.ListAllCommands();
+
+        PAssert.That(() => tracedCommands.Length == 2); // tracedCommands[0].EventContent
+        var expectedTraceEvent = $"Bulk inserted {rowCountToInsert} rows from {typeof(BulkInsertTestSampleRow).ToCSharpFriendlyTypeName()} into table {target.TableName}.";
+        PAssert.That(() => tracedCommands[0].EventContent == expectedTraceEvent); // tracedCommands[0].EventContent
+
+        PAssert.That(() => fromDb.Length == rowCountToInsert);
+    }
+
+    [Fact]
     public void BulkInsertAndReadRoundTrips_ManyRows()
     {
         var manyRows = BulkInsertTestSampleRow.SampleRows(400);

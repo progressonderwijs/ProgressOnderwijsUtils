@@ -1,10 +1,10 @@
 namespace ProgressOnderwijsUtils;
 
-public struct SqlTraceEvent
+public readonly record struct SqlTraceEvent
 {
-    public string EventContent;
-    public TimeSpan Duration;
-    public TimeSpan CumulativeElapsedTime;
+    public string EventContent { get; init; }
+    public TimeSpan Duration { get; init; }
+    public TimeSpan CumulativeElapsedTime { get; init; }
 }
 
 public interface ISqlCommandTracer

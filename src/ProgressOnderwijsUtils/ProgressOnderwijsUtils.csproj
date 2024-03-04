@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>101.1.0</Version>
-    <PackageReleaseNotes>Allow unary plus as an html fragment conversion</PackageReleaseNotes>
+    <Version>101.2.0</Version>
+    <PackageReleaseNotes>Fix ISqlCommandTracer logging for bulk copy post SqlClient 5.2.0</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

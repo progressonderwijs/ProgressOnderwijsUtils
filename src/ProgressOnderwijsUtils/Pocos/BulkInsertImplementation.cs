@@ -60,23 +60,10 @@ static class BulkInsertImplementation
         return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
     }
 
-    static FieldInfo? rowsCopiedField;
-
-    public static int GetRowsCopied(SqlBulkCopy bulkCopy)
-    {
-        //Why oh why isn't this public... https://stackoverflow.com/a/4474394/42921
-        if (rowsCopiedField == null) {
-            rowsCopiedField = typeof(SqlBulkCopy).GetField("_rowsCopied", BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance).AssertNotNull();
-        }
-
-        return (int)rowsCopiedField.GetValue(bulkCopy).AssertNotNull();
-    }
-
     static void TraceBulkInsertDuration(ISqlCommandTracer? tracerOrNull, string destinationTableName, Stopwatch sw, SqlBulkCopy sqlBulkCopy, string sourceNameForTracing)
     {
         if (tracerOrNull is { IsTracing: true }) {
-            var rowsInserted = GetRowsCopied(sqlBulkCopy);
-            tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
+            tracerOrNull.RegisterEvent($"Bulk inserted {sqlBulkCopy.RowsCopied64} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
         }
     }
 
