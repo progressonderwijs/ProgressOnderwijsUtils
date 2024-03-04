@@ -60,16 +60,10 @@ static class BulkInsertImplementation
         return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
     }
 
-    public static long GetRowsCopied(SqlBulkCopy bulkCopy)
-    {
-        return bulkCopy.RowsCopied64;
-    }
-
     static void TraceBulkInsertDuration(ISqlCommandTracer? tracerOrNull, string destinationTableName, Stopwatch sw, SqlBulkCopy sqlBulkCopy, string sourceNameForTracing)
     {
         if (tracerOrNull is { IsTracing: true }) {
-            var rowsInserted = GetRowsCopied(sqlBulkCopy);
-            tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
+            tracerOrNull.RegisterEvent($"Bulk inserted {sqlBulkCopy.RowsCopied64} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
         }
     }
 
