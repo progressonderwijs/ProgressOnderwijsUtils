@@ -57,16 +57,30 @@ public sealed class UriExtensionsTest
     }
 
     [Fact]
-    public async Task IsWorkingUri_valid()
+    public async Task IsPlausibleHttpUriForWebContent_valid()
     {
-        var valid = await new Uri("https://nu.nl").IsWorkingHttpUri(CancellationToken.None);
-        PAssert.That(() => valid);
+        var valid = await new Uri("https://medium.com/").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+        PAssert.That(() => valid == true);
     }
 
     [Fact]
-    public async Task IsWorkingUri_invalid()
+    public async Task IsPlausibleHttpUriForWebContent_invalid()
     {
-        var invalid = !await new Uri("https://nu").IsWorkingHttpUri(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
-        PAssert.That(() => invalid);
+        var valid = await new Uri("https://sadfn48jf0qej0938hc0iasc8378r3jdm498m08vm084mf.com").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+        PAssert.That(() => valid == false);
+    }
+
+    [Fact]
+    public async Task IsPlausibleHttpUriForWebContent_rejectsFileUri()
+    {
+        var valid = await new Uri(@"C:\file.txt").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
+        PAssert.That(() => valid == false);
+    }
+
+    [Fact]
+    public async Task IsPlausibleHttpUriForWebContent_rejectsOddPort()
+    {
+        var valid = await new Uri("https://medium.com:1234/weird").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
+        PAssert.That(() => valid == false);
     }
 }

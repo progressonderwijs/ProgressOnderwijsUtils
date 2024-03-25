@@ -1,4 +1,4 @@
-using System.Net.Http;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils;
@@ -34,13 +34,21 @@ public static class UriExtensions
             ? throw new InvalidOperationException($"The uri {networkUri} is not a windows file share")
             : networkUri.Combine("/").LocalPath.TrimEnd('\\');
 
-    static readonly HttpClient client = new();
-
-    public static async Task<bool> IsWorkingHttpUri(this Uri uri, CancellationToken cancel)
+    /// <summary>
+    /// Returns true if resolvable in the given deadline; null if cancelled, and false if resolution fails.
+    /// </summary>
+    public static async Task<bool?> IsPlausibleHttpUriForWebContent(this Uri url, CancellationToken token)
     {
+        if (url is not ({ Scheme: "http", Port: 80, } or { Scheme: "https", Port: 443, })) {
+            return false;
+        }
+
         try {
-            return (await client.SendAsync(new(HttpMethod.Head, uri), cancel)).IsSuccessStatusCode;
-        } catch {
+            _ = (await Dns.GetHostAddressesAsync(url.Host, token)).First();
+            return true;
+        } catch (Exception) when (token.IsCancellationRequested) {
+            return null;
+        } catch (Exception) {
             return false;
         }
     }
