@@ -289,7 +289,7 @@ public static class CascadedDelete
         }
     }
 
-    public struct DeletionReport
+    public record struct DeletionReport
     {
         public string Table;
         public TimeSpan DeletionDuration;
