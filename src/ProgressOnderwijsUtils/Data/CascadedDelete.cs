@@ -200,7 +200,7 @@ public static class CascadedDelete
             }
             onStackDeletionTables.Push(tempTableName);
 
-            var ttJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
+            var ttPkJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
             deletionStack.Push(
                 () => {
@@ -213,7 +213,7 @@ public static class CascadedDelete
                                 delete pk
                                 {outputClause}
                                 from {table.QualifiedNameSql} pk
-                                join {tempTableName} tt on {ttJoin};
+                                join {tempTableName} tt on {ttPkJoin};
                             "
                         );
 
@@ -250,25 +250,29 @@ public static class CascadedDelete
 
             foreach (var fk in table.KeysFromReferencingChildren) {
                 var childTable = fk.ReferencingChildTable;
-                var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
+                var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
-                var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
-                    ? SQL($"where 1=1")
-                    : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))}");
+                var andSelfRefFksDontCauseDuplicationClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
+                    ? SQL($"1=1")
+                    : keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "));
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                 var selectClause = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                 var statement = SQL(
-                    $@"
-                        select {selectClause} 
-                        into {newDelTable}
-                        from {childTable.QualifiedNameSql} as fk
-                        join {table.QualifiedNameSql} as pk on {pkJoin}
-                        {whereClause}
-                            and exists(select 1 from {tempTableName} as tt where {ttJoin})
-                        ;
-                        
-                        select count(*) from {newDelTable}
-                    "
+                    $"""
+                    select {selectClause}
+                    into {newDelTable}
+                    from {childTable.QualifiedNameSql} as fk
+                    where exists(
+                            select 1
+                            from {table.QualifiedNameSql} pk
+                            join {tempTableName} tt on {ttPkJoin}
+                            where {andSelfRefFksDontCauseDuplicationClause}
+                                and {pkFkJoin}
+                        )
+                    ;
+
+                    select count(*) from {newDelTable}
+                    """
                 );
 
                 var kidRowsCount = statement.ReadScalar<int>(conn);
