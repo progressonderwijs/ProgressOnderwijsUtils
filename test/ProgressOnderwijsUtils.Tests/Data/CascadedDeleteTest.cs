@@ -252,6 +252,43 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
             };
     }
 
+    sealed record C_rec(int iid) : IReadImplicitly;
+
+    [Fact]
+    public void CascadeDeleteDoesntDeleteTooManyRecordsForSelfRefFk()
+    {
+        SQL(
+            $"""
+            create table C (iid int primary key);
+            create table AB (bid int primary key, iid int references C, ic int references AB);
+
+            insert into C values (4);
+            insert into C values (2);
+            insert into C values (1);
+            insert into AB values (12, 4, null);
+            insert into AB values (3, 2, null);
+            insert into AB values (5, 1, 3);
+            """
+        ).ExecuteNonQuery(Connection);
+
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.C"), true, null, null, new C_rec(4))
+            .Select(StringifyDeletionReportRow).JoinStrings("\n");
+
+        PAssert.That(
+            () =>
+                """
+                dbo.AB (at most #1)
+                    bid:12; iid:4; ic:
+
+                dbo.C (at most #1)
+                    iid:4
+
+                """ ==
+                deletionReport
+        );
+    }
+
     [Fact]
     public void CascadeDeleteAllowsSameTableCyclesWhenThoseAreSimultaneouslyDeletable()
     {
