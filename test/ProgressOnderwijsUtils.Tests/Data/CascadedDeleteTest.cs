@@ -224,9 +224,29 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One)
+            .Select(
+                r => $"{r.Table} (at most #{r.DeletedAtMostRowCount})\n" +
+                    r.DeletedRows switch {
+                        { } dt => dt.Rows.Cast<DataRow>().Select(dr => dt.Columns.Cast<DataColumn>().Select(col => col.ColumnName + ":" + dr[col].ToString()).JoinStrings("; ")).Select(line => $"    {line}\n").JoinStrings(),
+                        null => "",
+                    }
+            ).JoinStrings("\n");
 
-        PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T2", "dbo.T1", }));
+        Assert.Equal(
+            """
+            dbo.T2 (at most #1)
+                B:3; A:; C:2
+
+            dbo.T2 (at most #1)
+                B:2; A:1; C:
+
+            dbo.T1 (at most #1)
+                A:1
+
+            """,
+            deletionReport
+        );
     }
 
     [Fact]
