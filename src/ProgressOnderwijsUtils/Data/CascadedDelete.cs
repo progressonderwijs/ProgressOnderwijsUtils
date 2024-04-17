@@ -253,7 +253,15 @@ public static class CascadedDelete
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
                 var avoidCascadeOnSelfReferencingRecordsFilter = table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
-                    ? SQL($"({columnsToJoinOn.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))})")
+                    ? SQL(
+                        $"""
+                        not exists (
+                            select 1
+                            from {tempTableName} tt
+                            where {columnsToJoinOn.Select(col => SQL($"fk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "))}
+                        )
+                        """
+                    )
                     : SQL($"1=1");
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                 var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
@@ -267,9 +275,9 @@ public static class CascadedDelete
                             select 1
                             from {table.QualifiedNameSql} pk
                             join {tempTableName} tt on {ttPkJoin}
-                            where {avoidCascadeOnSelfReferencingRecordsFilter}
-                                and {pkFkJoin}
+                            where {pkFkJoin}
                         )
+                    and {avoidCascadeOnSelfReferencingRecordsFilter}
                     ;
 
                     select count(*) from {newDelTable}
