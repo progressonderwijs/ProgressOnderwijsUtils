@@ -86,6 +86,8 @@ public sealed class DatabaseDescription
 
         public ParameterizedSql ScriptToDropConstraint()
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)};\n");
+
+        public override string ToString() => $"FK: {QualifiedName} from {ReferencingChildTable.QualifiedName} to {ReferencedParentTable.QualifiedName}";
     }
 
     public sealed class Index<TObject>
@@ -306,6 +308,9 @@ public sealed class DatabaseDescription
                             .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
                             .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
                 ).ToArray();
+
+        public override string ToString()
+            => $"TABLE: {QualifiedName}";
     }
 
     public sealed class View : ObjectWithColumns<View>

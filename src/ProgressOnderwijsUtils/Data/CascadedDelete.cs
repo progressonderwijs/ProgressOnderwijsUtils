@@ -178,13 +178,19 @@ public static class CascadedDelete
         log($"{totalDeletes} rows Deleted");
         return perflog.ToArray();
 
-        void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] keyColumns, SList<string> logStack)
+        void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] columnsToJoinOn, SList<string> logStack)
         {
             if (StopCascading(table.QualifiedNameSql)) {
                 return;
             }
-            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new());
+            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, columnsToJoinOn.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
+                //Tricky: cyclical dependency check might not detect a cycle as quickly as you'd like
+                //we're looking for cycles based on previously required deletions.  Real cyclical dependencies are _row_ based, however, we're checking by keys here.
+                //Checking by keys would be fine if we always used the same keys for a given table, but we don't: we're selecting previous deletions based on table _and_ key, and there might be multiple unique keys
+                //So there's a risk that a row can't be deleted before some other row it points to, and that other row points back to the initial row - but via a different key.
+                //Were that to happen we would _not_ immediately detect a cycle, though almost certainly that cycle itself repeats, so we probably detect it later
+
                 var unionOfProblems = onStackDeletionTables.Select(onStackTmpTable => SQL($"(select * from {onStackTmpTable} intersect select * from {tempTableName})")).ConcatenateSql(SQL($" union all "));
                 var cycleDetected = SQL($"select iif(exists({unionOfProblems}), {true}, {false})").ReadScalar<bool>(conn);
 
@@ -194,7 +200,7 @@ public static class CascadedDelete
             }
             onStackDeletionTables.Push(tempTableName);
 
-            var ttJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
+            var ttPkJoin = columnsToJoinOn.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
             deletionStack.Push(
                 () => {
@@ -207,7 +213,7 @@ public static class CascadedDelete
                                 delete pk
                                 {outputClause}
                                 from {table.QualifiedNameSql} pk
-                                join {tempTableName} tt on {ttJoin};
+                                join {tempTableName} tt on {ttPkJoin};
                             "
                         );
 
@@ -244,25 +250,38 @@ public static class CascadedDelete
 
             foreach (var fk in table.KeysFromReferencingChildren) {
                 var childTable = fk.ReferencingChildTable;
-                var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
+                var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
-                var whereClause = !table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
-                    ? SQL($"where 1=1")
-                    : SQL($"where {keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))}");
+                var avoidCascadeOnSelfReferencingRecordsFilter = table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
+                    ? SQL(
+                        $"""
+                        not exists (
+                            select 1
+                            from {tempTableName} tt
+                            where {columnsToJoinOn.Select(col => SQL($"fk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "))}
+                        )
+                        """
+                    )
+                    : SQL($"1=1");
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
-                var selectClause = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+                var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+
                 var statement = SQL(
-                    $@"
-                        select {selectClause} 
-                        into {newDelTable}
-                        from {childTable.QualifiedNameSql} as fk
-                        join {table.QualifiedNameSql} as pk on {pkJoin}
-                        {whereClause}
-                            and exists(select 1 from {tempTableName} as tt where {ttJoin})
-                        ;
-                        
-                        select count(*) from {newDelTable}
-                    "
+                    $"""
+                    select {columnsThatReferencePkViaFk}
+                    into {newDelTable}
+                    from {childTable.QualifiedNameSql} as fk
+                    where exists(
+                            select 1
+                            from {table.QualifiedNameSql} pk
+                            join {tempTableName} tt on {ttPkJoin}
+                            where {pkFkJoin}
+                        )
+                    and {avoidCascadeOnSelfReferencingRecordsFilter}
+                    ;
+
+                    select count(*) from {newDelTable}
+                    """
                 );
 
                 var kidRowsCount = statement.ReadScalar<int>(conn);
@@ -283,7 +302,7 @@ public static class CascadedDelete
         }
     }
 
-    public struct DeletionReport
+    public record struct DeletionReport
     {
         public string Table;
         public TimeSpan DeletionDuration;

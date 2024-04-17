@@ -213,20 +213,80 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadeDeleteFollowsNullableForeignKeyAndThenSameTableForeignKey()
     {
         SQL(
-            $@"
-                create table T1 (A int primary key);
-                create table T2 (B int primary key, A int references T1, C int references T2);
+            $"""
+            create table T1 (A int primary key);
+            create table T2 (B int primary key, A int references T1, C int references T2);
 
-                insert into T1 values (1);
-                insert into T2 values (2, 1, null);
-                insert into T2 values (3, null, 2);
-            "
+            insert into T1 values (1);
+            insert into T2 values (2, 1, null);
+            insert into T2 values (3, null, 2);
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One)
+            .Select(StringifyDeletionReportRow).JoinStrings("\n");
 
-        PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T2", "dbo.T1", }));
+        Assert.Equal(
+            """
+            dbo.T2 (at most #1)
+                B:3; A:; C:2
+
+            dbo.T2 (at most #1)
+                B:2; A:1; C:
+
+            dbo.T1 (at most #1)
+                A:1
+
+            """,
+            deletionReport
+        );
+    }
+
+    static string StringifyDeletionReportRow(CascadedDelete.DeletionReport r)
+    {
+        return $"{r.Table} (at most #{r.DeletedAtMostRowCount})\n" +
+            r.DeletedRows switch {
+                { } dt => dt.Rows.Cast<DataRow>().Select(dr => dt.Columns.Cast<DataColumn>().Select(col => col.ColumnName + ":" + dr[col].ToString()).JoinStrings("; ")).Select(line => $"    {line}\n").JoinStrings(),
+                null => "",
+            };
+    }
+
+    sealed record C_rec(int iid) : IReadImplicitly;
+
+    [Fact]
+    public void CascadeDeleteDoesntDeleteTooManyRecordsForSelfRefFk()
+    {
+        SQL(
+            $"""
+            create table C (iid int primary key);
+            create table AB (bid int primary key, iid int references C, ic int references AB);
+
+            insert into C values (4);
+            insert into C values (2);
+            insert into C values (1);
+            insert into AB values (12, 4, null);
+            insert into AB values (3, 2, null);
+            insert into AB values (5, 1, 3);
+            """
+        ).ExecuteNonQuery(Connection);
+
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.C"), true, null, null, new C_rec(4))
+            .Select(StringifyDeletionReportRow).JoinStrings("\n");
+
+        PAssert.That(
+            () =>
+                """
+                dbo.AB (at most #1)
+                    bid:12; iid:4; ic:
+
+                dbo.C (at most #1)
+                    iid:4
+
+                """ ==
+                deletionReport
+        );
     }
 
     [Fact]
