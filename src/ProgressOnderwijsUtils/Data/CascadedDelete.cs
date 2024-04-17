@@ -257,6 +257,7 @@ public static class CascadedDelete
                     : SQL($"1=1");
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                 var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+
                 var statement = SQL(
                     $"""
                     select {columnsThatReferencePkViaFk}
