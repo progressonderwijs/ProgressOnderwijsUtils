@@ -60,8 +60,9 @@ public sealed class ProcessRunnerTest
     }
 
     [Fact]
-    public void CanBeCancelled()
+    public async void CanBeCancelled()
     {
+        // ReSharper disable MethodSupportsCancellation
         var cancel = new CancellationTokenSource();
 
         var timer = Stopwatch.StartNew();
@@ -72,17 +73,17 @@ public sealed class ProcessRunnerTest
         }.StartProcess(cancel.Token);
         _ = result.Output.Subscribe(o => output.WriteLine(o.Line));
 
-        var hasStartedPinging = result.Output.Any(o => o.Line.StartsWith("Pinging", StringComparison.Ordinal)).Wait();
+        var hasStartedPinging = await result.Output.Any(o => o.Line.StartsWith("Pinging", StringComparison.Ordinal));
         var elapsedAfterFirstOutput = timer.Elapsed;
         PAssert.That(() => hasStartedPinging && !result.ExitCode.IsCompleted && elapsedAfterFirstOutput < TimeSpan.FromSeconds(4));
-        cancel.Cancel();
-        _ = Task.WaitAny(result.ExitCode); //WaitAny does not throw, unlike .Wait()
+        await cancel.CancelAsync();
+        await result.ExitCode.ContinueWith(_ => { });
 
         var elapsedAfterExit = timer.Elapsed;
         PAssert.That(() => result.ExitCode.IsCompleted && elapsedAfterExit < TimeSpan.FromSeconds(8));
 
-        var outputCompletedInTime = result.Output.ToTask(CancellationToken.None).Wait(1000);
-        PAssert.That(() => outputCompletedInTime);
+        _ = await result.Output.ToTask(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(1));
+        // ReSharper restore MethodSupportsCancellation
     }
 
     [Fact]
