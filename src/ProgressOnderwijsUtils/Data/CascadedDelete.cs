@@ -185,6 +185,12 @@ public static class CascadedDelete
             }
             var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
+                //Tricky: cyclical dependency check might not detect a cycle as quickly as you'd like
+                //we're looking for cycles based on previously required deletions.  Real cyclical dependencies are _row_ based, however, we're checking by keys here.
+                //Checking by keys would be fine if we always used the same keys for a given table, but we don't: we're selecting previous deletions based on table _and_ key, and there might be multiple unique keys
+                //So there's a risk that a row can't be deleted before some other row it points to, and that other row points back to the initial row - but via a different key.
+                //Were that to happen we would _not_ immediately detect a cycle, though almost certainly that cycle itself repeats, so we probably detect it later
+
                 var unionOfProblems = onStackDeletionTables.Select(onStackTmpTable => SQL($"(select * from {onStackTmpTable} intersect select * from {tempTableName})")).ConcatenateSql(SQL($" union all "));
                 var cycleDetected = SQL($"select iif(exists({unionOfProblems}), {true}, {false})").ReadScalar<bool>(conn);
 
