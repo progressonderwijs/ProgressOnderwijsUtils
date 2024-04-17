@@ -253,7 +253,7 @@ public static class CascadedDelete
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
                 var avoidCascadeOnSelfReferencingRecordsFilter = table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
-                    ? columnsToJoinOn.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))
+                    ? SQL($"({columnsToJoinOn.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))})")
                     : SQL($"1=1");
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                 var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
