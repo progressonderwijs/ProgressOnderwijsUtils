@@ -256,10 +256,10 @@ public static class CascadedDelete
                     ? SQL($"1=1")
                     : keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "));
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
-                var selectClause = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+                var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                 var statement = SQL(
                     $"""
-                    select {selectClause}
+                    select {columnsThatReferencePkViaFk}
                     into {newDelTable}
                     from {childTable.QualifiedNameSql} as fk
                     where exists(
