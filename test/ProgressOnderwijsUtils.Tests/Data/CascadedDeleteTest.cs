@@ -225,13 +225,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
         var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One)
-            .Select(
-                r => $"{r.Table} (at most #{r.DeletedAtMostRowCount})\n" +
-                    r.DeletedRows switch {
-                        { } dt => dt.Rows.Cast<DataRow>().Select(dr => dt.Columns.Cast<DataColumn>().Select(col => col.ColumnName + ":" + dr[col].ToString()).JoinStrings("; ")).Select(line => $"    {line}\n").JoinStrings(),
-                        null => "",
-                    }
-            ).JoinStrings("\n");
+            .Select(StringifyDeletionReportRow).JoinStrings("\n");
 
         Assert.Equal(
             """
@@ -247,6 +241,15 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
             """,
             deletionReport
         );
+    }
+
+    static string StringifyDeletionReportRow(CascadedDelete.DeletionReport r)
+    {
+        return $"{r.Table} (at most #{r.DeletedAtMostRowCount})\n" +
+            r.DeletedRows switch {
+                { } dt => dt.Rows.Cast<DataRow>().Select(dr => dt.Columns.Cast<DataColumn>().Select(col => col.ColumnName + ":" + dr[col].ToString()).JoinStrings("; ")).Select(line => $"    {line}\n").JoinStrings(),
+                null => "",
+            };
     }
 
     [Fact]
