@@ -178,12 +178,12 @@ public static class CascadedDelete
         log($"{totalDeletes} rows Deleted");
         return perflog.ToArray();
 
-        void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] keyColumns, SList<string> logStack)
+        void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] columnsToJoinOn, SList<string> logStack)
         {
             if (StopCascading(table.QualifiedNameSql)) {
                 return;
             }
-            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, keyColumns.ConcatenateSql(SQL($","))), new());
+            var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, columnsToJoinOn.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
                 //Tricky: cyclical dependency check might not detect a cycle as quickly as you'd like
                 //we're looking for cycles based on previously required deletions.  Real cyclical dependencies are _row_ based, however, we're checking by keys here.
@@ -200,7 +200,7 @@ public static class CascadedDelete
             }
             onStackDeletionTables.Push(tempTableName);
 
-            var ttPkJoin = keyColumns.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
+            var ttPkJoin = columnsToJoinOn.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
             deletionStack.Push(
                 () => {
@@ -253,7 +253,7 @@ public static class CascadedDelete
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
                 var avoidCascadeOnSelfReferencingRecordsFilter = table.QualifiedName.EqualsOrdinalCaseInsensitive(childTable.QualifiedName)
-                    ? keyColumns.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))
+                    ? columnsToJoinOn.Select(col => SQL($"pk.{col}<>fk.{col} or fk.{col} is null")).ConcatenateSql(SQL($" or "))
                     : SQL($"1=1");
                 var referencingCols = fk.Columns.ArraySelect(col => col.ReferencingChildColumn.SqlColumnName());
                 var columnsThatReferencePkViaFk = referencingCols.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
