@@ -62,6 +62,7 @@ public static class DbColumnExtensions
             return column.ColumnMetaData with {
                 UserTypeId = SqlSystemTypeId.Binary,
                 MaxLength = 8,
+                IsComputed = false,
             };
         } else {
             return column;
