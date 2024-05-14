@@ -1,4 +1,4 @@
-using Microsoft.Windows.Sdk;
+using Windows.Win32.Foundation;
 
 namespace ProgressOnderwijsUtils.Win32;
 
