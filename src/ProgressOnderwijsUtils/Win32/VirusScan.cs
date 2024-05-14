@@ -1,22 +1,26 @@
-using Microsoft.Windows.Sdk;
+using System.Runtime.Versioning;
+using Windows.Win32;
+using Windows.Win32.System.Antimalware;
 
 namespace ProgressOnderwijsUtils.Win32;
 
 public static class VirusScan
 {
+    [SupportedOSPlatform("windows10.0.10240")]
     public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
     {
-        var context = default(nint);
+        var context = default(HAMSICONTEXT);
 
         try {
             PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
 
             fixed (void* bufferPtr = buffer) {
-                _ = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, nint.Zero, out var result);
+                var hresult = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, default(HAMSISESSION), out var result);
+                hresult.AssertResultOk("AmsiScanBuffer", "");
                 return ResultIsMalware(result);
             }
         } finally {
-            if (context != default(nint)) {
+            if (context != default(HAMSICONTEXT)) {
                 PInvoke.AmsiUninitialize(context);
             }
         }
