@@ -60,7 +60,7 @@ public sealed class ProcessRunnerTest
     }
 
     [Fact]
-    public async void CanBeCancelled()
+    public async Task CanBeCancelled()
     {
         // ReSharper disable MethodSupportsCancellation
         var cancel = new CancellationTokenSource();
