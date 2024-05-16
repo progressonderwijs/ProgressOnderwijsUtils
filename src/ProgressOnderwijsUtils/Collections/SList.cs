@@ -3,19 +3,9 @@ namespace ProgressOnderwijsUtils.Collections;
 /// <summary>
 /// Immutable, thread-safe, singly-linked list
 /// </summary>
-public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
+public readonly struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
 {
-    sealed class Impl
-    {
-        public readonly T Head;
-        public readonly Impl? Tail;
-
-        public Impl(T head, Impl? tail)
-        {
-            Head = head;
-            Tail = tail;
-        }
-    }
+    sealed record Impl(T Head, Impl? Tail);
 
     SList(Impl? list)
         => this.list = list;
@@ -98,6 +88,7 @@ public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
     }
 
     IEnumerator IEnumerable.GetEnumerator()
+        // ReSharper disable once NotDisposedResourceIsReturned
         => ((IEnumerable<T>)this).GetEnumerator();
 }
 

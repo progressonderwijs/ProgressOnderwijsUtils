@@ -214,6 +214,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
     }
 
     public IEnumerator<T> GetEnumerator()
+        // ReSharper disable once NotDisposedResourceIsReturned
         => ((IEnumerable<T>)ValuesInOrder).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
