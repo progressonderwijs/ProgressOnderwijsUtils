@@ -91,4 +91,16 @@ public static class PocoUtils
 
     static readonly MethodInfo genericMethodInfo_GetProperties = Utils.F(GetProperties<object>).Method.GetGenericMethodDefinition();
     static readonly Func<Type, IPocoProperties<IPocoProperty>> memoizedGetProperties = Utils.F((Type t) => (IPocoProperties<IPocoProperty>)genericMethodInfo_GetProperties.MakeGenericMethod(t).Invoke(null, null).AssertNotNull()).ThreadSafeMemoize();
+
+    [Pure]
+    public static string PropertiesDiffLog<TPoco>(TPoco a, TPoco b)
+        => (
+            from prop in GetProperties<TPoco>()
+            let getter = prop.Getter
+            where getter is not null
+            let aVal = getter(a)
+            let bVal = getter(b)
+            where !Equals(aVal, bVal)
+            select $"{prop.Name}='{aVal}'»»'{bVal}'"
+        ).JoinStrings("; ");
 }

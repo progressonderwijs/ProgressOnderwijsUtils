@@ -192,4 +192,15 @@ public sealed class PocoUtilsTest
         var mpReadonlyProperty = PocoUtils.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
         PAssert.That(() => mpReadonlyProperty.CanContainNull);
     }
+
+    sealed record PropertiesDiffLogPoco(int i, string? s);
+
+    [Fact]
+    public void PropertiesDiffLogTest()
+    {
+        PAssert.That(() => PocoUtils.PropertiesDiffLog(new PropertiesDiffLogPoco(1, null), new PropertiesDiffLogPoco(1, null)) == "");
+        PAssert.That(() => PocoUtils.PropertiesDiffLog(new PropertiesDiffLogPoco(1, null), new PropertiesDiffLogPoco(2, null)) == "i='1'»»'2'");
+        PAssert.That(() => PocoUtils.PropertiesDiffLog(new PropertiesDiffLogPoco(1, null), new PropertiesDiffLogPoco(1, "iets")) == "s=''»»'iets'");
+        PAssert.That(() => PocoUtils.PropertiesDiffLog(new PropertiesDiffLogPoco(1, null), new PropertiesDiffLogPoco(2, "iets")) == "i='1'»»'2'; s=''»»'iets'");
+    }
 }
