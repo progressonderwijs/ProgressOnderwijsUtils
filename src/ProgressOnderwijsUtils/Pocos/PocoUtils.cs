@@ -94,11 +94,13 @@ public static class PocoUtils
 
     [Pure]
     public static string PropertiesDiffLog<TPoco>(TPoco a, TPoco b)
-        => GetProperties<TPoco>()
-            .Where(p => p.CanRead)
-            .Select(p => (name: p.Name, a: p.Getter.AssertNotNull()(a), b: p.Getter.AssertNotNull()(b)))
-            .Where(p => !Equals(p.a, p.b))
-            .OrderBy(p => p.name)
-            .Select(p => $"{p.name}='{p.a}'»»'{p.b}'")
-            .JoinStrings("; ");
+        => (
+            from prop in GetProperties<TPoco>()
+            let getter = prop.Getter
+            where getter is not null
+            let aVal = getter(a)
+            let bVal = getter(b)
+            where !Equals(aVal, bVal)
+            select $"{prop.Name}='{aVal}'»»'{bVal}'"
+        ).JoinStrings("; ");
 }
