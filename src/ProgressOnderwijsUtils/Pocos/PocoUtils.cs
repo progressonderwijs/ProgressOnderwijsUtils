@@ -97,7 +97,8 @@ public static class PocoUtils
         => GetProperties<TPoco>()
             .Where(p => p.CanRead)
             .Select(p => (name: p.Name, a: p.Getter.AssertNotNull()(a), b: p.Getter.AssertNotNull()(b)))
-            .Where(p => !object.Equals(p.a, p.b))
-            .Select(p => $"{p.name}: '{p.a}'->'{p.b}'")
+            .Where(p => !Equals(p.a, p.b))
+            .OrderBy(p => p.name)
+            .Select(p => $"{p.name}='{p.a}'»»'{p.b}'")
             .JoinStrings("; ");
 }
