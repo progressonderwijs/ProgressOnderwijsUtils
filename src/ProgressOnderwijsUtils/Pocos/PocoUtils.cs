@@ -101,6 +101,6 @@ public static class PocoUtils
             let aVal = getter(a)
             let bVal = getter(b)
             where !Equals(aVal, bVal)
-            select $"{prop.Name}='{aVal}'»»'{bVal}'"
+            select $"{prop.Name}={aVal}»»{bVal}"
         ).JoinStrings("; ");
 }
