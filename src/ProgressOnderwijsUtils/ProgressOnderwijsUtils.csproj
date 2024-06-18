@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>102.2.1</Version>
-    <PackageReleaseNotes>Do not use quotes in poco debug function - the delimiters are informational enough</PackageReleaseNotes>
+    <Version>102.2.2</Version>
+    <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
