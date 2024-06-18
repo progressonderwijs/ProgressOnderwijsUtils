@@ -10,7 +10,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.11.4" /> <!-- PV 20231218: Package installed, cause Microsoft.Data.SqlClient used an old vunerable version 1.7.0 -->
+    <PackageReference Include="Azure.Identity" Version="1.12.0" /> <!-- PV 20231218: Package installed, cause Microsoft.Data.SqlClient used an old vunerable version 1.7.0 -->
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
