@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>102.2.1</Version>
-    <PackageReleaseNotes>Do not use quotes in poco debug function - the delimiters are informational enough</PackageReleaseNotes>
+    <Version>102.2.2</Version>
+    <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -10,7 +10,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.11.4" /> <!-- PV 20231218: Package installed, cause Microsoft.Data.SqlClient used an old vunerable version 1.7.0 -->
+    <PackageReference Include="Azure.Identity" Version="1.12.0" /> <!-- PV 20231218: Package installed, cause Microsoft.Data.SqlClient used an old vunerable version 1.7.0 -->
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
