@@ -4,6 +4,7 @@ public sealed class ExampleObject : IWrittenImplicitly
 {
     public int? A { get; set; }
     public int B { get; set; }
+    // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength
     public string? C { get; set; }
     public bool? D { get; set; }
     public int E { get; set; }
