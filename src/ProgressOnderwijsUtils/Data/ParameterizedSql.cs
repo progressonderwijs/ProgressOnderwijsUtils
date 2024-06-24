@@ -96,23 +96,74 @@ public struct ParameterizedSql
     /// </summary>
     public static ParameterizedSql UnescapedSqlIdentifier(string rawSqlString)
     {
+        ArgumentNullException.ThrowIfNull(nameof(rawSqlString));
+        AssertIsIdentifier(rawSqlString, 0);
+        return new StringSqlFragment(rawSqlString).BuildableToQuery();
+    }
+    /// <summary>
+    /// raw sql string, throws exception if the identifier does not follow https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers rules.
+    /// </summary>
+    public static ParameterizedSql AssertQualifiedSqlIdentifier(string rawSqlString)
+    {
         if (rawSqlString == null) {
             throw new ArgumentNullException(nameof(rawSqlString));
         }
-        if (rawSqlString == "") {
-            return EmptySql;
-        }
-        if (!ValidInitialIdentifierChar(rawSqlString[0])) {
-            throw new($"Invalid SQL identifier @ index 0 ({rawSqlString[0]}): {rawSqlString}");
+        if (rawSqlString.Length < 3) {
+            throw new("A qualified SQL identifier must have a qualifier, a dot, and a name");
         }
 
-        for (var i = 1; i < rawSqlString.Length; i++) {
-            if (!ValidSubsequentIdentifierChar(rawSqlString[i])) {
-                throw new($"Invalid SQL identifier @ index {i} ({rawSqlString[i]}): {rawSqlString}");
+        var index = 0;
+        AssertIsInitialChar(rawSqlString, index);
+
+        while (index < rawSqlString.Length) {
+            if (rawSqlString[index] == '.') {
+                index++;
+                break;
             }
+            AssertIsSubsequentChar(rawSqlString, index);
+            index++;
         }
+
+        if (index == rawSqlString.Length) {
+            throw new("Missing '.' in qualified name");
+        }
+
+        AssertIsIdentifier(rawSqlString, index);
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
+
+    static void AssertIsIdentifier(string rawSqlString, int index)
+    {
+        if (rawSqlString.Length == 0) {
+            throw new("A qualified SQL identifier must have at least one char");
+        }
+
+        AssertIsInitialChar(rawSqlString, index);
+
+        index++;
+        for (; index < rawSqlString.Length; index++) {
+            AssertIsSubsequentChar(rawSqlString, index);
+        }
+    }
+
+    static void AssertIsSubsequentChar(string rawSqlString, int index)
+    {
+        if (!ValidSubsequentIdentifierChar(rawSqlString[index])) {
+            ThrowInvalidIdentifierChar(rawSqlString, index);
+        }
+    }
+
+    static void AssertIsInitialChar(string rawSqlString, int index)
+    {
+        if (!ValidInitialIdentifierChar(rawSqlString[index])) {
+            ThrowInvalidIdentifierChar(rawSqlString, index);
+        }
+    }
+
+    static void ThrowInvalidIdentifierChar(string rawSqlString, int index)
+        => throw new($"Invalid SQL identifier @ index {index} ({rawSqlString[index]}): {rawSqlString}");
+
+
 
     public static ParameterizedSql EscapedSqlObjectName(string objectName)
         => RawSql_PotentialForSqlInjection("[" + objectName.Replace("]", "]]") + "]");

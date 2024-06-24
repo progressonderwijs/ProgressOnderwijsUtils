@@ -1,3 +1,4 @@
+// ReSharper disable EntityFramework.ModelValidation.UnlimitedStringLength
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 public sealed class WideExampleObject : IWrittenImplicitly

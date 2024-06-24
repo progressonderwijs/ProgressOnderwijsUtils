@@ -193,7 +193,7 @@ public sealed class PocoUtilsTest
         PAssert.That(() => mpReadonlyProperty.CanContainNull);
     }
 
-    sealed record PropertiesDiffLogPoco(int i, string? s);
+    sealed record PropertiesDiffLogPoco(int i, string? s) : IReadImplicitly;
 
     [Fact]
     public void PropertiesDiffLogTest()

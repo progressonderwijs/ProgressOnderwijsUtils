@@ -149,19 +149,59 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
+        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
+
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(""));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("--\n\n drop bobby tables"));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(" bla"));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("bl a"));
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("0bla"));
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("!iets"));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("(expression)"));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("a.b"));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("$ab"));
-        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("[ab]"));
     }
+
+    [Fact]
+    public void AssertQualifiedSqlIdentifier_ThrowsOnInvalid()
+    {
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a.b");//assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a$b.c$d");//assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#temptable.col");//assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("hmm.#dubious");//assert does not throw, but not dangerous
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0.col");//assert does not throw, but not dangerous
+
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier(""));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("--\n\n drop bobby tables"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#tempTable"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier(" bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bl a"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("0bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("!iets"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("(expression)"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("$ab"));
+
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q. bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q.bl a"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q.0bla"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q.!iets"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q.(expression)"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("q.$ab"));
+
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier(" bla.col"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bl a.col"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("0bla.col"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("!iets.col"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("(expression).col"));
+        _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("$ab.col"));
+    }
+
 
     [Fact]
     public void OperatorAndReturnsSqlWhenTrue()
