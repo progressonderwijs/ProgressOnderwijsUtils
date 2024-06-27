@@ -248,7 +248,7 @@ public static class CascadedDelete
                 }
             );
 
-            foreach (var fk in table.KeysFromReferencingChildren) {
+            foreach (var fk in table.KeysFromReferencingChildren.Where(o => o.DeleteReferentialAction != FkReferentialAction.SetNull)) {
                 var childTable = fk.ReferencingChildTable;
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
