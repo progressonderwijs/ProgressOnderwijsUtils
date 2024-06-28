@@ -21,6 +21,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
+            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
             stopCascading,
             new[] { pkColumn, },
             SQL(
@@ -59,6 +60,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
+            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
             stopCascading,
             pkColumns,
             SQL(
@@ -93,6 +95,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
+            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
             stopCascading,
             pkColumns,
             SQL(
@@ -124,6 +127,7 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
+        Func<DatabaseDescription.ForeignKey, bool> foreignKeyPredicate,
         Func<string, bool>? stopCascading,
         string[] pkColumns,
         ParameterizedSql pksTVParameter)
@@ -248,7 +252,7 @@ public static class CascadedDelete
                 }
             );
 
-            foreach (var fk in table.KeysFromReferencingChildren.Where(o => o.DeleteReferentialAction != FkReferentialAction.SetNull)) {
+            foreach (var fk in table.KeysFromReferencingChildren.Where(foreignKeyPredicate)) {
                 var childTable = fk.ReferencingChildTable;
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
