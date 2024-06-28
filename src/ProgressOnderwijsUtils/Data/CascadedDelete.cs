@@ -10,6 +10,7 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
         Func<string, bool>? stopCascading,
         string pkColumn,
         params TId[] pksToDelete)
@@ -21,7 +22,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
+            foreignKeyPredicate,
             stopCascading,
             new[] { pkColumn, },
             SQL(
@@ -38,9 +39,9 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
         Func<string, bool>? stopCascading,
-        params TId[] pksToDelete
-    )
+        params TId[] pksToDelete)
         where TId : IReadImplicitly
     {
         var pksTable = SQL($"#pksTable");
@@ -60,7 +61,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
+            foreignKeyPredicate,
             stopCascading,
             pkColumns,
             SQL(
@@ -80,7 +81,14 @@ public static class CascadedDelete
         return report;
     }
 
-    public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, DataTable pksToDelete)
+    public static DeletionReport[] RecursivelyDelete(
+        SqlConnection conn,
+        DatabaseDescription.Table initialTableAsEntered,
+        bool outputAllDeletedRows,
+        Action<string>? logger,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
+        Func<string, bool>? stopCascading,
+        DataTable pksToDelete)
     {
         var pksTable = SQL($"#pksTable");
         var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
@@ -95,7 +103,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            o => o.DeleteReferentialAction != FkReferentialAction.SetNull,
+            null,
             stopCascading,
             pkColumns,
             SQL(
