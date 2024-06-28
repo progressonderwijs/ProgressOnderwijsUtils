@@ -103,7 +103,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            null,
+            foreignKeyPredicate,
             stopCascading,
             pkColumns,
             SQL(
