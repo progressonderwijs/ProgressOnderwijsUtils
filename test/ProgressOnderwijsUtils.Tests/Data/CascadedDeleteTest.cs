@@ -200,11 +200,8 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
             "
         ).ExecuteNonQuery(Connection);
 
-        bool StopCascading(string onTable)
-            => onTable == "dbo.T2";
-
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, StopCascading, "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.ReferencedParentTable.QualifiedName != "dbo.T2", null, "A", AId.One);
 
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T3", "dbo.T1", }));
     }
