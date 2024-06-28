@@ -22,7 +22,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333, }));
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, null, "A", AId.One, AId.Two);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
 
         var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
         PAssert.That(() => finalDependentValues.SetEqual(new[] { 333, }));
@@ -47,7 +47,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333, }));
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, null, "A", AId.One, AId.Two);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
 
         var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
         PAssert.That(() => finalDependentValues.SetEqual(new[] { 333, }));
@@ -77,7 +77,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333, }));
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var ex = Assert.ThrowsAny<Exception>(() => CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, null, "A", AId.One, AId.Two));
+        var ex = Assert.ThrowsAny<Exception>(() => CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two));
         PAssert.That(() => ex.Message.Contains("dbo.T2->dbo.T1->dbo.T2->dbo.T1"));
     }
 
@@ -103,7 +103,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, null, PksToDelete("A", 1, 2));
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, PksToDelete("A", 1, 2));
         var finalValues = SQL($"select B from T1").ReadPlain<int>(Connection);
 
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1", }));
@@ -142,7 +142,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4, }));
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, null, new RootId { Root = 1, }, new RootId { Root = 2, });
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, }, new RootId { Root = 2, });
 
         var finalT2 = SQL($"select D from T2").ReadPlain<int>(Connection);
         PAssert.That(() => finalT2.SetEqual(new[] { 5, }));
@@ -175,7 +175,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, null, new RootId { Root = 1, });
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, });
 
         var rowsFromTRoot = deletionReport.Single(t => t.Table == "dbo.TRoot");
         PAssert.That(() => rowsFromTRoot.DeletedAtMostRowCount == 1);
@@ -201,7 +201,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.ReferencedParentTable.QualifiedName != "dbo.T2", null, "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.ReferencedParentTable.QualifiedName != "dbo.T2", "A", AId.One);
 
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T3", "dbo.T1", }));
     }
@@ -221,7 +221,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, null, "A", AId.One)
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One)
             .Select(StringifyDeletionReportRow).JoinStrings("\n");
 
         Assert.Equal(
@@ -269,7 +269,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.C"), true, null, null, null, new C_rec(4))
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.C"), true, null, null, new C_rec(4))
             .Select(StringifyDeletionReportRow).JoinStrings("\n");
 
         PAssert.That(
@@ -302,7 +302,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, null, "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One);
 
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1", }));
     }
@@ -316,7 +316,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         var version = SQL($"select t.V from T1 t").ReadScalar<byte[]>(Connection).AssertNotNull();
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, null, "A", AId.One).Single();
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One).Single();
         var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
 
         PAssert.That(() => deletionReport.Table == "dbo.T1");
@@ -333,7 +333,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         var version = SQL($"select t.V from T1 t").ReadScalar<byte[]>(Connection).AssertNotNull();
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, null, "A", AId.One).Single();
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), true, null, null, "A", AId.One).Single();
         var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
 
         PAssert.That(() => deletionReport.Table == "dbo.T1");

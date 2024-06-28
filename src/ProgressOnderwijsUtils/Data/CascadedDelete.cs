@@ -11,7 +11,6 @@ public static class CascadedDelete
         bool outputAllDeletedRows,
         Action<string>? logger,
         Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
-        Func<string, bool>? stopCascading,
         string pkColumn,
         params TId[] pksToDelete)
         where TId : Enum
@@ -23,7 +22,6 @@ public static class CascadedDelete
             outputAllDeletedRows,
             logger,
             foreignKeyPredicate,
-            stopCascading,
             new[] { pkColumn, },
             SQL(
                 $@"
@@ -40,7 +38,6 @@ public static class CascadedDelete
         bool outputAllDeletedRows,
         Action<string>? logger,
         Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
-        Func<string, bool>? stopCascading,
         params TId[] pksToDelete)
         where TId : IReadImplicitly
     {
@@ -62,7 +59,6 @@ public static class CascadedDelete
             outputAllDeletedRows,
             logger,
             foreignKeyPredicate,
-            stopCascading,
             pkColumns,
             SQL(
                 $@"
@@ -87,7 +83,6 @@ public static class CascadedDelete
         bool outputAllDeletedRows,
         Action<string>? logger,
         Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
-        Func<string, bool>? stopCascading,
         DataTable pksToDelete)
     {
         var pksTable = SQL($"#pksTable");
@@ -104,7 +99,6 @@ public static class CascadedDelete
             outputAllDeletedRows,
             logger,
             foreignKeyPredicate,
-            stopCascading,
             pkColumns,
             SQL(
                 $@"
@@ -136,15 +130,11 @@ public static class CascadedDelete
         bool outputAllDeletedRows,
         Action<string>? logger,
         Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
-        Func<string, bool>? stopCascading,
         string[] pkColumns,
         ParameterizedSql pksTVParameter)
     {
         void log(string message)
             => logger?.Invoke(message);
-
-        bool StopCascading(ParameterizedSql tableName)
-            => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
         var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
@@ -192,9 +182,6 @@ public static class CascadedDelete
 
         void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] columnsToJoinOn, SList<string> logStack)
         {
-            if (StopCascading(table.QualifiedNameSql)) {
-                return;
-            }
             var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, columnsToJoinOn.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
                 //Tricky: cyclical dependency check might not detect a cycle as quickly as you'd like
