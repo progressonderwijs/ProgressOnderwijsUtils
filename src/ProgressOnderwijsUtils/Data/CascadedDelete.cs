@@ -127,7 +127,7 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
-        Func<DatabaseDescription.ForeignKey, bool> foreignKeyPredicate,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
         Func<string, bool>? stopCascading,
         string[] pkColumns,
         ParameterizedSql pksTVParameter)
@@ -252,7 +252,7 @@ public static class CascadedDelete
                 }
             );
 
-            foreach (var fk in table.KeysFromReferencingChildren.Where(foreignKeyPredicate)) {
+            foreach (var fk in table.KeysFromReferencingChildren.Where(foreignKeyPredicate ?? (_ => true))) {
                 var childTable = fk.ReferencingChildTable;
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
