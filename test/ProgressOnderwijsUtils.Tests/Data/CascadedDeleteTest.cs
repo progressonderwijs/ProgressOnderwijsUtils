@@ -307,6 +307,32 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1", }));
     }
 
+
+    [Fact]
+    public void CascadeDeleteWithForeignKeySpecificationOnDeleteSetNull_is_honored()
+    {
+        SQL(
+            $@"
+                create table T1 (A int primary key);
+                create table T2 (B int primary key, A int references T1 on delete set null);
+
+                insert into T1 values (1);
+                insert into T2 values (2, 1);
+                insert into T2 values (3, 1);
+            "
+        ).ExecuteNonQuery(Connection);
+
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        var initialValues = SQL($"select A from T2").ReadPlain<int?>(Connection);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.DeleteReferentialAction != FkReferentialAction.SetNull, "A", AId.One);
+        var finalValues = SQL($"select A from T2").ReadPlain<int?>(Connection);
+
+        PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1", }));
+        PAssert.That(() => initialValues.All(o => o == 1));
+        PAssert.That(() => finalValues.All(o => o == null));
+    }
+
+
     [Fact]
     public void CascadeDelete_also_reports_on_tables_with_rowversion_column()
     {
