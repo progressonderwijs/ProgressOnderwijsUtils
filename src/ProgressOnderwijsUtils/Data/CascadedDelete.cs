@@ -10,7 +10,7 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
-        Func<string, bool>? stopCascading,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
         string pkColumn,
         params TId[] pksToDelete)
         where TId : Enum
@@ -21,7 +21,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            stopCascading,
+            foreignKeyPredicate,
             new[] { pkColumn, },
             SQL(
                 $@"
@@ -37,9 +37,8 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
-        Func<string, bool>? stopCascading,
-        params TId[] pksToDelete
-    )
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
+        params TId[] pksToDelete)
         where TId : IReadImplicitly
     {
         var pksTable = SQL($"#pksTable");
@@ -59,7 +58,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            stopCascading,
+            foreignKeyPredicate,
             pkColumns,
             SQL(
                 $@"
@@ -78,7 +77,13 @@ public static class CascadedDelete
         return report;
     }
 
-    public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, DataTable pksToDelete)
+    public static DeletionReport[] RecursivelyDelete(
+        SqlConnection conn,
+        DatabaseDescription.Table initialTableAsEntered,
+        bool outputAllDeletedRows,
+        Action<string>? logger,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
+        DataTable pksToDelete)
     {
         var pksTable = SQL($"#pksTable");
         var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
@@ -93,7 +98,7 @@ public static class CascadedDelete
             initialTableAsEntered,
             outputAllDeletedRows,
             logger,
-            stopCascading,
+            foreignKeyPredicate,
             pkColumns,
             SQL(
                 $@"
@@ -124,15 +129,12 @@ public static class CascadedDelete
         DatabaseDescription.Table initialTableAsEntered,
         bool outputAllDeletedRows,
         Action<string>? logger,
-        Func<string, bool>? stopCascading,
+        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
         string[] pkColumns,
         ParameterizedSql pksTVParameter)
     {
         void log(string message)
             => logger?.Invoke(message);
-
-        bool StopCascading(ParameterizedSql tableName)
-            => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
         var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
@@ -180,9 +182,6 @@ public static class CascadedDelete
 
         void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] columnsToJoinOn, SList<string> logStack)
         {
-            if (StopCascading(table.QualifiedNameSql)) {
-                return;
-            }
             var onStackDeletionTables = stackOfEnqueuedDeletions.GetOrAdd((table.ObjectId, columnsToJoinOn.ConcatenateSql(SQL($","))), new());
             if (onStackDeletionTables.Any()) {
                 //Tricky: cyclical dependency check might not detect a cycle as quickly as you'd like
@@ -248,7 +247,7 @@ public static class CascadedDelete
                 }
             );
 
-            foreach (var fk in table.KeysFromReferencingChildren) {
+            foreach (var fk in table.KeysFromReferencingChildren.Where(foreignKeyPredicate ?? (_ => true))) {
                 var childTable = fk.ReferencingChildTable;
                 var pkFkJoin = fk.Columns.Select(col => SQL($"fk.{col.ReferencingChildColumn.SqlColumnName()}=pk.{col.ReferencedParentColumn.SqlColumnName()}")).ConcatenateSql(SQL($" and "));
                 var newDelTable = ParameterizedSql.RawSql_PotentialForSqlInjection($"[#del_{delBatch}]");
