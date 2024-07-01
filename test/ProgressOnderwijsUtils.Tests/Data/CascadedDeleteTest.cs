@@ -201,7 +201,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.ReferencedParentTable.QualifiedName != "dbo.T2", "A", AId.One);
+        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, fk => fk.ReferencingChildTable.QualifiedName != "dbo.T2", "A", AId.One);
 
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T3", "dbo.T1", }));
     }
