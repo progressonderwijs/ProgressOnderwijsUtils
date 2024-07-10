@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>102.2.4</Version>
-    <PackageReleaseNotes>Replace RecursivelyDelete parameter</PackageReleaseNotes>
+    <Version>102.2.5</Version>
+    <PackageReleaseNotes>Bump dependencies</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
