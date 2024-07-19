@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>4.1.0</Version>
-        <PackageReleaseNotes>Upgrade to .net 8</PackageReleaseNotes>
+        <Version>4.1.1</Version>
+        <PackageReleaseNotes>Bump Selenium.WebDriver</PackageReleaseNotes>
 
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
@@ -11,7 +11,7 @@
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Selenium.WebDriver" Version="4.22.0" />
+        <PackageReference Include="Selenium.WebDriver" Version="4.23.0" />
 		<None Include="readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
