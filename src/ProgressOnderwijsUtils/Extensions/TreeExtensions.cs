@@ -77,7 +77,7 @@ public static class TreeExtensions
     [Pure]
     public static Tree<TR> Select<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapper)
         where TTree : IRecursiveStructure<TTree>
-        => TreeBuilder<TTree, TR>.Build(tree.TypedThis, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
+        => TreeBuilder<TTree, Tree<TR>>.Build(tree.TypedThis, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
 
     /// <summary>
     /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
@@ -88,11 +88,7 @@ public static class TreeExtensions
     [Pure]
     public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
         where TTree : IRecursiveStructure<TTree>
-    {
-        var collectionSelector = static (Tree<Tree<TR>[]> o) => o.NodeValue;
-        return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
-    }
-
+        => TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => (mapStructure(n, mapValue(n), kids.ConcatArrays()).EmptyIfNull()));
 
     /// <summary>
     /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
@@ -103,7 +99,7 @@ public static class TreeExtensions
     public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
         where TTree : IRecursiveStructure<TTree, T>
         => tree.TypedThis is var treeTyped && retainSubTree(treeTyped)
-            ? TreeBuilder<TTree, T>.Build(treeTyped, o => o.Children.Where(retainSubTree), (o, kids) => Tree.Node(o.NodeValue, kids))
+            ? TreeBuilder<TTree, Tree<T>>.Build(treeTyped, o => o.Children.Where(retainSubTree), (o, kids) => Tree.Node(o.NodeValue, kids))
             : null;
 
     /// <summary>

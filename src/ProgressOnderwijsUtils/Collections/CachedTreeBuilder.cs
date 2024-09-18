@@ -1,17 +1,17 @@
 namespace ProgressOnderwijsUtils.Collections;
 
-static class TreeBuilder<TInput, TNodeValue>
+static class TreeBuilder<TInput, TOutput>
 {
     sealed class TreeNodeBuilder
     {
         public required TInput value;
         public TreeNodeBuilder? parent;
         public required int idxInParent;
-        public Tree<TNodeValue>[] kids = [];
+        public TOutput[] kids = [];
     }
 
     [Pure]
-    public static Tree<TNodeValue> Build(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>?> kidLookup, Func<TInput, Tree<TNodeValue>[], Tree<TNodeValue>> map)
+    public static TOutput Build(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>> kidLookup, Func<TInput, TOutput[], TOutput> map)
     {
         var needsKids = new Stack<TreeNodeBuilder>();
 
@@ -36,7 +36,7 @@ static class TreeBuilder<TInput, TNodeValue>
                     needsKids.Push(builderForKid);
                 }
                 if (kidIdx > 0) {
-                    nodeBuilderThatWantsKids.kids = new Tree<TNodeValue>[kidIdx];
+                    nodeBuilderThatWantsKids.kids = new TOutput[kidIdx];
                     continue;
                 }
             }
@@ -60,3 +60,4 @@ static class TreeBuilder<TInput, TNodeValue>
         }
     }
 }
+
