@@ -89,7 +89,7 @@ public static class TreeExtensions
     public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
         where TTree : IRecursiveStructure<TTree>
     {
-        var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
+        var collectionSelector = static (Tree<Tree<TR>[]> o) => o.NodeValue;
         return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
     }
 
@@ -103,7 +103,7 @@ public static class TreeExtensions
     public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], IEnumerable<Tree<TR>>?> mapStructure)
         where TTree : IRecursiveStructure<TTree>
     {
-        var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
+        var collectionSelector = static (Tree<Tree<TR>[]> o) => o.NodeValue;
         return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
     }
 
