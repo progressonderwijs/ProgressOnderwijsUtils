@@ -42,10 +42,12 @@ public sealed class TreeWhereTest
             Tree.Node("3"),
             Tree.Node(
                 "y",
-                Tree.Node("4"),
+                Tree.Node("4",
+                Tree.Node("5")),
                 Tree.Node(
                     "x",
-                    Tree.Node("ee")
+                    Tree.Node("ee"),
+                    Tree.Node("ff")
                 )
             )
         );
@@ -63,7 +65,7 @@ public sealed class TreeWhereTest
                 )
             )
         );
-        var whereTrue = tree.Where(n => n.Children.Count is not (0 or 3) || n.NodeValue.Contains("ee"));
+        var whereTrue = tree.Where(n => n.Children.Count is not 0 || n.NodeValue.Contains("ee"));
         PAssert.That(() => treeExpected.Equals(whereTrue));
     }
 
