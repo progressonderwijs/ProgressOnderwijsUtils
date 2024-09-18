@@ -93,19 +93,6 @@ public static class TreeExtensions
         return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
     }
 
-    /// <summary>
-    /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
-    /// mapValue and mapStructure are called exactly once for each node in the tree.
-    /// mapValue is passed the old node and should return its new value.
-    /// mapStructure is passed the old node, its new value, and the already-mapped children and should return the nodes that should replace the old one in the tree.
-    /// </summary>
-    [Pure]
-    public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], IEnumerable<Tree<TR>>?> mapStructure)
-        where TTree : IRecursiveStructure<TTree>
-    {
-        var collectionSelector = static (Tree<Tree<TR>[]> o) => o.NodeValue;
-        return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
-    }
 
     /// <summary>
     /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
