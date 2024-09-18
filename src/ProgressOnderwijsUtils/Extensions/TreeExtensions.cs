@@ -68,7 +68,7 @@ public static class TreeExtensions
     [Pure]
     public static Tree<TR> SelectNodeValue<TTree, T, TR>(this IRecursiveStructure<TTree, T> tree, Func<T, TR> mapper)
         where TTree : IRecursiveStructure<TTree, T>
-        => tree.TypedThis.Select(node => mapper(node.NodeValue));
+        => tree.Select(node => mapper(node.NodeValue));
 
     /// <summary>
     /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
