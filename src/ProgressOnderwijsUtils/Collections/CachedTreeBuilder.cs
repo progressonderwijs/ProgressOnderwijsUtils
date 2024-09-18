@@ -11,7 +11,7 @@ static class TreeBuilder<TInput, TOutput>
     }
 
     [Pure]
-    public static TOutput Build(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>> kidLookup, Func<TInput, TOutput[], TOutput> map)
+    public static TOutput Build(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>?> kidLookup, Func<TInput, TOutput[], TOutput> map)
     {
         var needsKids = new Stack<TreeNodeBuilder>();
 
