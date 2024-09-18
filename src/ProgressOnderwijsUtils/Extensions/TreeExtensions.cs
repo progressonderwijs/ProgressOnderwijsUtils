@@ -104,6 +104,20 @@ public static class TreeExtensions
 
     /// <summary>
     /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
+    /// The filter function is called for children before parents, and is passed BOTH the originalInput and output subtrees that may or may not be retained;
+    /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
+    /// </summary>
+    [Pure]
+    public static Tree<T>? WherePostFilter<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<(TTree originalNode, Tree<T>[] filteredKids), bool> retainSubTree)
+        where TTree : IRecursiveStructure<TTree, T>
+        => TreeBuilder<TTree, Tree<T>?>.Build(
+            tree.TypedThis,
+            o => o.Children,
+            (o, kids) => kids.WhereNotNull() is var newKids && retainSubTree((o, newKids)) ? Tree.Node(o.NodeValue, newKids) : null
+        );
+
+    /// <summary>
+    /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
     /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
     /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
     /// </summary>

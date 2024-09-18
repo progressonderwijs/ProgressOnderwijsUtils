@@ -65,7 +65,7 @@ public sealed class TreeWhereTest
                 )
             )
         );
-        var whereTrue = tree.Where(n => n.Children.Count is not 0 || n.NodeValue.Contains("ee"));
+        var whereTrue = tree.WherePostFilter(n => n.filteredKids is not [] || n.originalNode.NodeValue.Contains("ee"));
         PAssert.That(() => treeExpected.Equals(whereTrue));
     }
 
