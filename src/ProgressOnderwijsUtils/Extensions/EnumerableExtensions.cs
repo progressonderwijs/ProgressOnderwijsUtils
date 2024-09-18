@@ -112,7 +112,7 @@ public static class EnumerableExtensions
         where T : class
     {
         foreach (var item in list) {
-            if (item != null) {
+            if (item is not null) {
                 yield return item;
             }
         }
@@ -122,7 +122,7 @@ public static class EnumerableExtensions
         where T : struct
     {
         foreach (var item in list) {
-            if (item.HasValue) {
+            if (item is not null) {
                 yield return item.Value;
             }
         }
