@@ -6,7 +6,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
     {
         public required TInput value;
         public TreeNodeBuilder? parent;
-        public int idxInParent;
+        public required int idxInParent;
         public Tree<TNodeValue>[] kids = [];
     }
 
@@ -16,7 +16,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
         var needsKids = new Stack<TreeNodeBuilder>();
 
         var generatedNodes = 0;
-        var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+        var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, idxInParent = 0, };
         generatedNodes++;
 
         needsKids.Push(rootBuilder);
