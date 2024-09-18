@@ -1,6 +1,6 @@
 namespace ProgressOnderwijsUtils.Collections;
 
-static class CachedTreeBuilder<TInput, TNodeValue>
+static class TreeBuilder<TInput, TNodeValue>
 {
     sealed class TreeNodeBuilder
     {
@@ -11,7 +11,7 @@ static class CachedTreeBuilder<TInput, TNodeValue>
     }
 
     [Pure]
-    public static Tree<TNodeValue> Resolve(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>?> kidLookup, Func<TInput, Tree<TNodeValue>[], Tree<TNodeValue>> map)
+    public static Tree<TNodeValue> Build(TInput rootNodeValue, Func<TInput, IEnumerable<TInput>?> kidLookup, Func<TInput, Tree<TNodeValue>[], Tree<TNodeValue>> map)
     {
         var needsKids = new Stack<TreeNodeBuilder>();
 

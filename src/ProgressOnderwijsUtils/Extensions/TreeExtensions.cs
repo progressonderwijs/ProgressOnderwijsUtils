@@ -77,7 +77,7 @@ public static class TreeExtensions
     [Pure]
     public static Tree<TR> Select<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapper)
         where TTree : IRecursiveStructure<TTree>
-        => CachedTreeBuilder<TTree, TR>.Resolve(tree.TypedThis, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
+        => TreeBuilder<TTree, TR>.Build(tree.TypedThis, o => o.Children, (o, kids) => Tree.Node(mapper(o), kids));
 
     /// <summary>
     /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper arguments.
@@ -90,7 +90,7 @@ public static class TreeExtensions
         where TTree : IRecursiveStructure<TTree>
     {
         var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
-        return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
+        return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull())).NodeValue;
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public static class TreeExtensions
         where TTree : IRecursiveStructure<TTree>
     {
         var collectionSelector = Utils.F((Tree<Tree<TR>[]> o) => o.NodeValue);
-        return CachedTreeBuilder<TTree, Tree<TR>[]>.Resolve(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
+        return TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => Tree.Node(mapStructure(n, mapValue(n), kids.SelectMany(collectionSelector)).EmptyIfNull().ToArray())).NodeValue;
     }
 
     /// <summary>
@@ -116,7 +116,7 @@ public static class TreeExtensions
     public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
         where TTree : IRecursiveStructure<TTree, T>
         => tree.TypedThis is var treeTyped && retainSubTree(treeTyped)
-            ? CachedTreeBuilder<TTree, T>.Resolve(treeTyped, o => o.Children.Where(retainSubTree), (o, kids) => Tree.Node(o.NodeValue, kids))
+            ? TreeBuilder<TTree, T>.Build(treeTyped, o => o.Children.Where(retainSubTree), (o, kids) => Tree.Node(o.NodeValue, kids))
             : null;
 
     /// <summary>
