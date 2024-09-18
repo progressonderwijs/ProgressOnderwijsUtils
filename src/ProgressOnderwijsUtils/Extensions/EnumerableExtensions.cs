@@ -128,6 +128,44 @@ public static class EnumerableExtensions
         }
     }
 
+    public static T[] WhereNotNull<T>(this T?[] kids)
+        where T : class
+    {
+        var nullCount = 0;
+        foreach (var k in kids) {
+            nullCount += k is null ? 1 : 0;
+        }
+        if (nullCount is 0) {
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            return kids!;
+        }
+        var output = new T[kids.Length - nullCount];
+        var outIdx = 0;
+        foreach (var k in kids) {
+            if (k is not null) {
+                output[outIdx++] = k;
+            }
+        }
+        return output;
+    }
+
+    public static T[] WhereNotNull<T>(this T?[] kids)
+        where T : struct
+    {
+        var nullCount = 0;
+        foreach (var k in kids) {
+            nullCount += k is null ? 1 : 0;
+        }
+        var output = new T[kids.Length - nullCount];
+        var outIdx = 0;
+        foreach (var k in kids) {
+            if (k is not null) {
+                output[outIdx++] = k.Value;
+            }
+        }
+        return output;
+    }
+
     [Pure]
     public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
         where TKey : notnull
