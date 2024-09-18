@@ -92,8 +92,8 @@ public static class TreeExtensions
 
     /// <summary>
     /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
-    /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
-    /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
+    /// The filter function is called for parents before children, and is passed the *input* subtree that may or may not be retained,
+    /// if a subtree is NOT retained, then retainSubTree is not called for any descendants.
     /// </summary>
     [Pure]
     public static Tree<T>? Where<TTree, T>(this IRecursiveStructure<TTree, T> tree, Func<TTree, bool> retainSubTree)
