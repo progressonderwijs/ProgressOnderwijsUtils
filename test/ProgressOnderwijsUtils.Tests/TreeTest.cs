@@ -233,22 +233,7 @@ public sealed class TreeTest
         var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
         var output = input.Rebuild(
             node => (long)node.NodeValue,
-            (_, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
-        );
-        var n5 = Tree.Node(5L);
-        var n3 = Tree.Node(3L, n5, n5);
-        var n1 = Tree.Node(1L, n3, n3);
-        var expected = new[] { n1, n1, };
-        PAssert.That(() => output.SequenceEqual(expected));
-    }
-
-    [Fact]
-    public void TreeRebuildSupportsEnumerableOverloadToo()
-    {
-        var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
-        var output = input.Rebuild(
-            node => (long)node.NodeValue,
-            (_, value, newKids) => value % 2 == 0 ? Array.Empty<Tree<long>>() : Enumerable.Repeat(Tree.Node(value, newKids), 2)
+            (_, value, newKids) => value % 2 == 0 ? [] : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
         );
         var n5 = Tree.Node(5L);
         var n3 = Tree.Node(3L, n5, n5);

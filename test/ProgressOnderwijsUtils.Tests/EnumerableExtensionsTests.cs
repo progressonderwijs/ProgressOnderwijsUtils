@@ -56,7 +56,7 @@ public sealed class EnumerableExtensionsTests
     [Fact]
     public void WhereNotNull_RemovesNullsWithoutCompilerWarningForReferenceTypes()
     {
-        IEnumerable<string?> sampleNullableData = new[] { "test", null, "this", };
+        var sampleNullableData = new[] { "test", null, "this", }.AsEnumerable();
         var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<string>
         var lengths = nonNullItems.Select(item => item.Length); //no nullability warning here; no crash here
         PAssert.That(() => lengths.Max() == 4);
@@ -65,7 +65,35 @@ public sealed class EnumerableExtensionsTests
     [Fact]
     public void WhereNotNull_RemovesNullsWithoutCompilerWarningForValueTypes()
     {
-        IEnumerable<int?> sampleNullableData = new[] { 37, default(int?), 42, };
+        var sampleNullableData = new[] { 37, default(int?), 42, }.AsEnumerable();
+        var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<int>
+        PAssert.That(() => nonNullItems.SequenceEqual(new[] { 37, 42, }));
+    }
+
+    [Fact]
+    public void ArrayWhereNotNull_RemovesNullsWithoutCompilerWarningForReferenceTypes()
+    {
+        var sampleNullableData = new[] { "test", null, "this", };
+        var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<string>
+        var lengths = nonNullItems.Select(item => item.Length); //no nullability warning here; no crash here
+        PAssert.That(() => lengths.Max() == 4);
+    }
+
+    [Fact]
+    public void ArrayWhereNotNull_WithoutRefNullsReturnsInput()
+    {
+        var sampleNullableData = new[] { "test", "this".PretendNullable(), };
+        var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<string>
+        PAssert.That(() => sampleNullableData == nonNullItems);
+        var sampleNullableDataEnumerable = sampleNullableData.AsEnumerable();
+        var nonNullItemsEnumerable = sampleNullableDataEnumerable.WhereNotNull();
+        PAssert.That(() => sampleNullableDataEnumerable != nonNullItemsEnumerable);
+    }
+
+    [Fact]
+    public void ArrayWhereNotNull_RemovesNullsWithoutCompilerWarningForValueTypes()
+    {
+        var sampleNullableData = new[] { 37, default(int?), 42, };
         var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<int>
         PAssert.That(() => nonNullItems.SequenceEqual(new[] { 37, 42, }));
     }

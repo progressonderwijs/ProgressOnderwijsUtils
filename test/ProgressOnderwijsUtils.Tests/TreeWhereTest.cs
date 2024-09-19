@@ -28,6 +28,48 @@ public sealed class TreeWhereTest
     }
 
     [Fact]
+    public void WhereCallsChildrenBeforeParents()
+    {
+        var tree = Tree.Node(
+            "1",
+            Tree.Node(
+                "x",
+                Tree.Node(
+                    "deeper",
+                    Tree.Node("leaf")
+                )
+            ),
+            Tree.Node("3"),
+            Tree.Node(
+                "y",
+                Tree.Node("4",
+                Tree.Node("5")),
+                Tree.Node(
+                    "x",
+                    Tree.Node("ee"),
+                    Tree.Node("ff")
+                )
+            )
+        );
+        var treeExpected = Tree.Node(
+            "1",
+            Tree.Node(
+                "x",
+                Tree.Node("deeper")
+            ),
+            Tree.Node(
+                "y",
+                Tree.Node(
+                    "x",
+                    Tree.Node("ee")
+                )
+            )
+        );
+        var whereTrue = tree.WherePostFilter(n => n.filteredKids is not [] || n.originalNode.NodeValue.Contains("ee"));
+        PAssert.That(() => treeExpected.Equals(whereTrue));
+    }
+
+    [Fact]
     public void NastySideEffectsHappenInConsistentOrder()
     {
         var tree = Tree.Node("1", Tree.Node("2", Tree.Node("x")), Tree.Node("3"), Tree.Node("y", Tree.Node("4")));

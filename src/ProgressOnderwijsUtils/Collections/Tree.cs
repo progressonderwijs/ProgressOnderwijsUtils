@@ -37,12 +37,12 @@ public static class Tree
 
     [Pure]
     public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>?> kidLookup)
-        => CachedTreeBuilder<T, T>.Resolve(root, kidLookup, Node);
+        => TreeBuilder<T, Tree<T>>.Build(root, kidLookup, Node);
 
     [Pure]
     public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
         where T : notnull
-        => CachedTreeBuilder<T, T>.Resolve(root, arg => kidLookup.GetValueOrDefault(arg)?.AsEnumerable(), Node);
+        => TreeBuilder<T, Tree<T>>.Build(root, arg => kidLookup.GetValueOrDefault(arg)?.AsEnumerable(), Node);
 
     [Pure]
     public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)

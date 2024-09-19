@@ -112,7 +112,7 @@ public static class EnumerableExtensions
         where T : class
     {
         foreach (var item in list) {
-            if (item != null) {
+            if (item is not null) {
                 yield return item;
             }
         }
@@ -122,10 +122,48 @@ public static class EnumerableExtensions
         where T : struct
     {
         foreach (var item in list) {
-            if (item.HasValue) {
+            if (item is not null) {
                 yield return item.Value;
             }
         }
+    }
+
+    public static T[] WhereNotNull<T>(this T?[] kids)
+        where T : class
+    {
+        var nullCount = 0;
+        foreach (var k in kids) {
+            nullCount += k is null ? 1 : 0;
+        }
+        if (nullCount is 0) {
+            // ReSharper disable once NullableWarningSuppressionIsUsed
+            return kids!;
+        }
+        var output = new T[kids.Length - nullCount];
+        var outIdx = 0;
+        foreach (var k in kids) {
+            if (k is not null) {
+                output[outIdx++] = k;
+            }
+        }
+        return output;
+    }
+
+    public static T[] WhereNotNull<T>(this T?[] kids)
+        where T : struct
+    {
+        var nullCount = 0;
+        foreach (var k in kids) {
+            nullCount += k is null ? 1 : 0;
+        }
+        var output = new T[kids.Length - nullCount];
+        var outIdx = 0;
+        foreach (var k in kids) {
+            if (k is not null) {
+                output[outIdx++] = k.Value;
+            }
+        }
+        return output;
     }
 
     [Pure]
