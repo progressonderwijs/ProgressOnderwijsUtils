@@ -17,6 +17,11 @@ public sealed class VirusScanTest
     [SupportedOSPlatform("windows10.0.10240")]
     public void SchoneString_als_byte_wordt_niet_als_virus_herkend()
         => PAssert.That(() => !VirusScan.IsMalware(Encoding.ASCII.GetBytes(schoneString), "Progress.Net", "Utils test"));
+
+    [FactIgnoreOnAppVeyor]
+    [SupportedOSPlatform("windows10.0.10240")]
+    public void LegeString_als_byte_wordt_niet_als_virus_herkend()
+        => PAssert.That(() => !VirusScan.IsMalware(Encoding.ASCII.GetBytes(""), "Progress.Net", "Utils test"));
 }
 
 public sealed class FactIgnoreOnAppVeyor : FactAttribute

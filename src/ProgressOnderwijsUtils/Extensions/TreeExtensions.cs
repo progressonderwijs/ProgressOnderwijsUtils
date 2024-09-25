@@ -88,7 +88,7 @@ public static class TreeExtensions
     [Pure]
     public static Tree<TR>[] Rebuild<TTree, TR>(this IRecursiveStructure<TTree> tree, Func<TTree, TR> mapValue, Func<TTree, TR, Tree<TR>[], Tree<TR>[]?> mapStructure)
         where TTree : IRecursiveStructure<TTree>
-        => TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => (mapStructure(n, mapValue(n), kids.ConcatArrays()).EmptyIfNull()));
+        => TreeBuilder<TTree, Tree<TR>[]>.Build(tree.TypedThis, n => n.Children, (n, kids) => mapStructure(n, mapValue(n), kids.ConcatArrays()).EmptyIfNull());
 
     /// <summary>
     /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
