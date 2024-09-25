@@ -9,6 +9,11 @@ public static class VirusScan
     [SupportedOSPlatform("windows10.0.10240")]
     public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
     {
+        // to avoid HRESULT failure (0x80070057) while attempting AmsiScanBuffer
+        if (buffer is []) {
+            return false;
+        }
+
         var context = default(HAMSICONTEXT);
 
         try {
