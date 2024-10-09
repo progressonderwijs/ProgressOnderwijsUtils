@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>102.3.1</Version>
-    <PackageReleaseNotes>Do not crash on a virus scan of an empty file.</PackageReleaseNotes>
+    <Version>102.3.2</Version>
+    <PackageReleaseNotes>Bump dependencies.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
