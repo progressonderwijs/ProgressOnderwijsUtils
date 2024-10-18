@@ -15,14 +15,35 @@ public static class Utils
         return x == y || delta / magnitude < relativeEpsilon;
     }
 
+    /// <summary>
+    /// Lazily execute the factory method, caching the result.
+    /// If the factory method throws, it may be called again.
+    /// Once the factory method returns without exception, it is not called again.
+    /// This is a convenience wrapper around LazyInitializer just as System.Lazy, however, it does not cache exceptions.
+    /// System.Lazy does not have a mode that both provides locking and allows retries in case of exceptions; ref: https://github.com/dotnet/runtime/issues/27421#issuecomment-424732179
+    /// </summary>
     public static Func<T> Lazy<T>(Func<T> factory)
     {
-        //Ideally we'd use Lazy<T>, but that either caches exceptions or fails to lock around initialization. see: https://github.com/dotnet/runtime/issues/27421#issuecomment-424732179
         var value = default(T?);
         var initialized = false;
         var sync = (object)factory;
 
         return () => LazyInitializer.EnsureInitialized(ref value, ref initialized, ref sync, factory);
+    }
+
+    /// <summary>
+    /// Like Utils.Lazy, except permits access to an ephemeral context.
+    /// If the factory method throws, it may be called again.
+    /// Once the factory method returns without exception, it is not called again, even if the context changes.
+    /// </summary>
+    public static Func<TContext, T> LazyRequiringContext<TContext, T>(Func<TContext, T> factory)
+    {
+        //Ideally we'd use Lazy<T>, but that either caches exceptions or fails to lock around initialization. see: https://github.com/dotnet/runtime/issues/27421#issuecomment-424732179
+        var value = default(T?);
+        var initialized = false;
+        var sync = new object();
+
+        return context => LazyInitializer.EnsureInitialized<T>(ref value, ref initialized, ref sync, () => factory(context));
     }
 
     public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
