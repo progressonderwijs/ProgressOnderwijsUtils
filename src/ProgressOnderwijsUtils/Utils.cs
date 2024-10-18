@@ -31,6 +31,21 @@ public static class Utils
         return () => LazyInitializer.EnsureInitialized(ref value, ref initialized, ref sync, factory);
     }
 
+    /// <summary>
+    /// Like Utils.Lazy, except permits access to an ephemeral context.
+    /// If the factory method throws, it may be called again.
+    /// Once the factory method returns without exception, it is not called again, even if the context changes.
+    /// </summary>
+    public static Func<TContext, T> LazyRequiringContext<TContext, T>(Func<TContext, T> factory)
+    {
+        //Ideally we'd use Lazy<T>, but that either caches exceptions or fails to lock around initialization. see: https://github.com/dotnet/runtime/issues/27421#issuecomment-424732179
+        var value = default(T?);
+        var initialized = false;
+        var sync = new object();
+
+        return context => LazyInitializer.EnsureInitialized<T>(ref value, ref initialized, ref sync, () => factory(context));
+    }
+
     public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 
