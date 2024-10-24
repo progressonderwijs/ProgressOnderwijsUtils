@@ -355,6 +355,15 @@ public sealed class ParameterizedSqlTest
 
     [TestNotLiteral]
     enum ExampleNonLiteralEnum { SomeValue = 1, }
+
+    [Fact]
+    public void GenerateUniqueQueryAlias_is_in_fact_unique_within_query()
+    {
+        var query = SQL($"select q.* from (select x = 1, y = 2 union all select x = 3, y = 4) q where 1=1 and x > 0");
+        var alias = query.GenerateUniqueQueryAlias();
+
+        PAssert.That(() => !query.CommandText().Contains(alias.CommandText()));
+    }
 }
 
 [AttributeUsage(AttributeTargets.Enum)]
