@@ -47,7 +47,7 @@ public static class ParameterizedSqlExtensions
         };
 
     /// <summary>
-    /// Generate an unique name which can be used safely as an alias for the given query.
+    /// Generate a non-conflicting alias for a given query.
     /// </summary>
     [Pure]
     public static ParameterizedSql GenerateUniqueQueryAlias(this ParameterizedSql query)
