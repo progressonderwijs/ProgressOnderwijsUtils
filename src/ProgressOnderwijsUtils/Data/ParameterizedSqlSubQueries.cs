@@ -23,4 +23,18 @@ public static class ParameterizedSqlSubQueries
         => sortOrder.Columns.None()
             ? EmptySql
             : ParameterizedSql.RawSql_PotentialForSqlInjection($"order by {sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", ")}");
+
+    /// <summary>
+    /// Generate an unique name which can be used savely as an alias for the given query.
+    /// </summary>
+    [Pure]
+    public static ParameterizedSql GenerateUniqueQueryAlias(int seed, string query)
+    {
+        var r = RandomHelper.Insecure(seed);
+        var queryAliasString = r.GetStringOfLatinLower(10);
+        while (query.Contains(queryAliasString, StringComparison.OrdinalIgnoreCase)) {
+            queryAliasString = r.GetStringOfLatinLower(queryAliasString.Length + 1);
+        }
+        return ParameterizedSql.UnescapedSqlIdentifier("_" + queryAliasString);
+    }
 }
