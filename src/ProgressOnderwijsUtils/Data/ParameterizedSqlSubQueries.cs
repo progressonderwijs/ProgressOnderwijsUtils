@@ -25,13 +25,6 @@ public static class ParameterizedSqlSubQueries
             : ParameterizedSql.RawSql_PotentialForSqlInjection($"order by {sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", ")}");
 
     /// <summary>
-    /// Generate a non-conflicting alias for a given query.
-    /// </summary>
-    [Pure]
-    public static ParameterizedSql GenerateUniqueQueryAlias(ParameterizedSql query)
-        => GenerateUniqueQueryAlias(query.CommandText().GetHashCode(), query.CommandText());
-
-    /// <summary>
     /// Generate a non-conflicting alias for a given query and seed.
     /// </summary>
     /// <param name="seed">Typically from a database sequence id.</param>
