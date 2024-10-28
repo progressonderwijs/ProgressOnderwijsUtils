@@ -45,11 +45,4 @@ public static class ParameterizedSqlExtensions
             0 => SQL($"(null)"),
             _ => SQL($"(").Append(set.Select(item => SQL($"{AsSqlParam(item)}")).ConcatenateSql(SQL($","))).Append(SQL($")")),
         };
-
-    /// <summary>
-    /// Generate a non-conflicting alias for a given query.
-    /// </summary>
-    [Pure]
-    public static ParameterizedSql GenerateUniqueQueryAlias(this ParameterizedSql query)
-        => ParameterizedSqlSubQueries.GenerateUniqueQueryAlias(query.CommandText().GetHashCode(), query.CommandText());
 }
