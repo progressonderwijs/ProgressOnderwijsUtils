@@ -202,7 +202,6 @@ public sealed class ParameterizedSqlTest
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("$ab.col"));
     }
 
-
     [Fact]
     public void OperatorAndReturnsSqlWhenTrue()
     {
@@ -355,6 +354,22 @@ public sealed class ParameterizedSqlTest
 
     [TestNotLiteral]
     enum ExampleNonLiteralEnum { SomeValue = 1, }
+
+    [Fact]
+    public void GenerateUniqueQueryAlias_is_in_fact_unique_within_query()
+    {
+        var basicQuery = "select 1";
+        var alias = ParameterizedSqlSubQueries.GenerateUniqueQueryAlias(42, basicQuery).CommandText();
+        PAssert.That(() => alias == "_cavklvebpn", "De query alias moet determinisch zijn");
+
+        var sneakyQuery = "select cavklvebpn = 1";
+        var sneakyAlias = ParameterizedSqlSubQueries.GenerateUniqueQueryAlias(42, sneakyQuery).CommandText();
+        PAssert.That(() => sneakyAlias == "_wtlrahmndzh", "De query alias neemt een tweede keuze in geval van conflict");
+
+        var sneakyQuery2 = "select cavklvebpn = 1, wtlrahmndzh = 2 ";
+        var sneakyAlias2 = ParameterizedSqlSubQueries.GenerateUniqueQueryAlias(42, sneakyQuery2).CommandText();
+        PAssert.That(() => sneakyAlias2 == "_nfvmwjxxfkoz", "De query alias neemt een tweede keuze in geval van conflict");
+    }
 }
 
 [AttributeUsage(AttributeTargets.Enum)]
