@@ -1,12 +1,12 @@
 namespace ProgressOnderwijsUtils.Collections;
 
-public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> UnderlyingElementComparer, bool NullCountsAsEmpty) : IEqualityComparer<T[]?>, IEqualityComparer<IEnumerable<T>?>
+public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> UnderlyingElementComparer, bool NullCountsAsEmpty) : IEqualityComparer<T?[]?>, IEqualityComparer<IEnumerable<T?>?>
 {
     public static readonly SequenceEqualityComparer<T> Default = new(EqualityComparer<T>.Default, false);
     const int NullHashCode = 0x1d45_7af3;
 
     [Pure]
-    public bool Equals(T[]? x, T[]? y)
+    public bool Equals(T?[]? x, T?[]? y)
     {
         if (NullCountsAsEmpty) {
             x ??= [];
@@ -31,7 +31,7 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
     }
 
     [Pure]
-    public int GetHashCode(T[]? arr)
+    public int GetHashCode(T?[]? arr)
     {
         if (arr == null) {
             if (NullCountsAsEmpty) {
@@ -41,14 +41,14 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
             }
         }
         var buffer = new HashCode();
-        foreach (var obj in arr) {
-            buffer.Add(obj, UnderlyingElementComparer);
+        foreach (var value in arr) {
+            buffer.Add(value is null ? 0 : UnderlyingElementComparer.GetHashCode(value));
         }
         return buffer.ToHashCode();
     }
 
     [Pure]
-    public bool Equals(IEnumerable<T>? x, IEnumerable<T>? y)
+    public bool Equals(IEnumerable<T?>? x, IEnumerable<T?>? y)
     {
         if (NullCountsAsEmpty) {
             x ??= Array.Empty<T>();
@@ -78,7 +78,7 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
     }
 
     [Pure]
-    public int GetHashCode(IEnumerable<T>? seq)
+    public int GetHashCode(IEnumerable<T?>? seq)
     {
         if (seq == null) {
             if (NullCountsAsEmpty) {
@@ -88,8 +88,8 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
             }
         }
         var buffer = new HashCode();
-        foreach (var obj in seq) {
-            buffer.Add(obj, UnderlyingElementComparer);
+        foreach (var value in seq) {
+            buffer.Add(value is null ? 0 : UnderlyingElementComparer.GetHashCode(value));
         }
         return buffer.ToHashCode();
     }
