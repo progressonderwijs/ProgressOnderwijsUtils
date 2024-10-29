@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ProgressOnderwijsUtils.Internal;
 
 //public needed for auto-mapping
-public struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObjectProjectionForDebugging, IReadImplicitly
+readonly struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObjectProjectionForDebugging, IReadImplicitly
 {
     [Key]
     public T QueryTableValue { get; init; }
@@ -16,7 +16,7 @@ public struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObje
 }
 
 
-public static class TableValuedParameterWrapperHelper
+static class TableValuedParameterWrapperHelper
 {
     /// <summary>
     /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.

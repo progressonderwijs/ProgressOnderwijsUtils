@@ -27,3 +27,5 @@ global using global::ProgressOnderwijsUtils.Collections;
 global using global::ProgressOnderwijsUtils.Internal;
 global using static global::ProgressOnderwijsUtils.SafeSql;
 global using PureAttribute = global::System.Diagnostics.Contracts.PureAttribute;
+
+[assembly: InternalsVisibleTo("ProgressOnderwijsUtils.Tests")]
