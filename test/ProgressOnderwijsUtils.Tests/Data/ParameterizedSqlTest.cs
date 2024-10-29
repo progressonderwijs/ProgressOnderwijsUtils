@@ -294,9 +294,7 @@ public sealed class ParameterizedSqlTest
             $$"""
             select a={{42}}
                 , b = 'consider {}'
-                , c = {{
-                    SQL($"[{'a'}{"$@"}]")
-                }}
+                , c = {{SQL($"[{'a'}{"$@"}]")}}
             ;
             """
         );
