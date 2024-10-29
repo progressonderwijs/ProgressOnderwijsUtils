@@ -165,10 +165,10 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
-        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0"); //assert does not throw
 
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(""));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("--\n\n drop bobby tables"));
@@ -185,11 +185,11 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void AssertQualifiedSqlIdentifier_ThrowsOnInvalid()
     {
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a.b");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a$b.c$d");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#temptable.col");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("hmm.#dubious");//assert does not throw, but not dangerous
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0.col");//assert does not throw, but not dangerous
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a.b"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a$b.c$d"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#temptable.col"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("hmm.#dubious"); //assert does not throw, but not dangerous
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0.col"); //assert does not throw, but not dangerous
 
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier(""));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("--\n\n drop bobby tables"));
