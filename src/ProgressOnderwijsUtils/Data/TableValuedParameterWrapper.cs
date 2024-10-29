@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProgressOnderwijsUtils.Internal;
+namespace ProgressOnderwijsUtils;
 
 //public needed for auto-mapping
 readonly struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObjectProjectionForDebugging, IReadImplicitly
