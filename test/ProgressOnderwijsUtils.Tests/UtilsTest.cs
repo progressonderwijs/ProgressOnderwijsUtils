@@ -117,6 +117,16 @@ public sealed class UtilsTest
     }
 
     [Fact]
+    public void ComparisonComparer_supports_ordering_by_the_comparison()
+    {
+        var arr = new[] { (1, 200), (3, 7), (1, 2), (9, 3) };
+        Array.Sort(arr, new ComparisonComparer<(int, int)>((a, b) => Math.Abs(a.Item1 - a.Item2).CompareTo(Math.Abs(b.Item1 - b.Item2))));
+
+        var expected = new[] { (1, 2), (3, 7), (9, 3), (1, 200), };
+        PAssert.That(() => arr.SequenceEqual(expected));
+    }
+
+    [Fact]
     public void IsDbConnFailureTest()
     {
         PAssert.That(() => !new Exception().IsRetriableConnectionFailure());
