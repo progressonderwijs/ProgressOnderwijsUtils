@@ -1,0 +1,2 @@
+[*.cs]
+resharper_usage_of_default_struct_equality_highlighting = none
