@@ -9,8 +9,8 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
     public bool Equals(T[]? x, T[]? y)
     {
         if (NullCountsAsEmpty) {
-            x ??= Array.Empty<T>();
-            y ??= Array.Empty<T>();
+            x ??= [];
+            y ??= [];
         } else {
             if (x == null) {
                 return y == null;
@@ -35,7 +35,7 @@ public sealed record SequenceEqualityComparer<T>(IEqualityComparer<T> Underlying
     {
         if (arr == null) {
             if (NullCountsAsEmpty) {
-                arr = Array.Empty<T>();
+                arr = [];
             } else {
                 return NullHashCode;
             }
