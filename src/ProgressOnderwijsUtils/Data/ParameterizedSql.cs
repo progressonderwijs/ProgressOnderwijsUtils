@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils;
 /// Represents a string of SQL including parameter values.
 /// </summary>
 [DebuggerDisplay("{DebugText()}")]
-public readonly struct ParameterizedSql
+public readonly struct ParameterizedSql : IEquatable<ParameterizedSql>
 {
     internal readonly ISqlComponent? impl;
 
