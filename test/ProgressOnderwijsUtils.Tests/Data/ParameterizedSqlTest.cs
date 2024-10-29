@@ -142,6 +142,22 @@ public sealed class ParameterizedSqlTest
     }
 
     [Fact]
+    public void EscapedSqlObjectName_works()
+    {
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("foo").CommandText() == "[foo]");
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("foo 'bar").CommandText() == "[foo 'bar]");
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("test [ this ]").CommandText() == "[test [ this ]]]");
+    }
+
+    [Fact]
+    public void EscapedLiteralString_works()
+    {
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("foo").CommandText() == "'foo'");
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("foo [%bar").CommandText() == "'foo [%bar'");
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("test ' this '").CommandText() == "'test '' this '''");
+    }
+
+    [Fact]
     public void ParameterizedSqlValidation()
         // ReSharper disable once NullableWarningSuppressionIsUsed
         => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
