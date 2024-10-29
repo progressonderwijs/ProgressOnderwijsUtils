@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace ProgressOnderwijsUtils;
 
 public static class SmallBatchInsertImplementation

@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
