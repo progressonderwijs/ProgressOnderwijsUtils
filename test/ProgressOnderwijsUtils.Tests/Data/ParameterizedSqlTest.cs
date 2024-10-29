@@ -116,9 +116,9 @@ public sealed class ParameterizedSqlTest
             withPar_1_2 = SQL($"a param: {new[] { 1, 2, }}"),
             withPar_1_2b = SQL($"a param: {new[] { 1, 2, }}"),
             withPar_2_1 = SQL($"a param: {new[] { 2, 1, }}"),
-            withParEnum_1_2 = SQL($"a param: {new[] { (DayOfWeek)1, (DayOfWeek)2, }}"),
-            withParString_1_2 = SQL($"a param: {new[] { "1", "2", }}"),
-            withParString_1_2b = SQL($"a param: {new[] { "1", "2", }}")
+            withParEnum_1_2 = SQL($"a param: {[(DayOfWeek)1, (DayOfWeek)2,]}"),
+            withParString_1_2 = SQL($"a param: {["1", "2",]}"),
+            withParString_1_2b = SQL($"a param: {["1", "2",]}")
             ;
 
         PAssert.That(() => withPar_1_2 == withPar_1_2b);
