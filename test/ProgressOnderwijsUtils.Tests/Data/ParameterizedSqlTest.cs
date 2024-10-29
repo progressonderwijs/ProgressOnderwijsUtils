@@ -158,6 +158,14 @@ public sealed class ParameterizedSqlTest
     }
 
     [Fact]
+    public void LiteralSqlNumericString_works()
+    {
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(0).CommandText() == "0");
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(-100_000).CommandText() == "-100000");
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(23456).CommandText() == "23456");
+    }
+
+    [Fact]
     public void ParameterizedSqlValidation()
         // ReSharper disable once NullableWarningSuppressionIsUsed
         => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
