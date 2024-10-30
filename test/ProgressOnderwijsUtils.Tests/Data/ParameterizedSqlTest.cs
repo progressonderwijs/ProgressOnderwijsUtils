@@ -116,9 +116,9 @@ public sealed class ParameterizedSqlTest
             withPar_1_2 = SQL($"a param: {new[] { 1, 2, }}"),
             withPar_1_2b = SQL($"a param: {new[] { 1, 2, }}"),
             withPar_2_1 = SQL($"a param: {new[] { 2, 1, }}"),
-            withParEnum_1_2 = SQL($"a param: {new[] { (DayOfWeek)1, (DayOfWeek)2, }}"),
-            withParString_1_2 = SQL($"a param: {new[] { "1", "2", }}"),
-            withParString_1_2b = SQL($"a param: {new[] { "1", "2", }}")
+            withParEnum_1_2 = SQL($"a param: {[(DayOfWeek)1, (DayOfWeek)2,]}"),
+            withParString_1_2 = SQL($"a param: {["1", "2",]}"),
+            withParString_1_2b = SQL($"a param: {["1", "2",]}")
             ;
 
         PAssert.That(() => withPar_1_2 == withPar_1_2b);
@@ -142,6 +142,30 @@ public sealed class ParameterizedSqlTest
     }
 
     [Fact]
+    public void EscapedSqlObjectName_works()
+    {
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("foo").CommandText() == "[foo]");
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("foo 'bar").CommandText() == "[foo 'bar]");
+        PAssert.That(() => ParameterizedSql.EscapedSqlObjectName("test [ this ]").CommandText() == "[test [ this ]]]");
+    }
+
+    [Fact]
+    public void EscapedLiteralString_works()
+    {
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("foo").CommandText() == "'foo'");
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("foo [%bar").CommandText() == "'foo [%bar'");
+        PAssert.That(() => ParameterizedSql.EscapedLiteralString("test ' this '").CommandText() == "'test '' this '''");
+    }
+
+    [Fact]
+    public void LiteralSqlNumericString_works()
+    {
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(0).CommandText() == "0");
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(-100_000).CommandText() == "-100000");
+        PAssert.That(() => ParameterizedSql.LiteralSqlNumericString(23456).CommandText() == "23456");
+    }
+
+    [Fact]
     public void ParameterizedSqlValidation()
         // ReSharper disable once NullableWarningSuppressionIsUsed
         => _ = Assert.Throws<ArgumentNullException>(() => _ = ParameterizedSql.RawSql_PotentialForSqlInjection(null!));
@@ -149,10 +173,10 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void ValidIdentifierCharsOnly_ThrowsOnInvalid()
     {
-        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla");//assert does not throw
-        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0");//assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("a$b"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("#tempTable"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla"); //assert does not throw
+        _ = ParameterizedSql.UnescapedSqlIdentifier("bla0"); //assert does not throw
 
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier(""));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.UnescapedSqlIdentifier("--\n\n drop bobby tables"));
@@ -169,11 +193,11 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void AssertQualifiedSqlIdentifier_ThrowsOnInvalid()
     {
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a.b");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a$b.c$d");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#temptable.col");//assert does not throw
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("hmm.#dubious");//assert does not throw, but not dangerous
-        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0.col");//assert does not throw, but not dangerous
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a.b"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("a$b.c$d"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("#temptable.col"); //assert does not throw
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("hmm.#dubious"); //assert does not throw, but not dangerous
+        _ = ParameterizedSql.AssertQualifiedSqlIdentifier("bla0.col"); //assert does not throw, but not dangerous
 
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier(""));
         _ = Assert.Throws<Exception>(() => _ = ParameterizedSql.AssertQualifiedSqlIdentifier("--\n\n drop bobby tables"));
@@ -294,9 +318,7 @@ public sealed class ParameterizedSqlTest
             $$"""
             select a={{42}}
                 , b = 'consider {}'
-                , c = {{
-                    SQL($"[{'a'}{"$@"}]")
-                }}
+                , c = {{SQL($"[{'a'}{"$@"}]")}}
             ;
             """
         );

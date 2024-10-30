@@ -2,14 +2,7 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class ReferenceEqualityComparerTest
 {
-    struct TestType
-    {
-        [UsedImplicitly] //for equality
-        int value;
-
-        public TestType(int value)
-            => this.value = value;
-    }
+    record struct TestType(int value);
 
     static readonly TestType t1 = new(1);
     static readonly TestType t2 = new(1);

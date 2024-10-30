@@ -1,5 +1,4 @@
 using System.Data.Common;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
 using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils.Tests.Data;

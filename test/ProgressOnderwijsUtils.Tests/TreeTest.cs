@@ -198,6 +198,7 @@ public sealed class TreeTest
     {
         var input = Tree.Node(1u, Tree.Node(2u));
         var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), }.Where(_ => oldNode.NodeValue != 1).ToArray());
+        // ReSharper disable once CollectionNeverUpdated.Local
         var expected = Array.Empty<Tree<long>>();
         PAssert.That(() => output.SequenceEqual(expected));
     }

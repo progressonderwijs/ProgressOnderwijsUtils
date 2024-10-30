@@ -1,9 +1,3 @@
-using System.IO.Pipelines;
-using AngleSharp;
-using AngleSharp.Html.Dom;
-using AngleSharp.Html.Parser;
-using ProgressOnderwijsUtils.Tests;
-
 namespace ProgressOnderwijsUtilsBenchmarks;
 
 [MedianColumn]

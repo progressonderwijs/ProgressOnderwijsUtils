@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>102.5.0</Version>
-    <PackageReleaseNotes>Added GenerateUniqueQueryAlias methods</PackageReleaseNotes>
+    <Version>102.6.0</Version>
+    <PackageReleaseNotes>Support collection expression equality in ParameterizedSql equality; mark ParameterizedSql as readonly</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

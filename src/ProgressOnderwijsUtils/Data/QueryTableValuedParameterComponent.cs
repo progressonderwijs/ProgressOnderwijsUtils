@@ -14,7 +14,7 @@ sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IS
     int cachedLength = -1;
 
     public object EquatableValue
-        => Tuple.Create(values, DbTypeName);
+        => new TvpEqualityToken<TIn>(values, DbTypeName);
 
     internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<TIn> values, Func<IEnumerable<TIn>, TOut[]> projection)
     {
@@ -61,6 +61,31 @@ sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IS
         paramArgs.Value = new PocoDataReader<TOut>(objs, CancellationToken.None);
         paramArgs.TypeName = DbTypeName;
     }
+}
+
+sealed class TvpEqualityToken<TIn>(IEnumerable<TIn> Values, string DbTypeName) : IEquatable<TvpEqualityToken<TIn>>
+{
+    readonly IEnumerable<TIn> values = Values;
+    readonly string dbTypeName = DbTypeName;
+
+    static readonly SequenceEqualityComparer<TIn> sequenceEqualityComparer = new(
+        new EqualsEqualityComparer<TIn>(
+            (a, b) => StructuralComparisons.StructuralEqualityComparer.Equals(a, b),
+            a => a is null ? 0 : StructuralComparisons.StructuralEqualityComparer.GetHashCode(a)
+        ),
+        false
+    );
+
+    public bool Equals(TvpEqualityToken<TIn>? other)
+        => other is not null
+            && dbTypeName == other.dbTypeName
+            && sequenceEqualityComparer.Equals(values, other.values);
+
+    public override bool Equals(object? obj)
+        => Equals(obj as TvpEqualityToken<TIn>);
+
+    public override int GetHashCode()
+        => dbTypeName.GetHashCode() ^ sequenceEqualityComparer.GetHashCode(values);
 }
 
 sealed class SingletonQueryTableValuedParameterComponent<TOut> : ISqlComponent
