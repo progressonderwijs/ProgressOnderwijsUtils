@@ -73,6 +73,18 @@ public static class MaybeExtensions
         }
     }
 
+    /// <summary>
+    /// Maps a possibly failed value to a new value.
+    /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
+    /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
+    /// </summary>
+    [Pure]
+    public static Maybe<Unit, TError> WhenOk<TError>(this Maybe<Unit, TError> state, Action actOnValue)
+    {
+        state.IfOk(actOnValue);
+        return state;
+    }
+
     [Obsolete("When the state of a Maybe is a nested Maybe, the error of that nested state can easily be ignored.")]
     public static Maybe<Maybe<TOkOut, TIgnoredError>, TError> WhenOk<TOk, TError, TOkOut, TIgnoredError>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOkOut, TIgnoredError>> map)
         => state.TryGet(out var okValue, out var error) ? Maybe.Ok(map(okValue)) : Maybe.Error(error).AsMaybeWithoutValue<Maybe<TOkOut, TIgnoredError>>();

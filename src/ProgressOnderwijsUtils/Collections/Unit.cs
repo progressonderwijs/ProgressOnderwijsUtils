@@ -13,4 +13,7 @@ public struct Unit
         action();
         return Value;
     }
+
+    public static Func<Unit> AsUnitReturningFunc(Action action)
+        => action.ToUnitReturningFunc();
 }
