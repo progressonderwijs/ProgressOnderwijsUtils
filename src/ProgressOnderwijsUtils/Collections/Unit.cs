@@ -14,6 +14,6 @@ public struct Unit
         return Value;
     }
 
-    public T Return<T>(T val)
-        => val;
+    public static Func<Unit> AsUnitReturningFunc(Action action)
+        => action.ToUnitReturningFunc();
 }

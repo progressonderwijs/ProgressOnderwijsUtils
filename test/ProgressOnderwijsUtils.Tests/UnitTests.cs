@@ -13,8 +13,4 @@ public sealed class UnitTests
         var action = () => { };
         PAssert.That(() => Unit.Value.Equals(Unit.SideEffect(action)));
     }
-
-    [Fact]
-    public void ReturnIsTheIdentityFunction()
-        => PAssert.That(() => Unit.Value.Return(3) == 3);
 }
