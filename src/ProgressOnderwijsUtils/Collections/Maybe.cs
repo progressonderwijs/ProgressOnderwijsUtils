@@ -156,6 +156,12 @@ public static class Maybe
     public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, Func<TOk> whenOk, Func<TError> whenError)
         => isOk ? Ok(whenOk()).AsMaybeWithoutError<TError>() : Error(whenError());
 
+    public static Maybe<Unit, TError> Either<TError>(bool isOk, Action whenOk, Func<TError> whenError)
+        => isOk ? Ok(whenOk.ToUnitReturningFunc()()).AsMaybeWithoutError<TError>() : Error(whenError());
+
+    public static Maybe<TOk, Unit> Either<TOk>(bool isOk, Func<TOk> whenOk, Action whenError)
+        => isOk ? Ok(whenOk()).AsMaybeWithoutError<Unit>() : Error(whenError.ToUnitReturningFunc()());
+
     public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, TOk whenOk, TError whenError)
         => isOk ? Ok(whenOk).AsMaybeWithoutError<TError>() : Error(whenError);
 
