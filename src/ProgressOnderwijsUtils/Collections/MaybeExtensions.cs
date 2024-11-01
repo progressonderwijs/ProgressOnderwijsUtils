@@ -429,7 +429,7 @@ public static class MaybeExtensions
     /// Allow discarding the return value. A lot of methods only need to return whether they succeeded, but a lot of sources of maybe return a result
     /// </summary>
     [Pure]
-    public static Maybe<Unit, TError> DiscardValue<TOk, TError>(this Maybe<TOk,TError> maybe)
+    public static Maybe<Unit, TError> DiscardValue<TOk, TError>(this Maybe<TOk, TError> maybe)
         => maybe.TryGet(out _, out var error) ? Maybe.Ok() : Maybe.Error(error);
 
     [Pure]
