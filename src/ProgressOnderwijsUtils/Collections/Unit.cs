@@ -13,7 +13,4 @@ public struct Unit
         action();
         return Value;
     }
-
-    public T Return<T>(T val)
-        => val;
 }
