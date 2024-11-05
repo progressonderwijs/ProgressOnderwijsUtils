@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Data.Common;
 using System.Text.Json;
 
 namespace ProgressOnderwijsUtils;
@@ -120,6 +121,29 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
+}
+
+public readonly record struct MaybeSqlCommand<TOut, TCommand>(TCommand underlying) : ITypedSqlCommand<Maybe<TOut, Exception>, MaybeSqlCommand<TOut, TCommand>>
+    where TCommand : ITypedSqlCommand<TOut, TCommand>
+{
+    public MaybeSqlCommand<TOut, TCommand> WithTimeout(CommandTimeout timeout)
+        => new(underlying.WithTimeout(timeout));
+
+    [MustUseReturnValue]
+    public Maybe<TOut, Exception> Execute(SqlConnection conn)
+    {
+        try {
+            return Maybe.Ok(underlying.Execute(conn));
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    public ParameterizedSql Sql
+        => underlying.Sql;
+
+    public CommandTimeout CommandTimeout
+        => underlying.CommandTimeout;
 }
 
 public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?[], BuiltinsSqlCommand<T>>
