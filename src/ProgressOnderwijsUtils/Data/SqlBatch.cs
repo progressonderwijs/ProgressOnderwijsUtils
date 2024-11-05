@@ -58,6 +58,23 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
     }
 }
 
+public readonly record struct DbColumnSchemaCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<DbColumn[], DbColumnSchemaCommand>
+{
+    public DbColumnSchemaCommand WithTimeout(CommandTimeout timeout)
+        => this with { CommandTimeout = timeout, };
+
+    public DbColumn[] Execute(SqlConnection conn)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            using var sqlReader = cmd.Command.ExecuteReader(CommandBehavior.SchemaOnly);
+            return sqlReader.GetColumnSchema().ToArray();
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
+}
+
 /// <summary>
 /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
 /// </summary>
