@@ -34,6 +34,12 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
     public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
+    Unit ITypedSqlCommand<Unit, NonQuerySqlCommand>.Execute(SqlConnection conn)
+    {
+        Execute(conn, out _);
+        return Unit.Value;
+    }
+
     public void Execute(SqlConnection conn)
         => Execute(conn, out _);
 
