@@ -21,14 +21,15 @@ public interface IWithTimeout<out TSelf> : INestableSql
     TSelf WithTimeout(CommandTimeout timeout);
 }
 
-public interface ITypedSqlCommand<out TQueryReturnValue>
+public interface ITypedSqlCommand<out TQueryReturnValue, out TSelf> : IWithTimeout<TSelf>
+    where TSelf : ITypedSqlCommand<TQueryReturnValue, TSelf>
 {
     [UsefulToKeep("lib method")]
     [MustUseReturnValue]
     TQueryReturnValue Execute(SqlConnection conn);
 }
 
-public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<NonQuerySqlCommand>
+public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<Unit, NonQuerySqlCommand>
 {
     public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout };
@@ -54,7 +55,7 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
 /// <summary>
 /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
 /// </summary>
-public readonly record struct DataTableSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, MissingSchemaAction MissingSchemaAction) : ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
+public readonly record struct DataTableSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout, MissingSchemaAction MissingSchemaAction) : ITypedSqlCommand<DataTable, DataTableSqlCommand>
 {
     public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout };
@@ -79,7 +80,7 @@ public readonly record struct DataTableSqlCommand(ParameterizedSql Sql, CommandT
     }
 }
 
-public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?>, IWithTimeout<ScalarSqlCommand<T>>
+public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?, ScalarSqlCommand<T>>
 {
     public ScalarSqlCommand<T> WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout };
@@ -98,7 +99,7 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
     }
 }
 
-public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?[]>, IWithTimeout<BuiltinsSqlCommand<T>>
+public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T?[], BuiltinsSqlCommand<T>>
 {
     public BuiltinsSqlCommand<T> WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout };
@@ -117,7 +118,7 @@ public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, Comman
 public readonly record struct PocosSqlCommand<
     [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     T
->(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
+>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<T[], PocosSqlCommand<T>>
     where T : IWrittenImplicitly
 {
     [UsefulToKeep("lib method")]
@@ -224,7 +225,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     }
 }
 
-public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
+public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout, FieldMappingMode FieldMapping) : ITypedSqlCommand<IEnumerable<T>, EnumeratedObjectsSqlCommand<T>>
     where T : IWrittenImplicitly
 {
     public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
@@ -286,7 +287,7 @@ public readonly record struct EnumeratedObjectsSqlCommand<T>(ParameterizedSql Sq
 public readonly record struct TuplesSqlCommand<
     [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
     T
->(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T[]>, IWithTimeout<TuplesSqlCommand<T>>
+>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<T[], TuplesSqlCommand<T>>
     where T : struct, IStructuralEquatable, ITuple
 {
     public EnumeratedTuplesSqlCommand<T> ToLazilyEnumeratedCommand()
@@ -315,7 +316,7 @@ public readonly record struct TuplesSqlCommand<
     }
 }
 
-public readonly record struct EnumeratedTuplesSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedTuplesSqlCommand<T>>
+public readonly record struct EnumeratedTuplesSqlCommand<T>(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<IEnumerable<T>, EnumeratedTuplesSqlCommand<T>>
     where T : struct, IStructuralEquatable, ITuple
 {
     public EnumeratedTuplesSqlCommand<T> WithTimeout(CommandTimeout timeout)
