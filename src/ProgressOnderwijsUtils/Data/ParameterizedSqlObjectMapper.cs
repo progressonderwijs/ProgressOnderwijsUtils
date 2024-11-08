@@ -21,6 +21,13 @@ public static class ParameterizedSqlObjectMapper
     public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
         => new(sql, CommandTimeout.DeferToConnectionDefault);
 
+    public static DbColumnSchemaCommand OfSchemaOnly(this ParameterizedSql sql)
+        => new(sql, CommandTimeout.DeferToConnectionDefault);
+
+    public static MaybeSqlCommand<TOut, TCommand> AsMaybe<TCommand, TOut>(this ITypedSqlCommand<TOut, TCommand> command)
+        where TCommand : ITypedSqlCommand<TOut, TCommand>
+        => new((TCommand)command);
+
     public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
         => new(sql, CommandTimeout.DeferToConnectionDefault);
 

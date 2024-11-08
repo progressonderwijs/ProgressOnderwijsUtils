@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
@@ -413,5 +414,24 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var message = exc.Message;
         PAssert.That(() => message.Contains("PocoObjectMapperTest.NullablityVerifierPoco.AccountNumber contains NULL despite being non-nullable"));
         PAssert.That(() => !message.Contains("+"));
+    }
+
+    [Fact]
+    public void VerifyOfSchemaOnly()
+    {
+        var verifyString = "SalesOrderID,DueDate,ShipDate,Status".Split(',');
+        var dbColumns = ParameterizedSqlForRows(1).OfSchemaOnly().Execute(Connection);
+
+        for (var i = 0; i < verifyString.Length; i++) {
+            PAssert.That(() => dbColumns[i].ColumnName == verifyString[i].Trim());
+        }
+    }
+
+    [Fact]
+    public void VerifyAsMaybe()
+    {
+        var faultyScalar = SQL($"select 1/0");
+        Assert.Throws<Exception>(() => faultyScalar.OfScalar<int>().AsMaybe().Execute(Connection).AssertOk());
+
     }
 }
