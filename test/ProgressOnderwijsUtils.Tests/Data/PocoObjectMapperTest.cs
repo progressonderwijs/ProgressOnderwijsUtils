@@ -9,7 +9,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         => SQL(
             $@"
                 SELECT top ({rows})
-                   SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
+                    SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
                 from (select SalesOrderID = 13 union all select 14) a01
                 cross join(select AccountNumber = N'abracadabra fee fi fo fum' union all select N'abcdef') a02
                 cross join(select Comment = N'abracadabra fee fi fo fum' union all select null) a04
