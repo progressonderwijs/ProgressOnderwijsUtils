@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
-using static ProgressOnderwijsUtils.Html.HtmlTagKinds;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
