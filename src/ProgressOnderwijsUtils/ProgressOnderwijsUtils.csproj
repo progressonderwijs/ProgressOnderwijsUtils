@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>103.0.5</Version>
+    <Version>104.0.0</Version>
     <PackageReleaseNotes>Error handling Maybe.Try voor sommige gevallen verplaatsen naar Utils</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
