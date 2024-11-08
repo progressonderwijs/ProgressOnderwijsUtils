@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
+using static ProgressOnderwijsUtils.Html.HtmlTagKinds;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
@@ -8,7 +10,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         => SQL(
             $@"
                 SELECT top ({rows})
-                    SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
+                   SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
                 from (select SalesOrderID = 13 union all select 14) a01
                 cross join(select AccountNumber = N'abracadabra fee fi fo fum' union all select N'abcdef') a02
                 cross join(select Comment = N'abracadabra fee fi fo fum' union all select null) a04
@@ -413,5 +415,24 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var message = exc.Message;
         PAssert.That(() => message.Contains("PocoObjectMapperTest.NullablityVerifierPoco.AccountNumber contains NULL despite being non-nullable"));
         PAssert.That(() => !message.Contains("+"));
+    }
+
+    [Fact]
+    public void VerifyOfSchemaOnly()
+    {
+        var verifyString = "SalesOrderID,DueDate,ShipDate,Status".Split(',');
+        var dbColumns = ParameterizedSqlForRows(1).OfSchemaOnly().Execute(Connection);
+
+        for (var i = 0; i < verifyString.Length; i++) {
+            PAssert.That(() => dbColumns[i].ColumnName == verifyString[i].Trim());
+        }
+    }
+
+    [Fact]
+    public void VerifyAsMaybe()
+    {
+        var faultyScalar = SQL($"select 1/0");
+        Assert.Throws<Exception>(() => faultyScalar.OfScalar<int>().AsMaybe().Execute(Connection).AssertOk());
+
     }
 }
