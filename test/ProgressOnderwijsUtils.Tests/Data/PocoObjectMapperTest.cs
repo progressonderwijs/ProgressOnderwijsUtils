@@ -430,8 +430,6 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
     [Fact]
     public void VerifyAsMaybe()
     {
-        var faultyScalar = SQL($"select 1/0");
-        Assert.Throws<Exception>(() => faultyScalar.OfScalar<int>().AsMaybe().Execute(Connection).AssertOk());
-
+        _ = SQL($"select 1/0").OfScalar<int>().AsMaybe().Execute(Connection).AssertError();
     }
 }
