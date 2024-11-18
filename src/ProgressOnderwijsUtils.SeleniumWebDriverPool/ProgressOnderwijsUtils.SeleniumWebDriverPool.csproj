@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>4.1.3</Version>
-        <PackageReleaseNotes>Bump Selenium.WebDriver</PackageReleaseNotes>
+        <Version>5.0.0</Version>
+        <PackageReleaseNotes>Bump to .net 9</PackageReleaseNotes>
 
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
         <PackageTags>ProgressOnderwijsUtils Selenium WebDriver Web</PackageTags>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
 		<PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
