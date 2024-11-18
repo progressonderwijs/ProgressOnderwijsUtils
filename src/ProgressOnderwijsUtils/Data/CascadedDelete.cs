@@ -53,26 +53,10 @@ public static class CascadedDelete
             PocoUtils.GetProperties<TId>().ArraySelect((pocoProperty, index) => new ColumnDefinition(pocoProperty.DataType, pocoProperty.Name, index, ColumnAccessibility.Normal))
         );
         pksToDelete.BulkCopyToSqlServer(conn, target);
-        var report = RecursivelyDelete(
-            conn,
-            initialTableAsEntered,
-            outputAllDeletedRows,
-            logger,
-            foreignKeyPredicate,
-            pkColumns,
-            SQL(
-                $@"
-                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
-                from {pksTable}
-            "
-            )
-        );
+        var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
+        var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
 
-        SQL(
-            $@"
-                drop table {pksTable}
-            "
-        ).ExecuteNonQuery(conn);
+        SQL($"drop table {pksTable}").ExecuteNonQuery(conn);
 
         return report;
     }
@@ -93,26 +77,10 @@ public static class CascadedDelete
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
         BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
 
-        var report = RecursivelyDelete(
-            conn,
-            initialTableAsEntered,
-            outputAllDeletedRows,
-            logger,
-            foreignKeyPredicate,
-            pkColumns,
-            SQL(
-                $@"
-                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
-                from {pksTable}
-            "
-            )
-        );
+        var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
+        var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
 
-        SQL(
-            $@"
-                drop table {pksTable}
-            "
-        ).ExecuteNonQuery(conn);
+        SQL($"drop table {pksTable}").ExecuteNonQuery(conn);
 
         return report;
     }
@@ -227,14 +195,13 @@ public static class CascadedDelete
                             return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
                         }
 
+                        var outputColumnsSpecification = table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "));
                         return SQL(
-                            $@"
-                                declare @output_deleted table(
-                                    {table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
-                                );
-                                {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
-                                select * from @output_deleted;
-                            "
+                            $"""
+                            declare @output_deleted table({outputColumnsSpecification});
+                            {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
+                            select * from @output_deleted;
+                            """
                         ).OfDataTable().Execute(conn);
                     }
 
