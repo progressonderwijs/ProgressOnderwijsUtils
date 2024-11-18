@@ -9,7 +9,7 @@ public sealed class SsoProcessorTest
     [Fact]
     public void GetRedirectUrl_signature_verifies()
     {
-        var certificate = new X509Certificate2("testCert.pfx", "testPassword");
+        var certificate = X509CertificateLoader.LoadPkcs12FromFile("testCert.pfx", "testPassword");
         var rawUri = SsoProcessor.GetRedirectUrl(
             new(
                 "123",
@@ -30,7 +30,7 @@ public sealed class SsoProcessorTest
     [Fact]
     public void EncodeAndSignAsFormArgument_signature_verifies()
     {
-        var certificate = new X509Certificate2("testCert.pfx", "testPassword");
+        var certificate = X509CertificateLoader.LoadPkcs12FromFile("testCert.pfx", "testPassword");
         var base64EncodedRequest = new AuthnRequest(
             "123",
             "http://example.com",
