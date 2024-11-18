@@ -66,7 +66,7 @@ public static class ReflectionLoadableClassHelper
         }
         var factories = new List<Func<TBaseType>>();
         foreach (var constructor in constructors) {
-            var constructionExpression = Expression.Lambda<Func<TBaseType>>(Expression.New(constructor), Array.Empty<ParameterExpression>());
+            var constructionExpression = Expression.Lambda<Func<TBaseType>>(Expression.New(constructor));
             var constructorDelegate = constructionExpression.CompileFast(true);
             if (constructorDelegate == null) {
                 return Maybe.Error(new[] { $"Failed to create factory for {typeof(TBaseType).ToCSharpFriendlyTypeName()}", });

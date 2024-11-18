@@ -1,5 +1,4 @@
 using System.Data.Common;
-using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
@@ -10,28 +9,28 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ConvertibleProperty()
     {
-        var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>>(Connection);
+        var value = SQL($"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>>(Connection);
         PAssert.That(() => value.Value == "aap");
     }
 
     [Fact]
     public void ConvertibleNullablePropertyWitValue()
     {
-        var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
+        var value = SQL($"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
         PAssert.That(() => value.AssertNotNull().Value == "aap");
     }
 
     [Fact]
     public void ConvertibleNullablePropertyWithoutValue()
     {
-        var value = SQL($@"select {default(TrivialValue<string>?)}").ReadScalar<TrivialValue<string>?>(Connection);
+        var value = SQL($"select {default(TrivialValue<string>?)}").ReadScalar<TrivialValue<string>?>(Connection);
         PAssert.That(() => value == null);
     }
 
     [Fact]
     public void ConvertibleNonNullablePropertyWithoutValueShouldThrow()
     {
-        var nullStringReturningQuery = SQL($@"select cast(null as nvarchar(max))");
+        var nullStringReturningQuery = SQL($"select cast(null as nvarchar(max))");
 
         _ = nullStringReturningQuery.ReadScalar<string>(Connection);
 
@@ -41,7 +40,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void DatabaseCanProcessTableValuedParameters()
     {
-        var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
+        var q = SQL($"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
         var sum = q.ReadScalar<int>(Connection);
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }
@@ -49,7 +48,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlCanIncludeTvps()
     {
-        var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
+        var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
         var sum = q.ReadScalar<int>(Connection);
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }
@@ -69,7 +68,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlCanIncludeEnumTvps()
     {
-        var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (SomeEnum)i)} x");
+        var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (SomeEnum)i)} x");
         var sum = (int)q.ReadScalar<SomeEnum>(Connection);
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }
@@ -77,7 +76,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlCanIncludeAutomaticallyConvertedTvps()
     {
-        var q = SQL($@"select sum(x.querytablevalue) from {AsSqlParam(Enumerable.Range(1, 100).Select(TrivialConvertibleValue.Create))} x");
+        var q = SQL($"select sum(x.querytablevalue) from {AsSqlParam(Enumerable.Range(1, 100).Select(TrivialConvertibleValue.Create))} x");
         var sum = (int)q.ReadScalar<SomeEnum>(Connection);
         PAssert.That(() => sum == (100 * 100 + 100) / 2);
     }
@@ -85,7 +84,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlTvpsCanCountDaysOfWeek()
     {
-        var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, }} x");
+        var q = SQL($"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday, }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 5);
     }
@@ -93,7 +92,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlTvpsCanCountGuids()
     {
-        var q = SQL($@"select count(x.querytablevalue) from {new[] { new Guid(), new Guid(), }} x");
+        var q = SQL($"select count(x.querytablevalue) from {new[] { new Guid(), new Guid(), }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 2);
     }
@@ -101,7 +100,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     [Fact]
     public void ParameterizedSqlTvpsCanCountStrings()
     {
-        var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo", }} x");
+        var q = SQL($"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo", }} x");
         var dayCount = q.ReadScalar<int>(Connection);
         PAssert.That(() => dayCount == 2);
     }
@@ -113,12 +112,12 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string?> { QueryTableValue = s, });
 
         var tableName = SQL($"#strings");
-        SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
+        SQL($"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
         //manual bulk insert because our default TVP types explicitly forbid null
         pocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
-        var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Connection);
-        SQL($@"drop table #strings").ExecuteNonQuery(Connection);
+        var output = SQL($"select x.querytablevalue from #strings x").ReadPlain<string>(Connection);
+        SQL($"drop table #strings").ExecuteNonQuery(Connection);
         PAssert.That(() => stringsWithNull.SetEqual(output));
     }
 
@@ -126,10 +125,10 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     public void Binary_columns_can_be_used_in_tvps()
     {
         var dataLengthSumQuery = SQL(
-            $@"
-                select sum(datalength(hashes.QueryTableValue))
-                from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef"), }} hashes
-            "
+            $"""
+            select sum(datalength(hashes.QueryTableValue))
+            from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef"), }} hashes
+            """
         );
         PAssert.That(() => dataLengthSumQuery.ReadPlain<long>(Connection).Single() == 16);
     }
@@ -155,18 +154,17 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
     public void Test_SqlDataReader_GetBytes_for_its_spec()
     {
         SQL(
-            $@"
-                create table get_bytes_test
-                (
-                    data varbinary(max) not null
-                );
+            $"""
+            create table get_bytes_test (
+                data varbinary(max) not null
+            );
 
-                insert into get_bytes_test
-                values ({testData});
-            "
+            insert into get_bytes_test
+            values ({testData});
+            """
         ).ExecuteNonQuery(Connection);
 
-        using var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault);
+        using var cmd = SQL($"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault);
         using var reader = cmd.Command.ExecuteReader(CommandBehavior.Default);
         Assert_DataReader_GetBytes_works(reader);
     }

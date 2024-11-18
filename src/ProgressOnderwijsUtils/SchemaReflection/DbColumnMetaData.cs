@@ -90,7 +90,6 @@ public sealed record DbColumnMetaData(
     public override string ToString()
         => ToStringByMembers.ToStringByPublicMembers(this);
 
-
     static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
     public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, ParameterizedSql objectName)
@@ -98,40 +97,40 @@ public sealed record DbColumnMetaData(
 
     public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, string qualifiedObjectName)
         => qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
-            ? RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
-            : RunQuery(conn, false, SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
+            ? RunQuery(conn, true, SQL($"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
+            : RunQuery(conn, false, SQL($"and c.object_id = object_id({qualifiedObjectName})"));
 
     public static DbColumnMetaData[] LoadAll(SqlConnection conn)
         => RunQuery(conn, false, new());
 
-
     public static ParameterizedSql BaseQuery(bool fromTempDb)
         => SQL(
-            $@"
-                with pks (object_id, column_id) as (
-                    select i.object_id, ic.column_id
-                    from sys.index_columns ic 
-                    join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
-                )
-                select
-                    ColumnName = c.name
-                    , DbObjectId = c.object_id
-                    , ColumnId = c.column_id
-                    , UserTypeId = c.user_type_id
-                    , MaxLength = c.max_length
-                    , c.Precision
-                    , c.Scale
-                    , ColumnFlags = convert(tinyint, 0
-                        + 1*c.is_nullable 
-                        + 2*c.is_computed
-                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                        + 8*c.is_identity
-                        )
-                    , CollationName = c.collation_name
-                from {fromTempDb && SQL($"tempdb.")}sys.columns c
-                left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
-                where 1=1
-            "
+            $"""
+            with pks (object_id, column_id) as (
+                select i.object_id, ic.column_id
+                from sys.index_columns ic 
+                join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
+            )
+            select
+                ColumnName = c.name
+                , DbObjectId = c.object_id
+                , ColumnId = c.column_id
+                , UserTypeId = c.user_type_id
+                , MaxLength = c.max_length
+                , c.Precision
+                , c.Scale
+                , ColumnFlags = convert(tinyint, 0
+                    + 1*c.is_nullable 
+                    + 2*c.is_computed
+                    + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
+                    + 8*c.is_identity
+                    )
+                , CollationName = c.collation_name
+            from {fromTempDb && SQL($"tempdb.")}sys.columns c
+            left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
+            where 1=1
+
+            """
         );
 
     static DbColumnMetaData[] RunQuery(SqlConnection conn, bool fromTempDb, ParameterizedSql filter)

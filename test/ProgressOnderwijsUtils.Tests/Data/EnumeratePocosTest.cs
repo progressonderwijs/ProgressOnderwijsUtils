@@ -4,13 +4,13 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
 {
     static ParameterizedSql ExampleQuery
         => SQL(
-            $@"
-                select content='bla', id= 3
-                union all
-                select content='hmm', id= 37
-                union all
-                select content=null, id= 1337
-                "
+            $"""
+            select content='bla', id= 3
+            union all
+            select content='hmm', id= 37
+            union all
+            select content=null, id= 1337
+            """
         );
 
     public sealed record ExampleRow : IWrittenImplicitly
@@ -67,7 +67,6 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
         var value = enumerable.Skip(1).First();
         Assert.Equal(new() { Id = 37, Content = "hmm", }, value);
     }
-
 
     [Fact]
     public void ConcurrentReadersCrash()

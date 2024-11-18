@@ -73,21 +73,22 @@ public sealed class DatabaseDescription
 
         public ParameterizedSql ScriptToAddConstraint()
             => SQL(
-                $@"
-                    alter table {ReferencingChildTable.QualifiedNameSql}
-                    add constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)}
-                        foreign key ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
-                        references {ReferencedParentTable.QualifiedNameSql}
-                            ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
-                        on delete {DeleteReferentialAction.AsSql()}
-                        on update {UpdateReferentialAction.AsSql()};
-                    "
+                $"""
+                alter table {ReferencingChildTable.QualifiedNameSql}
+                add constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)}
+                    foreign key ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
+                    references {ReferencedParentTable.QualifiedNameSql}
+                        ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
+                    on delete {DeleteReferentialAction.AsSql()}
+                    on update {UpdateReferentialAction.AsSql()};
+                """
             );
 
         public ParameterizedSql ScriptToDropConstraint()
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)};\n");
 
-        public override string ToString() => $"FK: {QualifiedName} from {ReferencingChildTable.QualifiedName} to {ReferencedParentTable.QualifiedName}";
+        public override string ToString()
+            => $"FK: {QualifiedName} from {ReferencingChildTable.QualifiedName} to {ReferencedParentTable.QualifiedName}";
     }
 
     public sealed class Index<TObject>

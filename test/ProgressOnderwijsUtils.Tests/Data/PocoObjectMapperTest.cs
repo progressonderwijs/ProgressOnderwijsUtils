@@ -7,22 +7,22 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 {
     public static ParameterizedSql ParameterizedSqlForRows(int rows)
         => SQL(
-            $@"
-                SELECT top ({rows})
-                    SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
-                from (select SalesOrderID = 13 union all select 14) a01
-                cross join(select AccountNumber = N'abracadabra fee fi fo fum' union all select N'abcdef') a02
-                cross join(select Comment = N'abracadabra fee fi fo fum' union all select null) a04
-                cross join(select DueDate = cast('2014-01-02' as datetime2) union all select cast('2014-01-03' as datetime2)) a09
-                cross join(select OnlineOrderFlag = cast(1 as bit) union all select cast(0 as bit)) a12
-                cross join(select Rowguid = NEWID ( )) a16
-                cross join(select SalesPersonId = 37 union all select null ) a18
-                cross join(select ShipDate = cast('2014-01-02' as datetime2) union all select null) a19
-                cross join(select Status = cast(1 as tinyint) union all select cast(10 as tinyint)) a22
-                cross join(select TotalDue = cast(1.1 as decimal(18,2))) a26
-                cross join(select SomeBlob = cast('deadbeef' as varbinary(max))) a27
-                cross join(select SomeNullableBlob = cast('deadbeef' as varbinary(max)) union all select null) a28
-            "
+            $"""
+            select top ({rows})
+                SalesOrderID,DueDate,ShipDate,Status,OnlineOrderFlag,AccountNumber,SalesPersonID,TotalDue,Comment,rowGuid, SomeBlob, SomeNullableBlob
+            from (select SalesOrderID = 13 union all select 14) a01
+            cross join(select AccountNumber = N'abracadabra fee fi fo fum' union all select N'abcdef') a02
+            cross join(select Comment = N'abracadabra fee fi fo fum' union all select null) a04
+            cross join(select DueDate = cast('2014-01-02' as datetime2) union all select cast('2014-01-03' as datetime2)) a09
+            cross join(select OnlineOrderFlag = cast(1 as bit) union all select cast(0 as bit)) a12
+            cross join(select Rowguid = NEWID ( )) a16
+            cross join(select SalesPersonId = 37 union all select null ) a18
+            cross join(select ShipDate = cast('2014-01-02' as datetime2) union all select null) a19
+            cross join(select Status = cast(1 as tinyint) union all select cast(10 as tinyint)) a22
+            cross join(select TotalDue = cast(1.1 as decimal(18,2))) a26
+            cross join(select SomeBlob = cast('deadbeef' as varbinary(max))) a27
+            cross join(select SomeNullableBlob = cast('deadbeef' as varbinary(max)) union all select null) a28
+            """
         );
 
     public sealed class ExampleWithJustSetters : IWrittenImplicitly
@@ -263,7 +263,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         {
             var tableName = SQL($"#rowversions");
             SQL(
-                $@"
+                $"""
                 create table {tableName} (
                     AShorterVersion binary(4)
                     , AnotherVersion binary(8) not null
@@ -271,17 +271,17 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
                     , AFinalVersion varbinary(max)
                     , Counter int identity not null
                 );
-            "
+                """
             ).ExecuteNonQuery(sqlConnection);
 
             SQL(
-                $@"
+                $"""
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1 as int), cast(2 as bigint), cast(3 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100 as int), cast(20000 as bigint), cast(30000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(10000 as int), cast(200000000 as bigint), cast(300000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(1000000 as int), cast(2000000000000 as bigint), cast(3000000000000 as bigint));
                 insert into {tableName} (AShorterVersion, AnotherVersion, AFinalVersion) values (cast(100000000 as int), cast(20000000000000000 as bigint), cast(30000000000000000 as bigint));
-            "
+                """
             ).ExecuteNonQuery(sqlConnection);
             return tableName;
         }

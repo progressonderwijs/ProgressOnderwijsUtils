@@ -10,16 +10,16 @@ public sealed record TriggerSqlDefinition(DbObjectId ObjectId, string Name, DbOb
 
     static TriggerSqlDefinition[] LoadAll(SqlConnection conn, int parentClass)
         => SQL(
-            $@"
-                    select
-                        ObjectId = tr.object_id
-                        , tr.name
-                        , TableObjectId = t.object_id
-                        , Definition = OBJECT_DEFINITION(tr.object_id)
-                    from sys.triggers tr
-                    left join sys.tables t on t.object_id = tr.parent_id
-                    where 1=1
-                        and tr.parent_class = {parentClass}
-                "
+            $"""
+            select
+                ObjectId = tr.object_id
+                , tr.name
+                , TableObjectId = t.object_id
+                , Definition = OBJECT_DEFINITION(tr.object_id)
+            from sys.triggers tr
+            left join sys.tables t on t.object_id = tr.parent_id
+            where 1=1
+                and tr.parent_class = {parentClass}
+            """
         ).ReadPocos<TriggerSqlDefinition>(conn);
 }

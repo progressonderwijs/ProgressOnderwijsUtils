@@ -130,18 +130,21 @@ static class SqlParameterComponent
 
         public static ParameterizedSql DefinitionScripts
             => SQL(
-                $@"
-                    begin tran;
-                    {All
-                        .Select(o => SQL($@"
-                            drop type if exists {ParameterizedSql.RawSql_PotentialForSqlInjection(o.SqlTypeName)};
-                            create type {ParameterizedSql.RawSql_PotentialForSqlInjection(o.SqlTypeName)}
-                            as table ({ParameterizedSql.RawSql_PotentialForSqlInjection(o.TableDeclaration)});
-                        "))
-                        .ConcatenateSql()}
-                    commit;
-                "
+                $"""
+                begin tran;
+                {All.Select(o => o.TypeDefinitionScript()).ConcatenateSql()}
+                commit;
+
+                """
             );
+
+        ParameterizedSql TypeDefinitionScript()
+            => SQL($"""
+                drop type if exists {ParameterizedSql.RawSql_PotentialForSqlInjection(SqlTypeName)};
+                create type {ParameterizedSql.RawSql_PotentialForSqlInjection(SqlTypeName)}
+                as table ({ParameterizedSql.RawSql_PotentialForSqlInjection(TableDeclaration)});
+
+                """);
     }
 
     interface ITableValuedParameterFactory

@@ -60,4 +60,3 @@ static class TreeBuilder<TInput, TOutput>
         }
     }
 }
-

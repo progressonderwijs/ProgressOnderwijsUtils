@@ -45,7 +45,7 @@ struct ForeignKeyColumnEntry : IWrittenImplicitly
     public static ForeignKeySqlDefinition[] LoadAll(SqlConnection conn)
     {
         var foreignKeys = SQL(
-                $@"
+                $"""
                 select 
                     ForeignKeyObjectId = fk.object_id
                     , DeleteReferentialAction = fk.delete_referential_action
@@ -60,7 +60,7 @@ struct ForeignKeyColumnEntry : IWrittenImplicitly
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id
-            "
+                """
             ).ReadPocos<ForeignKeyColumnEntry>(conn)
             .GroupBy(fkCol => fkCol.ForeignKeyObjectId)
             .Select(

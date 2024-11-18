@@ -46,17 +46,17 @@ public sealed record SequenceSqlDefinition(
 
     public static SequenceSqlDefinition[] LoadAll(SqlConnection conn)
         => SQL(
-            $@"
-                    select
-                        QualifiedName = object_schema_name(s.object_id) + '.' + object_name(s.object_id)
-                        , Type = cast(s.system_type_id as int)
-                        , IsCycling = s.is_cycling
-                        , IsCached = s.is_cached
-                        , CacheSize = s.cache_size
-                        , Increment = cast(s.increment as bigint)
-                        , MinimumValue = cast(s.minimum_value as bigint)
-                        , MaximumValue = cast(s.maximum_value as bigint)
-                    from sys.sequences s
-                "
+            $"""
+            select
+                QualifiedName = object_schema_name(s.object_id) + '.' + object_name(s.object_id)
+                , Type = cast(s.system_type_id as int)
+                , IsCycling = s.is_cycling
+                , IsCached = s.is_cached
+                , CacheSize = s.cache_size
+                , Increment = cast(s.increment as bigint)
+                , MinimumValue = cast(s.minimum_value as bigint)
+                , MaximumValue = cast(s.maximum_value as bigint)
+            from sys.sequences s
+            """
         ).ReadPocos<SequenceSqlDefinition>(conn);
 }
