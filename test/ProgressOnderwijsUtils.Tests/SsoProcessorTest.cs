@@ -51,7 +51,7 @@ public sealed class SsoProcessorTest
     public void SsoProcessor_GetAttributes_returns_ok_for_valid_response()
     {
         var validRawSamlResponse = "...";
-        var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(@"..."));
+        var certificate = X509CertificateLoader.LoadCertificate("..."u8);
         var attributes = SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
         _ = attributes.AssertOk();
     }
