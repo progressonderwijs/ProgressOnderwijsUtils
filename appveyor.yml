@@ -3,6 +3,12 @@ branches:
   only:
   - master
 image: Visual Studio 2022
+install:
+- ps: |
+    Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:temp\dotnet-install.ps1"
+    & $env:temp\dotnet-install.ps1 -Architecture x64 -Version '9.0.100' -InstallDir "$env:ProgramFiles\dotnet"
+before_build:
+  - cmd: dotnet --version
 environment:
   CONNECTION_STRING: Server=(local)\SQL2019;Database=master;User ID=sa;Password=Password12!;Encrypt=False
 init:
