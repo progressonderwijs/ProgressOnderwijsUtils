@@ -6,21 +6,21 @@ public sealed class ForeignKeyLookupTest : TransactedLocalConnection
     public void AllDependantTables_works_recursively()
     {
         SQL(
-            $@"
-                create table dbo.ForeignKeyLookupRoot (
-                    IdRoot int not null primary key
-                );
+            $"""
+            create table dbo.ForeignKeyLookupRoot (
+                IdRoot int not null primary key
+            );
 
-                create table dbo.ForeignKeyLookupLevel (
-                    IdLevel int not null primary key
-                    , IdRoot int not null foreign key references dbo.ForeignKeyLookupRoot(IdRoot)
-                );
+            create table dbo.ForeignKeyLookupLevel (
+                IdLevel int not null primary key
+                , IdRoot int not null foreign key references dbo.ForeignKeyLookupRoot(IdRoot)
+            );
 
-                create table dbo.ForeignKeyLookupLeaf (
-                    IdLeaf int not null primary key
-                    , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
-                );
-            "
+            create table dbo.ForeignKeyLookupLeaf (
+                IdLeaf int not null primary key
+                , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
+            );
+            """
         ).ExecuteNonQuery(Connection);
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 

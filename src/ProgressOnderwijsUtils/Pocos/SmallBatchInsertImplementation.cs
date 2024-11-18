@@ -41,12 +41,10 @@ public static class SmallBatchInsertImplementation
                     return fieldVal == null && !target.Options.HasFlag(SqlBulkCopyOptions.KeepNulls) ? SQL($"default") : ParameterizedSql.Param(fieldVal);
                 }
             );
-            SQL(
-                $@"
-                    insert into {ParameterizedSql.RawSql_PotentialForSqlInjection(target.TableName)} ({destinationColumns.ConcatenateSql(SQL($","))})
-                    values ({sourceValues.ConcatenateSql(SQL($", "))});
-                "
-            ).OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
+            var tableSql = ParameterizedSql.RawSql_PotentialForSqlInjection(target.TableName);
+            var columnSpec = destinationColumns.ConcatenateSql(SQL($","));
+            var valuesSpec = sourceValues.ConcatenateSql(SQL($", "));
+            SQL($"insert into {tableSql} ({columnSpec}) values ({valuesSpec});").OfNonQuery().WithTimeout(timeout).Execute(sqlConn);
         }
     }
 

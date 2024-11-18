@@ -54,8 +54,8 @@ public sealed class GitExe
     }
 
     public async Task<bool> IsUpToDateWithOriginBranch(string sourceBranch)
-        => await Git_MayFail($@"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode == 0
-            && await Git_MayFail($@"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode == 0;
+        => await Git_MayFail($"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode == 0
+            && await Git_MayFail($"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode == 0;
 
     public bool IsRefMergeable_AndResetWorkingCopy(string gitRef)
     {

@@ -15,17 +15,17 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
     public static BulkInsertTarget CreateTable(SqlConnection sqlConnection, ParameterizedSql tempTableName)
     {
         SQL(
-            $@"
-                create table {tempTableName} (
-                    AnEnum int not null
-                    , ADateTime datetime2
-                    , SomeString nvarchar(max)
-                    , LotsOfMoney decimal(19, 5)
-                    , VagueNumber float not null
-                    , CustomBla nvarchar(max) not null
-                    , CustomBlaThanCanBeNull nvarchar(max) null
-                )
-            "
+            $"""
+            create table {tempTableName} (
+                AnEnum int not null
+                , ADateTime datetime2
+                , SomeString nvarchar(max)
+                , LotsOfMoney decimal(19, 5)
+                , VagueNumber float not null
+                , CustomBla nvarchar(max) not null
+                , CustomBlaThanCanBeNull nvarchar(max) null
+            )
+            """
         ).ExecuteNonQuery(sqlConnection);
 
         return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText());
@@ -153,13 +153,13 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         using var conn2 = new SqlConnection(ConnectionString);
         conn2.Open();
         var query = SQL(
-            $@"
-                    select *
-                    from (
-                        values (1, null, 'test', 'test2')
-                        , (2, 1, null, 'test3')
-                    ) x(intNonNull, intNull, stringNull, stringNonNull)
-                "
+            $"""
+            select *
+            from (
+                values (1, null, 'test', 'test2')
+                , (2, 1, null, 'test3')
+            ) x(intNonNull, intNull, stringNull, stringNonNull)
+            """
         ).OfPocos<SampleRow2>();
         var expectedData = new[] {
             new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2", },
@@ -168,14 +168,14 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         AssertCollectionsEquivalent(expectedData, query.Execute(conn2)); //sanity check that we're testing consistent data
 
         SQL(
-            $@"
-                    create table #tmp (
-                        intNonNull int not null
-                        , intNull int null
-                        , stringNull nvarchar(max) null
-                        , stringNonNull nvarchar(max) not null
-                    )
-                "
+            $"""
+            create table #tmp (
+                intNonNull int not null
+                , intNull int null
+                , stringNull nvarchar(max) null
+                , stringNonNull nvarchar(max) not null
+            )
+            """
         ).ExecuteNonQuery(Connection);
         var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
 
@@ -201,14 +201,14 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     public void BulkInsertSmallBatchesRespectsKeepNul()
     {
         SQL(
-            $@"
-                    create table #tmp (
-                        intNonNull int not null
-                        , intNull int null default 37 
-                        , stringNull nvarchar(max) null
-                        , stringNonNull nvarchar(max) not null
-                    )
-                "
+            $"""
+            create table #tmp (
+                intNonNull int not null
+                , intNull int null default 37 
+                , stringNull nvarchar(max) null
+                , stringNonNull nvarchar(max) not null
+            )
+            """
         ).ExecuteNonQuery(Connection);
         var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
         new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", }, }

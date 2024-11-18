@@ -6,12 +6,12 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_KeyConstraintViolation_when_single_column_unique_key_constraint_is_violated_with_value_containing_parentheses()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int identity primary key,
-                        C nchar(4) not null constraint uc_T_C unique
-                    )
-                "
+            $"""
+            create table #T (
+                Id int identity primary key,
+                C nchar(4) not null constraint uc_T_C unique
+            )
+            """
         ).ExecuteNonQuery(Connection);
         SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Connection);
 
@@ -30,13 +30,13 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_DuplicateKeyUniqueIndex_when_duplicate_value_is_inserted_in_unique_index()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int identity primary key,
-                        C nchar(1) not null
-                    )
-                    create unique index ix_T on #T (C)
-                "
+            $"""
+            create table #T (
+                Id int identity primary key,
+                C nchar(1) not null
+            )
+            create unique index ix_T on #T (C)
+            """
         ).ExecuteNonQuery(Connection);
         SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Connection);
 
@@ -54,11 +54,11 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_KeyConstraintViolation_when_single_column_primary_key_constraint_is_violated()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int constraint pk_T primary key
-                    )
-                "
+            $"""
+            create table #T (
+                Id int constraint pk_T primary key
+            )
+            """
         ).ExecuteNonQuery(Connection);
         SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection));
@@ -76,14 +76,14 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_KeyConstraintViolation_when_multi_column_unique_key_constraint_is_violated()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int identity primary key,
-                        C1 nchar(1) not null,
-                        C2 nchar(1) not null,
-                        constraint uc_T_C1_C2 unique (C1, C2)
-                    )
-                "
+            $"""
+            create table #T (
+                Id int identity primary key,
+                C1 nchar(1) not null,
+                C2 nchar(1) not null,
+                constraint uc_T_C1_C2 unique (C1, C2)
+            )
+            """
         ).ExecuteNonQuery(Connection);
         SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection));
@@ -101,12 +101,12 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_GenericConstraintViolation_when_check_constraint_is_violated_using_insert()
     {
         SQL(
-            $@"
-                    create table T1 (
-                        Id int identity primary key,
-                        C int not null constraint ck_T_C check (C <> 1)
-                    )
-                "
+            $"""
+            create table T1 (
+                Id int identity primary key,
+                C int not null constraint ck_T_C check (C <> 1)
+            )
+            """
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T1 (C) values (1)").ExecuteNonQuery(Connection));
 
@@ -125,12 +125,12 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_GenericConstraintViolation_when_check_constraint_is_violated_using_update()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int identity primary key,
-                        C int not null constraint ck_T_C check (C <> 1)
-                    )
-                "
+            $"""
+            create table #T (
+                Id int identity primary key,
+                C int not null constraint ck_T_C check (C <> 1)
+            )
+            """
         ).ExecuteNonQuery(Connection);
         SQL($"insert #T (C) values (2)").ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Connection));
@@ -151,15 +151,15 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     {
         // Reference constraints on temporary tables aren't enforced or something.
         SQL(
-            $@"
-                    create table T1 (
-                        Id int identity primary key
-                    )
-                    create table T2 (
-                        Id int identity primary key,
-                        C int not null constraint fk_T2_T1 references T1
-                    )
-                "
+            $"""
+            create table T1 (
+                Id int identity primary key
+            )
+            create table T2 (
+                Id int identity primary key,
+                C int not null constraint fk_T2_T1 references T1
+            )
+            """
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Connection));
 
@@ -178,12 +178,12 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
     public void Parse_returns_CannotInsertNull_when_attempting_to_insert_null_value_in_not_null_column()
     {
         SQL(
-            $@"
-                    create table #T (
-                        Id int identity primary key,
-                        C int not null
-                    )
-                "
+            $"""
+            create table #T (
+                Id int identity primary key,
+                C int not null
+            )
+            """
         ).ExecuteNonQuery(Connection);
         var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Connection));
 

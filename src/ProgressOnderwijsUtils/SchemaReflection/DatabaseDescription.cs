@@ -73,15 +73,15 @@ public sealed class DatabaseDescription
 
         public ParameterizedSql ScriptToAddConstraint()
             => SQL(
-                $@"
-                    alter table {ReferencingChildTable.QualifiedNameSql}
-                    add constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)}
-                        foreign key ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
-                        references {ReferencedParentTable.QualifiedNameSql}
-                            ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
-                        on delete {DeleteReferentialAction.AsSql()}
-                        on update {UpdateReferentialAction.AsSql()};
-                    "
+                $"""
+                alter table {ReferencingChildTable.QualifiedNameSql}
+                add constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)}
+                    foreign key ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencingChildColumn.ColumnName).JoinStrings(", "))}) 
+                    references {ReferencedParentTable.QualifiedNameSql}
+                        ({ParameterizedSql.RawSql_PotentialForSqlInjection(Columns.Select(fkc => fkc.ReferencedParentColumn.ColumnName).JoinStrings(", "))})
+                    on delete {DeleteReferentialAction.AsSql()}
+                    on update {UpdateReferentialAction.AsSql()};
+                """
             );
 
         public ParameterizedSql ScriptToDropConstraint()

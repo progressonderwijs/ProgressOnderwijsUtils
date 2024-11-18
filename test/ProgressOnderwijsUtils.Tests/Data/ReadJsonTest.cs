@@ -41,61 +41,61 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     public void ReadJson_can_read_all_known_used_column_types_from_the_db()
     {
         SQL(
-            $@"
-                create table #ReadJsonTest (
-                    ReadJsonTestId int not null
-
-                    -- exact numerics
-                    , BitColumn bit
-                    , IntColumn int
-                    , BigIntColumn bigint
-                    , DecimalColumn decimal(4,2)
-
-                    -- Approximate numerics
-                    , FloatColumn float
-
-                    -- Date and time
-                    , DateColumn date
-                    , DateTimeOffsetColumn datetimeoffset
-
-                    -- Character strings
-                    , CharColumn char
-                    , VarCharColumn varchar(32)
-
-                    -- Unicode character strings
-                    , NCharColumn nchar
-                    , NVarCharColumn nvarchar(32)
-
-                    -- Binary strings (equiv. to rowversion)
-                    , BinaryColumn binary(8)
-
-                    -- Other data types
-                    , UniqueIdentifierColumn uniqueidentifier
-                );
-            "
+            $"""
+            create table #ReadJsonTest (
+                ReadJsonTestId int not null
+            
+                -- exact numerics
+                , BitColumn bit
+                , IntColumn int
+                , BigIntColumn bigint
+                , DecimalColumn decimal(4,2)
+            
+                -- Approximate numerics
+                , FloatColumn float
+            
+                -- Date and time
+                , DateColumn date
+                , DateTimeOffsetColumn datetimeoffset
+            
+                -- Character strings
+                , CharColumn char
+                , VarCharColumn varchar(32)
+            
+                -- Unicode character strings
+                , NCharColumn nchar
+                , NVarCharColumn nvarchar(32)
+            
+                -- Binary strings (equiv. to rowversion)
+                , BinaryColumn binary(8)
+            
+                -- Other data types
+                , UniqueIdentifierColumn uniqueidentifier
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         SQL(
-            $@"
-                insert into #ReadJsonTest (
-                    ReadJsonTestId
-                    , BitColumn
-                    , IntColumn
-                    , BigIntColumn
-                    , DecimalColumn
-                    , FloatColumn
-                    , DateColumn
-                    , DateTimeOffsetColumn
-                    , CharColumn
-                    , VarCharColumn
-                    , NCharColumn
-                    , NVarCharColumn
-                    , BinaryColumn
-                    , UniqueIdentifierColumn
-                ) values
-                    (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
-                    , (2, null, null, null, null, null, null, null, null, null, null, null, null, null);
-            "
+            $"""
+            insert into #ReadJsonTest (
+                ReadJsonTestId
+                , BitColumn
+                , IntColumn
+                , BigIntColumn
+                , DecimalColumn
+                , FloatColumn
+                , DateColumn
+                , DateTimeOffsetColumn
+                , CharColumn
+                , VarCharColumn
+                , NCharColumn
+                , NVarCharColumn
+                , BinaryColumn
+                , UniqueIdentifierColumn
+            ) values
+                (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
+                , (2, null, null, null, null, null, null, null, null, null, null, null, null, null);
+            """
         ).ExecuteNonQuery(Connection);
 
         var pipe = new Pipe();
@@ -112,25 +112,25 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     {
         SQL(
             $"""
-                create table #ReadJsonTest (
-                    DateTimeColumn datetime
-                    , DateTime2Column datetime2
-                    , DateTime2Column_Utc datetime2
-                    , DateTimeOffsetColumn datetimeoffset
-                );
+            create table #ReadJsonTest (
+                DateTimeColumn datetime
+                , DateTime2Column datetime2
+                , DateTime2Column_Utc datetime2
+                , DateTimeOffsetColumn datetimeoffset
+            );
             """
         ).ExecuteNonQuery(Connection);
 
         var dateTime = new DateTime(1, 2, 3, 4, 5, 6, 7);
         SQL(
             $"""
-                insert into #ReadJsonTest (
-                    DateTimeColumn
-                    , DateTime2Column
-                    , DateTime2Column_Utc
-                    , DateTimeOffsetColumn
-                ) values
-                    ({new DateTime(2023, 5, 6, 16, 13, 55)}, {dateTime}, {dateTime.ToUniversalTime()}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
+            insert into #ReadJsonTest (
+                DateTimeColumn
+                , DateTime2Column
+                , DateTime2Column_Utc
+                , DateTimeOffsetColumn
+            ) values
+                ({new DateTime(2023, 5, 6, 16, 13, 55)}, {dateTime}, {dateTime.ToUniversalTime()}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
             """
         ).ExecuteNonQuery(Connection);
 
@@ -161,37 +161,37 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     public void Deserialize_ReadJson_gives_the_same_result_as_ReadPocos()
     {
         SQL(
-            $@"
-                create table #ReadJsonPocoTest (
-                    ReadJsonPocoTestId int not null
-                    , BooleanColumn bit not null
-                    , NumberColumn int
-                    , LongColumn bigint
-                    , DecimalColumn decimal(10, 2)
-                    , DoubleColumn float(53)
-                    , StringColumn nvarchar(32)
-                    , DateTimeColumn datetime2
-                    , BinaryColumn varbinary(32)
-                );
-            "
+            $"""
+            create table #ReadJsonPocoTest (
+                ReadJsonPocoTestId int not null
+                , BooleanColumn bit not null
+                , NumberColumn int
+                , LongColumn bigint
+                , DecimalColumn decimal(10, 2)
+                , DoubleColumn float(53)
+                , StringColumn nvarchar(32)
+                , DateTimeColumn datetime2
+                , BinaryColumn varbinary(32)
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         SQL(
-            $@"
-                insert into #ReadJsonPocoTest (
-                    ReadJsonPocoTestId
-                    , BooleanColumn
-                    , NumberColumn
-                    , LongColumn
-                    , DoubleColumn
-                    , DecimalColumn
-                    , StringColumn
-                    , DateTimeColumn
-                    , BinaryColumn
-                ) values
-                    (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245 }})
-                    , (2, {false}, null, null, null, null, null, null, null);
-            "
+            $"""
+            insert into #ReadJsonPocoTest (
+                ReadJsonPocoTestId
+                , BooleanColumn
+                , NumberColumn
+                , LongColumn
+                , DoubleColumn
+                , DecimalColumn
+                , StringColumn
+                , DateTimeColumn
+                , BinaryColumn
+            ) values
+                (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245 }})
+                , (2, {false}, null, null, null, null, null, null, null);
+            """
         ).ExecuteNonQuery(Connection);
 
         var query = SQL($"select t.* from #ReadJsonPocoTest t order by t.ReadJsonPocoTestId");

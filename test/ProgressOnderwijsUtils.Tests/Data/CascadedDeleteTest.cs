@@ -8,13 +8,13 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadedDeleteFollowsAForeignKey()
     {
         SQL(
-            $@"
-                create table T1 ( A int primary key, B int);
-                create table T2 ( C int primary key, A int references T1 (A) );
+            $"""
+            create table T1 ( A int primary key, B int);
+            create table T2 ( C int primary key, A int references T1 (A) );
 
-                insert into T1 values (1,11), (2,22), (3, 33);
-                insert into T2 values (111,1), (333,3);
-            "
+            insert into T1 values (1,11), (2,22), (3, 33);
+            insert into T2 values (111,1), (333,3);
+            """
         ).ExecuteNonQuery(Connection);
 
         var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
@@ -33,13 +33,13 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadedDeleteFollowsAUniqueConstraintBasedForeignKey()
     {
         SQL(
-            $@"
-                create table T1 ( A int not null unique, B int);
-                create table T2 ( C int not null, A int references T1 (A) );
+            $"""
+            create table T1 ( A int not null unique, B int);
+            create table T2 ( C int not null, A int references T1 (A) );
 
-                insert into T1 values (1,11), (2,22), (3, 33);
-                insert into T2 values (111,1), (333,3);
-            "
+            insert into T1 values (1,11), (2,22), (3, 33);
+            insert into T2 values (111,1), (333,3);
+            """
         ).ExecuteNonQuery(Connection);
 
         var initialDependentValues = SQL($"select C from T2").ReadPlain<int>(Connection);
@@ -58,18 +58,17 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadedDeleteDetectsCycles()
     {
         SQL(
-            $@"
-                create table T1 ( A int not null unique, B int);
-                create table T2 ( B int not null unique, A int references T1 (A) );
-                alter table T1 add constraint T1FK foreign key (B) references T2(B);
+            $"""
+            create table T1 ( A int not null unique, B int);
+            create table T2 ( B int not null unique, A int references T1 (A) );
+            alter table T1 add constraint T1FK foreign key (B) references T2(B);
 
-                insert into T1 values (1,null), (2,null), (3, null);
-                insert into T2 values (111,1), (333,3);
-                
-                update T1 set B = 111 where A = 1;
-                update T1 set B = 333 where A = 3;
+            insert into T1 values (1,null), (2,null), (3, null);
+            insert into T2 values (111,1), (333,3);
 
-            "
+            update T1 set B = 111 where A = 1;
+            update T1 set B = 333 where A = 3;
+            """
         ).ExecuteNonQuery(Connection);
 
         var initialDependentValues = SQL($"select B from T2").ReadPlain<int>(Connection);
@@ -95,11 +94,11 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         }
 
         SQL(
-            $@"
-                create table T1 ( A int primary key identity(1,1), B int);
+            $"""
+            create table T1 ( A int primary key identity(1,1), B int);
 
-                insert into T1 values (11), (22), (33);
-            "
+            insert into T1 values (11), (22), (33);
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -119,22 +118,22 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadedDeleteFollowsADiamondOfForeignKey()
     {
         SQL(
-            $@"
-                create table TRoot ( root int primary key, B int);
-                create table T1 ( C int primary key, root int references TRoot (root));
-                create table T2 ( D int primary key, root int references TRoot (root));
-                create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
-            "
+            $"""
+            create table TRoot ( root int primary key, B int);
+            create table T1 ( C int primary key, root int references TRoot (root));
+            create table T2 ( D int primary key, root int references TRoot (root));
+            create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
+            """
         ).ExecuteNonQuery(Connection);
 
         SQL(
-            $@"
-                insert into TRoot values (1,11), (2,22), (3, 33);
-                insert into T1 values (4,1), (5, 2);
-                insert into T2 values (4,2), (5, 3);
+            $"""
+            insert into TRoot values (1,11), (2,22), (3, 33);
+            insert into T1 values (4,1), (5, 2);
+            insert into T2 values (4,2), (5, 3);
 
-                insert into TLeaf values (1, 4, null), (2, null, 4), (3, null, 5), (4, null, null);
-            "
+            insert into TLeaf values (1, 4, null), (2, null, 4), (3, null, 5), (4, null, null);
+            """
         ).ExecuteNonQuery(Connection);
 
         var initialTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Connection);
@@ -158,20 +157,20 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void NonUniqueForeignKeyDoesNotLeadToExplosionOfDeletions()
     {
         SQL(
-            $@"
-                create table TRoot ( root int primary key, B int);
-                create table T1 ( C int primary key, root int references TRoot (root));
-                create table TLeaf ( Z int primary key, C int references T1 (C));
-            "
+            $"""
+            create table TRoot ( root int primary key, B int);
+            create table T1 ( C int primary key, root int references TRoot (root));
+            create table TLeaf ( Z int primary key, C int references T1 (C));
+            """
         ).ExecuteNonQuery(Connection);
 
         SQL(
-            $@"
-                insert into TRoot values (1, 11), (2, 22), (3, 33);
-                insert into T1 values (1,1), (2, 2), (3, 3), (11,1), (22,2), (33,3);
+            $"""
+            insert into TRoot values (1, 11), (2, 22), (3, 33);
+            insert into T1 values (1,1), (2, 2), (3, 3), (11,1), (22,2), (33,3);
 
-                insert into TLeaf values (1, 1);
-            "
+            insert into TLeaf values (1, 1);
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -189,15 +188,15 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadeDeleteBreaksOnSpecificTable()
     {
         SQL(
-            $@"
-                create table T1 (A int primary key);
-                create table T2 (B int primary key, A int references T1 (A) on delete set null);
-                create table T3 (C int primary key, A int references T1 (A));
+            $"""
+            create table T1 (A int primary key);
+            create table T2 (B int primary key, A int references T1 (A) on delete set null);
+            create table T3 (C int primary key, A int references T1 (A));
 
-                insert into T1 values (1);
-                insert into T2 values (2, 1);
-                insert into T3 values (3, 1);
-            "
+            insert into T1 values (1);
+            insert into T2 values (2, 1);
+            insert into T3 values (3, 1);
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -290,15 +289,15 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadeDeleteAllowsSameTableCyclesWhenThoseAreSimultaneouslyDeletable()
     {
         SQL(
-            $@"
-                create table T1 (A int primary key);
-                create table T2 (B int primary key, A int references T1, C int references T2);
+            $"""
+            create table T1 (A int primary key);
+            create table T2 (B int primary key, A int references T1, C int references T2);
 
-                insert into T1 values (1);
-                insert into T2 values (2, 1, null);
-                insert into T2 values (3, 1, 2);
-                update T2 set C=3 where B=2
-            "
+            insert into T1 values (1);
+            insert into T2 values (2, 1, null);
+            insert into T2 values (3, 1, 2);
+            update T2 set C=3 where B=2
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -311,14 +310,14 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
     public void CascadeDeleteWithForeignKeySpecificationOnDeleteSetNull_is_honored()
     {
         SQL(
-            $@"
-                create table T1 (A int primary key);
-                create table T2 (B int primary key, A int references T1 on delete set null);
+            $"""
+            create table T1 (A int primary key);
+            create table T2 (B int primary key, A int references T1 on delete set null);
 
-                insert into T1 values (1);
-                insert into T2 values (2, 1);
-                insert into T2 values (3, 1);
-            "
+            insert into T1 values (1);
+            insert into T2 values (2, 1);
+            insert into T2 values (3, 1);
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
