@@ -58,14 +58,12 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     public void CheckConstraintWithTable_works()
     {
         SQL(
-            $@"
-                create table dbo.CheckConstraintTest (
-                    IdRoot int not null primary key,
-                    Test int not null
-                );
-
-                alter table dbo.CheckConstraintTest add constraint ck_TestConstraint check (Test <> 0);
-            "
+            $"""
+            create table dbo.CheckConstraintTest (
+                IdRoot int not null primary key,
+                Test int not null constraint ck_TestConstraint check (Test <> 0)
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -170,12 +168,11 @@ end;";
     public void DefaultValueConstraint_LoadOK()
     {
         SQL(
-            $@"
-                create table dbo.CheckDefaultValues (
-                    SomeValue int not null
-                );
-                alter table dbo.CheckDefaultValues add constraint df_SomeValue default (42) for SomeValue;
-            "
+            $"""
+            create table dbo.CheckDefaultValues (
+                SomeValue int not null constraint df_SomeValue default (42)
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
