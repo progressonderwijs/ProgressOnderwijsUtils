@@ -1,4 +1,5 @@
 // ReSharper disable ClassCanBeSealed.Global  - for Benchmark.NET
+
 namespace ProgressOnderwijsUtilsBenchmarks;
 
 public interface IFactory<out T>

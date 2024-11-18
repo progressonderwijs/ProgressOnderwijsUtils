@@ -191,7 +191,6 @@ public static class WikiPageHtml5
         css_wikitable = new CssClass("wikitable"),
         css_Z3988 = new CssClass("Z3988");
 
-
     public static HtmlFragment MakeHtml()
         => _html._class(css_client_nojs)
             ._lang("en")

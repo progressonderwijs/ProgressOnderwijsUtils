@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ProgressOnderwijsUtils.AspNetCore;
+
 public sealed class ModelStateFilter : IActionFilter
 {
     public void OnActionExecuted(ActionExecutedContext context) { }

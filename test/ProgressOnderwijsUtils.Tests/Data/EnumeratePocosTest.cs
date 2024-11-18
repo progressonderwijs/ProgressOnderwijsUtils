@@ -68,7 +68,6 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
         Assert.Equal(new() { Id = 37, Content = "hmm", }, value);
     }
 
-
     [Fact]
     public void ConcurrentReadersCrash()
     {

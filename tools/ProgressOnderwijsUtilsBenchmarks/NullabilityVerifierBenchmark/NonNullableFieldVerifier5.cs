@@ -5,7 +5,6 @@ using static ProgressOnderwijsUtils.BackingFieldDetector;
 
 namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
 
-
 public static class NonNullableFieldVerifier5
 {
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()

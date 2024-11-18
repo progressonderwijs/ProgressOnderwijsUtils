@@ -15,7 +15,6 @@ readonly struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalOb
         => QueryTableValue;
 }
 
-
 static class TableValuedParameterWrapperHelper
 {
     /// <summary>

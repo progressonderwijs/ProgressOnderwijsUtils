@@ -159,5 +159,4 @@ public sealed class HtmlTests
         var htmlToPipeToString = textReader.ReadToEnd();
         PAssert.That(() => htmlToString == htmlToPipeToString);
     }
-
 }

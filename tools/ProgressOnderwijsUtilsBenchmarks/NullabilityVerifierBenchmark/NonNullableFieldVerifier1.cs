@@ -7,8 +7,8 @@ namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
 
 public static class NonNullableFieldVerifier1
 {
-
     static readonly Func<string, StringSplitOptions, string[]> x = "".Split;
+
     //string split
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
     {

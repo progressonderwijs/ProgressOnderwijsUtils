@@ -307,7 +307,6 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1", }));
     }
 
-
     [Fact]
     public void CascadeDeleteWithForeignKeySpecificationOnDeleteSetNull_is_honored()
     {
@@ -331,7 +330,6 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => initialValues.All(o => o == 1));
         PAssert.That(() => finalValues.All(o => o == null));
     }
-
 
     [Fact]
     public void CascadeDelete_also_reports_on_tables_with_rowversion_column()

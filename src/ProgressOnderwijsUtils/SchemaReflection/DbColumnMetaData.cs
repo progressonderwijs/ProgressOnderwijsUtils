@@ -90,7 +90,6 @@ public sealed record DbColumnMetaData(
     public override string ToString()
         => ToStringByMembers.ToStringByPublicMembers(this);
 
-
     static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
     public static DbColumnMetaData[] ColumnMetaDatas(SqlConnection conn, ParameterizedSql objectName)
@@ -103,7 +102,6 @@ public sealed record DbColumnMetaData(
 
     public static DbColumnMetaData[] LoadAll(SqlConnection conn)
         => RunQuery(conn, false, new());
-
 
     public static ParameterizedSql BaseQuery(bool fromTempDb)
         => SQL(
