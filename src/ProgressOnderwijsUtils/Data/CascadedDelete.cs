@@ -24,10 +24,10 @@ public static class CascadedDelete
             foreignKeyPredicate,
             new[] { pkColumn, },
             SQL(
-                $@"
+                $"""
                 select {pkColumnSql} = q.QueryTableValue 
                 from {pksToDelete} q
-            "
+                """
             )
         );
     }
@@ -112,23 +112,20 @@ public static class CascadedDelete
         pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
 
         var idsToDelete = SQL(
-            $@"
-                insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
-                {pksTVParameter};
-
-                select count(*) from {delTable};
-            "
+            $"""
+            insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))}) {pksTVParameter};
+            select count(*) from {delTable};
+            """
         ).ReadScalar<int>(conn);
 
         var initialRowCountToDelete = SQL(
-            $@"
-                delete dt
-                from {delTable} dt
-                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
-                where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
-                ;
-                select count(*) from {delTable}
-            "
+            $"""
+            delete dt from {delTable} dt
+            left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+            where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
+            ;
+            select count(*) from {delTable}
+            """
         ).ReadScalar<int>(conn);
 
         log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
@@ -176,12 +173,12 @@ public static class CascadedDelete
 
                     ParameterizedSql DeletionQuery(ParameterizedSql outputClause)
                         => SQL(
-                            $@"
-                                delete pk
-                                {outputClause}
-                                from {table.QualifiedNameSql} pk
-                                join {tempTableName} tt on {ttPkJoin};
-                            "
+                            $"""
+                            delete pk
+                            {outputClause}
+                            from {table.QualifiedNameSql} pk
+                            join {tempTableName} tt on {ttPkJoin};
+                            """
                         );
 
                     DataTable? DeletionExecution()
