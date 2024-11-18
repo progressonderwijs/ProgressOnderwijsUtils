@@ -141,7 +141,7 @@ public sealed class HtmlDslGenerator
         var elAttrExtensionMethods = specificAttributes
             .Select(
                 attrName => $"""
-
+                    
                         public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
                             where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
                             => htmlTagExpr.Attribute("{attrName}", attrValue);

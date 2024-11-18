@@ -139,7 +139,7 @@ public sealed class HtmlTests
     public void StringIsEquivalentToStreamOutput()
     {
         var html = WikiPageHtml5.MakeHtml();
-        var htmlToString =  html.ToStringWithDoctype();
+        var htmlToString = html.ToStringWithDoctype();
         using var ms = new MemoryStream();
         html.SaveHtmlFragmentToStream(ms, StringUtils.Utf8WithoutBom);
         var htmlToStreamToString = StringUtils.Utf8WithoutBom.GetString(ms.ToArray());
@@ -150,7 +150,7 @@ public sealed class HtmlTests
     public void StringIsEquivalentToPipeOutput()
     {
         var html = WikiPageHtml5.MakeHtml();
-        var htmlToString =  html.ToStringWithDoctype();
+        var htmlToString = html.ToStringWithDoctype();
         var ms = new Pipe();
         html.SaveHtmlFragmentToPipe(ms.Writer);
         ms.Writer.Complete();

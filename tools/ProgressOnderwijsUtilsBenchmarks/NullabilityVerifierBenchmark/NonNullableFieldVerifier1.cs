@@ -20,7 +20,7 @@ public static class NonNullableFieldVerifier1
         NullabilityInfoContext context = new();
         var concatCall = ((Func<string, string, string>)string.Concat).Method;
 
-        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance)
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
             .Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
             .ToArray();
         statements.AddRange(
@@ -61,7 +61,7 @@ public static class NonNullableFieldVerifier1
             ))
         );
         statements.Add(exceptionList);
-        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] {exception, exceptionList, }, statements), objectParam);
+        var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exception, exceptionList, }, statements), objectParam);
         return ToLambda.Compile();
     }
 }
