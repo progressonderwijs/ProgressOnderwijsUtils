@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicitly
@@ -233,6 +235,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         CheckPostConditions(Enumerable.Range(1, 4).ToArray(), 5); //there's a special case for collections such as IReadOnlyList
         CheckPostConditions(Enumerable.Range(1, 4).ToArray(), 2);
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         void CheckPostConditions(IEnumerable<int> enumerable, int count)
         {
             var output = SmallBatchInsertImplementation.PeekAtPrefix(enumerable, count);
