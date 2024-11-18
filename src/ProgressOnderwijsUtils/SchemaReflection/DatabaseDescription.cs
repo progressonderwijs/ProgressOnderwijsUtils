@@ -87,7 +87,8 @@ public sealed class DatabaseDescription
         public ParameterizedSql ScriptToDropConstraint()
             => SQL($"alter table {ReferencingChildTable.QualifiedNameSql} drop constraint {ParameterizedSql.RawSql_PotentialForSqlInjection(UnqualifiedName)};\n");
 
-        public override string ToString() => $"FK: {QualifiedName} from {ReferencingChildTable.QualifiedName} to {ReferencedParentTable.QualifiedName}";
+        public override string ToString()
+            => $"FK: {QualifiedName} from {ReferencingChildTable.QualifiedName} to {ReferencedParentTable.QualifiedName}";
     }
 
     public sealed class Index<TObject>
