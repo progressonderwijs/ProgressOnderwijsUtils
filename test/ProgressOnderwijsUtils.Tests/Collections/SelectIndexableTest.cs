@@ -38,9 +38,6 @@ public sealed class SelectIndexableTest
         PAssert.That(() => mapped.SequenceEqual(new[] { 2, 3, 4 }));
     }
 
-
-
-
     static Func<A, X> CountCalls<A, X>(Func<A, X> func, out Func<int> callCount)
     {
         var callCounter = 0;

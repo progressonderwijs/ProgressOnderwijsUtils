@@ -24,10 +24,10 @@ public static class CascadedDelete
             foreignKeyPredicate,
             new[] { pkColumn, },
             SQL(
-                $@"
+                $"""
                 select {pkColumnSql} = q.QueryTableValue 
                 from {pksToDelete} q
-            "
+                """
             )
         );
     }
@@ -53,26 +53,10 @@ public static class CascadedDelete
             PocoUtils.GetProperties<TId>().ArraySelect((pocoProperty, index) => new ColumnDefinition(pocoProperty.DataType, pocoProperty.Name, index, ColumnAccessibility.Normal))
         );
         pksToDelete.BulkCopyToSqlServer(conn, target);
-        var report = RecursivelyDelete(
-            conn,
-            initialTableAsEntered,
-            outputAllDeletedRows,
-            logger,
-            foreignKeyPredicate,
-            pkColumns,
-            SQL(
-                $@"
-                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
-                from {pksTable}
-            "
-            )
-        );
+        var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
+        var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
 
-        SQL(
-            $@"
-                drop table {pksTable}
-            "
-        ).ExecuteNonQuery(conn);
+        SQL($"drop table {pksTable}").ExecuteNonQuery(conn);
 
         return report;
     }
@@ -93,26 +77,10 @@ public static class CascadedDelete
         pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
         BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
 
-        var report = RecursivelyDelete(
-            conn,
-            initialTableAsEntered,
-            outputAllDeletedRows,
-            logger,
-            foreignKeyPredicate,
-            pkColumns,
-            SQL(
-                $@"
-                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
-                from {pksTable}
-            "
-            )
-        );
+        var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
+        var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
 
-        SQL(
-            $@"
-                drop table {pksTable}
-            "
-        ).ExecuteNonQuery(conn);
+        SQL($"drop table {pksTable}").ExecuteNonQuery(conn);
 
         return report;
     }
@@ -144,23 +112,20 @@ public static class CascadedDelete
         pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
 
         var idsToDelete = SQL(
-            $@"
-                insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
-                {pksTVParameter};
-
-                select count(*) from {delTable};
-            "
+            $"""
+            insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))}) {pksTVParameter};
+            select count(*) from {delTable};
+            """
         ).ReadScalar<int>(conn);
 
         var initialRowCountToDelete = SQL(
-            $@"
-                delete dt
-                from {delTable} dt
-                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
-                where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
-                ;
-                select count(*) from {delTable}
-            "
+            $"""
+            delete dt from {delTable} dt
+            left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+            where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
+            ;
+            select count(*) from {delTable}
+            """
         ).ReadScalar<int>(conn);
 
         log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
@@ -208,12 +173,12 @@ public static class CascadedDelete
 
                     ParameterizedSql DeletionQuery(ParameterizedSql outputClause)
                         => SQL(
-                            $@"
-                                delete pk
-                                {outputClause}
-                                from {table.QualifiedNameSql} pk
-                                join {tempTableName} tt on {ttPkJoin};
-                            "
+                            $"""
+                            delete pk
+                            {outputClause}
+                            from {table.QualifiedNameSql} pk
+                            join {tempTableName} tt on {ttPkJoin};
+                            """
                         );
 
                     DataTable? DeletionExecution()
@@ -227,14 +192,13 @@ public static class CascadedDelete
                             return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
                         }
 
+                        var outputColumnsSpecification = table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "));
                         return SQL(
-                            $@"
-                                declare @output_deleted table(
-                                    {table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "))}
-                                );
-                                {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
-                                select * from @output_deleted;
-                            "
+                            $"""
+                            declare @output_deleted table({outputColumnsSpecification});
+                            {DeletionQuery(SQL($"output deleted.* into @output_deleted"))}
+                            select * from @output_deleted;
+                            """
                         ).OfDataTable().Execute(conn);
                     }
 

@@ -27,10 +27,10 @@ public sealed class AsSqlInExpressionTest : TransactedLocalConnection
     public void In_helper_works_on_actual_query()
     {
         SQL(
-            $@"
-                create table Tin (x int not null, y int null);
-                insert into Tin (x, y) values (3, 7), (11, null);
-            "
+            $"""
+            create table Tin (x int not null, y int null);
+            insert into Tin (x, y) values (3, 7), (11, null);
+            """
         ).ExecuteNonQuery(Connection);
 
         var xQueriedInEmpty = SQL($"select t.x from Tin t where t.x in {Array.Empty<int>().AsUnrolledSqlInExpression()}").ReadPlain<int?>(Connection);

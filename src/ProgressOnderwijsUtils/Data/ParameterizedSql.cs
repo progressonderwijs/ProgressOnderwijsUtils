@@ -100,6 +100,7 @@ public readonly struct ParameterizedSql : IEquatable<ParameterizedSql>
         AssertIsIdentifier(rawSqlString, 0);
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
+
     /// <summary>
     /// raw sql string, throws exception if the identifier does not follow https://learn.microsoft.com/en-us/sql/relational-databases/databases/database-identifiers rules.
     /// </summary>
@@ -162,8 +163,6 @@ public readonly struct ParameterizedSql : IEquatable<ParameterizedSql>
 
     static void ThrowInvalidIdentifierChar(string rawSqlString, int index)
         => throw new($"Invalid SQL identifier @ index {index} ({rawSqlString[index]}): {rawSqlString}");
-
-
 
     public static ParameterizedSql EscapedSqlObjectName(string objectName)
         => RawSql_PotentialForSqlInjection("[" + objectName.Replace("]", "]]") + "]");

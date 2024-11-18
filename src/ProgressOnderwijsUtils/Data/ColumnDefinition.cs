@@ -4,9 +4,7 @@ namespace ProgressOnderwijsUtils;
 
 public enum ColumnAccessibility
 {
-    Normal,
-    AutoIncrementIdentity,
-    Readonly,
+    Normal, AutoIncrementIdentity, Readonly,
 }
 
 public sealed record ColumnDefinition(Type DataType, string Name, int Index, ColumnAccessibility ColumnAccessibility)

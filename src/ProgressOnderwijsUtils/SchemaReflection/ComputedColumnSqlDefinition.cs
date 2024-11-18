@@ -4,13 +4,13 @@ public sealed record ComputedColumnSqlDefinition(DbObjectId ObjectId, DbColumnId
 {
     public static ComputedColumnSqlDefinition[] LoadAll(SqlConnection conn)
         => SQL(
-            $@"
-                    select 
-                        ObjectId = c.object_id
-                        , ColumnId = c.column_id
-                        , c.Definition
-                        , IsPersisted = c.is_persisted
-                    from sys.computed_columns c
-                "
+            $"""
+            select 
+                ObjectId = c.object_id
+                , ColumnId = c.column_id
+                , c.Definition
+                , IsPersisted = c.is_persisted
+            from sys.computed_columns c
+            """
         ).ReadPocos<ComputedColumnSqlDefinition>(conn);
 }

@@ -17,23 +17,23 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     DatabaseDescription CreateSampleData()
     {
         SQL(
-            $@"
-                create table dbo.ForeignKeyLookupRoot (
-                    IdRoot int not null primary key
-                );
+            $"""
+            create table dbo.ForeignKeyLookupRoot (
+                IdRoot int not null primary key
+            );
 
-                create table dbo.ForeignKeyLookupLevel (
-                    IdLevel int not null primary key
-                    , IdRoot int not null constraint LevelToRoot foreign key references dbo.ForeignKeyLookupRoot(IdRoot)
-                    , SomeDataWithDefault nvarchar(max) not null default('test')
-                    , SomeDataWithoutDefault nvarchar(max) not null
-                );
+            create table dbo.ForeignKeyLookupLevel (
+                IdLevel int not null primary key
+                , IdRoot int not null constraint LevelToRoot foreign key references dbo.ForeignKeyLookupRoot(IdRoot)
+                , SomeDataWithDefault nvarchar(max) not null default('test')
+                , SomeDataWithoutDefault nvarchar(max) not null
+            );
 
-                create table dbo.ForeignKeyLookupLeaf (
-                    IdLeaf int not null primary key
-                    , IdLevel int not null constraint LeafToLevel foreign key references dbo.ForeignKeyLookupLevel(IdLevel) on delete cascade
-                );
-            "
+            create table dbo.ForeignKeyLookupLeaf (
+                IdLeaf int not null primary key
+                , IdLevel int not null constraint LeafToLevel foreign key references dbo.ForeignKeyLookupLevel(IdLevel) on delete cascade
+            );
+            """
         ).ExecuteNonQuery(Connection);
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
         return db;
@@ -58,14 +58,12 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     public void CheckConstraintWithTable_works()
     {
         SQL(
-            $@"
-                create table dbo.CheckConstraintTest (
-                    IdRoot int not null primary key,
-                    Test int not null
-                );
-
-                alter table dbo.CheckConstraintTest add constraint ck_TestConstraint check (Test <> 0);
-            "
+            $"""
+            create table dbo.CheckConstraintTest (
+                IdRoot int not null primary key,
+                Test int not null constraint ck_TestConstraint check (Test <> 0)
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -88,10 +86,12 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
     public void CheckTableTriggers_works()
     {
         SQL($"create table dbo.TableTriggerTest (Iets int null)").ExecuteNonQuery(Connection);
-        var definition = @"create trigger dbo.EenTrigger on dbo.TableTriggerTest for insert as
-begin
-    do_nothing:
-end;";
+        var definition = """
+            create trigger dbo.EenTrigger on dbo.TableTriggerTest for insert as
+            begin
+                do_nothing:
+            end;
+            """;
         SQL($"{ParameterizedSql.RawSql_PotentialForSqlInjection(definition)}").ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -106,8 +106,7 @@ end;";
     [Fact]
     public void CheckDatabaseTriggers_works()
     {
-        var definition =
-            """
+        var definition = """
             create trigger EenTrigger on database for create_table, alter_table as
             begin
                 do_nothing:
@@ -135,17 +134,17 @@ end;";
     public void CheckIsStringAndIsUnicode_works()
     {
         SQL(
-            $@"
-                create table dbo.CheckIsString (
-                    IdRoot int not null primary key,
-                    Testint int not null,
-                    Testchar char(10) not null,
-                    Testvarchar varchar(10) not null,
-                    Testnchar nchar(10) not null,
-                    Testnvarchar nvarchar(10) not null,
-                    Testxml xml not null
-                );
-            "
+            $"""
+            create table dbo.CheckIsString (
+                IdRoot int not null primary key,
+                Testint int not null,
+                Testchar char(10) not null,
+                Testvarchar varchar(10) not null,
+                Testnchar nchar(10) not null,
+                Testnvarchar nvarchar(10) not null,
+                Testxml xml not null
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -170,12 +169,11 @@ end;";
     public void DefaultValueConstraint_LoadOK()
     {
         SQL(
-            $@"
-                create table dbo.CheckDefaultValues (
-                    SomeValue int not null
-                );
-                alter table dbo.CheckDefaultValues add constraint df_SomeValue default (42) for SomeValue;
-            "
+            $"""
+            create table dbo.CheckDefaultValues (
+                SomeValue int not null constraint df_SomeValue default (42)
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);
@@ -192,13 +190,13 @@ end;";
     public void ComputedColumns_LoadOK()
     {
         SQL(
-            $@"
-                create table dbo.CheckComputedValues (
-                    Bla int not null,
-                    SomeValue as (42) persisted not null,
-                    SomeOtherValue as (cast(null as nvarchar(max)))
-                );
-            "
+            $"""
+            create table dbo.CheckComputedValues (
+                Bla int not null,
+                SomeValue as (42) persisted not null,
+                SomeOtherValue as (cast(null as nvarchar(max)))
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         var db = DatabaseDescription.LoadFromSchemaTables(Connection);

@@ -11,7 +11,7 @@ public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
         public int? OtherColumn { get; set; }
 
         public static ExactMapping[] Load(SqlConnection context)
-            => SQL($@"select t.* from {testTableName} t").ReadPocos<ExactMapping>(context);
+            => SQL($"select t.* from {testTableName} t").ReadPocos<ExactMapping>(context);
     }
 
     struct LessColumns : IWrittenImplicitly, IReadImplicitly
@@ -45,13 +45,13 @@ public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
     BulkInsertTarget CreateTargetTable()
     {
         SQL(
-            $@"
-                create table {testTableName} (
-                    Id int not null
-                    , SomeColumn int null
-                    , OtherColumn int null
-                );
-            "
+            $"""
+            create table {testTableName} (
+                Id int not null
+                , SomeColumn int null
+                , OtherColumn int null
+            );
+            """
         ).ExecuteNonQuery(Connection);
 
         return BulkInsertTarget.FromCompleteSetOfColumns(testTableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Connection, testTableName));

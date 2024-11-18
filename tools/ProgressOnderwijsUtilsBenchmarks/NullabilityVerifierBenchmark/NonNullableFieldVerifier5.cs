@@ -5,7 +5,6 @@ using static ProgressOnderwijsUtils.BackingFieldDetector;
 
 namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
 
-
 public static class NonNullableFieldVerifier5
 {
     public static Func<T, string[]?> MissingRequiredProperties_FuncFactory<T>()
@@ -15,7 +14,7 @@ public static class NonNullableFieldVerifier5
         var exception = Expression.Variable(typeof(string[]), "exception");
 
         NullabilityInfoContext context = new();
-        var fields = typeof(T).GetFields(BindingFlags.NonPublic|BindingFlags.Public |BindingFlags.Instance)
+        var fields = typeof(T).GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance)
             .Where(f => context.Create(f).WriteState == NullabilityState.NotNull)
             .ToArray();
 
