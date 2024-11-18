@@ -42,8 +42,10 @@ public sealed class TreeWhereTest
             Tree.Node("3"),
             Tree.Node(
                 "y",
-                Tree.Node("4",
-                Tree.Node("5")),
+                Tree.Node(
+                    "4",
+                    Tree.Node("5")
+                ),
                 Tree.Node(
                     "x",
                     Tree.Node("ee"),

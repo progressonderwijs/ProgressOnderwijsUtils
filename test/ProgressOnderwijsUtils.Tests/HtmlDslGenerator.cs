@@ -154,49 +154,49 @@ public sealed class HtmlDslGenerator
                     voidElements.Contains(el.elementName)
                         ? $$"""
                         
-                                public struct {{el.csUpperName}} : IHtmlElement<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
-                                {
-                                    public string TagName => "{{el.elementName}}";
-                                    string IHtmlElement.TagStart => "<{{el.elementName}}";
-                                    string IHtmlElement.EndTag => "";
-                                    ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
-                                    ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
-                                    public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
-                                    HtmlAttributes attrs;
-                                    {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
-                                    HtmlAttributes IHtmlElement.Attributes => attrs;
-                                    IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
-                                    [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-                                    public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
-                                    public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
-                                    public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-                                    public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-                                }
-                            """
+                            public struct {{el.csUpperName}} : IHtmlElement<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                            {
+                                public string TagName => "{{el.elementName}}";
+                                string IHtmlElement.TagStart => "<{{el.elementName}}";
+                                string IHtmlElement.EndTag => "";
+                                ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                                ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+                                public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
+                                HtmlAttributes attrs;
+                                {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
+                                HtmlAttributes IHtmlElement.Attributes => attrs;
+                                IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
+                                [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                                public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
+                                public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                                public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                            }
+                        """
                         : $$"""
-                            
-                                public struct {{el.csUpperName}} : IHtmlElementAllowingContent<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
-                                {
-                                    public string TagName => "{{el.elementName}}";
-                                    string IHtmlElement.TagStart => "<{{el.elementName}}";
-                                    string IHtmlElement.EndTag => "</{{el.elementName}}>";
-                                    ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
-                                    ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</{{el.elementName}}>"u8;
-                                    public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
-                                    HtmlAttributes attrs;
-                                    {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
-                                    HtmlAttributes IHtmlElement.Attributes => attrs;
-                                    HtmlFragment children;
-                                    {{el.csUpperName}} IHtmlElementAllowingContent<{{el.csUpperName}}>.ReplaceContentWith(HtmlFragment replacementContents) => new {{el.csUpperName}} { attrs = attrs, children = replacementContents };
-                                    HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
-                                    IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
-                                    [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-                                    public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
-                                    public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
-                                    public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-                                    public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-                                }
-                            """
+                        
+                            public struct {{el.csUpperName}} : IHtmlElementAllowingContent<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                            {
+                                public string TagName => "{{el.elementName}}";
+                                string IHtmlElement.TagStart => "<{{el.elementName}}";
+                                string IHtmlElement.EndTag => "</{{el.elementName}}>";
+                                ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                                ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</{{el.elementName}}>"u8;
+                                public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
+                                HtmlAttributes attrs;
+                                {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
+                                HtmlAttributes IHtmlElement.Attributes => attrs;
+                                HtmlFragment children;
+                                {{el.csUpperName}} IHtmlElementAllowingContent<{{el.csUpperName}}>.ReplaceContentWith(HtmlFragment replacementContents) => new {{el.csUpperName}} { attrs = attrs, children = replacementContents };
+                                HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+                                IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
+                                [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                                public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                                public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
+                                public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                                public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                            }
+                        """
             );
 
         var elFields = elements
@@ -213,53 +213,53 @@ public sealed class HtmlDslGenerator
             AssertFileExistsAndApproveContent(
                 HtmlTagKinds_GeneratedOutputFilePath,
                 $$"""
-            #nullable enable
-            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+                #nullable enable
+                using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-            namespace ProgressOnderwijsUtils.Html;
+                namespace ProgressOnderwijsUtils.Html;
 
-            public static class HtmlTagKinds
-            {{{elTagNameClasses.JoinStrings("")}}
-            }
+                public static class HtmlTagKinds
+                {{{elTagNameClasses.JoinStrings("")}}
+                }
 
-            """
+                """
             ),
 
             AssertFileExistsAndApproveContent(
                 HtmlTags_GeneratedOutputFilePath,
                 $$"""
-            #nullable enable
-            namespace ProgressOnderwijsUtils.Html;
+                #nullable enable
+                namespace ProgressOnderwijsUtils.Html;
 
-            public static class Tags
-            {{{elFields.JoinStrings("")}}}
+                public static class Tags
+                {{{elFields.JoinStrings("")}}}
 
-            """
+                """
             ),
 
             AssertFileExistsAndApproveContent(
                 AttributeNameInterfaces_GeneratedOutputFilePath,
                 $$"""
-            #nullable enable
-            namespace ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+                #nullable enable
+                namespace ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-            {{elAttrInterfaces.JoinStrings("")}}
-            """
+                {{elAttrInterfaces.JoinStrings("")}}
+                """
             ),
 
             AssertFileExistsAndApproveContent(
                 AttributeConstructionMethods_GeneratedOutputFilePath,
                 $$"""
-            #nullable enable
-            using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
+                #nullable enable
+                using ProgressOnderwijsUtils.Html.AttributeNameInterfaces;
 
-            namespace ProgressOnderwijsUtils.Html;
+                namespace ProgressOnderwijsUtils.Html;
 
-            public static class AttributeConstructionMethods
-            {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
-            }
+                public static class AttributeConstructionMethods
+                {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
+                }
 
-            """
+                """
             ),
         }.WhereNotNull().ToArray();
 

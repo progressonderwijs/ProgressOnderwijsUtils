@@ -25,40 +25,41 @@ public static class NonNullableFieldVerifier1
             .ToArray();
         statements.AddRange(
             fields.Select(
-                    f => {
-                        var memberExpression = Expression.Field(objectParam, f);
-                        var fieldValue = Expression.Convert(memberExpression, typeof(object));
+                f => {
+                    var memberExpression = Expression.Field(objectParam, f);
+                    var fieldValue = Expression.Convert(memberExpression, typeof(object));
 
-                        var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
-                        var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable\n";
+                    var propName = AutoPropertyOfFieldOrNull(f) is { } prop ? prop.Name : f.Name;
+                    var exceptionMessage = typeof(T).ToCSharpFriendlyTypeName() + "." + propName + " contains NULL despite being non-nullable\n";
 
-                        return Expression.IfThen(
-                            Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
-                            Expression.Assign(
+                    return Expression.IfThen(
+                        Expression.Equal(fieldValue, Expression.Constant(null, typeof(object))),
+                        Expression.Assign(
+                            exception,
+                            Expression.Call(
+                                concatCall,
                                 exception,
-                                Expression.Call(
-                                    concatCall,
-                                    exception,
-                                    Expression.Constant(exceptionMessage)
-                                )
+                                Expression.Constant(exceptionMessage)
                             )
-                        );
-                    }
-                )
+                        )
+                    );
+                }
+            )
         );
 
         var splitStringCall = x.Method;
 
         var exceptionList = Expression.Variable(typeof(string[]), "exceptionList");
         var result = Expression.Call(exception, splitStringCall, Expression.Constant("\n"), Expression.Constant(StringSplitOptions.RemoveEmptyEntries));
-        statements.Add(Expression.Condition(
-            Expression.NotEqual(
-                exception,
-                Expression.Constant("")
+        statements.Add(
+            Expression.Condition(
+                Expression.NotEqual(
+                    exception,
+                    Expression.Constant("")
                 ),
-            Expression.Assign(exceptionList,result),
-            Expression.Assign(exceptionList,Expression.Constant(null,typeof(string[]))
-            ))
+                Expression.Assign(exceptionList, result),
+                Expression.Assign(exceptionList, Expression.Constant(null, typeof(string[])))
+            )
         );
         statements.Add(exceptionList);
         var ToLambda = Expression.Lambda<Func<T, string[]?>>(Expression.Block(new[] { exception, exceptionList, }, statements), objectParam);
