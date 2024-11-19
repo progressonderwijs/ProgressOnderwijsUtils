@@ -51,6 +51,20 @@ public sealed class TreeCursorTest
     }
 
     [Fact]
+    public void EmptyCursorChildrenDoesNotCrash()
+    {
+        var tree = Tree.Node(42, Tree.Node(1337)).CursorForThisRoot();
+        PAssert.That(() => tree.HasValue && tree.Children.Count == 1);
+        var child = tree.Children[0];
+        PAssert.That(() => child.HasValue && child.Children.Count == 0);
+        var parentOfChild = child.Parent;
+        PAssert.That(() => Equals(parentOfChild, tree));
+        PAssert.That(() => parentOfChild.IsRoot && parentOfChild.HasValue);
+        var parentOfRoot = tree.Parent;
+        PAssert.That(() => !parentOfRoot.HasValue && !parentOfRoot.IsRoot && parentOfRoot.Children.Count == 0);
+    }
+
+    [Fact]
     public void RootedTree_Sibling_Implementation_Works_Correctly()
     {
         var tree =

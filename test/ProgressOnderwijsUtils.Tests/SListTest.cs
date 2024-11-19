@@ -94,8 +94,20 @@ public sealed class SListTest
         var list = SList.Create(new[] { 1, 2, 3, });
 
         PAssert.That(() => list.Head == 1);
+        var tryGet1 = list.TryGet(out var head1, out var tail1);
+        PAssert.That(() => tryGet1 && head1 == 1 && !tail1.IsEmpty);
+
         PAssert.That(() => list.Tail.Head == 2);
+        var tryGet2 = tail1.TryGet(out var head2, out var tail2);
+        PAssert.That(() => tryGet2 && head2 == 2 && !tail2.IsEmpty);
+
         PAssert.That(() => list.Tail.Tail.Head == 3);
+        var tryGet3 = tail2.TryGet(out var head3, out var tail3);
+        PAssert.That(() => tryGet3 && head3 == 3 && tail3.IsEmpty);
+
+        var tryGet4 = tail3.TryGet(out var head4, out var tail4);
+        PAssert.That(() => !tryGet4 && head4 == 0 && tail4.IsEmpty);
+
         // ReSharper disable once UnusedVariable
         _ = Assert.Throws<Exception>(
             () => {

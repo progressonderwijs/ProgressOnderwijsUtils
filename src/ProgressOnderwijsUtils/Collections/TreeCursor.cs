@@ -15,24 +15,23 @@ public readonly struct TreeCursor<T> : IEquatable<TreeCursor<T>>, IRecursiveStru
         => PathSegments.Head.ThisSubTree;
 
     public IReadOnlyList<TreeCursor<T>> Children
-    {
-        get {
-            var treePathSegments = PathSegments;
-            return ToSubTree().Children.SelectIndexable((kid, i) => new TreeCursor<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
-        }
-    }
+        => PathSegments is var treePathSegments
+            && treePathSegments.TryGet(out var head, out _)
+            && head.ThisSubTree.Children is { } children and not []
+                ? children.SelectIndexable((kid, i) => new TreeCursor<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))))
+                : Array.Empty<TreeCursor<T>>();
 
     public T NodeValue
         => ToSubTree().NodeValue;
 
     public bool IsRoot
-        => PathSegments.Tail.IsEmpty;
+        => PathSegments.TryGet(out _, out var tail) && tail.IsEmpty;
 
     public bool HasValue
         => !PathSegments.IsEmpty;
 
     public TreeCursor<T> Parent
-        => new(PathSegments.Tail);
+        => PathSegments.TryGet(out _, out var tail) ? new(tail) : this;
 
     public Tree<T> Root
         => PathSegments.Last().ThisSubTree;
