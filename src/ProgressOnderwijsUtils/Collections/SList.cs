@@ -24,6 +24,19 @@ public readonly struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
     public T Head
         => list.AssertNotNull().Head;
 
+    public bool TryGet([MaybeNullWhen(false)] out T head, out SList<T> tail)
+    {
+        if (list == null) {
+            head = default(T);
+            tail = Empty;
+            return false;
+        } else {
+            head = list.Head;
+            tail = new(list.Tail);
+            return true;
+        }
+    }
+
     public SList<T> Tail
         => new(list.AssertNotNull().Tail);
 
