@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>105.1.0</Version>
-    <PackageReleaseNotes>SList: add TryGet method; TreeCursor: no longer crash on access of Children or IsRoot of the empty cursor.</PackageReleaseNotes>
+    <Version>105.2.0</Version>
+    <PackageReleaseNotes>JsonSqlCommand now throws ParameterizedSqlExecutionException's.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
