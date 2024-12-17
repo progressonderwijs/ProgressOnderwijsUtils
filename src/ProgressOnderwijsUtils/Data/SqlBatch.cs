@@ -214,12 +214,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options)
     {
         using var cmd = this.ReusableCommand(conn);
-        SqlDataReader? reader;
-        try {
-            reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-        } catch (Exception ex) {
-            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
-        }
+        var reader = ExecuteReader(cmd);
         using var disposeReader = reader;
         var table = reader.GetColumnSchema()
             .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName))
@@ -227,7 +222,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
 
         using var writer = new Utf8JsonWriter(buffer, options);
         writer.WriteStartArray();
-        while (reader.Read()) {
+        while (Read(cmd, reader)) {
             writer.WriteStartObject();
             for (var i = 0; i < table.Length; i++) {
                 if (!reader.IsDBNull(i)) {
@@ -269,6 +264,24 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
             writer.WriteEndObject();
         }
         writer.WriteEndArray();
+    }
+
+    SqlDataReader ExecuteReader(ReusableCommand cmd)
+    {
+        try {
+            return cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+    }
+
+    bool Read(ReusableCommand cmd, SqlDataReader reader)
+    {
+        try {
+            return reader.Read();
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "Read failed");
+        }
     }
 }
 
