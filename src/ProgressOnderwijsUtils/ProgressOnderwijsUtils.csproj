@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>105.2.0</Version>
-    <PackageReleaseNotes>JsonSqlCommand now throws ParameterizedSqlExecutionExceptions.</PackageReleaseNotes>
+    <Version>105.2.1</Version>
+    <PackageReleaseNotes>Bump versions.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
