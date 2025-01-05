@@ -37,12 +37,13 @@ sealed class Benchmarker
 
         Output($"Testing {Tries} groups of {IterationsPerTry} queries with {rowCounts.Min()}-{rowCounts.Max()} rows");
         Output(
-            $"median: {rowCounts.OrderBy(x => x).Skip((IterationsPerTry - 1) / 2).Take(2).Average()}; "
-            + $"mean: {rowCounts.Average():f2}; "
-            + $"{rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}% 0; "
-            + $"{rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}% 1; "
-            + $"{rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50; "
+            $"Row-count median: {rowCounts.OrderBy(x => x).Skip((IterationsPerTry - 1) / 2).Take(2).Average()}; "
+            + $"mean: {rowCounts.Average():f1}; "
+            + $"0 rows: {rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}%; "
+            + $"1 row: {rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}%; "
+            + $"<50 rows: {rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50"
         );
+        Output($"Reporting time per query execution; parallel executions use {ThreadCount} threads");
     }
 
     public void BenchSqlServer(string name, Func<SqlConnection, int, int> action)
@@ -167,9 +168,9 @@ sealed class Benchmarker
         var stddev = Math.Sqrt(variance);
         var scale = 1000.0 / (Tries * IterationsPerTry);
         Output(
-            $"{mean / IterationsPerTry:f2}μs ~ {stddev / IterationsPerTry:f2}μs overall;" +
-            $"{latencyDistribution.Mean * 1000:f2}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f2}μs latency;" +
-            $" {gen0 * scale:f4}/{gen1 * scale:f4}/{gen2 * scale:f4} milliGC;  {name}  {ignore}"
+            $"{mean / IterationsPerTry:f1}μs ~ {stddev / IterationsPerTry:f2}μs parallel;" +
+            $"{latencyDistribution.Mean * 1000:f0}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f1}μs latency;" +
+            $" {gen0 * scale:f2}/{gen1 * scale:f2}/{gen2 * scale:f2} milliGC;  {name}  {ignore}"
         );
     }
 
