@@ -12,15 +12,21 @@ static class MicroOrmBenchmarkProgram
 
     static void RunCurrentBenchmarks(Benchmarker benchmarker)
     {
+        benchmarker.Output("Running 6-column queries ");
+
         EntityFrameworkBench.RunQuery(benchmarker);
         DapperExecutor.RunQuery(benchmarker);
         ParameterizedSqlExecutor.RunQuery(benchmarker);
         HandrolledAdoNetExecutor.RunQuery(benchmarker);
 
+        benchmarker.Output("Running 26-column queries (shape of AdventureWorks SalesOrderHeader)");
+
         EntityFrameworkBench.RunWideQuery(benchmarker);
         DapperExecutor.RunWideQuery(benchmarker);
         ParameterizedSqlExecutor.RunWideQuery(benchmarker);
         HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
+
+        benchmarker.Output("Running special-case benchmarks");
 
         ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
         ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
