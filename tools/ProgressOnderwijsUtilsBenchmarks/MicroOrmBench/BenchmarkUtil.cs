@@ -93,24 +93,24 @@ sealed class Benchmarker
             sqliteConn.Open();
 
             _ = sqliteConn.Query<ExampleObject>(
-                @"
-                    create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
-
-                    insert into example (a,b,c,d,e)
-                    select
-                        a.x as a
-                        , b.x as b
-                        , c.x as c
-                        , d.x as d
-                        , e.x as e
-                    from       (select 0 as x union all select 1 union all select null) a
-                    cross join (select 0 as x union all select 1 union all select 2) b
-                    cross join (select 'abracadabra fee fi fo fum' as x union all select null union all select 'quick brown fox') c
-                    cross join(select cast(1 as bit) as x union all select cast(0 as bit) union all select null) d
-                    cross join(select 0 as x union all select 1 union all select 2) e
-                    cross join(select 0 as x union all select 1 union all select 2 union all select 3) f
-                    cross join(select 0 as x union all select 1 union all select 2 union all select 3) g
-                "
+                """
+                create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
+                
+                insert into example (a,b,c,d,e)
+                select
+                    a.x as a
+                    , b.x as b
+                    , c.x as c
+                    , d.x as d
+                    , e.x as e
+                from       (select 0 as x union all select 1 union all select null) a
+                cross join (select 0 as x union all select 1 union all select 2) b
+                cross join (select 'abracadabra fee fi fo fum' as x union all select null union all select 'quick brown fox') c
+                cross join(select cast(1 as bit) as x union all select cast(0 as bit) union all select null) d
+                cross join(select 0 as x union all select 1 union all select 2) e
+                cross join(select 0 as x union all select 1 union all select 2 union all select 3) f
+                cross join(select 0 as x union all select 1 union all select 2 union all select 3) g
+                """
             );
             ok = true;
             return sqliteConn;
