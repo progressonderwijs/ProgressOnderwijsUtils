@@ -110,7 +110,7 @@ sealed class Benchmarker
         var initialGen1 = GC.CollectionCount(1);
         var initialGen2 = GC.CollectionCount(2);
         var elapsed = new List<double>();
-        long ignore = 0;
+        long rowsum = 0;
         var latencyDistribution = MeanVarianceAccumulator.Empty;
         for (var k = 0L; k < Tries; k++) {
             var i = 0;
@@ -126,7 +126,7 @@ sealed class Benchmarker
                     swInner.Restart();
                     var val = action(conn, IndexToRowCount(localI));
                     latencies = latencies.Add(swInner.Elapsed.TotalMilliseconds);
-                    Interlocked.Add(ref ignore, val);
+                    Interlocked.Add(ref rowsum, val);
                 }
                 return latencies;
             };
@@ -150,7 +150,7 @@ sealed class Benchmarker
         Output(
             $"{mean / IterationsPerTry:f1}μs ~ {stddev / IterationsPerTry:f2}μs parallel;" +
             $"{latencyDistribution.Mean * 1000:f0}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f1}μs latency;" +
-            $" {gen0 * scale:f2}/{gen1 * scale:f2}/{gen2 * scale:f2} milliGC;  {name}  {ignore}"
+            $" {gen0 * scale:f2}/{gen1 * scale:f2}/{gen2 * scale:f2} milliGC;  {name}  checksum:{rowsum}"
         );
     }
 
