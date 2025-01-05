@@ -1,3 +1,6 @@
+using System.Data.SQLite;
+using Dapper;
+
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 public sealed class ExampleObject : IWrittenImplicitly
@@ -13,7 +16,7 @@ public sealed class ExampleObject : IWrittenImplicitly
 
     static readonly FormattableString formattableQueryString = $"""
         select top ({0}) 
-            a.x+{2} as a
+            a.x + {2} as a
             , b.x as b
             , c.x as c
             , d.x as d
@@ -31,28 +34,37 @@ public sealed class ExampleObject : IWrittenImplicitly
     static readonly string formatString = formattableQueryString.Format;
     public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Arg", "@Hehe");
 
+    public static readonly string RawSqliteQueryString = """
+        select
+            ex.a + @Num2 as A
+            , ex.B
+            , coalesce(ex.c, @Hehe) as C
+            , ex.D
+            , ex.E
+            , @Arg as Arg
+        from example ex
+        limit @Top
+        """;
+
     public static ParameterizedSql ParameterizedSqlForRows(int rows)
         => ParameterizedSql.FromSqlInterpolated(InterpolatedQuery(rows));
 
     public static FormattableString InterpolatedQuery(int rows)
         => FormattableStringFactory.Create(formatString, rows, 2, someInt64Value, "hehe");
 
-    static readonly FormattableString formattableSqliteQueryString = $"""
-        select
-            ex.a + {2} as a
-            , ex.b
-            , coalesce(ex.c, {"hehe"}) as c
-            , ex.d
-            , ex.e
-            , {default(long)} as Arg
-        from example ex
-        limit {0}
-        """;
-
-    static readonly string formatSqliteString = formattableSqliteQueryString.Format;
-    public static readonly string RawSqliteQueryString = string.Format(formatSqliteString, "@Num2", "@Hehe", "@Arg", "@Top");
     public static readonly long someInt64Value = int.MaxValue * (long)short.MinValue;
 
-    public static ParameterizedSql ParameterizedSqliteForRows(int rows)
-        => ParameterizedSql.FromSqlInterpolated(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
+    public static void PrefillExampleTable(SQLiteConnection sqliteConn)
+        //Sqlite isn't optimized for weird inline cross-joins, so to avoid measuring _that_
+        //mostly materialize the underlying query into a table instead, and query from that
+        => _ = sqliteConn.Execute(
+            "create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);\n"
+            + "insert into example (a,b,c,d,e)\n"
+            + RawQueryString
+                .Replace("top (@Top)", "")
+                .Replace(" + @Num2", "")
+                .Replace(", @Arg as Arg", "")
+                .Replace("@Hehe", "null")
+                .Replace("N'", "'")
+        );
 }
