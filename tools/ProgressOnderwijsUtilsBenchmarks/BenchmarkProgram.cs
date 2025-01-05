@@ -1,12 +1,13 @@
 using BenchmarkDotNet.Running;
+using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
 
 public static class BenchmarkProgram
 {
     static void Main()
-        => RunTreeBenchmarks();
-    //=> MicroOrmBenchmarkProgram.RunBenchmarks();
+        //=> RunTreeBenchmarks();
+    => MicroOrmBenchmarkProgram.RunBenchmarks();
     //=> RunArrayBuilderBenchmarks();
     //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
     //=> BenchmarkRunner.Run<NullabilityBenchmark>();
