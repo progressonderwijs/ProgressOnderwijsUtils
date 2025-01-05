@@ -4,6 +4,8 @@ static class MicroOrmBenchmarkProgram
 {
     public static void RunBenchmarks()
     {
+        using var proc = Process.GetCurrentProcess();
+        proc.PriorityClass = ProcessPriorityClass.AboveNormal;
         var benchmarker = new Benchmarker { IterationsPerTry = 2000, Tries = 100, };
         benchmarker.ReportInitialDistribution();
         Console.WriteLine("Warming up...");
