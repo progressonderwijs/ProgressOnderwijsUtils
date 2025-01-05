@@ -82,7 +82,7 @@ static class HandrolledAdoNetExecutor
         };
         var heheP = new SQLiteParameter {
             DbType = DbType.String,
-            ParameterName = "@hehe",
+            ParameterName = "@Hehe",
             IsNullable = false,
             Value = "hehe",
         };
@@ -143,7 +143,7 @@ static class HandrolledAdoNetExecutor
             };
             var heheP = new SQLiteParameter {
                 DbType = DbType.String,
-                ParameterName = "@hehe",
+                ParameterName = "@Hehe",
                 IsNullable = false,
                 //Value = "hehe",
             };
