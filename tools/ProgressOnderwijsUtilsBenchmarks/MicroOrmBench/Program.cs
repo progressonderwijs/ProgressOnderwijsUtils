@@ -12,15 +12,15 @@ static class MicroOrmBenchmarkProgram
 
     static void RunCurrentBenchmarks(Benchmarker benchmarker)
     {
-        HandrolledAdoNetExecutor.RunQuery(benchmarker);
         EntityFrameworkBench.RunQuery(benchmarker);
-        ParameterizedSqlExecutor.RunQuery(benchmarker);
         DapperExecutor.RunQuery(benchmarker);
+        ParameterizedSqlExecutor.RunQuery(benchmarker);
+        HandrolledAdoNetExecutor.RunQuery(benchmarker);
 
-        HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
         EntityFrameworkBench.RunWideQuery(benchmarker);
         DapperExecutor.RunWideQuery(benchmarker);
         ParameterizedSqlExecutor.RunWideQuery(benchmarker);
+        HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
 
         ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
         ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
