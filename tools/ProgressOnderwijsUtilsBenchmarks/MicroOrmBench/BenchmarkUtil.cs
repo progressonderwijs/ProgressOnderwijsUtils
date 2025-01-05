@@ -150,18 +150,12 @@ sealed class Benchmarker
                 return latencies;
             };
             var sw = Stopwatch.StartNew();
-#if SINGLETHREADED
-                var innerLatencyDistribution = ExecuteBenchLoop();
-                elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
-                latencyDistribution = latencyDistribution.Add(innerLatencyDistribution);
-#else
-            var tasks = Enumerable.Range(0, Environment.ProcessorCount + 1 >> 1).Select(_ => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
+            var tasks = Enumerable.Range(0, ThreadCount).Select(_ => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
             Task.WaitAll(tasks);
             elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
             foreach (var task in tasks) {
                 latencyDistribution = latencyDistribution.Add(task.GetAwaiter().GetResult());
             }
-#endif
         }
 
         var gen0 = GC.CollectionCount(0) - initialGen0;
@@ -178,4 +172,11 @@ sealed class Benchmarker
             $" {gen0 * scale:f4}/{gen1 * scale:f4}/{gen2 * scale:f4} milliGC;  {name}  {ignore}"
         );
     }
+
+    public static int ThreadCount
+#if SINGLETHREADED
+        => 1;
+#else
+        => Environment.ProcessorCount + 1 >> 1;
+#endif
 }
