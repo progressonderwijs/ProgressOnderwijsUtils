@@ -6,7 +6,9 @@ static class MicroOrmBenchmarkProgram
     {
         var benchmarker = new Benchmarker { IterationsPerTry = 2000, Tries = 100, };
         benchmarker.ReportInitialDistribution();
-        RunCurrentBenchmarks(new() { IterationsPerTry = 8, Tries = 2, Output = _ => { }, }); //warm-up
+        Console.WriteLine("Warming up...");
+        RunCurrentBenchmarks(new() { IterationsPerTry = 16, Tries = 3, Output = _ => { }, }); //warm-up
+        Console.WriteLine("Benchmarking...");
         RunCurrentBenchmarks(benchmarker);
     }
 
