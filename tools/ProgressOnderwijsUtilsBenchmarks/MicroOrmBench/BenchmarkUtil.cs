@@ -60,7 +60,7 @@ sealed class Benchmarker
             ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(sqlConn);
         }
 
-        Bench(name, () => new EntityFrameworkBench(CreateSqlConnection()), action);
+        Bench(name, () => new(CreateSqlConnection()), action);
     }
 
     public void BenchSQLite(string name, Func<SQLiteConnection, int, int> action)
