@@ -6,16 +6,15 @@ static class DapperExecutor
 {
     public static void RunQuery(Benchmarker benchmarker)
     {
-        benchmarker.BenchSQLite(
-            "Dapper (sqlite)",
-            (sqlConn, rows) =>
-                sqlConn.Query<ExampleObject>(ExampleObject.RawSqliteQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe", }).Count()
-        );
-
         benchmarker.BenchSqlServer(
             "Dapper",
             (sqlConn, rows) =>
                 sqlConn.Query<ExampleObject>(ExampleObject.RawQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe", }).Count()
+        );
+        benchmarker.BenchSQLite(
+            "Dapper (sqlite)",
+            (sqlConn, rows) =>
+                sqlConn.Query<ExampleObject>(ExampleObject.RawSqliteQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe", }).Count()
         );
     }
 

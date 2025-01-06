@@ -37,12 +37,13 @@ sealed class Benchmarker
 
         Output($"Testing {Tries} groups of {IterationsPerTry} queries with {rowCounts.Min()}-{rowCounts.Max()} rows");
         Output(
-            $"median: {rowCounts.OrderBy(x => x).Skip((IterationsPerTry - 1) / 2).Take(2).Average()}; "
-            + $"mean: {rowCounts.Average():f2}; "
-            + $"{rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}% 0; "
-            + $"{rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}% 1; "
-            + $"{rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50; "
+            $"Row-count median: {rowCounts.OrderBy(x => x).Skip((IterationsPerTry - 1) / 2).Take(2).Average()}; "
+            + $"mean: {rowCounts.Average():f1}; "
+            + $"0 rows: {rowCounts.Count(x => x == 0) * 100.0 / IterationsPerTry:f2}%; "
+            + $"1 row: {rowCounts.Count(x => x == 1) * 100.0 / IterationsPerTry:f2}%; "
+            + $"<50 rows: {rowCounts.Count(x => x < 50) * 100.0 / IterationsPerTry:f2}% <50"
         );
+        Output($"Reporting time per query execution; parallel executions use {ThreadCount} threads");
     }
 
     public void BenchSqlServer(string name, Func<SqlConnection, int, int> action)
@@ -60,7 +61,7 @@ sealed class Benchmarker
             ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(sqlConn);
         }
 
-        Bench(name, () => new EntityFrameworkBench(CreateSqlConnection()), action);
+        Bench(name, () => new(CreateSqlConnection()), action);
     }
 
     public void BenchSQLite(string name, Func<SQLiteConnection, int, int> action)
@@ -91,27 +92,7 @@ sealed class Benchmarker
         var ok = false;
         try {
             sqliteConn.Open();
-
-            _ = sqliteConn.Query<ExampleObject>(
-                @"
-                    create table example (key INTEGER PRIMARY KEY, a int null, b int not null, c TEXT, d BOOLEAN null, e int not null);
-
-                    insert into example (a,b,c,d,e)
-                    select
-                        a.x as a
-                        , b.x as b
-                        , c.x as c
-                        , d.x as d
-                        , e.x as e
-                    from       (select 0 as x union all select 1 union all select null) a
-                    cross join (select 0 as x union all select 1 union all select 2) b
-                    cross join (select 'abracadabra fee fi fo fum' as x union all select null union all select 'quick brown fox') c
-                    cross join(select cast(1 as bit) as x union all select cast(0 as bit) union all select null) d
-                    cross join(select 0 as x union all select 1 union all select 2) e
-                    cross join(select 0 as x union all select 1 union all select 2 union all select 3) f
-                    cross join(select 0 as x union all select 1 union all select 2 union all select 3) g
-                "
-            );
+            ExampleObject.PrefillExampleTable(sqliteConn);
             ok = true;
             return sqliteConn;
         } finally {
@@ -129,7 +110,7 @@ sealed class Benchmarker
         var initialGen1 = GC.CollectionCount(1);
         var initialGen2 = GC.CollectionCount(2);
         var elapsed = new List<double>();
-        long ignore = 0;
+        long rowsum = 0;
         var latencyDistribution = MeanVarianceAccumulator.Empty;
         for (var k = 0L; k < Tries; k++) {
             var i = 0;
@@ -145,23 +126,17 @@ sealed class Benchmarker
                     swInner.Restart();
                     var val = action(conn, IndexToRowCount(localI));
                     latencies = latencies.Add(swInner.Elapsed.TotalMilliseconds);
-                    Interlocked.Add(ref ignore, val);
+                    Interlocked.Add(ref rowsum, val);
                 }
                 return latencies;
             };
             var sw = Stopwatch.StartNew();
-#if SINGLETHREADED
-                var innerLatencyDistribution = ExecuteBenchLoop();
-                elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
-                latencyDistribution = latencyDistribution.Add(innerLatencyDistribution);
-#else
-            var tasks = Enumerable.Range(0, Environment.ProcessorCount).Select(_ => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
+            var tasks = Enumerable.Range(0, ThreadCount).Select(_ => Task.Factory.StartNew(ExecuteBenchLoop, TaskCreationOptions.LongRunning)).ToArray();
             Task.WaitAll(tasks);
             elapsed.Add(sw.Elapsed.TotalMilliseconds * 1000.0);
             foreach (var task in tasks) {
                 latencyDistribution = latencyDistribution.Add(task.GetAwaiter().GetResult());
             }
-#endif
         }
 
         var gen0 = GC.CollectionCount(0) - initialGen0;
@@ -173,9 +148,16 @@ sealed class Benchmarker
         var stddev = Math.Sqrt(variance);
         var scale = 1000.0 / (Tries * IterationsPerTry);
         Output(
-            $"{mean / IterationsPerTry:f2}μs ~ {stddev / IterationsPerTry:f2}μs overall;" +
-            $"{latencyDistribution.Mean * 1000:f2}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f2}μs latency;" +
-            $" {gen0 * scale:f4}/{gen1 * scale:f4}/{gen2 * scale:f4} milliGC;  {name}  {ignore}"
+            $"{mean / IterationsPerTry:f1}μs ~ {stddev / IterationsPerTry:f2}μs parallel;" +
+            $"{latencyDistribution.Mean * 1000:f0}μs ~ {latencyDistribution.SampleStandardDeviation * 1000:f1}μs latency;" +
+            $" {gen0 * scale:f2}/{gen1 * scale:f2}/{gen2 * scale:f2} milliGC;  {name}  checksum:{rowsum}"
         );
     }
+
+    public static int ThreadCount
+#if SINGLETHREADED
+        => 1;
+#else
+        => Environment.ProcessorCount + 1 >> 1;
+#endif
 }

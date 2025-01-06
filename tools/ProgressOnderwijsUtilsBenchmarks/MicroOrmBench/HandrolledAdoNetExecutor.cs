@@ -7,10 +7,10 @@ static class HandrolledAdoNetExecutor
 {
     public static void RunQuery(Benchmarker benchmarker)
     {
-        benchmarker.BenchSQLite("Raw (sqlite, cached)", ExecuteSqliteQueryCached);
+        benchmarker.BenchSqlServer("Raw (via GetSql...)", ExecuteQuery2);
+        benchmarker.BenchSqlServer("Raw (via IsDBNull+Get...)", ExecuteQuery);
         benchmarker.BenchSQLite("Raw (sqlite)", ExecuteSqliteQuery);
-        benchmarker.BenchSqlServer("Raw", ExecuteQuery);
-        benchmarker.BenchSqlServer("Raw (SqlDbTypes)", ExecuteQuery2);
+        benchmarker.BenchSQLite("Raw (sqlite, cached)", ExecuteSqliteQueryCached);
     }
 
     static int ExecuteQuery(SqlConnection sqlConn, int rows)
@@ -82,7 +82,7 @@ static class HandrolledAdoNetExecutor
         };
         var heheP = new SQLiteParameter {
             DbType = DbType.String,
-            ParameterName = "@hehe",
+            ParameterName = "@Hehe",
             IsNullable = false,
             Value = "hehe",
         };
@@ -143,7 +143,7 @@ static class HandrolledAdoNetExecutor
             };
             var heheP = new SQLiteParameter {
                 DbType = DbType.String,
-                ParameterName = "@hehe",
+                ParameterName = "@Hehe",
                 IsNullable = false,
                 //Value = "hehe",
             };
