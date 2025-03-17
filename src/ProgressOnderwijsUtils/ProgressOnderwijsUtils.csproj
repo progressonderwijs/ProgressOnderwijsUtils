@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>105.2.6</Version>
-    <PackageReleaseNotes>Bump versions.</PackageReleaseNotes>
+    <Version>105.3.0</Version>
+    <PackageReleaseNotes>Allow for clearing of connection pool after killing spids.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
