@@ -5,7 +5,7 @@ public static class SqlServerUtils
     /// <summary>
     /// If the catalog in question does not exist, this method does nothing.
     /// </summary>
-    public static void KillOtherUserProcessesOnDb(SqlConnection sqlContext, string catalog)
+    public static void KillOtherUserProcessesOnDb(SqlConnection sqlContext, string catalog, bool clearAllPools)
     {
         try {
             SQL(
@@ -25,6 +25,9 @@ public static class SqlServerUtils
             ).ExecuteNonQuery(sqlContext);
         } catch (Exception e) when (IsSpidAlreadyDeadException(e)) {
             //the spid may already be dead by the time we get around to killing it, which throws an error.  We ignore that error.
+        }
+        if (clearAllPools) {
+            SqlConnection.ClearAllPools();
         }
     }
 
