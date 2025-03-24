@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>5.0.2</Version>
+        <Version>5.0.3</Version>
         <PackageReleaseNotes>Bump selenium</PackageReleaseNotes>
 
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
@@ -11,7 +11,7 @@
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Selenium.WebDriver" Version="4.29.0" />
+        <PackageReference Include="Selenium.WebDriver" Version="4.30.0" />
         <None Include="readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 </Project>
