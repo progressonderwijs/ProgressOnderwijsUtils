@@ -38,6 +38,8 @@ public interface IHasAttr_onrejectionhandled { }
 public interface IHasAttr_onstorage { }
 public interface IHasAttr_onunhandledrejection { }
 public interface IHasAttr_onunload { }
+public interface IHasAttr_command { }
+public interface IHasAttr_commandfor { }
 public interface IHasAttr_disabled { }
 public interface IHasAttr_form { }
 public interface IHasAttr_formaction { }
@@ -60,7 +62,6 @@ public interface IHasAttr_autocomplete { }
 public interface IHasAttr_enctype { }
 public interface IHasAttr_method { }
 public interface IHasAttr_novalidate { }
-public interface IHasAttr_manifest { }
 public interface IHasAttr_srcdoc { }
 public interface IHasAttr_sandbox { }
 public interface IHasAttr_allow { }
@@ -73,7 +74,9 @@ public interface IHasAttr_ismap { }
 public interface IHasAttr_decoding { }
 public interface IHasAttr_fetchpriority { }
 public interface IHasAttr_accept { }
+public interface IHasAttr_alpha { }
 public interface IHasAttr_checked { }
+public interface IHasAttr_colorspace { }
 public interface IHasAttr_dirname { }
 public interface IHasAttr_list { }
 public interface IHasAttr_max { }
@@ -112,6 +115,10 @@ public interface IHasAttr_defer { }
 public interface IHasAttr_colspan { }
 public interface IHasAttr_rowspan { }
 public interface IHasAttr_headers { }
+public interface IHasAttr_shadowrootmode { }
+public interface IHasAttr_shadowrootdelegatesfocus { }
+public interface IHasAttr_shadowrootclonable { }
+public interface IHasAttr_shadowrootserializable { }
 public interface IHasAttr_cols { }
 public interface IHasAttr_rows { }
 public interface IHasAttr_wrap { }

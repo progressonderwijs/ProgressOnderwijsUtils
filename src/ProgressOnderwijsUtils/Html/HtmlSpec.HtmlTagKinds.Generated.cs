@@ -290,7 +290,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct BUTTON : IHtmlElementAllowingContent<BUTTON>, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_type, IHasAttr_value
+    public struct BUTTON : IHtmlElementAllowingContent<BUTTON>, IHasAttr_command, IHasAttr_commandfor, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_type, IHasAttr_value
     {
         public string TagName => "button";
         string IHtmlElement.TagStart => "<button";
@@ -995,7 +995,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(HR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, HR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct HTML : IHtmlElementAllowingContent<HTML>, IHasAttr_manifest
+    public struct HTML : IHtmlElementAllowingContent<HTML>
     {
         public string TagName => "html";
         string IHtmlElement.TagStart => "<html";
@@ -1076,7 +1076,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
+    public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alpha, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_colorspace, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
     {
         public string TagName => "input";
         string IHtmlElement.TagStart => "<input";
@@ -2030,7 +2030,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>
+    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>, IHasAttr_shadowrootmode, IHasAttr_shadowrootdelegatesfocus, IHasAttr_shadowrootclonable, IHasAttr_shadowrootserializable
     {
         public string TagName => "template";
         string IHtmlElement.TagStart => "<template";
