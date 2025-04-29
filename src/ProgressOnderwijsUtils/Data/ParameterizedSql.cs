@@ -96,7 +96,6 @@ public readonly struct ParameterizedSql : IEquatable<ParameterizedSql>
     /// </summary>
     public static ParameterizedSql UnescapedSqlIdentifier(string rawSqlString)
     {
-        ArgumentNullException.ThrowIfNull(nameof(rawSqlString));
         AssertIsIdentifier(rawSqlString, 0);
         return new StringSqlFragment(rawSqlString).BuildableToQuery();
     }
