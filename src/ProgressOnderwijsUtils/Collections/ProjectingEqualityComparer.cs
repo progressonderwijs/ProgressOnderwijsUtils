@@ -72,10 +72,10 @@ public sealed class ProjectingEqualityComparer<T>
         return new Equatable(CombinedEquality, CombinedHash);
     }
 
-    sealed record Equatable(EqualsComparer EqualsComparer, HashComputation Hash) : IEqualityComparer<T>
+    sealed record Equatable(EqualsComparer Comparer, HashComputation Hash) : IEqualityComparer<T>
     {
         public bool Equals(T? x, T? y)
-            => x is null ? y is null : y is not null && EqualsComparer(x, y);
+            => x is null ? y is null : y is not null && Comparer(x, y);
 
         public int GetHashCode(T obj)
             => obj is null ? 0 : Hash(obj);
