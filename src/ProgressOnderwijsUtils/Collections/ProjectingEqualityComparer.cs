@@ -15,7 +15,7 @@ public sealed class ProjectingEqualityComparer<T>
     ProjectingEqualityComparer(EqualsComparer[] equality, HashComputation[] hash)
         => (Equality, Hash) = (equality, hash);
 
-    public ProjectingEqualityComparer() : this(Array.Empty<EqualsComparer>(), Array.Empty<HashComputation>()) { }
+    public ProjectingEqualityComparer() : this([], []) { }
 
     public ProjectingEqualityComparer<T> AddKeyColumn<TPart>(Func<T, TPart> part, IEqualityComparer<TPart> partComparer)
         => AddKey_WithoutColumn(([DisallowNull] a, [DisallowNull] b) => partComparer.Equals(part(a), part(b)), ([DisallowNull] o) => part(o) is { } nonNull ? partComparer.GetHashCode(nonNull) : 0);
@@ -72,10 +72,10 @@ public sealed class ProjectingEqualityComparer<T>
         return new Equatable(CombinedEquality, CombinedHash);
     }
 
-    sealed record Equatable(EqualsComparer EqualsComparer, HashComputation Hash) : IEqualityComparer<T>
+    sealed record Equatable(EqualsComparer Comparer, HashComputation Hash) : IEqualityComparer<T>
     {
         public bool Equals(T? x, T? y)
-            => x is null ? y is null : y is not null && EqualsComparer(x, y);
+            => x is null ? y is null : y is not null && Comparer(x, y);
 
         public int GetHashCode(T obj)
             => obj is null ? 0 : Hash(obj);
