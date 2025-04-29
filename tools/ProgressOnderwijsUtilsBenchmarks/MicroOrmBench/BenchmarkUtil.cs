@@ -1,7 +1,6 @@
 //#define SINGLETHREADED
 
 using System.Data.SQLite;
-using Dapper;
 using IncrementalMeanVarianceAccumulator;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;

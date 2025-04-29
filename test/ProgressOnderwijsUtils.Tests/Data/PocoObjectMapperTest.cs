@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Common;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 

@@ -1,4 +1,3 @@
-using System.Linq;
 using IntSet = ProgressOnderwijsUtils.Collections.SortedSet<int, ProgressOnderwijsUtils.Tests.Collections.IntOrdering>;
 
 namespace ProgressOnderwijsUtils.Tests.Collections;
