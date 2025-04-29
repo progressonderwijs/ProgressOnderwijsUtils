@@ -10,6 +10,9 @@ public sealed record SequenceSqlDefinition(
     long MinimumValue,
     long MaximumValue) : IWrittenImplicitly
 {
+    public ParameterizedSql QualifiedNameSql
+        => ParameterizedSql.AssertQualifiedSqlIdentifier(QualifiedName);
+
     public void AppendCreationScript(StringBuilder sb)
     {
         if (Type != SqlSystemTypeId.BigInt && Type != SqlSystemTypeId.Int) {
