@@ -125,7 +125,7 @@ sealed class Benchmarker
                     swInner.Restart();
                     var val = action(conn, IndexToRowCount(localI));
                     latencies = latencies.Add(swInner.Elapsed.TotalMilliseconds);
-                    Interlocked.Add(ref rowsum, val);
+                    _ = Interlocked.Add(ref rowsum, val);
                 }
                 return latencies;
             };
