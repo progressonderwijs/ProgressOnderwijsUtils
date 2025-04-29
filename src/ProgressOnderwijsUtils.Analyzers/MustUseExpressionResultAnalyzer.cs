@@ -21,7 +21,7 @@ public sealed class MustUseExpressionResultAnalyzer : DiagnosticAnalyzer
     );
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        => ImmutableArray.Create(Rule);
+        => [Rule];
 
     public override void Initialize(AnalysisContext context)
     {
