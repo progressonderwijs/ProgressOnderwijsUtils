@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>105.5.0</Version>
-    <PackageReleaseNotes>QualifiedNameSql property added to SequenceSqlDefinition</PackageReleaseNotes>
+    <Version>105.5.1</Version>
+    <PackageReleaseNotes>Bumped dependencies and fixed some warnings</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
