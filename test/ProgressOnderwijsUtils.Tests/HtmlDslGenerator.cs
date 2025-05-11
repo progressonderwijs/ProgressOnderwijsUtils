@@ -59,7 +59,7 @@ public sealed class HtmlDslGenerator
             tableOfAttributes.QuerySelectorAll("tbody tr")
                 .Where(tr => tr.QuerySelector("td")?.TextContent.Trim() == "HTML elements")
                 .Select(tr => tr.QuerySelector("th").AssertNotNull().TextContent.Trim())
-                .ToArray();
+                .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var booleanAttributes =
             tableOfAttributes.QuerySelectorAll("tbody tr").GroupBy(
@@ -126,16 +126,6 @@ public sealed class HtmlDslGenerator
                     }
             ).ToArray();
 
-        var globalAttributeExtensionMethods = globalAttributes
-            .Select(
-                attrName => $"""
-                    {(attrName == "class" ? "\n    [Obsolete]" : "")}
-                        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-                            where THtmlTag : struct, IHtmlElement<THtmlTag>
-                            => htmlTagExpr.Attribute("{attrName}", attrValue);
-                    """
-            );
-
         var specificAttributes = elements.SelectMany(el => el.attributes).ToDistinctArray();
 
         var elAttrInterfaces = specificAttributes
@@ -145,15 +135,8 @@ public sealed class HtmlDslGenerator
 
                     """
             );
-        var elAttrExtensionMethods = specificAttributes
-            .Select(
-                attrName => $"""
-                    
-                        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-                            where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
-                            => htmlTagExpr.Attribute("{attrName}", attrValue);
-                    """
-            );
+        var elAttrExtensionMethods = globalAttributes.Concat(specificAttributes)
+            .Select(AttrHelper).JoinStrings("");
 
         var elTagNameClasses = elements
             .Select(
@@ -263,7 +246,7 @@ public sealed class HtmlDslGenerator
                 namespace ProgressOnderwijsUtils.Html;
 
                 public static class AttributeConstructionMethods
-                {{{globalAttributeExtensionMethods.JoinStrings("")}}{{elAttrExtensionMethods.JoinStrings("")}}
+                {{{elAttrExtensionMethods}}
                 }
 
                 """
@@ -271,6 +254,31 @@ public sealed class HtmlDslGenerator
         }.WhereNotNull().ToArray();
 
         PAssert.That(() => diff.None());
+        return;
+
+        string AttrHelper(string attrName)
+        {
+            var obsoleteAttribute = attrName == "class" ? "\n    [Obsolete]" : "";
+            var applicabilityTypeContraint = globalAttributes.Contains(attrName) switch {
+                true => "",
+                false => $", IHasAttr_{toClassName(attrName)}",
+            };
+            var isBoolean = booleanAttributes.GetValueOrDefault(attrName) ?? (attrName.StartsWith("on", StringComparison.OrdinalIgnoreCase) ? false : null);
+            return isBoolean switch {
+                null => throw new(attrName + " could not be determined to be a boolean attribute or not"),
+                false => AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, ", string? attrValue", ", attrValue"),
+                _ => AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, ", bool attrValue", ", attrValue ? \"\" : null")
+                    + AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, "", ", \"\""),
+            };
+        }
+
+        static string AttrExtensionMethod(string attrName, string applicabilityTypeContraint, string obsoleteAttribute, string attrValueParam, string attrValueExpr)
+            => $"""
+                {obsoleteAttribute}
+                    public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr{attrValueParam})
+                        where THtmlTag : struct{applicabilityTypeContraint}, IHtmlElement<THtmlTag>
+                        => htmlTagExpr.Attribute("{attrName}"{attrValueExpr});
+                """;
     }
 
     static string? AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
