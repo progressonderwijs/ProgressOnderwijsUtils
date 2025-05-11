@@ -447,6 +447,9 @@ public static class AttributeConstructionMethods
     public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootserializable", attrValue);
+    public static THtmlTag _shadowrootcustomelementregistry<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_shadowrootcustomelementregistry, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootcustomelementregistry", attrValue);
     public static THtmlTag _cols<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_cols, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("cols", attrValue);
