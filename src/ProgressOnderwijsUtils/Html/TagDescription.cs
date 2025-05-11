@@ -34,7 +34,7 @@ struct TagDescription
             .Where(
                 mi => {
                     var typeArgument = mi.GetGenericArguments().Single();
-                    return typeArgument.GetGenericParameterConstraints()
+                    return mi.GetParameters().Length == 2 && typeArgument.GetGenericParameterConstraints()
                         .All(
                             constraint =>
                                 constraint.IsAssignableFrom(tagType)
@@ -43,7 +43,7 @@ struct TagDescription
                 }
             )
             .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, "",]).AssertNotNull()).Attributes[^1].Name,
+                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, method.GetParameters()[1].ParameterType == typeof(string) ? "" : true,]).AssertNotNull()).Attributes[^1].Name,
                 method => method.Name,
                 StringComparer.OrdinalIgnoreCase
             );
