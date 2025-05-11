@@ -61,9 +61,9 @@ public sealed class HtmlDslGenerator
                 .Select(tr => tr.QuerySelector("th").AssertNotNull().TextContent.Trim())
                 .ToArray();
 
-        string toClassName(string s)
+        static string toClassName(string s)
             => s.Replace('-', '_');
-        string[] splitList(string list)
+        static string[] splitList(string list)
             => list.Split(';').Select(s => s.Trim().TrimEnd('*')).Where(s => s != "").ToArray();
 
         var elements = tableOfElements.QuerySelectorAll("tbody tr")
