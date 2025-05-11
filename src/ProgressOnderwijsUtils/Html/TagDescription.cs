@@ -43,7 +43,7 @@ struct TagDescription
                 }
             )
             .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"", }).AssertNotNull()).Attributes[^1].Name,
+                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, "",]).AssertNotNull()).Attributes[^1].Name,
                 method => method.Name,
                 StringComparer.OrdinalIgnoreCase
             );
