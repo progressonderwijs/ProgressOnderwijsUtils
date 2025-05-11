@@ -61,6 +61,13 @@ public sealed class HtmlDslGenerator
                 .Select(tr => tr.QuerySelector("th").AssertNotNull().TextContent.Trim())
                 .ToArray();
 
+        var booleanAttributes =
+            tableOfAttributes.QuerySelectorAll("tbody tr").GroupBy(
+                tr => tr.QuerySelector("th").AssertNotNull().TextContent.Trim(),
+                tr => tr.QuerySelector("td > a[href='#boolean-attribute']")?.TextContent.Trim() == "Boolean attribute",
+                (key, isBoolean) => (key, isBoolean: isBoolean.Distinct().ToArray() is [var unique,] ? unique : default(bool?))
+            ).ToDictionary(o => o.key, o => o.isBoolean, StringComparer.OrdinalIgnoreCase);
+
         static string toClassName(string s)
             => s.Replace('-', '_');
         static string[] splitList(string list)
