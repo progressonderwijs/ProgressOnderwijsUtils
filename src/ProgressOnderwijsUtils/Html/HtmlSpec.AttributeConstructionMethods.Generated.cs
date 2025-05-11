@@ -14,9 +14,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _autocorrect<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("autocorrect", attrValue);
-    public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("autofocus", attrValue);
+        => htmlTagExpr.Attribute("autofocus", attrValue ? "" : null);
+    public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("autofocus", "");
     [Obsolete]
     public static THtmlTag _class<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
@@ -39,9 +42,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _id<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("id", attrValue);
-    public static THtmlTag _inert<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _inert<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("inert", attrValue);
+        => htmlTagExpr.Attribute("inert", attrValue ? "" : null);
+    public static THtmlTag _inert<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("inert", "");
     public static THtmlTag _inputmode<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("inputmode", attrValue);
@@ -57,9 +63,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _itemref<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("itemref", attrValue);
-    public static THtmlTag _itemscope<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _itemscope<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("itemscope", attrValue);
+        => htmlTagExpr.Attribute("itemscope", attrValue ? "" : null);
+    public static THtmlTag _itemscope<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("itemscope", "");
     public static THtmlTag _itemtype<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("itemtype", attrValue);
@@ -135,18 +144,30 @@ public static class AttributeConstructionMethods
     public static THtmlTag _preload<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_preload, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("preload", attrValue);
-    public static THtmlTag _autoplay<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _autoplay<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_autoplay, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("autoplay", attrValue);
-    public static THtmlTag _loop<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("autoplay", attrValue ? "" : null);
+    public static THtmlTag _autoplay<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_autoplay, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("autoplay", "");
+    public static THtmlTag _loop<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_loop, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("loop", attrValue);
-    public static THtmlTag _muted<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("loop", attrValue ? "" : null);
+    public static THtmlTag _loop<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_loop, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("loop", "");
+    public static THtmlTag _muted<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_muted, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("muted", attrValue);
-    public static THtmlTag _controls<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("muted", attrValue ? "" : null);
+    public static THtmlTag _muted<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_muted, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("muted", "");
+    public static THtmlTag _controls<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_controls, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("controls", attrValue);
+        => htmlTagExpr.Attribute("controls", attrValue ? "" : null);
+    public static THtmlTag _controls<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_controls, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("controls", "");
     public static THtmlTag _cite<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_cite, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("cite", attrValue);
@@ -210,9 +231,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _commandfor<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_commandfor, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("commandfor", attrValue);
-    public static THtmlTag _disabled<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _disabled<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_disabled, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("disabled", attrValue);
+        => htmlTagExpr.Attribute("disabled", attrValue ? "" : null);
+    public static THtmlTag _disabled<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_disabled, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("disabled", "");
     public static THtmlTag _form<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_form, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("form", attrValue);
@@ -225,9 +249,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _formmethod<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_formmethod, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("formmethod", attrValue);
-    public static THtmlTag _formnovalidate<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _formnovalidate<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_formnovalidate, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("formnovalidate", attrValue);
+        => htmlTagExpr.Attribute("formnovalidate", attrValue ? "" : null);
+    public static THtmlTag _formnovalidate<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_formnovalidate, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("formnovalidate", "");
     public static THtmlTag _formtarget<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_formtarget, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("formtarget", attrValue);
@@ -255,9 +282,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _datetime<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_datetime, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("datetime", attrValue);
-    public static THtmlTag _open<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _open<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_open, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("open", attrValue);
+        => htmlTagExpr.Attribute("open", attrValue ? "" : null);
+    public static THtmlTag _open<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_open, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("open", "");
     public static THtmlTag _accept_charset<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_accept_charset, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("accept-charset", attrValue);
@@ -273,9 +303,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _method<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_method, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("method", attrValue);
-    public static THtmlTag _novalidate<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _novalidate<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_novalidate, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("novalidate", attrValue);
+        => htmlTagExpr.Attribute("novalidate", attrValue ? "" : null);
+    public static THtmlTag _novalidate<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_novalidate, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("novalidate", "");
     public static THtmlTag _srcdoc<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_srcdoc, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("srcdoc", attrValue);
@@ -285,9 +318,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _allow<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_allow, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("allow", attrValue);
-    public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("allowfullscreen", attrValue);
+        => htmlTagExpr.Attribute("allowfullscreen", attrValue ? "" : null);
+    public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("allowfullscreen", "");
     public static THtmlTag _loading<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_loading, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("loading", attrValue);
@@ -300,9 +336,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _usemap<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_usemap, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("usemap", attrValue);
-    public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_ismap, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("ismap", attrValue);
+        => htmlTagExpr.Attribute("ismap", attrValue ? "" : null);
+    public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_ismap, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("ismap", "");
     public static THtmlTag _decoding<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_decoding, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("decoding", attrValue);
@@ -312,12 +351,18 @@ public static class AttributeConstructionMethods
     public static THtmlTag _accept<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_accept, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("accept", attrValue);
-    public static THtmlTag _alpha<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _alpha<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_alpha, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("alpha", attrValue);
-    public static THtmlTag _checked<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("alpha", attrValue ? "" : null);
+    public static THtmlTag _alpha<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_alpha, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("alpha", "");
+    public static THtmlTag _checked<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_checked, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("checked", attrValue);
+        => htmlTagExpr.Attribute("checked", attrValue ? "" : null);
+    public static THtmlTag _checked<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_checked, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("checked", "");
     public static THtmlTag _colorspace<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_colorspace, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("colorspace", attrValue);
@@ -339,21 +384,30 @@ public static class AttributeConstructionMethods
     public static THtmlTag _minlength<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_minlength, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("minlength", attrValue);
-    public static THtmlTag _multiple<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _multiple<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_multiple, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("multiple", attrValue);
+        => htmlTagExpr.Attribute("multiple", attrValue ? "" : null);
+    public static THtmlTag _multiple<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_multiple, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("multiple", "");
     public static THtmlTag _pattern<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_pattern, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("pattern", attrValue);
     public static THtmlTag _placeholder<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_placeholder, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("placeholder", attrValue);
-    public static THtmlTag _readonly<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _readonly<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_readonly, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("readonly", attrValue);
-    public static THtmlTag _required<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("readonly", attrValue ? "" : null);
+    public static THtmlTag _readonly<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_readonly, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("readonly", "");
+    public static THtmlTag _required<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_required, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("required", attrValue);
+        => htmlTagExpr.Attribute("required", attrValue ? "" : null);
+    public static THtmlTag _required<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_required, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("required", "");
     public static THtmlTag _size<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_size, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("size", attrValue);
@@ -405,27 +459,42 @@ public static class AttributeConstructionMethods
     public static THtmlTag _data<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_data, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("data", attrValue);
-    public static THtmlTag _reversed<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _reversed<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_reversed, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("reversed", attrValue);
+        => htmlTagExpr.Attribute("reversed", attrValue ? "" : null);
+    public static THtmlTag _reversed<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_reversed, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("reversed", "");
     public static THtmlTag _start<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_start, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("start", attrValue);
     public static THtmlTag _label<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_label, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("label", attrValue);
-    public static THtmlTag _selected<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _selected<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_selected, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("selected", attrValue);
-    public static THtmlTag _nomodule<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("selected", attrValue ? "" : null);
+    public static THtmlTag _selected<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_selected, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("selected", "");
+    public static THtmlTag _nomodule<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_nomodule, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("nomodule", attrValue);
-    public static THtmlTag _async<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("nomodule", attrValue ? "" : null);
+    public static THtmlTag _nomodule<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_nomodule, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("nomodule", "");
+    public static THtmlTag _async<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_async, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("async", attrValue);
-    public static THtmlTag _defer<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("async", attrValue ? "" : null);
+    public static THtmlTag _async<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_async, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("async", "");
+    public static THtmlTag _defer<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_defer, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("defer", attrValue);
+        => htmlTagExpr.Attribute("defer", attrValue ? "" : null);
+    public static THtmlTag _defer<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_defer, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("defer", "");
     public static THtmlTag _colspan<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_colspan, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("colspan", attrValue);
@@ -438,18 +507,30 @@ public static class AttributeConstructionMethods
     public static THtmlTag _shadowrootmode<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootmode, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootmode", attrValue);
-    public static THtmlTag _shadowrootdelegatesfocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _shadowrootdelegatesfocus<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootdelegatesfocus, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootdelegatesfocus", attrValue);
-    public static THtmlTag _shadowrootclonable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("shadowrootdelegatesfocus", attrValue ? "" : null);
+    public static THtmlTag _shadowrootdelegatesfocus<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_shadowrootdelegatesfocus, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootdelegatesfocus", "");
+    public static THtmlTag _shadowrootclonable<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootclonable, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootclonable", attrValue);
-    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("shadowrootclonable", attrValue ? "" : null);
+    public static THtmlTag _shadowrootclonable<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_shadowrootclonable, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootclonable", "");
+    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootserializable", attrValue);
-    public static THtmlTag _shadowrootcustomelementregistry<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        => htmlTagExpr.Attribute("shadowrootserializable", attrValue ? "" : null);
+    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootserializable", "");
+    public static THtmlTag _shadowrootcustomelementregistry<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootcustomelementregistry, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootcustomelementregistry", attrValue);
+        => htmlTagExpr.Attribute("shadowrootcustomelementregistry", attrValue ? "" : null);
+    public static THtmlTag _shadowrootcustomelementregistry<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_shadowrootcustomelementregistry, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootcustomelementregistry", "");
     public static THtmlTag _cols<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_cols, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("cols", attrValue);
@@ -465,9 +546,12 @@ public static class AttributeConstructionMethods
     public static THtmlTag _abbr<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_abbr, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("abbr", attrValue);
-    public static THtmlTag _default<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _default<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_default, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("default", attrValue);
+        => htmlTagExpr.Attribute("default", attrValue ? "" : null);
+    public static THtmlTag _default<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_default, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("default", "");
     public static THtmlTag _kind<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_kind, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("kind", attrValue);
@@ -477,7 +561,10 @@ public static class AttributeConstructionMethods
     public static THtmlTag _poster<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_poster, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("poster", attrValue);
-    public static THtmlTag _playsinline<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+    public static THtmlTag _playsinline<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_playsinline, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("playsinline", attrValue);
+        => htmlTagExpr.Attribute("playsinline", attrValue ? "" : null);
+    public static THtmlTag _playsinline<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_playsinline, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("playsinline", "");
 }
