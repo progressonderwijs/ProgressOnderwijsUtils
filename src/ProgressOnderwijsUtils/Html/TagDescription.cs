@@ -42,11 +42,8 @@ struct TagDescription
                         );
                 }
             )
-            .ToDictionary(
-                method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, method.GetParameters()[1].ParameterType == typeof(string) ? "" : true,]).AssertNotNull()).Attributes[^1].Name,
-                method => method.Name,
-                StringComparer.OrdinalIgnoreCase
-            );
+            .GroupBy(method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, method.GetParameters()[1].ParameterType == typeof(string) ? "" : true,]).AssertNotNull()).Attributes[^1].Name, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First().Name, StringComparer.OrdinalIgnoreCase);
 
     public static TagDescription LookupTag(string tagName)
         => ByTagName.TryGetValue(tagName, out var desc)

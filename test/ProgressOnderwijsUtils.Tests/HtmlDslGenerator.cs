@@ -268,7 +268,8 @@ public sealed class HtmlDslGenerator
                 null => throw new(attrName + " could not be determined to be a boolean attribute or not"),
                 false => AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, ", string? attrValue", ", attrValue"),
                 _ => AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, ", bool attrValue", ", attrValue ? \"\" : null")
-                    + AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, "", ", \"\""),
+                    + AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, "", ", \"\"")
+                    + AttrExtensionMethod(attrName, applicabilityTypeContraint, obsoleteAttribute, ", string? attrValue", ", attrValue"),
             };
         }
 
