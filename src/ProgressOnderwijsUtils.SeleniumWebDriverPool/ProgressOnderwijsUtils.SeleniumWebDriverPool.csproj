@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>5.0.3</Version>
+        <Version>5.0.4</Version>
         <PackageReleaseNotes>Bump selenium</PackageReleaseNotes>
 
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
