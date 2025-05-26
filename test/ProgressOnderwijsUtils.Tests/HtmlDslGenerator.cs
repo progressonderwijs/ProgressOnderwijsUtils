@@ -18,7 +18,8 @@ public sealed class HtmlDslGenerator
         HtmlTagKinds_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTagKinds.Generated.cs"),
         HtmlTags_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.HtmlTags.Generated.cs"),
         AttributeNameInterfaces_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeNameInterfaces.Generated.cs"),
-        AttributeConstructionMethods_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeConstructionMethods.Generated.cs");
+        AttributeConstructionMethods_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeConstructionMethods.Generated.cs"),
+        AttributeLookupTable_GeneratedOutputFilePath = LibHtmlDirectory.Combine("HtmlSpec.AttributeLookupTable.Generated.cs");
 
     readonly ITestOutputHelper output;
 
@@ -251,10 +252,65 @@ public sealed class HtmlDslGenerator
 
                 """
             ),
+
+            AssertFileExistsAndApproveContent(
+                AttributeLookupTable_GeneratedOutputFilePath,
+                GenerateAttributeLookupTable(
+                    elements.Select(el => (el.elementName, el.attributes)).ToArray(),
+                    globalAttributes,
+                    specificAttributes.ToArray(),
+                    booleanAttributes
+                )
+            ),
         }.WhereNotNull().ToArray();
 
         PAssert.That(() => diff.None());
         return;
+
+        string GenerateAttributeLookupTable(
+            (string elementName, DistinctArray<string> attributes)[] elements,
+            HashSet<string> globalAttributes,
+            string[] specificAttributes,
+            Dictionary<string, bool?> booleanAttributes)
+        {
+            // Generate lookup entries for each element
+            var elementLookups = elements.Select(el => {
+                var elementAttributes = ((IEnumerable<string>)globalAttributes).Concat(el.attributes).ToDistinctArray();
+                var attributeEntries = elementAttributes.Select(attrName => {
+                    var methodName = $"_{toClassName(attrName)}";
+                    return $"[\"{attrName}\"] = \"{methodName}\"";
+                }).JoinStrings(",\n                ");
+                
+                return $"[\"" + el.elementName + "\"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {\n" +
+                       $"                {attributeEntries}\n" +
+                       "            },";
+            }).JoinStrings("\n            ");
+
+            // Generate default attributes for unknown elements (global attributes only)
+            var defaultAttributeEntries = globalAttributes.Select(attrName => {
+                var methodName = $"_{toClassName(attrName)}";
+                return $"[\"{attrName}\"] = \"{methodName}\"";
+            }).JoinStrings(",\n                ");
+
+            return $$"""
+                #nullable enable
+                namespace ProgressOnderwijsUtils.Html;
+
+                public static class AttributeLookupTable
+                {
+                    public static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> ByTagName =
+                        new Dictionary<string, IReadOnlyDictionary<string, string>>(StringComparer.OrdinalIgnoreCase) {
+                {{elementLookups}}
+                        };
+
+                    public static readonly IReadOnlyDictionary<string, string> DefaultAttributes =
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                            {{defaultAttributeEntries}}
+                        };
+                }
+
+                """;
+        }
 
         string AttrHelper(string attrName)
         {
@@ -274,13 +330,14 @@ public sealed class HtmlDslGenerator
         }
 
         static string AttrExtensionMethod(string attrName, string applicabilityTypeContraint, string obsoleteAttribute, string attrValueParam, string attrValueExpr)
-            => $"""
-                {obsoleteAttribute}
-                    public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr{attrValueParam})
-                        where THtmlTag : struct{applicabilityTypeContraint}, IHtmlElement<THtmlTag>
-                        => htmlTagExpr.Attribute("{attrName}"{attrValueExpr});
+            => $$"""
+                {{obsoleteAttribute}}
+                    public static THtmlTag _{{toClassName(attrName)}}<THtmlTag>(this THtmlTag htmlTagExpr{{attrValueParam}})
+                        where THtmlTag : struct{{applicabilityTypeContraint}}, IHtmlElement<THtmlTag>
+                        => htmlTagExpr.Attribute("{{attrName}}"{{attrValueExpr}});
                 """;
-    }
+        }
+    
 
     static string? AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
     {

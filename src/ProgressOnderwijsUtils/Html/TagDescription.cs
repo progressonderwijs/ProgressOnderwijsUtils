@@ -29,21 +29,9 @@ struct TagDescription
             );
 
     static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
-        => typeof(AttributeConstructionMethods)
-            .GetMethods(BindingFlags.Public | BindingFlags.Static)
-            .Where(
-                mi => {
-                    var typeArgument = mi.GetGenericArguments().Single();
-                    return mi.GetParameters().Length == 2 && typeArgument.GetGenericParameterConstraints()
-                        .All(
-                            constraint =>
-                                constraint.IsAssignableFrom(tagType)
-                                || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType)
-                        );
-                }
-            )
-            .GroupBy(method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, [emptyValue, method.GetParameters()[1].ParameterType == typeof(string) ? "" : true,]).AssertNotNull()).Attributes[^1].Name, StringComparer.OrdinalIgnoreCase)
-            .ToDictionary(group => group.Key, group => group.First().Name, StringComparer.OrdinalIgnoreCase);
+        => AttributeLookupTable.ByTagName.TryGetValue(emptyValue.TagName, out var lookup)
+            ? new Dictionary<string, string>(lookup, StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(AttributeLookupTable.DefaultAttributes, StringComparer.OrdinalIgnoreCase);
 
     public static TagDescription LookupTag(string tagName)
         => ByTagName.TryGetValue(tagName, out var desc)
@@ -55,5 +43,5 @@ struct TagDescription
                 AttributeMethodsByName = DefaultAttributes,
             };
 
-    static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookup(typeof(CustomHtmlElement), new CustomHtmlElement("unknown", null, null));
+    static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookupTable.DefaultAttributes;
 }
