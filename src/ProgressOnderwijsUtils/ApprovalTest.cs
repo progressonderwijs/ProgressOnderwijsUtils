@@ -11,7 +11,7 @@ public sealed class ApprovalTest
     {
         var filename = Path.GetFileNameWithoutExtension(sourceLocation.FilePath);
         var filedir = Path.GetDirectoryName(sourceLocation.FilePath);
-        var approvalPath = $"{filedir}\\{filename}.{sourceLocation.MemberName}.approved.txt";
+        var approvalPath = Path.Combine(filedir.AssertNotNull(), $"{filename}.{sourceLocation.MemberName}.approved.txt");
         return approvalPath;
     }
 

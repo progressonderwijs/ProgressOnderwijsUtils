@@ -211,7 +211,7 @@ public static class WikiPageHtml5
                     _link._rel("stylesheet")
                         ._href("/w/load.php?debug=false&lang=en&modules=ext.cite.styles%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cmediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Cwikibase.client.init&only=styles&skin=vector"),
                     "\n",
-                    _script._async("")
+                    _script._async()
                         ._src("/w/load.php?debug=false&lang=en&modules=startup&only=scripts&skin=vector"),
                     "\n",
                     _meta._name("ResourceLoaderDynamicStyles")
