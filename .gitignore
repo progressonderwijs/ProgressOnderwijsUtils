@@ -6,3 +6,4 @@ bin/
 BenchmarkDotNet.Artifacts
 *.vspx
 *.received.txt
+.DS_Store
