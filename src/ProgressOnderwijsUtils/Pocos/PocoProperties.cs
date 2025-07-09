@@ -35,6 +35,12 @@ public sealed class PocoProperties<T> : IPocoProperties<IPocoProperty<T>>
         IndexByName = dictionary;
     }
 
+    public bool TryGetByName(string name, [NotNullWhen(true)] out IPocoProperty<T>? property)
+    {
+        property = IndexByName.TryGetValue(name, out var index) ? Properties[index] : null;
+        return property != null;
+    }
+
     public IPocoProperty<T> GetByName(string name)
         => Properties[IndexByName[name]];
 

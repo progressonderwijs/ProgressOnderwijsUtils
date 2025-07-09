@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>105.6.0</Version>
-    <PackageReleaseNotes>HTML DSL: better support for https://html.spec.whatwg.org/#boolean-attribute </PackageReleaseNotes>
+    <Version>105.7.0</Version>
+    <PackageReleaseNotes>Added PocoProperties<T>.TryGetByName method to allow fluent lookup of external provided names.</T></PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

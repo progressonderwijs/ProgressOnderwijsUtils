@@ -109,6 +109,21 @@ public sealed class PocoUtilsTest
     }
 
     [Fact]
+    public void CanTryGet()
+    {
+        var o = new SimpleObject { LabelledProperty = "bar", };
+        var moDef = PocoUtils.GetProperties<SimpleObject>();
+
+        var existing = moDef.TryGetByName(nameof(SimpleObject.LabelledProperty), out var prop);
+        PAssert.That(() => existing);
+        PAssert.That(() => (string?)prop.AssertNotNull().Getter.AssertNotNull()(o) == "bar");
+
+        existing = moDef.TryGetByName("NonExisting", out var noprop);
+        PAssert.That(() => !existing);
+        PAssert.That(() => noprop == null);
+    }
+
+    [Fact]
     public void CanGetByExpression()
     {
         var pocoProperty = PocoUtils.GetByExpression((SimpleObject o) => o.Property);
