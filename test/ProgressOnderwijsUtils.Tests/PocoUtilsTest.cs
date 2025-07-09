@@ -118,8 +118,8 @@ public sealed class PocoUtilsTest
         PAssert.That(() => existing);
         PAssert.That(() => (string?)prop.AssertNotNull().Getter.AssertNotNull()(o) == "bar");
 
-        var nonExisting = moDef.TryGetByName("NonExisting", out var noprop);
-        PAssert.That(() => !nonExisting);
+        existing = moDef.TryGetByName("NonExisting", out var noprop);
+        PAssert.That(() => !existing);
         PAssert.That(() => noprop == null);
     }
 
