@@ -246,19 +246,13 @@ public sealed class HtmlDslGenerator
                 """
             ),
 
-            AssertFileExistsAndApproveContent(
-                AttributeLookupTable_GeneratedOutputFilePath,
-                GenerateAttributeLookupTable(
-                    elements.Select(el => (el.elementName, el.attributes)).ToArray()
-                )
-            ),
+            AssertFileExistsAndApproveContent(AttributeLookupTable_GeneratedOutputFilePath, GenerateAttributeLookupTable(elements.Select(el => (el.elementName, el.attributes)).ToArray())),
         }.WhereNotNull().ToArray();
 
         PAssert.That(() => diff.None());
         return;
 
-        string GenerateAttributeLookupTable(
-            (string elementName, DistinctArray<string> attributes)[] elementsWithAttributes)
+        string GenerateAttributeLookupTable((string elementName, DistinctArray<string> attributes)[] elementsWithAttributes)
         {
             // Generate lookup entries for each element
             var elementLookups = elementsWithAttributes.Select(el => {
