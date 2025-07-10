@@ -249,8 +249,7 @@ public sealed class HtmlDslGenerator
             AssertFileExistsAndApproveContent(
                 AttributeLookupTable_GeneratedOutputFilePath,
                 GenerateAttributeLookupTable(
-                    elements.Select(el => (el.elementName, el.attributes)).ToArray(),
-                    globalAttributes
+                    elements.Select(el => (el.elementName, el.attributes)).ToArray()
                 )
             ),
         }.WhereNotNull().ToArray();
@@ -259,8 +258,7 @@ public sealed class HtmlDslGenerator
         return;
 
         string GenerateAttributeLookupTable(
-            (string elementName, DistinctArray<string> attributes)[] elements,
-            HashSet<string> globalAttributes)
+            (string elementName, DistinctArray<string> attributes)[] elements)
         {
             // Generate lookup entries for each element
             var elementLookups = elements.Select(el => {
