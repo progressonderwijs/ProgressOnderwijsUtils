@@ -75,8 +75,7 @@ public sealed class HtmlDslGenerator
             => list.Split(';').Select(s => s.Trim().TrimEnd('*')).Where(s => s != "").ToArray();
 
         var elements = tableOfElements.QuerySelectorAll("tbody tr")
-            .SelectMany(
-                tableRow => {
+            .SelectMany(tableRow => {
                     var tds = tableRow.QuerySelectorAll("th,td");
                     var elementNames = tds[elementNameColumnIndex].TextContent.Split(',').Select(n => n.Trim());
                     var elementAnchor = tds[elementNameColumnIndex].QuerySelector("a")?.GetAttribute("href");
@@ -87,8 +86,7 @@ public sealed class HtmlDslGenerator
                     var elementLink = new Uri(specUri, elementAnchor).ToString();
                     var attributes = splitList(tds[attributesColumnIndex].TextContent)
                         .Where(s => s != "any" && s != "globals" && !s.Contains(" ")).ToArray();
-                    return elementNames.Select(
-                        elementName => new {
+                    return elementNames.Select(elementName => new {
                             elementName,
                             elementLink,
                             description,
@@ -102,102 +100,97 @@ public sealed class HtmlDslGenerator
             )
             .Where(el => !el.elementName.Contains(" "))
             .GroupBy(el => el.elementName)
-            .Select(
-                elGroup =>
-                    new {
-                        elementName = elGroup.Key,
-                        csName = toClassName(elGroup.Key),
-                        csUpperName = toClassName(elGroup.Key).ToUpperInvariant(),
-                        elementMetaData =
-                            new XElement(
-                                "summary",
-                                elGroup.SelectMany(
-                                    el =>
-                                        new object[] {
-                                            el.description + ". See: ",
-                                            new XElement("a", new XAttribute("href", el.elementLink), el.elementLink),
-                                            new XElement("br")
-                                        }
-                                )
-                            ),
-                        attributes = elGroup.SelectMany(el => el.attributes).ToDistinctArray(),
-                        categories = elGroup.SelectMany(el => el.categories).ToDistinctArray(),
-                        parents = elGroup.SelectMany(el => el.parents).ToDistinctArray(),
-                        children = elGroup.SelectMany(el => el.children).ToDistinctArray(),
-                    }
+            .Select(elGroup =>
+                new {
+                    elementName = elGroup.Key,
+                    csName = toClassName(elGroup.Key),
+                    csUpperName = toClassName(elGroup.Key).ToUpperInvariant(),
+                    elementMetaData =
+                        new XElement(
+                            "summary",
+                            elGroup.SelectMany(el =>
+                                new object[] {
+                                    el.description + ". See: ",
+                                    new XElement("a", new XAttribute("href", el.elementLink), el.elementLink),
+                                    new XElement("br")
+                                }
+                            )
+                        ),
+                    attributes = elGroup.SelectMany(el => el.attributes).ToDistinctArray(),
+                    categories = elGroup.SelectMany(el => el.categories).ToDistinctArray(),
+                    parents = elGroup.SelectMany(el => el.parents).ToDistinctArray(),
+                    children = elGroup.SelectMany(el => el.children).ToDistinctArray(),
+                }
             ).ToArray();
 
         var specificAttributes = elements.SelectMany(el => el.attributes).ToDistinctArray();
 
         var elAttrInterfaces = specificAttributes
-            .Select(
-                attrName => $$"""
-                    public interface IHasAttr_{{toClassName(attrName)}} { }
+            .Select(attrName => $$"""
+                public interface IHasAttr_{{toClassName(attrName)}} { }
 
-                    """
+                """
             );
         var elAttrExtensionMethods = globalAttributes.Concat(specificAttributes)
             .Select(AttrHelper).JoinStrings("");
 
         var elTagNameClasses = elements
-            .Select(
-                el =>
-                    voidElements.Contains(el.elementName)
-                        ? $$"""
-                        
-                            public struct {{el.csUpperName}} : IHtmlElement<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
-                            {
-                                public string TagName => "{{el.elementName}}";
-                                string IHtmlElement.TagStart => "<{{el.elementName}}";
-                                string IHtmlElement.EndTag => "";
-                                ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
-                                ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
-                                public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
-                                HtmlAttributes attrs;
-                                {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
-                                HtmlAttributes IHtmlElement.Attributes => attrs;
-                                IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
-                                [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-                                public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
-                                public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
-                                public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-                                public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-                            }
-                        """
-                        : $$"""
-                        
-                            public struct {{el.csUpperName}} : IHtmlElementAllowingContent<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
-                            {
-                                public string TagName => "{{el.elementName}}";
-                                string IHtmlElement.TagStart => "<{{el.elementName}}";
-                                string IHtmlElement.EndTag => "</{{el.elementName}}>";
-                                ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
-                                ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</{{el.elementName}}>"u8;
-                                public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
-                                HtmlAttributes attrs;
-                                {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
-                                HtmlAttributes IHtmlElement.Attributes => attrs;
-                                HtmlFragment children;
-                                {{el.csUpperName}} IHtmlElementAllowingContent<{{el.csUpperName}}>.ReplaceContentWith(HtmlFragment replacementContents) => new {{el.csUpperName}} { attrs = attrs, children = replacementContents };
-                                HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
-                                IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
-                                [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-                                public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
-                                public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
-                                public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
-                                public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
-                            }
-                        """
+            .Select(el =>
+                voidElements.Contains(el.elementName)
+                    ? $$"""
+
+                        public struct {{el.csUpperName}} : IHtmlElement<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                        {
+                            public string TagName => "{{el.elementName}}";
+                            string IHtmlElement.TagStart => "<{{el.elementName}}";
+                            string IHtmlElement.EndTag => "";
+                            ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                            ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => ""u8;
+                            public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
+                            HtmlAttributes attrs;
+                            {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes };
+                            HtmlAttributes IHtmlElement.Attributes => attrs;
+                            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterEmptyElement(this);
+                            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                            public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                            public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
+                            public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                            public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                        }
+                    """
+                    : $$"""
+
+                        public struct {{el.csUpperName}} : IHtmlElementAllowingContent<{{el.csUpperName}}>{{el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings("")}}
+                        {
+                            public string TagName => "{{el.elementName}}";
+                            string IHtmlElement.TagStart => "<{{el.elementName}}";
+                            string IHtmlElement.EndTag => "</{{el.elementName}}>";
+                            ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<{{el.elementName}}"u8;
+                            ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</{{el.elementName}}>"u8;
+                            public bool ContainsUnescapedText => {{(el.elementName is "script" or "style" ? "true" : "false")}};
+                            HtmlAttributes attrs;
+                            {{el.csUpperName}} IHtmlElement<{{el.csUpperName}}>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new {{el.csUpperName}} { attrs = replacementAttributes, children = children };
+                            HtmlAttributes IHtmlElement.Attributes => attrs;
+                            HtmlFragment children;
+                            {{el.csUpperName}} IHtmlElementAllowingContent<{{el.csUpperName}}>.ReplaceContentWith(HtmlFragment replacementContents) => new {{el.csUpperName}} { attrs = attrs, children = replacementContents };
+                            HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+                            IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
+                            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+                            public static implicit operator HtmlFragment({{el.csUpperName}} tag) => tag.AsFragment();
+                            public static HtmlFragment operator +({{el.csUpperName}} unary) => unary;
+                            public static HtmlFragment operator +({{el.csUpperName}} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+                            public static HtmlFragment operator +(string head, {{el.csUpperName}} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+                        }
+                    """
             );
 
         var elFields = elements
-            .Select(
-                el => $"""
+            .Select(el => $"""
 
-                    {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "    ///")}
-                        public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();
+                {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None), @"^|(?<=\n)", "    ///")}
+                    public static readonly HtmlTagKinds.{el.csUpperName} _{el.csName} = new HtmlTagKinds.{el.csUpperName}();
 
-                    """
+                """
             );
 
         var diff = new[] {
@@ -275,22 +268,25 @@ public sealed class HtmlDslGenerator
         {
             // Generate lookup entries for each element
             var elementLookups = elements.Select(el => {
-                var elementAttributes = globalAttributes.Concat(el.attributes).ToDistinctArray();
-                var attributeEntries = elementAttributes.Select(attrName => {
-                    var methodName = $"_{toClassName(attrName)}";
-                    return $"[\"{attrName}\"] = \"{methodName}\"";
-                }).JoinStrings(",\n                ");
-                
-                return $"[\"" + el.elementName + "\"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {\n" +
-                       $"                {attributeEntries}\n" +
-                       "            },";
-            }).JoinStrings("\n            ");
+                    var elementAttributes = globalAttributes.Concat(el.attributes).ToDistinctArray();
+                    var attributeEntries = elementAttributes.Select(attrName => {
+                            var methodName = $"_{toClassName(attrName)}";
+                            return $"[\"{attrName}\"] = \"{methodName}\"";
+                        }
+                    ).JoinStrings(",\n                ");
+
+                    return "[\"" + el.elementName + "\"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {\n" +
+                        $"                {attributeEntries}\n" +
+                        "            },";
+                }
+            ).JoinStrings("\n            ");
 
             // Generate default attributes for unknown elements (global attributes only)
             var defaultAttributeEntries = globalAttributes.Select(attrName => {
-                var methodName = $"_{toClassName(attrName)}";
-                return $"[\"{attrName}\"] = \"{methodName}\"";
-            }).JoinStrings(",\n                ");
+                    var methodName = $"_{toClassName(attrName)}";
+                    return $"[\"{attrName}\"] = \"{methodName}\"";
+                }
+            ).JoinStrings(",\n                ");
 
             return $$"""
                 #nullable enable
@@ -336,8 +332,7 @@ public sealed class HtmlDslGenerator
                         where THtmlTag : struct{{applicabilityTypeContraint}}, IHtmlElement<THtmlTag>
                         => htmlTagExpr.Attribute("{{attrName}}"{{attrValueExpr}});
                 """;
-        }
-    
+    }
 
     static string? AssertFileExistsAndApproveContent(Uri GeneratedOutputFilePath, string generatedCSharpContent)
     {
