@@ -275,7 +275,7 @@ public sealed class HtmlDslGenerator
         {
             // Generate lookup entries for each element
             var elementLookups = elements.Select(el => {
-                var elementAttributes = ((IEnumerable<string>)globalAttributes).Concat(el.attributes).ToDistinctArray();
+                var elementAttributes = globalAttributes.Concat(el.attributes).ToDistinctArray();
                 var attributeEntries = elementAttributes.Select(attrName => {
                     var methodName = $"_{toClassName(attrName)}";
                     return $"[\"{attrName}\"] = \"{methodName}\"";
