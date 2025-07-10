@@ -258,10 +258,10 @@ public sealed class HtmlDslGenerator
         return;
 
         string GenerateAttributeLookupTable(
-            (string elementName, DistinctArray<string> attributes)[] elements)
+            (string elementName, DistinctArray<string> attributes)[] elementsWithAttributes)
         {
             // Generate lookup entries for each element
-            var elementLookups = elements.Select(el => {
+            var elementLookups = elementsWithAttributes.Select(el => {
                     var elementAttributes = globalAttributes.Concat(el.attributes).ToDistinctArray();
                     var attributeEntries = elementAttributes.Select(attrName => {
                             var methodName = $"_{toClassName(attrName)}";
