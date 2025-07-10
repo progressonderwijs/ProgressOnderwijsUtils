@@ -250,9 +250,7 @@ public sealed class HtmlDslGenerator
                 AttributeLookupTable_GeneratedOutputFilePath,
                 GenerateAttributeLookupTable(
                     elements.Select(el => (el.elementName, el.attributes)).ToArray(),
-                    globalAttributes,
-                    specificAttributes.ToArray(),
-                    booleanAttributes
+                    globalAttributes
                 )
             ),
         }.WhereNotNull().ToArray();
@@ -262,9 +260,7 @@ public sealed class HtmlDslGenerator
 
         string GenerateAttributeLookupTable(
             (string elementName, DistinctArray<string> attributes)[] elements,
-            HashSet<string> globalAttributes,
-            string[] specificAttributes,
-            Dictionary<string, bool?> booleanAttributes)
+            HashSet<string> globalAttributes)
         {
             // Generate lookup entries for each element
             var elementLookups = elements.Select(el => {
