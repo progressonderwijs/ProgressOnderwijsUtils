@@ -298,7 +298,7 @@ public sealed class HtmlDslGenerator
 
         string AttrHelper(string attrName)
         {
-            var obsoleteAttribute = attrName == "class" ? "\n    [Obsolete]" : "";
+            var obsoleteAttribute = "";
             var applicabilityTypeContraint = globalAttributes.Contains(attrName) switch {
                 true => "",
                 false => $", IHasAttr_{toClassName(attrName)}",
