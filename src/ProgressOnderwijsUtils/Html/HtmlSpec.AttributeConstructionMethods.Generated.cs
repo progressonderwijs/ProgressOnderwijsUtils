@@ -23,7 +23,6 @@ public static class AttributeConstructionMethods
     public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("autofocus", attrValue);
-    [Obsolete]
     public static THtmlTag _class<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("class", attrValue);
