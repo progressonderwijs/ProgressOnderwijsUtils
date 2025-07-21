@@ -5,6 +5,9 @@ public static class DbQualifiedNameUtils
     public static string QualifiedObjectName(string schema, string unqualifiedName)
         => $"{schema}.{unqualifiedName}";
 
+    public static ParameterizedSql QualifiedObjectName(ParameterizedSql schema, ParameterizedSql unqualifiedName)
+        => SQL($"{schema}.{unqualifiedName}");
+
     public static string UnqualifiedObjectName(string qualifiedName)
         => qualifiedName[(qualifiedName.IndexOf('.') + 1)..];
 
