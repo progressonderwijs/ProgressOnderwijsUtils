@@ -7,7 +7,7 @@ public static class SchemaReflectionExtensions
 
     public static DataTable ToEmptyDataTable(this IEnumerable<IDbColumn> columns, string qualifiedTableName)
     {
-        var table = new DataTable(DbQualifiedNameUtils.UnqualifiedTableName(qualifiedTableName), DbQualifiedNameUtils.SchemaFromQualifiedName(qualifiedTableName));
+        var table = new DataTable(DbQualifiedNameUtils.UnqualifiedObjectName(qualifiedTableName), DbQualifiedNameUtils.SchemaFromQualifiedName(qualifiedTableName));
         table.Columns.AddRange(columns.Select(col => col.ToDataColumn()).ToArray());
         return table;
     }
