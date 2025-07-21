@@ -286,7 +286,7 @@ public sealed class DatabaseDescription
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
 
         public string UnqualifiedName
-            => DbQualifiedNameUtils.UnqualifiedTableName(QualifiedName);
+            => DbQualifiedNameUtils.UnqualifiedObjectName(QualifiedName);
 
         public ParameterizedSql QualifiedNameSql
             => ParameterizedSql.RawSql_PotentialForSqlInjection(QualifiedName);
@@ -332,7 +332,7 @@ public sealed class DatabaseDescription
             => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
 
         public string UnqualifiedName
-            => DbQualifiedNameUtils.UnqualifiedTableName(QualifiedName);
+            => DbQualifiedNameUtils.UnqualifiedObjectName(QualifiedName);
 
         public ParameterizedSql QualifiedNameSql
             => ParameterizedSql.RawSql_PotentialForSqlInjection(QualifiedName);
