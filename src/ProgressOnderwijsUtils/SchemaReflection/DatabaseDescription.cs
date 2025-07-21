@@ -7,6 +7,7 @@ public sealed class DatabaseDescription
     readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
     readonly IReadOnlyDictionary<DbObjectId, View> viewById;
     readonly IReadOnlyDictionary<string, Table> tableByQualifiedName;
+    readonly IReadOnlyDictionary<string, View> viewByQualifiedName;
     public readonly ILookup<string, ForeignKey> ForeignKeyConstraintsByUnqualifiedName;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencedParentObjectId;
     readonly ILookup<DbObjectId, ForeignKey> fksByReferencingChildObjectId;
@@ -23,6 +24,7 @@ public sealed class DatabaseDescription
         fksByReferencedParentObjectId = fkObjects.ToLookup(fk => fk.ReferencedParentTable.ObjectId);
         fksByReferencingChildObjectId = fkObjects.ToLookup(fk => fk.ReferencingChildTable.ObjectId);
         tableByQualifiedName = tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
+        viewByQualifiedName = viewById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase);
         ForeignKeyConstraintsByUnqualifiedName = fkObjects.ToLookup(o => o.UnqualifiedName, StringComparer.OrdinalIgnoreCase);
     }
 
@@ -42,10 +44,13 @@ public sealed class DatabaseDescription
         => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 
     public Table? TryGetTableByName(string qualifiedName)
-        => tableByQualifiedName.TryGetValue(qualifiedName, out var id) ? id : null;
+        => tableByQualifiedName.TryGetValue(qualifiedName, out var table) ? table : null;
 
     public Table? TryGetTableById(DbObjectId id)
         => tableById.GetValueOrDefault(id);
+
+    public View? TryGetViewByName(string qualifiedName)
+        => viewByQualifiedName.TryGetValue(qualifiedName, out var view) ? view : null;
 
     public sealed record ForeignKeyColumn(Column<Table> ReferencedParentColumn, Column<Table> ReferencingChildColumn);
 

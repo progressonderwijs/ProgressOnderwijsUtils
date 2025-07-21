@@ -220,4 +220,23 @@ public sealed class DatabaseDescriptionTest : TransactedLocalConnection
 
         PAssert.That(() => db.TryGetTableByName("dbo.dtproperties") == null);
     }
+
+    [Fact]
+    public void TrygetViewByName_works()
+    {
+        SQL(
+            $"""
+            create view dbo.TrygetViewByName_works as
+            select x = 1;
+            """
+        ).ExecuteNonQuery(Connection);
+
+        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
+        var view = db.TryGetViewByName("dbo.TrygetViewByName_works").AssertNotNull();
+
+        PAssert.That(() => view.QualifiedName == "dbo.TrygetViewByName_works");
+        PAssert.That(() => view.Columns.Single().ColumnName == "x");
+
+        PAssert.That(() => db.TryGetViewByName("dbo.DoesNotExist") == null);
+    }
 }
