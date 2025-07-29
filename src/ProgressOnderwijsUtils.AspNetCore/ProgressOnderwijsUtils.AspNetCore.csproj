@@ -10,7 +10,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2025.2.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
