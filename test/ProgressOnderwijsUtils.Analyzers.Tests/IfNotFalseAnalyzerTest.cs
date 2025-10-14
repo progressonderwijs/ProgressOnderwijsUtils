@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using Xunit;
 
@@ -37,5 +38,39 @@ public sealed class IfNotFalseAnalyzerTests
             """;
         var diagnostics = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
+    }
+
+    [Fact]
+    public async Task CodeFix_RemovesIfNotFalse()
+    {
+        var source = """
+            class C
+            {
+                void M()
+                {
+                    if (!false) { System.Console.WriteLine("Hello"); }
+                }
+            }
+            """;
+        var expected = """
+            class C
+            {
+                void M()
+                {
+                    System.Console.WriteLine("Hello");
+                }
+            }
+            """;
+
+        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
+        var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single();
+
+        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
+        PAssert.That(() => fixesMade == 1);
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        Assert.Equal(
+            expected,
+            result.ToString()
+        );
     }
 }
