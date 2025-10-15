@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ProgressOnderwijsUtils.Analyzers;
 
-[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RedundantAssertNotNullCodeFix))]
+[ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(IfNotFalseCodeFix))]
 [Shared]
 public sealed class IfNotFalseCodeFix : CodeFixProvider
 {
