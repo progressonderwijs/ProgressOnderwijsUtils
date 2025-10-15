@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
+using Microsoft.CodeAnalysis;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests;
@@ -151,11 +152,78 @@ public sealed class IfNotFalseAnalyzerTests
                     }
                     """,
             },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false) { System.Console.WriteLine("A"); } else { System.Console.WriteLine("B"); }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("A");
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false) { System.Console.WriteLine("A"); } else { System.Console.WriteLine("B"); }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("A");
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false)
+                            {
+                                System.Console.WriteLine("A");
+                            }
+                            else
+                            {
+                                System.Console.WriteLine("B");
+                            }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("A");
+                        }
+                    }
+                    """,
+            },
         };
 
         foreach (var test in testCases) {
             var workspace = DiagnosticHelper.CreateProjectWithTestFile(test.Source);
-            var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single();
+            var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single(d => d.Id == IfNotFalseAnalyzer.Rule.Id); // otherwise we could get diagnostic like CS0162 (unreachable code)
             var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
             PAssert.That(() => fixesMade == 1);
 
