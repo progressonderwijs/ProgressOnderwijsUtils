@@ -43,34 +43,125 @@ public sealed class IfNotFalseAnalyzerTests
     [Fact]
     public async Task CodeFix_RemovesIfNotFalse()
     {
-        var source = """
-            class C
-            {
-                void M()
-                {
-                    if (!false) { System.Console.WriteLine("Hello"); }
-                }
-            }
-            """;
-        var expected = """
-            class C
-            {
-                void M()
-                {
-                    System.Console.WriteLine("Hello");
-                }
-            }
-            """;
+        var testCases = new[] {
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false) { System.Console.WriteLine("Hello"); }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("Hello");
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false) { System.Console.WriteLine("A"); System.Console.WriteLine("B"); }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("A"); System.Console.WriteLine("B");
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false)
+                            {
+                                System.Console.WriteLine("Hello");
+                            }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("Hello");
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false) { }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                        }
+                    }
+                    """,
+            },
+            new {
+                Source = """
+                    class C
+                    {
+                        void M()
+                        {
+                            if (!false)
+                            {
+                                System.Console.WriteLine("A");
+                                System.Console.WriteLine("B");
+                            }
+                        }
+                    }
+                    """,
+                Expected = """
+                    class C
+                    {
+                        void M()
+                        {
+                            System.Console.WriteLine("A");
+                            System.Console.WriteLine("B");
+                        }
+                    }
+                    """,
+            },
+        };
 
-        var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single();
+        foreach (var test in testCases) {
+            var workspace = DiagnosticHelper.CreateProjectWithTestFile(test.Source);
+            var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single();
+            var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
+            PAssert.That(() => fixesMade == 1);
 
-        var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
-        PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
-        Assert.Equal(
-            expected,
-            result.ToString()
-        );
+            var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+            var resultText = result.ToString().Replace("\r\n", "\n");
+            Assert.Equal(test.Expected, resultText);
+        }
     }
 }

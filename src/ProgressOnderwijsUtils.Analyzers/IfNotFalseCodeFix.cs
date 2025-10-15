@@ -6,6 +6,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace ProgressOnderwijsUtils.Analyzers;
 
@@ -51,15 +52,12 @@ public sealed class IfNotFalseCodeFix : CodeFixProvider
         );
     }
 
-    private static SyntaxNode ReplaceWithBlockStatements(SyntaxNode root, IfStatementSyntax ifStatement, BlockSyntax block)
+    static SyntaxNode ReplaceWithBlockStatements(SyntaxNode root, IfStatementSyntax ifStatement, BlockSyntax block)
     {
-        var statements = block.Statements;
-        var firstStatement = statements[0]
-            .WithLeadingTrivia(ifStatement.GetLeadingTrivia())
-            .WithTrailingTrivia(block.GetTrailingTrivia());
+        var formattedStatements = block.Statements
+            .Select(s => s.WithAdditionalAnnotations(Formatter.Annotation))
+            .ToArray();
 
-        var newStatements = statements.Replace(statements[0], firstStatement);
-
-        return root.ReplaceNode(ifStatement, newStatements);
+        return root.ReplaceNode(ifStatement, formattedStatements);
     }
 }
