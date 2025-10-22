@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Data.Common;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ProgressOnderwijsUtils;
 
@@ -211,8 +212,15 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public JsonSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
-    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options)
+    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
     {
+        if (defaultIgnoreCondition is JsonIgnoreCondition.Always) {
+            throw new ArgumentException("The value cannot be 'Always'", nameof(defaultIgnoreCondition));
+        }
+        if (defaultIgnoreCondition is JsonIgnoreCondition.WhenWritingDefault) {
+            throw new NotSupportedException($"defaultIgnoreCondition {JsonIgnoreCondition.WhenWritingDefault} is not supported");
+        }
+
         using var cmd = this.ReusableCommand(conn);
         var reader = ExecuteReader(cmd);
         using var disposeReader = reader;
@@ -225,8 +233,12 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         while (Read(cmd, reader)) {
             writer.WriteStartObject();
             for (var i = 0; i < table.Length; i++) {
-                if (!reader.IsDBNull(i)) {
-                    var name = table[i].ColumnName;
+                var name = table[i].ColumnName;
+                if (reader.IsDBNull(i)) {
+                    if (defaultIgnoreCondition is JsonIgnoreCondition.Never) {
+                        writer.WriteNull(name);
+                    }
+                } else {
                     var type = table[i].DataType;
                     var sqlType = table[i].DataTypeName;
                     if (type == typeof(bool)) {

@@ -1,6 +1,7 @@
 using System.IO.Pipelines;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
@@ -216,5 +217,36 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 PAssert.That(() => pocos[i].BinaryColumn == null);
             }
         }
+    }
+
+    [Fact]
+    public void Null_properties_can_be_serialized_by_configuration()
+    {
+        SQL(
+            $"""
+            create table #ReadJsonNullsTest (
+                I int null
+                , S nvarchar(12) null
+            );
+            """
+        ).ExecuteNonQuery(Connection);
+
+        SQL(
+            $"""
+            insert into #ReadJsonNullsTest (I, S) values
+                (1, 'een')
+                , (null, 'twee')
+                , (2, null)
+                , (null, null)
+            """
+        ).ExecuteNonQuery(Connection);
+
+        var pipe = new Pipe();
+        SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
+        pipe.Writer.Complete();
+
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        ApprovalTest.CreateHere().AssertUnchangedAndSave(json);
     }
 }
