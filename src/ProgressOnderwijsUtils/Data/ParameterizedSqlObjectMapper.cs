@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore.Query;
 
 // ReSharper disable ConvertToUsingDeclaration
@@ -69,8 +70,8 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
 
-    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> buffer, JsonWriterOptions options)
-        => q.OfJson().Execute(sqlConn, buffer, options);
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
+        => q.OfJson().Execute(sqlConn, buffer, options, defaultIgnoreCondition);
 
     /// <summary>
     /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order
