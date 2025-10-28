@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Data.Common;
 using System.Text.Json;
 using System.Text.Json.Serialization;
