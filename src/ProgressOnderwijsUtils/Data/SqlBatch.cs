@@ -267,10 +267,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(byte[])) {
                         var bytes = reader.GetFieldValue<byte[]>(i);
                         if (sqlType is "rowversion" or "timestamp" && rowVersionAsNumber) {
-                            if (BitConverter.IsLittleEndian) {
-                                Array.Reverse(bytes);
-                            }
-                            writer.WriteNumber(name, BitConverter.ToUInt64(bytes, 0));
+                            writer.WriteNumber(name, BinaryPrimitives.ReadUInt64BigEndian(bytes));
                         } else {
                             writer.WriteBase64String(name, bytes);
                         }
