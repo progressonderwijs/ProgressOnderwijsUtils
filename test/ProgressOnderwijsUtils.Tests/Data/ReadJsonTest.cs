@@ -100,7 +100,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ).ExecuteNonQuery(Connection);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
         pipe.Writer.Complete();
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
@@ -156,6 +156,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         public string? StringColumn { get; init; }
         public DateTime? DateTimeColumn { get; init; }
         public byte[]? BinaryColumn { get; init; }
+        public ulong RijRevisie { get; init; }
     }
 
     [Fact]
@@ -173,6 +174,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 , StringColumn nvarchar(32)
                 , DateTimeColumn datetime2
                 , BinaryColumn varbinary(32)
+                , RijRevisie rowversion
             );
             """
         ).ExecuteNonQuery(Connection);
@@ -199,7 +201,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         var pocos = query.ReadPocos<ReadJsonPocoTest>(Connection);
 
         var pipe = new Pipe();
-        query.ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        query.ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.WhenWritingNull, true);
         pipe.Writer.Complete();
         var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();

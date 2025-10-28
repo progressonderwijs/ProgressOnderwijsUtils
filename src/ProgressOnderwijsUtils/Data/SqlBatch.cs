@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Buffers.Binary;
 using System.Data.Common;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -212,7 +213,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     public JsonSqlCommand WithTimeout(CommandTimeout timeout)
         => this with { CommandTimeout = timeout, };
 
-    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
+    public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, bool rowVersionAsNumber = false)
     {
         if (defaultIgnoreCondition is JsonIgnoreCondition.Always) {
             throw new ArgumentException("The value cannot be 'Always'", nameof(defaultIgnoreCondition));
@@ -265,7 +266,12 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     } else if (type == typeof(string)) {
                         writer.WriteString(name, reader.GetString(i));
                     } else if (type == typeof(byte[])) {
-                        writer.WriteBase64String(name, reader.GetFieldValue<byte[]>(i));
+                        var bytes = reader.GetFieldValue<byte[]>(i);
+                        if (sqlType is "rowversion" or "timestamp" && rowVersionAsNumber) {
+                            writer.WriteNumber(name, BinaryPrimitives.ReadUInt64BigEndian(bytes));
+                        } else {
+                            writer.WriteBase64String(name, bytes);
+                        }
                     } else if (type == typeof(Guid)) {
                         writer.WriteString(name, reader.GetGuid(i));
                     } else {

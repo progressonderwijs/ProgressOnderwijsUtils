@@ -70,8 +70,8 @@ public static class ParameterizedSqlObjectMapper
         where T : IWrittenImplicitly
         => q.OfPocos<T>().Execute(sqlConn);
 
-    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
-        => q.OfJson().Execute(sqlConn, buffer, options, defaultIgnoreCondition);
+    public static void ReadJson(this ParameterizedSql q, SqlConnection sqlConn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, bool rowVersionAsNumber = false)
+        => q.OfJson().Execute(sqlConn, buffer, options, defaultIgnoreCondition, rowVersionAsNumber);
 
     /// <summary>
     /// Reads all records of the given query from the database, unpacking into a C# array of tuples in field order
