@@ -6,7 +6,7 @@
     <TieredCompilation>false</TieredCompilation>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.4" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.7" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.2" />
