@@ -47,7 +47,11 @@ public static class SsoProcessor
     public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate)
         => GetAttributes(rawSamlResponse, certificate, false);
 
-    public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate, bool evilIgnoreSignatureCheck)
+    [Obsolete("This method ignores signature validation and should not be used in production code")]
+    public static Maybe<SsoAttributes, string> GetAttributesWithEvilIgnoreSignatureCheck(string rawSamlResponse, X509Certificate2 certificate)
+        => GetAttributes(rawSamlResponse, certificate, true);
+
+    static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate, bool evilIgnoreSignatureCheck)
     {
         byte[] bytes;
         try {
