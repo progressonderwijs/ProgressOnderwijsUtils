@@ -44,7 +44,7 @@ public static class SsoProcessor
         return null;
     }
 
-    public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate)
+    public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate, bool ignoreSignatureCheck = false)
     {
         byte[] bytes;
         try {
@@ -85,7 +85,7 @@ public static class SsoProcessor
             return Maybe.Error("Public key missing");
         }
 
-        if (!dsig.CheckSignature(key)) {
+        if (!dsig.CheckSignature(key) && !ignoreSignatureCheck) {
             return Maybe.Error("Signature invalid");
         }
 
