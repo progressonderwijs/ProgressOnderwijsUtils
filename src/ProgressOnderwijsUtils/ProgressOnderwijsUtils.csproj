@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>110.2.0</Version>
-    <PackageReleaseNotes>Give the possibility to serialize rowversion columns to number properties in the JSON reader.</PackageReleaseNotes>
+    <Version>110.3.0</Version>
+    <PackageReleaseNotes>Added obslote hack function to ignore invalid signed SAML.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
