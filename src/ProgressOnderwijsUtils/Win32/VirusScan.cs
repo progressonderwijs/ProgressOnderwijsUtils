@@ -19,11 +19,9 @@ public static class VirusScan
         try {
             PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
 
-            fixed (void* bufferPtr = buffer) {
-                var hresult = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, default(HAMSISESSION), out var result);
-                hresult.AssertResultOk("AmsiScanBuffer", "");
-                return ResultIsMalware(result);
-            }
+            var hresult = PInvoke.AmsiScanBuffer(context, buffer, contentName, default(HAMSISESSION), out var result);
+            hresult.AssertResultOk("AmsiScanBuffer", "");
+            return ResultIsMalware(result);
         } finally {
             if (context != default(HAMSICONTEXT)) {
                 PInvoke.AmsiUninitialize(context);
