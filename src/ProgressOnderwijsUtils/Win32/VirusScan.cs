@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.Win32;
 public static class VirusScan
 {
     [SupportedOSPlatform("windows10.0.10240")]
-    public static unsafe bool IsMalware(byte[] buffer, string contentName, string sessionName)
+    public static bool IsMalware(byte[] buffer, string contentName, string sessionName)
     {
         // to avoid HRESULT failure (0x80070057) while attempting AmsiScanBuffer
         if (buffer is []) {
@@ -19,11 +19,9 @@ public static class VirusScan
         try {
             PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
 
-            fixed (void* bufferPtr = buffer) {
-                var hresult = PInvoke.AmsiScanBuffer(context, bufferPtr, (uint)buffer.LongLength, contentName, default(HAMSISESSION), out var result);
-                hresult.AssertResultOk("AmsiScanBuffer", "");
-                return ResultIsMalware(result);
-            }
+            var hresult = PInvoke.AmsiScanBuffer(context, buffer, contentName, default(HAMSISESSION), out var result);
+            hresult.AssertResultOk("AmsiScanBuffer", "");
+            return ResultIsMalware(result);
         } finally {
             if (context != default(HAMSICONTEXT)) {
                 PInvoke.AmsiUninitialize(context);
