@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>110.3.0</Version>
-    <PackageReleaseNotes>Give the possibility to optionally set a name for your SqlConnectionContext.</PackageReleaseNotes>
+    <PackageReleaseNotes>Do not throw on accessing the Name of SqlConnectionContext to prevent errors on disposing.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

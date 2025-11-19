@@ -16,5 +16,5 @@ public abstract class SiteBase : ISite
     public virtual bool DesignMode
         => throw new NotSupportedException();
 
-    public virtual string? Name { get; set; }
+    public string? Name { get; set; }
 }
