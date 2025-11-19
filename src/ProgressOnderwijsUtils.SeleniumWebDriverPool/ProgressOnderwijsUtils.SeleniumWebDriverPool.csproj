@@ -1,13 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>5.0.4</Version>
-        <PackageReleaseNotes>Bump selenium</PackageReleaseNotes>
-
+        <Version>6.0.0</Version>
+        <PackageReleaseNotes>Update to .NetCore 10</PackageReleaseNotes>
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
         <PackageTags>ProgressOnderwijsUtils Selenium WebDriver Web</PackageTags>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
