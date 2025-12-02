@@ -10,14 +10,8 @@ public interface IHasDefaultCommandTimeout
     CommandTimeoutDefaults TimeoutDefaults { get; }
 }
 
-public sealed class SqlConnectionContext : SiteBase, IAttachedToTracer, IHasDefaultCommandTimeout
+public sealed class SqlConnectionContext(ISqlCommandTracer tracer, CommandTimeoutDefaults timeoutDefaults) : SiteBase, IAttachedToTracer, IHasDefaultCommandTimeout
 {
-    public SqlConnectionContext(ISqlCommandTracer tracer, CommandTimeoutDefaults timeoutDefaults)
-    {
-        Tracer = tracer;
-        TimeoutDefaults = timeoutDefaults;
-    }
-
-    public ISqlCommandTracer Tracer { get; }
-    public CommandTimeoutDefaults TimeoutDefaults { get; set; }
+    public ISqlCommandTracer Tracer { get; } = tracer;
+    public CommandTimeoutDefaults TimeoutDefaults { get; set; } = timeoutDefaults;
 }

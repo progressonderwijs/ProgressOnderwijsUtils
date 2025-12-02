@@ -68,7 +68,7 @@ public static class SqlSystemTypeIdExtensions
         (typeof(uint), SqlSystemTypeId.Binary),
         (typeof(DateTime), SqlSystemTypeId.DateTime2),
         (typeof(DateTime), SqlSystemTypeId.DateTime),
-        (typeof(DateTime), SqlSystemTypeId.Date),
+        (typeof(DateOnly), SqlSystemTypeId.Date),
         (typeof(DateTime), SqlSystemTypeId.SmallDateTime),
         (typeof(DateTimeOffset), SqlSystemTypeId.DateTimeOffset),
         (typeof(decimal), SqlSystemTypeId.Decimal),
