@@ -10,7 +10,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>library</OutputType>
     <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
