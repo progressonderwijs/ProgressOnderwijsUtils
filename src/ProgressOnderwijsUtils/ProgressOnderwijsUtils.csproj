@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>112.0.1</Version>
-    <PackageReleaseNotes>Extended the lookup to determine the underlying sql type for DateOnly</PackageReleaseNotes>
+    <Version>113.0.0</Version>
+    <PackageReleaseNotes>Changed SQL date type mapping to prioritize DateOnly over DateTime</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
