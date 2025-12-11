@@ -89,8 +89,8 @@ public struct FieldMappingValidation
                 var srcType = src.DataType.GetNonNullableUnderlyingType();
                 var dstType = dst.DataType.GetNonNullableUnderlyingType();
 
-                var isTypeIncompatible = srcType != dstType;
-                if (isTypeIncompatible) {
+                var isTypeCompatible = srcType == dstType;
+                if (!isTypeCompatible) {
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                     if (!SilentlySkipReadonlyTargetColumns) {
