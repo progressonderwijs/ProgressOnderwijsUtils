@@ -86,7 +86,8 @@ public struct FieldMappingValidation
             } else {
                 //src & dst not null
 
-                if (src.DataType.GetNonNullableUnderlyingType() != dst.DataType.GetNonNullableUnderlyingType()) {
+                var srcType = src.DataType.GetNonNullableUnderlyingType();
+                if (srcType != dst.DataType.GetNonNullableUnderlyingType()) {
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                     if (!SilentlySkipReadonlyTargetColumns) {
