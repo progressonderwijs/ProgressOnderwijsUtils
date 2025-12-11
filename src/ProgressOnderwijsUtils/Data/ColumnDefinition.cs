@@ -31,7 +31,7 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         return retval;
     }
 
-    public static ColumnDefinition FromSqlSystemTypeId(int columnOrdinal, string columnName, SqlSystemTypeId sqlSystemTypeId, ColumnAccessibility columnAccessibility)
+    static ColumnDefinition FromSqlSystemTypeId(int columnOrdinal, string columnName, SqlSystemTypeId sqlSystemTypeId, ColumnAccessibility columnAccessibility)
         => new(sqlSystemTypeId.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
 
     public override string ToString()
