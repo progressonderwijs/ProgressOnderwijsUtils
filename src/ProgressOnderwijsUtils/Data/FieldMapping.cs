@@ -1,3 +1,5 @@
+using ProgressOnderwijsUtils.SchemaReflection;
+
 namespace ProgressOnderwijsUtils;
 
 public readonly struct BulkInsertFieldMapping
@@ -84,12 +86,10 @@ public struct FieldMappingValidation
                     throw new($"impossible value {dst.ColumnAccessibility}");
                 }
             } else {
-                //src & dst not null
-
                 var srcType = src.DataType.GetNonNullableUnderlyingType();
                 var dstType = dst.DataType.GetNonNullableUnderlyingType();
 
-                var isTypeCompatible = srcType == dstType;
+                var isTypeCompatible = srcType == dstType || srcType == typeof(DateTime) && dstType == typeof(DateOnly);
                 if (!isTypeCompatible) {
                     errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                 } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
