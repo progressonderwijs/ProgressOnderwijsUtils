@@ -212,9 +212,7 @@ static class AlternativeArrayBuilders
             if (idx < current.Length) {
                 current[idx++] = item;
             } else {
-                if (segments == null) {
-                    segments = new T[31 - InitSize2Pow][];
-                }
+                segments ??= new T[31 - InitSize2Pow][];
                 segments[sI++] = current;
                 current = new T[current.Length << 1 & ~current.Length];
                 current[0] = item;
