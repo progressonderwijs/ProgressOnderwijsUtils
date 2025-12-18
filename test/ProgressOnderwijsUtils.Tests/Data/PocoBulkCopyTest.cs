@@ -136,7 +136,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
         var target = BlaOk.CreateTargetTable(Connection, SQL($"#MyTable"));
         SampleObjects.BulkCopyToSqlServer(Connection, target);
         var fromDb = SQL($"select * from {target.TableNameSql} order by Id").ReadPocos<BlaOk>(Connection);
-        PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
+        PAssert.That(() => SampleObjects.AsEnumerable().SequenceEqual(fromDb));
     }
 
     [Fact]

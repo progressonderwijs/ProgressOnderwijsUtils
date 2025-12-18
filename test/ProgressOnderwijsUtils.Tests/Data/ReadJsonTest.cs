@@ -214,7 +214,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
             PAssert.That(() => structered == pocos[i]);
 
             if (jsonPocos[i].BinaryColumn is { } buf) {
-                PAssert.That(() => buf.SequenceEqual(pocos[i].BinaryColumn.AssertNotNull()));
+                PAssert.That(() => buf.AsEnumerable().SequenceEqual(pocos[i].BinaryColumn.AssertNotNull()));
             } else {
                 PAssert.That(() => pocos[i].BinaryColumn == null);
             }

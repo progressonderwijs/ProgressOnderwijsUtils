@@ -23,7 +23,7 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
         PAssert.That(() => violation.ConstraintName == "uc_T_C");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A(1)", }));
+        PAssert.That(() => violation.DuplicateKeyValue.AsEnumerable().SequenceEqual(new[] { "A(1)", }));
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
 
         PAssert.That(() => violation.IndexName == "ix_T");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A", }));
+        PAssert.That(() => violation.DuplicateKeyValue.AsEnumerable().SequenceEqual(new[] { "A", }));
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         PAssert.That(() => violation.ConstraintType == "PRIMARY KEY");
         PAssert.That(() => violation.ConstraintName == "pk_T");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "1", }));
+        PAssert.That(() => violation.DuplicateKeyValue.AsEnumerable().SequenceEqual(new[] { "1", }));
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public sealed class SqlErrorParserTest : TransactedLocalConnection
         PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
         PAssert.That(() => violation.ConstraintName == "uc_T_C1_C2");
         PAssert.That(() => violation.ObjectName == "dbo.#T");
-        PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A", "B", }));
+        PAssert.That(() => violation.DuplicateKeyValue.AsEnumerable().SequenceEqual(new[] { "A", "B", }));
     }
 
     [Fact]

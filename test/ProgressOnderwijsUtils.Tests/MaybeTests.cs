@@ -309,8 +309,8 @@ public sealed class MaybeTests
     public void WhenAllOk_simple_cases_work()
     {
         PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk());
-        PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2, })));
-        PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2, })));
+        PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.AsEnumerable().SequenceEqual(new[] { 1, 2, })));
+        PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.AsEnumerable().SequenceEqual(new[] { 1, 2, })));
     }
 
     [Fact]
@@ -337,12 +337,12 @@ public sealed class MaybeTests
         PAssert.That(() => emptyPartitioned.okValues.None());
 
         var twoOkPartitioned = TwoOkMaybes.Partition();
-        PAssert.That(() => twoOkPartitioned.okValues.SequenceEqual(new[] { 1, 2, }));
+        PAssert.That(() => twoOkPartitioned.okValues.AsEnumerable().SequenceEqual(new[] { 1, 2, }));
         PAssert.That(() => twoOkPartitioned.errorValues.None());
 
         var threeMixedPartitioned = ThreeMixedMaybes.Partition();
-        PAssert.That(() => threeMixedPartitioned.okValues.SequenceEqual(new[] { Unit.Value, }));
-        PAssert.That(() => threeMixedPartitioned.errorValues.SequenceEqual(new[] { 1, 2, }));
+        PAssert.That(() => threeMixedPartitioned.okValues.AsEnumerable().SequenceEqual(new[] { Unit.Value, }));
+        PAssert.That(() => threeMixedPartitioned.errorValues.AsEnumerable().SequenceEqual(new[] { 1, 2, }));
     }
 
     static Maybe<Unit, int>[] ThreeMixedMaybes

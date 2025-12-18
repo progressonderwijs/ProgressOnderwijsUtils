@@ -289,6 +289,6 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         (target with { SilentlySkipReadonlyTargetColumns = true, }).BulkInsert(Connection, new[] { record, });
 
         var allowed = SQL($"select * from {tableName}").ReadPocos<TableWithReadOnlyColumn>(Connection).Single();
-        PAssert.That(() => !allowed.ReadOnly.SequenceEqual(record.ReadOnly));
+        PAssert.That(() => !allowed.ReadOnly.AsEnumerable().SequenceEqual(record.ReadOnly));
     }
 }

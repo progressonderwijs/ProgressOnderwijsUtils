@@ -19,8 +19,8 @@ public sealed class ArrayExtensionsTest
     {
         var arrA = new[] { "paper", "scissors", "stone", };
         var arrB = new[] { "lizard", "spock", };
-        PAssert.That(() => arrA.ConcatArray(arrB).SequenceEqual(new[] { "paper", "scissors", "stone", "lizard", "spock", }));
-        PAssert.That(() => arrB.ConcatArray(arrA).SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone", }));
+        PAssert.That(() => arrA.Concat(arrB).SequenceEqual(new[] { "paper", "scissors", "stone", "lizard", "spock", }));
+        PAssert.That(() => arrB.Concat(arrA).SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone", }));
     }
 
     [Fact]
@@ -28,8 +28,8 @@ public sealed class ArrayExtensionsTest
     {
         var arrA = new[] { "paper", "scissors", "stone", };
         var arrB = new[] { "lizard", "spock", };
-        PAssert.That(() => new[] { arrA, arrB, }.ConcatArrays().SequenceEqual(new[] { "paper", "scissors", "stone", "lizard", "spock", }));
-        PAssert.That(() => new[] { arrB, arrA, }.ConcatArrays().SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone", }));
+        PAssert.That(() => new[] { arrA, arrB, }.ConcatArrays().AsEnumerable().SequenceEqual(new[] { "paper", "scissors", "stone", "lizard", "spock", }));
+        PAssert.That(() => new[] { arrB, arrA, }.ConcatArrays().AsEnumerable().SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone", }));
     }
 
     [Fact]
@@ -38,16 +38,16 @@ public sealed class ArrayExtensionsTest
         var obj = new object();
         var arrA = new[] { "string", };
         var arrB = new[] { obj, };
-        PAssert.That(() => new[] { arrA, arrB, }.ConcatArrays().SequenceEqual(new[] { "string", obj, }));
-        PAssert.That(() => new[] { arrB, arrA, }.ConcatArrays().SequenceEqual(new[] { obj, "string", }));
+        PAssert.That(() => new[] { arrA, arrB, }.ConcatArrays().AsEnumerable().SequenceEqual(new[] { "string", obj, }));
+        PAssert.That(() => new[] { arrB, arrA, }.ConcatArrays().AsEnumerable().SequenceEqual(new[] { obj, "string", }));
     }
 
     [Fact]
     public void AppendingingEmptyWorks()
     {
         var arr = new[] { "foo", "baar", };
-        PAssert.That(() => new string[0].ConcatArray(arr).SequenceEqual(arr));
-        PAssert.That(() => arr.ConcatArray(new string[0]).SequenceEqual(arr));
+        PAssert.That(() => new string[0].Concat(arr).SequenceEqual(arr));
+        PAssert.That(() => arr.Concat(new string[0]).SequenceEqual(arr));
         PAssert.That(() => new string[0].ConcatArray(arr) == arr);
         PAssert.That(() => arr.ConcatArray(new string[0]) == arr);
     }

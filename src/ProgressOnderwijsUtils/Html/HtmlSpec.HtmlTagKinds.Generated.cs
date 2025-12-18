@@ -1781,6 +1781,27 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(SELECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, SELECT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
+    public struct SELECTEDCONTENT : IHtmlElementAllowingContent<SELECTEDCONTENT>
+    {
+        public string TagName => "selectedcontent";
+        string IHtmlElement.TagStart => "<selectedcontent";
+        string IHtmlElement.EndTag => "</selectedcontent>";
+        ReadOnlySpan<byte> IHtmlElement.TagStartUtf8 => "<selectedcontent"u8;
+        ReadOnlySpan<byte> IHtmlElement.EndTagUtf8 => "</selectedcontent>"u8;
+        public bool ContainsUnescapedText => false;
+        HtmlAttributes attrs;
+        SELECTEDCONTENT IHtmlElement<SELECTEDCONTENT>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new SELECTEDCONTENT { attrs = replacementAttributes, children = children };
+        HtmlAttributes IHtmlElement.Attributes => attrs;
+        HtmlFragment children;
+        SELECTEDCONTENT IHtmlElementAllowingContent<SELECTEDCONTENT>.ReplaceContentWith(HtmlFragment replacementContents) => new SELECTEDCONTENT { attrs = attrs, children = replacementContents };
+        HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
+        [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
+        public static implicit operator HtmlFragment(SELECTEDCONTENT tag) => tag.AsFragment();
+        public static HtmlFragment operator +(SELECTEDCONTENT unary) => unary;
+        public static HtmlFragment operator +(SELECTEDCONTENT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+        public static HtmlFragment operator +(string head, SELECTEDCONTENT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+    }
     public struct SLOT : IHtmlElementAllowingContent<SLOT>, IHasAttr_name
     {
         public string TagName => "slot";
