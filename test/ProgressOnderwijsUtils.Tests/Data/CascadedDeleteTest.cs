@@ -343,7 +343,7 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
 
         PAssert.That(() => deletionReport.Table == "dbo.T1");
-        PAssert.That(() => ((byte[])deletedRow["V"]).SequenceEqual(version));
+        PAssert.That(() => ((byte[])deletedRow["V"]).AsEnumerable().SequenceEqual(version));
     }
 
     [Fact]
@@ -360,6 +360,6 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         var deletedRow = deletionReport.DeletedRows.AssertNotNull().Rows.Cast<DataRow>().Single();
 
         PAssert.That(() => deletionReport.Table == "dbo.T1");
-        PAssert.That(() => ((byte[])deletedRow["V"]).SequenceEqual(version));
+        PAssert.That(() => ((byte[])deletedRow["V"]).AsEnumerable().SequenceEqual(version));
     }
 }

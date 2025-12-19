@@ -154,14 +154,14 @@ public sealed class HtmlAttributesTest
     public void ClassesListTwoSeparatelyAppliedAttributes()
     {
         var div = _div._class(A)._id("B").Attribute("data-xyz", "C").Attribute("data-xyz", "!!!")._class(D);
-        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "D", }));
+        PAssert.That(() => GetAttributes(div).Classes().AsEnumerable().SequenceEqual(new[] { "A", "D", }));
     }
 
     [Fact]
     public void ClassesCombinesSpaceSeparatedNamesWithSeparatelyAppliedNames()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, null, C, E, None, null)._class(None)._class(Y);
-        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "A", "X", "D", "C", "E", "Y", }));
+        PAssert.That(() => GetAttributes(div).Classes().AsEnumerable().SequenceEqual(new[] { "A", "X", "D", "C", "E", "Y", }));
     }
 
     [Fact]
@@ -226,9 +226,9 @@ public sealed class HtmlAttributesTest
         var div0 = _div._class(D, A);
         var div1 = _div._class(A)._class(D, A);
         var div2 = _div._class(A, D)._class(D, A);
-        PAssert.That(() => GetAttributes(div).Classes().SequenceEqual(new[] { "D", "A", }));
-        PAssert.That(() => GetAttributes(div0).Classes().SequenceEqual(new[] { "D", "A", }));
-        PAssert.That(() => GetAttributes(div1).Classes().SequenceEqual(new[] { "A", "D", "A", }));
-        PAssert.That(() => GetAttributes(div2).Classes().SequenceEqual(new[] { "A", "D", "D", "A", }));
+        PAssert.That(() => GetAttributes(div).Classes().AsEnumerable().SequenceEqual(new[] { "D", "A", }));
+        PAssert.That(() => GetAttributes(div0).Classes().AsEnumerable().SequenceEqual(new[] { "D", "A", }));
+        PAssert.That(() => GetAttributes(div1).Classes().AsEnumerable().SequenceEqual(new[] { "A", "D", "A", }));
+        PAssert.That(() => GetAttributes(div2).Classes().AsEnumerable().SequenceEqual(new[] { "A", "D", "D", "A", }));
     }
 }

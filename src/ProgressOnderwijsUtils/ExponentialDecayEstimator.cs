@@ -11,11 +11,9 @@ public sealed class ExponentialDecayEstimator
 {
     public const double LogOfHalf = -0.69314718055994529; //Math.Log(0.5);
     public readonly TimeSpan halflife;
-    DateTime timestampOfValue = default(DateTime).ToUniversalTime();
     double currentValue;
 
-    public DateTime UtcTimestampOfValue
-        => timestampOfValue;
+    public DateTime UtcTimestampOfValue { get; private set; } = default(DateTime).ToUniversalTime();
 
     public ExponentialDecayEstimator(TimeSpan halflife)
         => this.halflife = halflife;
@@ -40,7 +38,7 @@ public sealed class ExponentialDecayEstimator
     public ExponentialDecayEstimatorValue ValueAt(DateTime moment)
     {
         Debug.Assert(moment.Kind == DateTimeKind.Utc, "Error:non-UTC DateTime detected; all moments should be in UTC to make reasoning about exponential decays simpler.");
-        var halflives = (moment - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
+        var halflives = (moment - UtcTimestampOfValue).TotalSeconds / halflife.TotalSeconds;
         return new(currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives)));
     }
 
@@ -50,12 +48,12 @@ public sealed class ExponentialDecayEstimator
     public ExponentialDecayEstimatorValue AddAmount(DateTime timestamp, double amount)
     {
         currentValue = ValueAt(timestamp).RawValue + amount;
-        timestampOfValue = timestamp;
+        UtcTimestampOfValue = timestamp;
         return new(currentValue);
     }
 
     public override string ToString()
-        => $"{currentValue} at {timestampOfValue} with halflife {halflife}";
+        => $"{currentValue} at {UtcTimestampOfValue} with halflife {halflife}";
 }
 
 public readonly struct ExponentialDecayEstimatorValue

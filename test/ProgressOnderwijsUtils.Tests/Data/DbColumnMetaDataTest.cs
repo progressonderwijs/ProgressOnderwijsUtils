@@ -24,7 +24,7 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
         var columnsFromCodeAsSql = columnsFromCode.ArraySelect(c => c.ToSqlColumnDefinition());
         var columnsFromDbAsSql = DbColumnMetaData.ColumnMetaDatas(Connection, tempTableName).ArraySelect(c => c.ToSqlColumnDefinition());
 
-        PAssert.That(() => columnsFromCodeAsSql.SequenceEqual(columnsFromDbAsSql));
+        PAssert.That(() => columnsFromCodeAsSql.AsEnumerable().SequenceEqual(columnsFromDbAsSql));
     }
 
     [Fact]

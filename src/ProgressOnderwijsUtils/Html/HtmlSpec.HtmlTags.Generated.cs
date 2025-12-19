@@ -261,6 +261,9 @@ public static class Tags
     ///<summary>List box control. See: <a href="https://html.spec.whatwg.org/#the-select-element">https://html.spec.whatwg.org/#the-select-element</a><br /></summary>
     public static readonly HtmlTagKinds.SELECT _select = new HtmlTagKinds.SELECT();
 
+    ///<summary>Mirrors content from an option. See: <a href="https://html.spec.whatwg.org/#the-selectedcontent-element">https://html.spec.whatwg.org/#the-selectedcontent-element</a><br /></summary>
+    public static readonly HtmlTagKinds.SELECTEDCONTENT _selectedcontent = new HtmlTagKinds.SELECTEDCONTENT();
+
     ///<summary>Shadow tree slot. See: <a href="https://html.spec.whatwg.org/#the-slot-element">https://html.spec.whatwg.org/#the-slot-element</a><br /></summary>
     public static readonly HtmlTagKinds.SLOT _slot = new HtmlTagKinds.SLOT();
 

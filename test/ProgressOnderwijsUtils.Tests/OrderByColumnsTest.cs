@@ -16,7 +16,7 @@ public sealed class OrderByColumnsTest
     [Fact]
     public void BasicOrderingOk()
         //check that order works as exepcted:
-        => PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
+        => PAssert.That(() => colSort.Columns.AsEnumerable().SequenceEqual(someOrder));
 
     [Fact]
     public void SortDirectionOk()
@@ -42,7 +42,7 @@ public sealed class OrderByColumnsTest
             _ = colSort.ToggleSortDirection(col.ColumnName.AssertNotNull()); //we're testing if this really is pure.
         }
 
-        PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD, }));
+        PAssert.That(() => colSort.Columns.AsEnumerable().SequenceEqual(new[] { ziggyA, abcA, acolD, }));
         PAssert.That(() => Equals(colSort, new OrderByColumns(new[] { ziggyA, abcA, acolD, })));
     }
 
@@ -63,9 +63,9 @@ public sealed class OrderByColumnsTest
     public void ToggleOk()
     {
         //verify that toggling adds if not present:
-        PAssert.That(() => colSort.ToggleSortDirection("monster").Columns.SequenceEqual(new[] { monsterD, ziggyA, abcA, acolD, }));
+        PAssert.That(() => colSort.ToggleSortDirection("monster").Columns.AsEnumerable().SequenceEqual(new[] { monsterD, ziggyA, abcA, acolD, }));
         //verify that toggling moves to front and flips direction if present:
-        PAssert.That(() => colSort.ToggleSortDirection("acol").Columns.SequenceEqual(new[] { acolA, ziggyA, abcA, }));
+        PAssert.That(() => colSort.ToggleSortDirection("acol").Columns.AsEnumerable().SequenceEqual(new[] { acolA, ziggyA, abcA, }));
     }
 
     [Fact]

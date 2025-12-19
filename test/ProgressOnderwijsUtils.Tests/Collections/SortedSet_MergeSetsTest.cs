@@ -73,7 +73,7 @@ public sealed class SortedSet_MergeSetsTest
         var setA = IntSet.FromValues([3, 5, 2, 9, 9,]);
         var setB = IntSet.FromValues([2, 8, 7, 6, 2,]);
         var output = IntSet.Algorithms.Merge_RemovingDuplicates(setA.ValuesInOrder, setB.ValuesInOrder);
-        PAssert.That(() => output.SequenceEqual(new[] { 2, 3, 5, 6, 7, 8, 9, }));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(new[] { 2, 3, 5, 6, 7, 8, 9, }));
     }
 
     static int[] ToOrderedSetOfBits(int value)
@@ -95,7 +95,7 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void Exhaustive5bitTwoWayMergeCheck()
     {
-        PAssert.That(() => ToOrderedSetOfBits((1 << 1) + (1 << 2) + (1 << 4) + (1 << 7)).SequenceEqual(new[] { 1, 2, 4, 7, }));
+        PAssert.That(() => ToOrderedSetOfBits((1 << 1) + (1 << 2) + (1 << 4) + (1 << 7)).AsEnumerable().SequenceEqual(new[] { 1, 2, 4, 7, }));
         var sets = Enumerable.Range(0, 32).Select(num => new { num, setOfBits = ToOrderedSetOfBits(num), }).ToArray();
 
         foreach (var a in sets) {
@@ -103,7 +103,7 @@ public sealed class SortedSet_MergeSetsTest
                 var expected = sets[a.num | b.num].setOfBits;
                 var setA = a.setOfBits;
                 var setB = b.setOfBits;
-                PAssert.That(() => IntSet.Algorithms.Merge_RemovingDuplicates(setA, setB).SequenceEqual(expected));
+                PAssert.That(() => IntSet.Algorithms.Merge_RemovingDuplicates(setA, setB).AsEnumerable().SequenceEqual(expected));
             }
         }
     }

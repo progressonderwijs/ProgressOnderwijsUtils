@@ -9,9 +9,7 @@ public abstract class DbDataReaderBase : DbDataReader
         long read = 0;
         var data = (byte[])GetValue(ordinal);
         while (read < length && read + dataOffset < data.Length) {
-            if (buffer != null) {
-                buffer[bufferOffset + read] = data[dataOffset + read];
-            }
+            buffer?[bufferOffset + read] = data[dataOffset + read];
             ++read;
         }
         return read;

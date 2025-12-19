@@ -22,7 +22,7 @@ public sealed class OrderByTopologyTest
     {
         var example = new[] { "a", "b", "d", "c", };
         var (cycleDetected, ordered) = example.OrderByTopology(_ => Array.Empty<string>());
-        PAssert.That(() => cycleDetected == false && ordered.SequenceEqual(example));
+        PAssert.That(() => cycleDetected == false && ordered.AsEnumerable().SequenceEqual(example));
     }
 
     [Fact]

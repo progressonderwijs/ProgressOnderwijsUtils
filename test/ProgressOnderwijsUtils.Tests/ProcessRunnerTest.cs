@@ -25,8 +25,8 @@ public sealed class ProcessRunnerTest
             var stdErr = await result.StdError();
             var stdOut = await result.StdOutput();
             PAssert.That(() => exitCode == 4);
-            PAssert.That(() => stdErr.SequenceEqual(new[] { "Invalid number of parameters", }));
-            PAssert.That(() => stdOut.SequenceEqual(new[] { "0 File(s) copied", }));
+            PAssert.That(() => stdErr.AsEnumerable().SequenceEqual(new[] { "Invalid number of parameters", }));
+            PAssert.That(() => stdOut.AsEnumerable().SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {
@@ -48,7 +48,7 @@ public sealed class ProcessRunnerTest
 
             result.WriteToConsoleWithPrefix("x");
             var stdOut = await result.StdOutput();
-            PAssert.That(() => stdOut.SequenceEqual(new[] { "0 File(s) copied", }));
+            PAssert.That(() => stdOut.AsEnumerable().SequenceEqual(new[] { "0 File(s) copied", }));
         }
 
         try {

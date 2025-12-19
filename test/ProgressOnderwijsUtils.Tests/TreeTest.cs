@@ -163,7 +163,7 @@ public sealed class TreeTest
     {
         var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => Tree.Node(value, newKids).AsSingletonArray());
         var expected = Tree.Node(1L).AsSingletonArray();
-        PAssert.That(() => output.SequenceEqual(expected));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class TreeTest
             Tree.Node(2L, Tree.Node(4L), Tree.Node(5L)),
             Tree.Node(3L, Tree.Node(4L), Tree.Node(5L)),
         };
-        PAssert.That(() => output.SequenceEqual(expected));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -200,7 +200,7 @@ public sealed class TreeTest
         var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), }.Where(_ => oldNode.NodeValue != 1).ToArray());
         // ReSharper disable once CollectionNeverUpdated.Local
         var expected = Array.Empty<Tree<long>>();
-        PAssert.That(() => output.SequenceEqual(expected));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -225,7 +225,7 @@ public sealed class TreeTest
         var expected = new[] {
             Tree.Node(1L, Tree.Node(3L, Tree.Node(5L))),
         };
-        PAssert.That(() => output.SequenceEqual(expected));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -240,7 +240,7 @@ public sealed class TreeTest
         var n3 = Tree.Node(3L, n5, n5);
         var n1 = Tree.Node(1L, n3, n3);
         var expected = new[] { n1, n1, };
-        PAssert.That(() => output.SequenceEqual(expected));
+        PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]

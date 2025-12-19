@@ -336,7 +336,7 @@ public sealed class ParameterizedSqlTest
             ('a', SqlDbType.NVarChar),
             ("$@", SqlDbType.NVarChar),
         };
-        PAssert.That(() => generatedParameters.SequenceEqual(expectedParameters));
+        PAssert.That(() => generatedParameters.AsEnumerable().SequenceEqual(expectedParameters));
     }
 
     [Fact]

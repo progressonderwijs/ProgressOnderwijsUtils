@@ -319,7 +319,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
 
         var middle = pocos[2];
         var uints = SQL($"select AshorterVersion from {tableName} where Version > {middle.Version} and AnotherVersion >= {pocos[3].AnotherVersion} order by Version").ReadPlain<uint>(Connection);
-        PAssert.That(() => uints.SequenceEqual(new[] { 1000000u, 100000000u, }));
+        PAssert.That(() => uints.AsEnumerable().SequenceEqual(new[] { 1000000u, 100000000u, }));
     }
 
     [Fact]
@@ -365,7 +365,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var actualWithoutRowversion = rowsAfterBulkInsert.Select(rec => rec with { Version = 0, }); //can't predict roversion, just its ordering
 
         PAssert.That(() => actualWithoutRowversion.SequenceEqual(expected));
-        PAssert.That(() => !rowsAfterBulkInsert.SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
+        PAssert.That(() => !rowsAfterBulkInsert.AsEnumerable().SequenceEqual(expected), "this should differ because the DB should have assigned rowversions");
     }
 
     [Fact]

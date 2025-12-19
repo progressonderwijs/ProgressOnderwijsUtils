@@ -38,6 +38,18 @@ public static class AttributeConstructionMethods
     public static THtmlTag _enterkeyhint<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("enterkeyhint", attrValue);
+    public static THtmlTag _headingoffset<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("headingoffset", attrValue);
+    public static THtmlTag _headingreset<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("headingreset", attrValue ? "" : null);
+    public static THtmlTag _headingreset<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("headingreset", "");
+    public static THtmlTag _headingreset<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("headingreset", attrValue);
     public static THtmlTag _hidden<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("hidden", attrValue);

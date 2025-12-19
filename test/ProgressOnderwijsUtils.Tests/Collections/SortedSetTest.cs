@@ -22,7 +22,7 @@ public sealed class SortedSetTest
     public void IdenticalValuesAreRemoved()
     {
         var set = IntSet.FromValues(new[] { 1, 2, 3, 3, 2, 1, });
-        PAssert.That(() => set.ValuesInOrder.SequenceEqual(new[] { 1, 2, 3, }));
+        PAssert.That(() => set.ValuesInOrder.AsEnumerable().SequenceEqual(new[] { 1, 2, 3, }));
     }
 
     [Fact]

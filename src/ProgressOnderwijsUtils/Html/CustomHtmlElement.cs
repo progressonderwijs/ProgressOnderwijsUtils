@@ -47,9 +47,7 @@ public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtm
     public IHtmlElement Canonicalize()
     {
         var tagDescription = TagDescription.LookupTag(TagName);
-        return tagDescription.EmptyValue == null
-            ? this
-            : tagDescription.EmptyValue.ReplaceAttributesAndContents(Attributes, GetContent());
+        return tagDescription.EmptyValue?.ReplaceAttributesAndContents(Attributes, GetContent()) ?? this;
     }
 
     IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change)

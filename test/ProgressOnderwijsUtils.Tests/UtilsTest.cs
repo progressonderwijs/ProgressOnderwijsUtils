@@ -123,7 +123,7 @@ public sealed class UtilsTest
         Array.Sort(arr, new ComparisonComparer<(int, int)>((a, b) => Math.Abs(a.Item1 - a.Item2).CompareTo(Math.Abs(b.Item1 - b.Item2))));
 
         var expected = new[] { (1, 2), (3, 7), (9, 3), (1, 200), };
-        PAssert.That(() => arr.SequenceEqual(expected));
+        PAssert.That(() => arr.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]

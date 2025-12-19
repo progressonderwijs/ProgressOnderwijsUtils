@@ -15,12 +15,12 @@ public static class ToStringInvariantExtension
     [Pure]
     public static string ToStringInvariant<T>(this T? val)
         where T : struct, IConvertible
-        => val == null ? "" : val.Value.ToString(CultureInfo.InvariantCulture);
+        => val?.ToString(CultureInfo.InvariantCulture) ?? "";
 
     [Pure]
     public static string ToStringInvariant<T>(this T? val, string format)
         where T : struct, IFormattable
-        => val == null ? "" : val.Value.ToString(format, CultureInfo.InvariantCulture);
+        => val?.ToString(format, CultureInfo.InvariantCulture) ?? "";
 
     [Pure]
     [return: NotNullIfNotNull("val")]

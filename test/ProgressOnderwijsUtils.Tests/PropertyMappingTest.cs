@@ -65,7 +65,7 @@ public sealed class PropertyMappingTest
 
         var mapped = PropertyMapper.CreateForIdentityMap<DayOfWeek>().Map(objects);
 
-        PAssert.That(() => objects.SequenceEqual(mapped));
+        PAssert.That(() => objects.AsEnumerable().SequenceEqual(mapped));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public sealed class PropertyMappingTest
 
         var mapped = PropertyMapper.CreateForValue(DateTimeKind.Unspecified).Map(objects);
 
-        PAssert.That(() => mapped.SequenceEqual(expected));
+        PAssert.That(() => mapped.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -165,7 +165,7 @@ public sealed class PropertyMappingTest
             .CloneWithExtraMappers(PropertyMapper.CreateForFunc((DateTimeKind kind) => (DateTimeKind)(((int)kind + 2) % 3)))
             .Map(objects);
 
-        PAssert.That(() => objects.SequenceEqual(copy), "Original objects should not be changed");
+        PAssert.That(() => objects.AsEnumerable().SequenceEqual(copy), "Original objects should not be changed");
 
         var expected = new[] {
             new TestObject {
@@ -180,7 +180,7 @@ public sealed class PropertyMappingTest
             },
         };
 
-        PAssert.That(() => mapped.SequenceEqual(expected));
+        PAssert.That(() => mapped.AsEnumerable().SequenceEqual(expected));
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public sealed class PropertyMappingTest
 
         var mappers = new PropertyMappers();
 
-        PAssert.That(() => mappers.Map(objects).SequenceEqual(original), "Empty mapper does nothing");
+        PAssert.That(() => mappers.Map(objects).AsEnumerable().SequenceEqual(original), "Empty mapper does nothing");
 
         _ = firstMap.AddToPropertyMappers(ref mappers);
 
@@ -205,7 +205,7 @@ public sealed class PropertyMappingTest
             new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Unspecified, },
         };
 
-        PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterFirstMapper));
+        PAssert.That(() => mappers.Map(objects).AsEnumerable().SequenceEqual(expectedAfterFirstMapper));
 
         _ = secondMap.AddToPropertyMappers(ref mappers);
 
@@ -214,7 +214,7 @@ public sealed class PropertyMappingTest
             new TestObject { EnumIntProperty = DayOfWeek.Wednesday, Kind = DateTimeKind.Local, },
         };
 
-        PAssert.That(() => mappers.Map(objects).SequenceEqual(expectedAfterSecondMapper));
+        PAssert.That(() => mappers.Map(objects).AsEnumerable().SequenceEqual(expectedAfterSecondMapper));
     }
 
     [Fact]

@@ -95,14 +95,14 @@ public sealed class EnumerableExtensionsTests
     {
         var sampleNullableData = new[] { 37, default(int?), 42, };
         var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<int>
-        PAssert.That(() => nonNullItems.SequenceEqual(new[] { 37, 42, }));
+        PAssert.That(() => nonNullItems.AsEnumerable().SequenceEqual(new[] { 37, 42, }));
     }
 
     [Fact]
     public void EmptyIfNullOk()
     {
-        PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().SequenceEqual(new[] { 0, 1, 2, }));
-        PAssert.That(() => default(int[]).EmptyIfNull().SequenceEqual(new int[] { }));
+        PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().AsEnumerable().SequenceEqual(new[] { 0, 1, 2, }));
+        PAssert.That(() => default(int[]).EmptyIfNull().AsEnumerable().SequenceEqual(new int[] { }));
         PAssert.That(() => default(int[]) == null);
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
