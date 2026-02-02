@@ -52,6 +52,14 @@ public static class Tree
 public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>, T>
 {
     readonly Tree<T>[] kidArray;
+    public bool isSelectable { get; set; } = true;
+
+    public Tree<T> WithSelectableRows(bool selectable)
+    {
+        isSelectable = selectable;
+        return this;
+    }
+
     public T NodeValue { get; }
 
     public IReadOnlyList<Tree<T>> Children
