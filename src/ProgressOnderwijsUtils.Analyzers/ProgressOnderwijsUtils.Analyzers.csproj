@@ -3,8 +3,8 @@
   <PropertyGroup>
     <Description>Bump dependencies</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Added IfNotFalseAnalyzer</PackageReleaseNotes>
-    <Version>2.1.6</Version>
+    <PackageReleaseNotes>Update Nuget packages</PackageReleaseNotes>
+    <Version>2.2.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
@@ -20,6 +20,10 @@
     <!-- It puts the dll in the expected folder of the NuGet package to be recognized as a C# analyzer -->
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="readme.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103" />
   </ItemGroup>
 
 </Project>
