@@ -14,7 +14,7 @@ public sealed class WebDriverPool : IDisposable
 {
     bool disposed;
     public readonly ConcurrentBag<IWebDriver> cachedIdleDrivers; //TODO: in .net core 3, consider DisposableObjectPool
-    readonly ICommandServer server;
+    readonly DriverService server;
     readonly Func<IWebDriver> driverFactory;
 
     public static WebDriverPool ChromePool((string Name, object Value)[] profilePreferences, string[] arguments)
@@ -32,7 +32,7 @@ public sealed class WebDriverPool : IDisposable
         return new(driverService, () => new ChromeDriver(driverService, driverOptions));
     }
 
-    public WebDriverPool(ICommandServer server, Func<IWebDriver> driverFactory)
+    public WebDriverPool(DriverService server, Func<IWebDriver> driverFactory)
     {
         this.server = server;
         this.driverFactory = driverFactory;
