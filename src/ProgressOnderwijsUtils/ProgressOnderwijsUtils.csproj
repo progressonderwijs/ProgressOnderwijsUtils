@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>114.1.0</Version>
+    <Version>114.2.0</Version>
     <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
@@ -15,18 +15,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="AngleSharp" Version="1.4.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
-    <PackageReference Include="System.Drawing.Common" Version="10.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.4" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.4" />
     <PackageReference Include="System.Reactive" Version="6.1.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
     <PackageReference Include="ExpressionToCodeLib" version="3.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.3" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.4" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.200" />
   </ItemGroup>
 </Project>

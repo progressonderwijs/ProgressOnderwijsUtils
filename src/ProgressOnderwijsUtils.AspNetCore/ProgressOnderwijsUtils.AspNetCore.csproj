@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>10.1.0</Version>
+    <Version>10.2.0</Version>
     <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add NumericEnumBinder and ModelStateFilter.</Description>
@@ -15,6 +15,6 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.200" />
   </ItemGroup>
 </Project>

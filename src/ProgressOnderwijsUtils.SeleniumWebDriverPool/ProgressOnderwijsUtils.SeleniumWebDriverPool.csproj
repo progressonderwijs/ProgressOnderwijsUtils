@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>6.2.0</Version>
+        <Version>6.3.0</Version>
         <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
@@ -14,7 +14,7 @@
         <None Include="readme.md" Pack="true" PackagePath="\" />
     </ItemGroup>
     <ItemGroup>
-      <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.103" />
+      <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.200" />
     </ItemGroup>
 </Project>
 
