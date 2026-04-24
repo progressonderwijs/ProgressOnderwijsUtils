@@ -55,7 +55,7 @@ public readonly struct SqlUnderlyingTypeInfo
 
 public static class SqlSystemTypeIdExtensions
 {
-    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup = {
+    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateTime = {
         //this list is ordered: earlier rows are better matches, and picked first.
         (typeof(bool), SqlSystemTypeId.Bit),
         (typeof(byte), SqlSystemTypeId.TinyInt),
@@ -95,7 +95,7 @@ public static class SqlSystemTypeIdExtensions
     /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
     public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId)
     {
-        foreach (var o in typeLookup) {
+        foreach (var o in typeLookup_DateIsDateTime) {
             if (o.typeId == sqlSystemTypeId) {
                 return new(sqlSystemTypeId, o.clrType);
             }
@@ -116,7 +116,7 @@ public static class SqlSystemTypeIdExtensions
         if (convertedType != null) {
             return convertedType.Value;
         }
-        foreach (var o in typeLookup) {
+        foreach (var o in typeLookup_DateIsDateOnly) {
             if (o.clrType == underlyingType) {
                 return o.typeId;
             }
