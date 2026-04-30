@@ -10,6 +10,7 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
         public decimal? LotsOfMoney { get; set; }
         public double VagueNumber { get; set; }
         public DateTime DateTime { get; set; }
+        public DateOnly DateOnly { get; set; }
         public TimeSpan TimeSpan { get; set; }
     }
 
@@ -46,4 +47,12 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
     [Fact]
     public void NChar_ToSqlColumnDefinition_ExampleWorks()
         => PAssert.That(() => DbColumnMetaData.Create("test", typeof(char), false, null, null).ToSqlColumnDefinition() == $"test NChar(1) collate {DbColumnExtensions.DefaultDbCollation} not null");
+
+    [Fact]
+    public void DateTime_ToSqlColumnDefinition_ExampleWorks()
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(DateTime), false, null, null).ToSqlColumnDefinition() == "test DateTime2 not null");
+
+    [Fact]
+    public void DateOnly_ToSqlColumnDefinition_ExampleWorks()
+        => PAssert.That(() => DbColumnMetaData.Create("test", typeof(DateOnly), false, null, null).ToSqlColumnDefinition() == "test Date not null");
 }
