@@ -242,6 +242,7 @@ public static class ParameterizedSqlObjectMapper
 
     static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding).AssertNotNull();
     static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding).AssertNotNull();
+    static readonly MethodInfo getDateOnly_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetFieldValue), binding).AssertNotNull().MakeGenericMethod(typeof(DateOnly));
     static readonly MethodInfo getUInt64 = ((Func<IDataRecord, int, ulong>)ReadUInt64).Method;
     static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
     static readonly MethodInfo getBytes = ((Func<IDataRecord, int, byte[]>)GetBytes).Method;
@@ -266,6 +267,7 @@ public static class ParameterizedSqlObjectMapper
                 _ when underlyingType == typeof(char[]) => getChars,
                 _ when underlyingType == typeof(TimeSpan) && isSqlDataReader => getTimeSpan_SqlDataReader,
                 _ when underlyingType == typeof(DateTimeOffset) && isSqlDataReader => getDateTimeOffset_SqlDataReader,
+                _ when underlyingType == typeof(DateOnly) && isSqlDataReader => getDateOnly_SqlDataReader,
                 _ when getterMethodsByType.TryGetValue(underlyingType, out var interfaceGetter) => InterfaceMap[interfaceGetter],
                 _ => null,
             };
