@@ -129,8 +129,8 @@ public sealed class FromDbValueConverterTest
         => PAssert.That(() => DbValueConverter.ToDb<int?>(default(TrivialValue<int>?)) == null);
 
     [Fact]
-    public void EnumConvertibleTypesCanNotConvertFomInt()
-        => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<TrivialValue<DayOfWeek>>(3).Value);
+    public void EnumConvertibleTypesCanConvertFomInt()
+        => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<DayOfWeek>>(3).Value == DayOfWeek.Wednesday);
 
     [Fact]
     public void IntConvertibleTypesCanConvertFomEnum()
