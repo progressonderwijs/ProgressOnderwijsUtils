@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Windows.Win32;
 using Windows.Win32.UI.Shell;
 
@@ -9,13 +8,8 @@ public static class BitLocker
     public static int BitlockerStatusOfDriveLetter(char driveLetter)
     {
         var pszPath = $"{driveLetter}:";
-        PInvoke.SHCreateItemFromParsingName(
-            pszPath,
-            null,
-            Guid.Parse(typeof(IShellItem2).GetCustomAttribute<GuidAttribute>().AssertNotNull().Value),
-            out var ppv_Void
-        ).AssertResultOk(nameof(PInvoke.SHCreateItemFromParsingName), pszPath);
-        var ppv = (IShellItem2)ppv_Void;
+        PInvoke.SHCreateItemFromParsingName(pszPath, null, out IShellItem2 ppv)
+            .AssertResultOk(nameof(PInvoke.SHCreateItemFromParsingName), pszPath);
 
         const string pszName = "System.Volume.BitLockerProtection";
         var driveDebugSuffix = "\nfor:" + pszPath;
