@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>10.6.0</Version>
+    <Version>10.7.0</Version>
     <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add NumericEnumBinder and ModelStateFilter.</Description>
@@ -10,7 +10,7 @@
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2025.2.4" />
+    <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
