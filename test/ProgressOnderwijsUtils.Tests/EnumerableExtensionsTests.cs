@@ -124,4 +124,18 @@ public sealed class EnumerableExtensionsTests
         var arr = new[] { 1, 2, 3, };
         PAssert.That(() => arr.ToNullIfEmpty() == arr);
     }
+
+    [Fact]
+    public void ToNullIfEmpty_ICollectionT_ReturnsNullForEmpty()
+    {
+        ICollection<int> empty = new List<int>();
+        PAssert.That(() => empty.ToNullIfEmpty() == null);
+    }
+
+    [Fact]
+    public void ToNullIfEmpty_AllowsNullInput()
+    {
+        int[]? arr = null;
+        PAssert.That(() => arr.ToNullIfEmpty() == null);
+    }
 }

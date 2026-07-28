@@ -262,6 +262,10 @@ public static class EnumerableExtensions
     }
 
     [Pure]
+    public static ICollection<T>? ToNullIfEmpty<T>(this ICollection<T>? collection)
+        => collection is { Count: > 0 } ? collection : null;
+
+    [Pure]
     public static TCollection? ToNullIfEmpty<TCollection>(this TCollection? collection)
         where TCollection : class, ICollection
         => collection is { Count: > 0, } ? collection : null;
