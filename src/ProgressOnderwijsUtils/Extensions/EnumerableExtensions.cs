@@ -93,7 +93,7 @@ public static class EnumerableExtensions
 
     [Pure]
     public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
-        => ContainsDuplicates(list, EqualityComparer<T>.Default);
+        => list.ContainsDuplicates(EqualityComparer<T>.Default);
 
     [Pure]
     public static bool ContainsDuplicates<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer)
@@ -260,4 +260,13 @@ public static class EnumerableExtensions
             return item.ToString();
         }
     }
+
+    [Pure]
+    public static ICollection<T>? ToNullIfEmpty<T>(this ICollection<T>? collection)
+        => collection is { Count: > 0, } ? collection : null;
+
+    [Pure]
+    public static TCollection? ToNullIfEmpty<TCollection>(this TCollection? collection)
+        where TCollection : class, ICollection
+        => collection is { Count: > 0, } ? collection : null;
 }
