@@ -16,6 +16,7 @@ public interface IHasAttr_src { }
 public interface IHasAttr_crossorigin { }
 public interface IHasAttr_preload { }
 public interface IHasAttr_autoplay { }
+public interface IHasAttr_loading { }
 public interface IHasAttr_loop { }
 public interface IHasAttr_muted { }
 public interface IHasAttr_controls { }
@@ -66,7 +67,6 @@ public interface IHasAttr_srcdoc { }
 public interface IHasAttr_sandbox { }
 public interface IHasAttr_allow { }
 public interface IHasAttr_allowfullscreen { }
-public interface IHasAttr_loading { }
 public interface IHasAttr_srcset { }
 public interface IHasAttr_sizes { }
 public interface IHasAttr_usemap { }
@@ -117,6 +117,7 @@ public interface IHasAttr_rowspan { }
 public interface IHasAttr_headers { }
 public interface IHasAttr_shadowrootmode { }
 public interface IHasAttr_shadowrootdelegatesfocus { }
+public interface IHasAttr_shadowrootslotassignment { }
 public interface IHasAttr_shadowrootclonable { }
 public interface IHasAttr_shadowrootserializable { }
 public interface IHasAttr_shadowrootcustomelementregistry { }
