@@ -60,4 +60,28 @@ public static class DateTimeExtensionsTest
 
     static void AssertOverlapt(DateTimeExtensions.Periode periode1, DateTimeExtensions.Periode periode2, bool uitkomst)
         => PAssert.That(() => periode1.Overlapt(periode2) == uitkomst);
+
+    [Fact]
+    public static void ToDateOnly_ReturnsCorrectDateOnly()
+    {
+        var dateTime = new DateTime(2024, 3, 15, 10, 30, 45);
+        var result = dateTime.ToDateOnly();
+        PAssert.That(() => result == new DateOnly(2024, 3, 15));
+    }
+
+    [Fact]
+    public static void ToDateOnly_Nullable_WithValue_ReturnsCorrectDateOnly()
+    {
+        DateTime? dateTime = new DateTime(2024, 3, 15, 10, 30, 45);
+        var result = dateTime.ToDateOnly();
+        PAssert.That(() => result == new DateOnly(2024, 3, 15));
+    }
+
+    [Fact]
+    public static void ToDateOnly_Nullable_WithNull_ReturnsNull()
+    {
+        DateTime? dateTime = null;
+        var result = dateTime.ToDateOnly();
+        PAssert.That(() => result == null);
+    }
 }
