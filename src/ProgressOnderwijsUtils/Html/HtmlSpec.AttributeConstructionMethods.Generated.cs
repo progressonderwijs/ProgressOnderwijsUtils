@@ -173,6 +173,9 @@ public static class AttributeConstructionMethods
     public static THtmlTag _autoplay<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_autoplay, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("autoplay", attrValue);
+    public static THtmlTag _loading<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_loading, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("loading", attrValue);
     public static THtmlTag _loop<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_loop, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("loop", attrValue ? "" : null);
@@ -371,9 +374,6 @@ public static class AttributeConstructionMethods
     public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("allowfullscreen", attrValue);
-    public static THtmlTag _loading<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-        where THtmlTag : struct, IHasAttr_loading, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("loading", attrValue);
     public static THtmlTag _srcset<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_srcset, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("srcset", attrValue);
@@ -596,6 +596,9 @@ public static class AttributeConstructionMethods
     public static THtmlTag _shadowrootdelegatesfocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootdelegatesfocus, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootdelegatesfocus", attrValue);
+    public static THtmlTag _shadowrootslotassignment<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_shadowrootslotassignment, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootslotassignment", attrValue);
     public static THtmlTag _shadowrootclonable<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootclonable, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootclonable", attrValue ? "" : null);

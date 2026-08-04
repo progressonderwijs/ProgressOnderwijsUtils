@@ -57,30 +57,30 @@ public sealed class UriExtensionsTest
     }
 
     [Fact]
-    public async Task IsPlausibleHttpUriForWebContent_valid()
+    public async Task IsPlausibleHttpUriForWebContentAsync_valid()
     {
-        var valid = await new Uri("https://medium.com/").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+        var valid = await new Uri("https://medium.com/").IsPlausibleHttpUriForWebContentAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
         PAssert.That(() => valid == true);
     }
 
     [Fact]
-    public async Task IsPlausibleHttpUriForWebContent_invalid()
+    public async Task IsPlausibleHttpUriForWebContentAsync_invalid()
     {
-        var valid = await new Uri("https://sadfn48jf0qej0938hc0iasc8378r3jdm498m08vm084mf.com").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
+        var valid = await new Uri("https://sadfn48jf0qej0938hc0iasc8378r3jdm498m08vm084mf.com").IsPlausibleHttpUriForWebContentAsync(new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token);
         PAssert.That(() => valid == false);
     }
 
     [Fact]
-    public async Task IsPlausibleHttpUriForWebContent_rejectsFileUri()
+    public async Task IsPlausibleHttpUriForWebContentAsync_rejectsFileUri()
     {
-        var valid = await new Uri(@"C:\file.txt").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
+        var valid = await new Uri(@"C:\file.txt").IsPlausibleHttpUriForWebContentAsync(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
         PAssert.That(() => valid == false);
     }
 
     [Fact]
-    public async Task IsPlausibleHttpUriForWebContent_rejectsOddPort()
+    public async Task IsPlausibleHttpUriForWebContentAsync_rejectsOddPort()
     {
-        var valid = await new Uri("https://medium.com:1234/weird").IsPlausibleHttpUriForWebContent(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
+        var valid = await new Uri("https://medium.com:1234/weird").IsPlausibleHttpUriForWebContentAsync(new CancellationTokenSource(TimeSpan.FromSeconds(1)).Token);
         PAssert.That(() => valid == false);
     }
 }

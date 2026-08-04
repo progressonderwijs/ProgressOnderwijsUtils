@@ -256,6 +256,7 @@ public static class AttributeLookupTable
                 ["crossorigin"] = "_crossorigin",
                 ["preload"] = "_preload",
                 ["autoplay"] = "_autoplay",
+                ["loading"] = "_loading",
                 ["loop"] = "_loop",
                 ["muted"] = "_muted",
                 ["controls"] = "_controls"
@@ -1822,6 +1823,7 @@ public static class AttributeLookupTable
                 ["crossorigin"] = "_crossorigin",
                 ["usemap"] = "_usemap",
                 ["ismap"] = "_ismap",
+                ["controls"] = "_controls",
                 ["width"] = "_width",
                 ["height"] = "_height",
                 ["referrerpolicy"] = "_referrerpolicy",
@@ -3531,6 +3533,7 @@ public static class AttributeLookupTable
                 ["writingsuggestions"] = "_writingsuggestions",
                 ["shadowrootmode"] = "_shadowrootmode",
                 ["shadowrootdelegatesfocus"] = "_shadowrootdelegatesfocus",
+                ["shadowrootslotassignment"] = "_shadowrootslotassignment",
                 ["shadowrootclonable"] = "_shadowrootclonable",
                 ["shadowrootserializable"] = "_shadowrootserializable",
                 ["shadowrootcustomelementregistry"] = "_shadowrootcustomelementregistry"
@@ -3960,6 +3963,7 @@ public static class AttributeLookupTable
                 ["preload"] = "_preload",
                 ["autoplay"] = "_autoplay",
                 ["playsinline"] = "_playsinline",
+                ["loading"] = "_loading",
                 ["loop"] = "_loop",
                 ["muted"] = "_muted",
                 ["controls"] = "_controls",

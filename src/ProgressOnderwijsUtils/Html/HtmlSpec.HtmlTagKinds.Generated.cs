@@ -128,7 +128,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(ASIDE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, ASIDE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct AUDIO : IHtmlElementAllowingContent<AUDIO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls
+    public struct AUDIO : IHtmlElementAllowingContent<AUDIO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_loading, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls
     {
         public string TagName => "audio";
         string IHtmlElement.TagStart => "<audio";
@@ -1058,7 +1058,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_decoding, IHasAttr_loading, IHasAttr_fetchpriority
+    public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_controls, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_decoding, IHasAttr_loading, IHasAttr_fetchpriority
     {
         public string TagName => "img";
         string IHtmlElement.TagStart => "<img";
@@ -2051,7 +2051,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>, IHasAttr_shadowrootmode, IHasAttr_shadowrootdelegatesfocus, IHasAttr_shadowrootclonable, IHasAttr_shadowrootserializable, IHasAttr_shadowrootcustomelementregistry
+    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>, IHasAttr_shadowrootmode, IHasAttr_shadowrootdelegatesfocus, IHasAttr_shadowrootslotassignment, IHasAttr_shadowrootclonable, IHasAttr_shadowrootserializable, IHasAttr_shadowrootcustomelementregistry
     {
         public string TagName => "template";
         string IHtmlElement.TagStart => "<template";
@@ -2300,7 +2300,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(VAR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, VAR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct VIDEO : IHtmlElementAllowingContent<VIDEO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_poster, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_playsinline, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls, IHasAttr_width, IHasAttr_height
+    public struct VIDEO : IHtmlElementAllowingContent<VIDEO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_poster, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_playsinline, IHasAttr_loading, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls, IHasAttr_width, IHasAttr_height
     {
         public string TagName => "video";
         string IHtmlElement.TagStart => "<video";

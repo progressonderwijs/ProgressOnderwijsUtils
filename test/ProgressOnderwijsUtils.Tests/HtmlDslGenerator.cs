@@ -38,7 +38,7 @@ public sealed class HtmlDslGenerator
             await File.WriteAllTextAsync(localCache.LocalPath, freshContent);
         }
         var content = await File.ReadAllTextAsync(localCache.LocalPath);
-        var document = new HtmlParser().ParseDocument(content);
+        var document = await new HtmlParser().ParseDocumentAsync(content);
 
         var voidElements = (document.GetElementById("void-elements")?.ParentElement?.NextElementSibling?.TextContent.Split(',').Select(s => s.Trim()).ToArray()).AssertNotNull();
         var tableOfElements = document.QuerySelectorAll("h3#elements-3 + p + table").Single();

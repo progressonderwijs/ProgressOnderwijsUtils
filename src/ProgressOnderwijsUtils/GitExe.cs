@@ -30,6 +30,7 @@ public sealed class GitExe
             WorkingDirectory = WorkingTree.LocalPath,
         }.StartProcess(CancellationToken.None);
 
+    #pragma warning disable VSTHRD002 // Synchronously waiting on tasks - intentionally synchronous API
     public AsyncProcessResult Git_AssertSuccess(string arguments)
     {
         var gitMayFail = Git_MayFail(arguments);
@@ -52,17 +53,22 @@ public sealed class GitExe
         var result = Git_MayFail("rev-parse --verify HEAD");
         return Maybe.Either(result.ExitCode.GetAwaiter().GetResult() == 0, result.StdOutput().GetAwaiter().GetResult().JoinStrings("\n").Trim(), Unit.Value);
     }
+#pragma warning restore VSTHRD002
 
+#pragma warning disable VSTHRD003, VSTHRD111, VSTHRD200 // Process tasks are safe; naming is intentional
     public async Task<bool> IsUpToDateWithOriginBranch(string sourceBranch)
-        => await Git_MayFail($"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode == 0
-            && await Git_MayFail($"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode == 0;
+        => await Git_MayFail($"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode.ConfigureAwait(false) == 0
+            && await Git_MayFail($"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode.ConfigureAwait(false) == 0;
+#pragma warning restore VSTHRD003, VSTHRD111, VSTHRD200
 
+#pragma warning disable VSTHRD002 // Synchronously waiting on tasks - intentionally synchronous API
     public bool IsRefMergeable_AndResetWorkingCopy(string gitRef)
     {
         var isExistingPrMergeable = Git_MayFail($"merge --no-commit --no-ff \"{gitRef}\"").ExitCode.GetAwaiter().GetResult() == 0;
         _ = Git_AssertSuccess("reset --hard");
         return isExistingPrMergeable;
     }
+#pragma warning restore VSTHRD002
 
     public sealed record TemporaryWorkTree(GitExe Parent, GitExe WorkTree) : IDisposable
     {

@@ -160,9 +160,11 @@ public sealed class AsyncProcessResult
         _ = Output.Subscribe(outputStreamEvent => Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line));
     }
 
-    public Task<string[]> StdOutput()
-        => Output.Where(o => o.Kind == ProcessOutputKind.StdOutput).Select(o => o.Line).ToArray().ToTask();
+    #pragma warning disable VSTHRD200 // Naming convention - not renaming as it would be a breaking change
+        public Task<string[]> StdOutput()
+            => Output.Where(o => o.Kind == ProcessOutputKind.StdOutput).Select(o => o.Line).ToArray().ToTask();
 
-    public Task<string[]> StdError()
-        => Output.Where(o => o.Kind == ProcessOutputKind.StdError).Select(o => o.Line).ToArray().ToTask();
+        public Task<string[]> StdError()
+            => Output.Where(o => o.Kind == ProcessOutputKind.StdError).Select(o => o.Line).ToArray().ToTask();
+    #pragma warning restore VSTHRD200
 }

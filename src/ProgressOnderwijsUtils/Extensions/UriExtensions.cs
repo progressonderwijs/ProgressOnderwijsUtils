@@ -37,14 +37,14 @@ public static class UriExtensions
     /// <summary>
     /// Returns true if resolvable in the given deadline; null if cancelled, and false if resolution fails.
     /// </summary>
-    public static async Task<bool?> IsPlausibleHttpUriForWebContent(this Uri url, CancellationToken token)
+    public static async Task<bool?> IsPlausibleHttpUriForWebContentAsync(this Uri url, CancellationToken token)
     {
         if (url is not ({ Scheme: "http", Port: 80, } or { Scheme: "https", Port: 443, })) {
             return false;
         }
 
         try {
-            _ = (await Dns.GetHostAddressesAsync(url.Host, token)).First();
+            _ = (await Dns.GetHostAddressesAsync(url.Host, token).ConfigureAwait(false)).First();
             return true;
         } catch (Exception) when (token.IsCancellationRequested) {
             return null;

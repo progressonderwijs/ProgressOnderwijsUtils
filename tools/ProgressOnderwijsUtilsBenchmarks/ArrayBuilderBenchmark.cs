@@ -1,3 +1,4 @@
+#pragma warning disable VSTHRD002, VSTHRD105 // Benchmarks intentionally use synchronous task waits
 // ReSharper disable ClassCanBeSealed.Global  - for Benchmark.NET
 
 namespace ProgressOnderwijsUtilsBenchmarks;
