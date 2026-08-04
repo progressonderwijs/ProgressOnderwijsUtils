@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
     <Description>Bump dependencies</Description>
@@ -7,6 +7,7 @@
     <Version>2.9.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <NoWarn>RS1038</NoWarn>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
   </PropertyGroup>
 
