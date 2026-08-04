@@ -699,6 +699,12 @@ dotnet_diagnostic.xunit2017.severity = error
 dotnet_diagnostic.xunit2013.severity = error
 dotnet_diagnostic.xunit2011.severity = error
 dotnet_diagnostic.xunit2008.severity = error
+dotnet_diagnostic.VSTHRD111.severity = warning
+
+[test/**]
+dotnet_diagnostic.VSTHRD111.severity = none
+dotnet_diagnostic.VSTHRD003.severity = none
+dotnet_diagnostic.VSTHRD200.severity = none
 
 #### Naming styles ####
 
