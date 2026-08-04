@@ -18,4 +18,16 @@ public static class DateTimeExtensions
         => periode1.DatumVan < periode2.DatumTot && periode1.DatumTot > periode2.DatumVan;
 
     public sealed record Periode(DateTime DatumVan, DateTime DatumTot);
+
+    extension(DateTime datetime)
+    {
+        public DateOnly ToDateOnly()
+            => DateOnly.FromDateTime(datetime);
+    }
+
+    extension(DateTime? datetime)
+    {
+        public DateOnly? ToDateOnly()
+            => datetime is { } dt ? dt.ToDateOnly() : null;
+    }
 }
