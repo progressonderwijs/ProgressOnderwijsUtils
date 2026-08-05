@@ -37,7 +37,7 @@ public static partial class ParameterizedSqlObjectMapper
         SqlConnection sqlConn,
         IBufferWriter<byte> buffer,
         JsonWriterOptions options,
-        CancellationToken cancel,
+        CancellationToken cancel = default,
         JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         bool rowVersionAsNumber = false)
         => q.OfJson().ExecuteAsync(sqlConn, buffer, options, cancel, defaultIgnoreCondition, rowVersionAsNumber);

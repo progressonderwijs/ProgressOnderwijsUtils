@@ -139,7 +139,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var pipe = new Pipe();
-        await SQL($"select t.* from #ReadJsonTest t").ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken);
+#pragma warning disable VSTHRD103 // Intentionally testing the synchronous ReadJson path
+        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+#pragma warning restore VSTHRD103
         await pipe.Writer.CompleteAsync();
 
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
