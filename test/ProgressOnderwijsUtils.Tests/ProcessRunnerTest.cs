@@ -76,7 +76,7 @@ public sealed class ProcessRunnerTest
         var elapsedAfterFirstOutput = timer.Elapsed;
         PAssert.That(() => hasStartedPinging && !result.ExitCode.IsCompleted && elapsedAfterFirstOutput < TimeSpan.FromSeconds(4));
         await cancel.CancelAsync();
-        await result.ExitCode.ConfigureAwait(false);
+        await result.ExitCode.ConfigureAwait(true);
 
         var elapsedAfterExit = timer.Elapsed;
         PAssert.That(() => result.ExitCode.IsCompleted && elapsedAfterExit < TimeSpan.FromSeconds(8));
