@@ -227,7 +227,7 @@ public sealed class IfNotFalseAnalyzerTests
             var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
             PAssert.That(() => fixesMade == 1);
 
-            var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+            var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
             var resultText = result.ToString().Replace("\r\n", "\n");
             Assert.Equal(test.Expected, resultText);
         }

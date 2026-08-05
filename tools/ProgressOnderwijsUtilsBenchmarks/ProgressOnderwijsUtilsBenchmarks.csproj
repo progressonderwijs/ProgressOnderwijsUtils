@@ -1,9 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../../src/Common.props" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TieredCompilation>false</TieredCompilation>
+    <StartupObject>ProgressOnderwijsUtilsBenchmarks.BenchmarkProgram</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />

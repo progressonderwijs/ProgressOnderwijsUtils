@@ -103,7 +103,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
         pipe.Writer.Complete();
 
-        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
+        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().Buffer));
     }
 
     enum ReadJsonPocoTestId { }
@@ -139,7 +139,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         pipe.Writer.Complete();
 
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().Buffer);
         foreach (var line in json.Split("\r\n").Where(l => l.Contains(":"))) {
             PAssert.That(() => line.Split(": ", StringSplitOptions.None)[1].Contains("+"));
         }
@@ -203,7 +203,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         var pipe = new Pipe();
         query.ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.WhenWritingNull, true);
         pipe.Writer.Complete();
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
 
         PAssert.That(() => jsonPocos.Length == pocos.Length);
@@ -248,7 +248,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
         pipe.Writer.Complete();
 
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().Buffer);
         ApprovalTest.CreateHere().AssertUnchangedAndSave(json);
     }
 }

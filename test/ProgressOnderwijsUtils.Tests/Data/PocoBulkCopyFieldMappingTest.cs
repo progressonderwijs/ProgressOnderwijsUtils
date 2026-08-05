@@ -32,14 +32,14 @@ public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
     public void Exact_mapping_gives_exception_on_less_columns()
     {
         var bulkInsertTarget = CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.ExactMatch, };
-        _ = Assert.Throws<InvalidOperationException>(() => bulkInsertTarget.BulkInsert(Connection, new[] { new LessColumns { Id = 37, SomeColumn = 42, }, }));
+        _ = Assert.Throws<InvalidOperationException>(() => bulkInsertTarget.BulkInsert(Connection, new[] { new LessColumns { Id = 37, SomeColumn = 42, }, }, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     [Fact]
     public void Exact_mapping_gives_exception_on_more_columns()
     {
         var bulkInsertTarget = CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.ExactMatch, };
-        _ = Assert.Throws<InvalidOperationException>(() => bulkInsertTarget.BulkInsert(Connection, new[] { new MoreColumns(), }));
+        _ = Assert.Throws<InvalidOperationException>(() => bulkInsertTarget.BulkInsert(Connection, new[] { new MoreColumns(), }, cancellationToken: TestContext.Current.CancellationToken));
     }
 
     BulkInsertTarget CreateTargetTable()
@@ -60,43 +60,43 @@ public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
     [Fact]
     public void Exact_mapping_works_when_mapping_is_exact()
     {
-        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.ExactMatch, }).BulkInsert(Connection, new[] { new ExactMapping(), });
+        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.ExactMatch, }).BulkInsert(Connection, new[] { new ExactMapping(), }, cancellationToken: TestContext.Current.CancellationToken);
         PAssert.That(() => ExactMapping.Load(Connection).Any());
     }
 
     [Fact]
     public void AllowExtraDatabaseColumns_mapping_gives_exception_on_more_columns()
-        => Assert.Throws<InvalidOperationException>(() => (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new MoreColumns(), }));
+        => Assert.Throws<InvalidOperationException>(() => (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new MoreColumns(), }, cancellationToken: TestContext.Current.CancellationToken));
 
     [Fact]
     public void AllowExtraDatabaseColumns_mapping_works_on_less_columns()
     {
-        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new LessColumns(), });
+        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new LessColumns(), }, cancellationToken: TestContext.Current.CancellationToken);
         PAssert.That(() => ExactMapping.Load(Connection).Any());
     }
 
     [Fact]
     public void AllowExtraDatabaseColumns_mapping_works_when_mapping_is_exact()
     {
-        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new ExactMapping(), });
+        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraDatabaseColumns, }).BulkInsert(Connection, new[] { new ExactMapping(), }, cancellationToken: TestContext.Current.CancellationToken);
         PAssert.That(() => ExactMapping.Load(Connection).Any());
     }
 
     [Fact]
     public void AllowExtraPocoProperties_mapping_gives_exception_on_less_columns()
-        => Assert.Throws<InvalidOperationException>(() => (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new LessColumns(), }));
+        => Assert.Throws<InvalidOperationException>(() => (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new LessColumns(), }, cancellationToken: TestContext.Current.CancellationToken));
 
     [Fact]
     public void AllowExtraPocoProperties_mapping_works_on_more_columns()
     {
-        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new MoreColumns(), });
+        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new MoreColumns(), }, cancellationToken: TestContext.Current.CancellationToken);
         PAssert.That(() => ExactMapping.Load(Connection).Any());
     }
 
     [Fact]
     public void AllowExtraPocoProperties_mapping_works_when_mapping_is_exact()
     {
-        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new ExactMapping(), });
+        (CreateTargetTable() with { Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties, }).BulkInsert(Connection, new[] { new ExactMapping(), }, cancellationToken: TestContext.Current.CancellationToken);
         PAssert.That(() => ExactMapping.Load(Connection).Any());
     }
 }

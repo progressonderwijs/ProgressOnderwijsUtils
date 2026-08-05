@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using Xunit;
@@ -49,7 +50,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -91,7 +92,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -133,7 +134,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -172,7 +173,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -211,7 +212,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -360,7 +361,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
@@ -403,7 +404,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
-        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+        var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
         Assert.Equal(
             """
             #nullable enable
