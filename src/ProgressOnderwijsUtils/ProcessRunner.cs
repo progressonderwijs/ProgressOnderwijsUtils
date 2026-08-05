@@ -66,8 +66,7 @@ public struct ProcessStartSettings
             MarkOnePartClosed();
         };
 
-        var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
-            observer => {
+        var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
                 proc.OutputDataReceived += (_, e) => {
                     if (e.Data == null) {
                         observer.OnCompleted();
@@ -79,8 +78,7 @@ public struct ProcessStartSettings
                 return Disposable.Empty;
             }
         );
-        var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
-            observer => {
+        var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
                 proc.ErrorDataReceived += (_, e) => {
                     if (e.Data == null) {
                         observer.OnCompleted();
@@ -160,11 +158,11 @@ public sealed class AsyncProcessResult
         _ = Output.Subscribe(outputStreamEvent => Console.WriteLine(prefixWithSpace + Utils.ToFixedPointString(outputStreamEvent.OutputMoment.TotalSeconds, culture, 4) + (outputStreamEvent.Kind == ProcessOutputKind.StdOutput ? "> " : "! ") + outputStreamEvent.Line));
     }
 
-    #pragma warning disable VSTHRD200 // Naming convention - not renaming as it would be a breaking change
-        public Task<string[]> StdOutput()
-            => Output.Where(o => o.Kind == ProcessOutputKind.StdOutput).Select(o => o.Line).ToArray().ToTask();
+#pragma warning disable VSTHRD200 // Naming convention - not renaming as it would be a breaking change
+    public Task<string[]> StdOutput()
+        => Output.Where(o => o.Kind == ProcessOutputKind.StdOutput).Select(o => o.Line).ToArray().ToTask();
 
-        public Task<string[]> StdError()
-            => Output.Where(o => o.Kind == ProcessOutputKind.StdError).Select(o => o.Line).ToArray().ToTask();
-    #pragma warning restore VSTHRD200
+    public Task<string[]> StdError()
+        => Output.Where(o => o.Kind == ProcessOutputKind.StdError).Select(o => o.Line).ToArray().ToTask();
+#pragma warning restore VSTHRD200
 }
