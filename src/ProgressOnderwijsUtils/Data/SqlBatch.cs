@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Data.Common;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils;
 
@@ -117,6 +118,19 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
         using var cmd = this.ReusableCommand(conn);
         try {
             var value = cmd.Command.ExecuteScalar();
+
+            return DbValueConverter.FromDb<T>(value);
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
+
+    [MustUseReturnValue]
+    public async Task<T?> ExecuteAsync(SqlConnection conn, CancellationToken cancellationToken = default)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            var value = await cmd.Command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
 
             return DbValueConverter.FromDb<T>(value);
         } catch (Exception e) {
