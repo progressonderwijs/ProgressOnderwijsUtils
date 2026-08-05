@@ -15,7 +15,7 @@ public sealed class SecurityHeadersMiddleware
         this.options = options;
     }
 
-    public Task Invoke(HttpContext context)
+    public Task InvokeAsync(HttpContext context)
     {
         if (options.ContentSecurityPolicy != null) {
             context.Response.Headers[HeaderNames.ContentSecurityPolicy] = options.ContentSecurityPolicy;

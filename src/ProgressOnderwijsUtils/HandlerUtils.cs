@@ -31,7 +31,8 @@ public static class HandlerUtils
                             }
                         }
                     }
-                }
+                },
+                TaskScheduler.Default
             );
         };
     }

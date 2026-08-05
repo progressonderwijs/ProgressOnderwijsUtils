@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+#pragma warning disable VSTHRD002, VSTHRD003, VSTHRD111, VSTHRD200
+
 namespace ProgressOnderwijsUtils;
 
 public sealed class GitExe
@@ -54,8 +56,8 @@ public sealed class GitExe
     }
 
     public async Task<bool> IsUpToDateWithOriginBranch(string sourceBranch)
-        => await Git_MayFail($"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode == 0
-            && await Git_MayFail($"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode == 0;
+        => await Git_MayFail($"fetch origin +refs/heads/{sourceBranch}:refs/remotes/origin/{sourceBranch} ").ExitCode.ConfigureAwait(false) == 0
+            && await Git_MayFail($"merge-base --is-ancestor origin/{sourceBranch} HEAD").ExitCode.ConfigureAwait(false) == 0;
 
     public bool IsRefMergeable_AndResetWorkingCopy(string gitRef)
     {
