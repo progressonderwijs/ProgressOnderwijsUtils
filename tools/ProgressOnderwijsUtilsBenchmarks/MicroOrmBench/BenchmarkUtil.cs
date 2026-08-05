@@ -1,3 +1,4 @@
+#pragma warning disable VSTHRD002, VSTHRD105 // Benchmarks intentionally use synchronous task waits
 //#define SINGLETHREADED
 
 using System.Data.SQLite;

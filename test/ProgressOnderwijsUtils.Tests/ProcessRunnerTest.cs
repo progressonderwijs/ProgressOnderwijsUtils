@@ -76,7 +76,7 @@ public sealed class ProcessRunnerTest
         var elapsedAfterFirstOutput = timer.Elapsed;
         PAssert.That(() => hasStartedPinging && !result.ExitCode.IsCompleted && elapsedAfterFirstOutput < TimeSpan.FromSeconds(4));
         await cancel.CancelAsync();
-        await result.ExitCode.ContinueWith(_ => { }, TestContext.Current.CancellationToken);
+        await result.ExitCode.ConfigureAwait(true);
 
         var elapsedAfterExit = timer.Elapsed;
         PAssert.That(() => result.ExitCode.IsCompleted && elapsedAfterExit < TimeSpan.FromSeconds(8));
@@ -86,7 +86,7 @@ public sealed class ProcessRunnerTest
     }
 
     [Fact]
-    public void SupportsLargeIO()
+    public async Task SupportsLargeIO()
     {
         var token = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
         var inputLine = new string('a', 1022);
@@ -101,8 +101,8 @@ public sealed class ProcessRunnerTest
         var collected = new List<string>();
         _ = result.Output.Subscribe(o => collected.Add(o.Line));
 
-        _ = result.Output.Wait();
-        _ = result.ExitCode.Wait(100, TestContext.Current.CancellationToken);
+        _ = await result.Output.ToTask(CancellationToken.None);
+        _ = await result.ExitCode.WaitAsync(TimeSpan.FromMilliseconds(100), TestContext.Current.CancellationToken);
         var finalExitCodeStatus = result.ExitCode.Status;
 
         var outputLineCount = collected.Count;

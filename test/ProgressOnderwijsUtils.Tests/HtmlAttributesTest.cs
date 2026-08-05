@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using static ProgressOnderwijsUtils.Tests.StyleClassesTestsObjects;
+#pragma warning disable VSTHRD002 // Test intentionally uses synchronous task waits
 
 namespace ProgressOnderwijsUtils.Tests;
 
@@ -69,7 +70,9 @@ public sealed class HtmlAttributesTest
                             }
                         }
                     },
-                    TaskCreationOptions.LongRunning
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default
                 )
             ).ToArray();
 
