@@ -44,42 +44,42 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public async Task ReadJson_can_read_all_known_used_column_types_from_the_db()
     {
-        SQL(
+        await SQL(
             $"""
             create table #ReadJsonTest (
                 ReadJsonTestId int not null
-            
+
                 -- exact numerics
                 , BitColumn bit
                 , IntColumn int
                 , BigIntColumn bigint
                 , DecimalColumn decimal(4,2)
-            
+
                 -- Approximate numerics
                 , FloatColumn float
-            
+
                 -- Date and time
                 , DateColumn date
                 , DateTimeOffsetColumn datetimeoffset
-            
+
                 -- Character strings
                 , CharColumn char
                 , VarCharColumn varchar(32)
-            
+
                 -- Unicode character strings
                 , NCharColumn nchar
                 , NVarCharColumn nvarchar(32)
-            
+
                 -- Binary strings (equiv. to rowversion)
                 , BinaryColumn binary(8)
-            
+
                 -- Other data types
                 , UniqueIdentifierColumn uniqueidentifier
             );
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
-        SQL(
+        await SQL(
             $"""
             insert into #ReadJsonTest (
                 ReadJsonTestId
@@ -100,10 +100,10 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 (1, {true}, {int.MaxValue}, {long.MaxValue}, {0.99m}, {1.234}, {new DateTime(2008, 4, 1)}, {new DateTime(2023, 11, 9, 8, 25, 01, DateTimeKind.Utc)}, 'x', 'xyz', N'p', N'pqr', {new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 }}, {"82DBEE37-3AF8-46F2-A403-AE0A1950BC6E"} )
                 , (2, null, null, null, null, null, null, null, null, null, null, null, null, null);
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
+        await SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken, JsonIgnoreCondition.Never);
         await pipe.Writer.CompleteAsync();
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer));
@@ -114,7 +114,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public async Task ReadJson_datetime_with_timezone_information()
     {
-        SQL(
+        await SQL(
             $"""
             create table #ReadJsonTest (
                 DateTimeColumn datetime
@@ -123,10 +123,10 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 , DateTimeOffsetColumn datetimeoffset
             );
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var dateTime = new DateTime(1, 2, 3, 4, 5, 6, 7);
-        SQL(
+        await SQL(
             $"""
             insert into #ReadJsonTest (
                 DateTimeColumn
@@ -136,10 +136,10 @@ public sealed class ReadJsonTest : TransactedLocalConnection
             ) values
                 ({new DateTime(2023, 5, 6, 16, 13, 55)}, {dateTime}, {dateTime.ToUniversalTime()}, {new DateTime(2023, 11, 9, 8, 19, 27, DateTimeKind.Utc)})
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
+        await SQL($"select t.* from #ReadJsonTest t").ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken);
         await pipe.Writer.CompleteAsync();
 
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
@@ -165,7 +165,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public async Task Deserialize_ReadJson_gives_the_same_result_as_ReadPocos()
     {
-        SQL(
+        await SQL(
             $"""
             create table #ReadJsonPocoTest (
                 ReadJsonPocoTestId int not null
@@ -180,9 +180,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 , RijRevisie rowversion
             );
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
-        SQL(
+        await SQL(
             $"""
             insert into #ReadJsonPocoTest (
                 ReadJsonPocoTestId
@@ -198,13 +198,13 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 (1, {true}, {17}, {long.MaxValue}, {12.99m}, {1.23456789}, {"iets"}, {new DateTime(2000, 4, 1, 9, 32, 55)}, {new byte[] { 255, 254, 253, 252, 251, 250, 249, 248, 247, 246, 245 }})
                 , (2, {false}, null, null, null, null, null, null, null);
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var query = SQL($"select t.* from #ReadJsonPocoTest t order by t.ReadJsonPocoTestId");
-        var pocos = query.ReadPocos<ReadJsonPocoTest>(Connection);
+        var pocos = await query.ReadPocosAsync<ReadJsonPocoTest>(Connection, TestContext.Current.CancellationToken);
 
         var pipe = new Pipe();
-        query.ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.WhenWritingNull, true);
+        await query.ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken, JsonIgnoreCondition.WhenWritingNull, true);
         await pipe.Writer.CompleteAsync();
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
@@ -227,16 +227,16 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     [Fact]
     public async Task Null_properties_can_be_serialized_by_configuration()
     {
-        SQL(
+        await SQL(
             $"""
             create table #ReadJsonNullsTest (
                 I int null
                 , S nvarchar(12) null
             );
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
-        SQL(
+        await SQL(
             $"""
             insert into #ReadJsonNullsTest (I, S) values
                 (1, 'een')
@@ -244,11 +244,11 @@ public sealed class ReadJsonTest : TransactedLocalConnection
                 , (2, null)
                 , (null, null)
             """
-        ).ExecuteNonQuery(Connection);
+        ).ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
 
         var pipe = new Pipe();
-        SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
-        SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
+        await SQL($"select t.* from #ReadJsonNullsTest t").ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken);
+        await SQL($"select t.* from #ReadJsonNullsTest t").ReadJsonAsync(Connection, pipe.Writer, new() { Indented = true, }, TestContext.Current.CancellationToken, JsonIgnoreCondition.Never);
         await pipe.Writer.CompleteAsync();
 
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
