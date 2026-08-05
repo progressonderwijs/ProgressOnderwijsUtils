@@ -99,7 +99,7 @@ public sealed class MaybeAsyncTests
                     return x + 5;
                 }
             )
-            .WhenOkAsync(x => x * 2)
+            .WhenOk(x => x * 2)
             .WhenErrorAsync(async err => {
                     await Task.Yield();
                     return $"Error: {err}";
@@ -158,7 +158,7 @@ public sealed class MaybeAsyncTests
                     return x * 3;
                 }
             )
-            .ExtractAsync(ok => $"got {ok}", err => $"error: {err}");
+            .Extract(ok => $"got {ok}", err => $"error: {err}");
 
         PAssert.That(() => result == "got 21");
     }
@@ -172,7 +172,7 @@ public sealed class MaybeAsyncTests
                     return x * 3;
                 }
             )
-            .ExtractAsync(ok => $"got {ok}", err => $"error: {err}");
+            .Extract(ok => $"got {ok}", err => $"error: {err}");
 
         PAssert.That(() => result == "error: bad");
     }
@@ -186,7 +186,7 @@ public sealed class MaybeAsyncTests
                     return x + 5;
                 }
             )
-            .WhenOkTryAsync(x => x > 8 ? Maybe.Ok(x).AsMaybeWithoutError<string>() : Maybe.Error("too small").AsMaybeWithoutValue<int>());
+            .WhenOkTry(x => x > 8 ? Maybe.Ok(x).AsMaybeWithoutError<string>() : Maybe.Error("too small").AsMaybeWithoutValue<int>());
 
         PAssert.That(() => result.AssertOk() == 10);
     }
