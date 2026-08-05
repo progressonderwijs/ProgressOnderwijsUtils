@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils.Tests;
 
@@ -23,7 +22,7 @@ public sealed class DebounceTests
 
         handler();
         Assert.NotEqual(TaskStatus.RanToCompletion, task.Status);
-        _ = task.Wait(10_000);
+        _ = task.Wait(10_000, TestContext.Current.CancellationToken);
         Assert.Equal(TaskStatus.RanToCompletion, task.Status);
     }
 
@@ -38,7 +37,7 @@ public sealed class DebounceTests
         );
         var sw = Stopwatch.StartNew();
         handler();
-        _ = task.Task.Wait(500);
+        _ = task.Task.Wait(500, TestContext.Current.CancellationToken);
 
         var elapsedMS = sw.Elapsed.TotalMilliseconds;
         PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
@@ -74,7 +73,7 @@ public sealed class DebounceTests
     }
 
     [Fact]
-    public void LotsOfCallsPreventHandlerFromFiring()
+    public async Task LotsOfCallsPreventHandlerFromFiring()
     {
         const int durationThatEventsAreFired = 300;
         const int debounceDurationThreshhold = 50;
@@ -97,7 +96,7 @@ public sealed class DebounceTests
                             var elapsed = Stopwatch.StartNew();
                             var r = new Random(threadId);
                             while (elapsed.Elapsed < TimeSpan.FromMilliseconds(durationThatEventsAreFired)) {
-                                var nextDelay = Task.Delay(r.Next(debounceDurationThreshhold));
+                                var nextDelay = Task.Delay(r.Next(debounceDurationThreshhold), TestContext.Current.CancellationToken);
                                 handler();
                                 actualTimes.Add(DateTime.UtcNow);
                                 await nextDelay;
@@ -108,16 +107,16 @@ public sealed class DebounceTests
             )
             .ToArray();
 
-        _ = Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
+        _ = Task.Delay(durationThatEventsAreFired, TestContext.Current.CancellationToken).ContinueWith(_ => handler(), TestContext.Current.CancellationToken);
 
-        if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire)) {
+        if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire, TestContext.Current.CancellationToken)) {
             throw new($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
         }
 
-        var eventFiringTimes = eventFiringTasks.SelectMany(t => t.GetAwaiter().GetResult()).OrderBy(t => t).ToArray();
+        var eventFiringTimes = (await Task.WhenAll(eventFiringTasks)).SelectMany(t => t).OrderBy(t => t).ToArray();
         var eventFiringTimeDeltas = eventFiringTimes.Skip(1).Zip(eventFiringTimes, (later, earlier) => later - earlier);
 
-        var actualDebouncedEventDelay = debouncedHandlerTask.GetAwaiter().GetResult().TotalMilliseconds;
+        var actualDebouncedEventDelay = (await debouncedHandlerTask).TotalMilliseconds;
         var worstEventFiringDelta = eventFiringTimeDeltas.Max().TotalMilliseconds;
 
         if (worstEventFiringDelta >= debounceDurationThreshhold && actualDebouncedEventDelay < earliestExpectedDebouncedEventDelay) {

@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests;
 public sealed class IfNotFalseAnalyzerTests
 {
     [Fact]
-    public void FlagsIfNotFalse()
+    public async Task FlagsIfNotFalse()
     {
         var source = """
             class C
@@ -20,13 +20,13 @@ public sealed class IfNotFalseAnalyzerTests
                 }
             }
             """;
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == IfNotFalseAnalyzer.Rule.Id);
         PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 4);
     }
 
     [Fact]
-    public void DoesNotFlagIfTrue()
+    public async Task DoesNotFlagIfTrue()
     {
         var source = """
             class C
@@ -37,7 +37,7 @@ public sealed class IfNotFalseAnalyzerTests
                 }
             }
             """;
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
     }
 
@@ -223,11 +223,11 @@ public sealed class IfNotFalseAnalyzerTests
 
         foreach (var test in testCases) {
             var workspace = DiagnosticHelper.CreateProjectWithTestFile(test.Source);
-            var diagnostic = DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace).Single(d => d.Id == IfNotFalseAnalyzer.Rule.Id); // otherwise we could get diagnostic like CS0162 (unreachable code)
+            var diagnostic = (await DiagnosticHelper.GetDiagnostics(new IfNotFalseAnalyzer(), workspace)).Single(d => d.Id == IfNotFalseAnalyzer.Rule.Id); // otherwise we could get diagnostic like CS0162 (unreachable code)
             var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new IfNotFalseCodeFix());
             PAssert.That(() => fixesMade == 1);
 
-            var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync();
+            var result = await workspace.CurrentSolution.Projects.Single().Documents.Single().GetTextAsync(TestContext.Current.CancellationToken);
             var resultText = result.ToString().Replace("\r\n", "\n");
             Assert.Equal(test.Expected, resultText);
         }

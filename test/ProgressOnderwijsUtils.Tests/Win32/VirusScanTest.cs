@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using ProgressOnderwijsUtils.Win32;
 
@@ -24,9 +25,10 @@ public sealed class VirusScanTest
         => PAssert.That(() => !VirusScan.IsMalware(Encoding.ASCII.GetBytes(""), "Progress.Net", "Utils test"));
 }
 
-public sealed class FactIgnoreOnAppVeyor : FactAttribute
+public sealed class FactIgnoreOnAppVeyorAttribute : FactAttribute
 {
-    public FactIgnoreOnAppVeyor()
+    public FactIgnoreOnAppVeyorAttribute([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        : base(sourceFilePath, sourceLineNumber)
     {
         if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
             Skip = "Ignore when run via AppVeyor";
