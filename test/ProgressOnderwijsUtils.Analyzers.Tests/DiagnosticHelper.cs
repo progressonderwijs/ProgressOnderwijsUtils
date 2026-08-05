@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using ProgressOnderwijsUtils.Collections;
+using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests;
 
@@ -21,9 +22,9 @@ public static class DiagnosticHelper
     public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, AdhocWorkspace workspace)
     {
         var project = workspace.CurrentSolution.Projects.Single();
-        var compilation = project.GetCompilationAsync().GetAwaiter().GetResult().AssertNotNull();
+        var compilation = project.GetCompilationAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().AssertNotNull();
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer,]);
-        return [.. compilationWithAnalyzers.GetAllDiagnosticsAsync().GetAwaiter().GetResult(),];
+        return [.. compilationWithAnalyzers.GetAllDiagnosticsAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult(),];
     }
 
     public static async Task<int> ApplyAllCodeFixes(AdhocWorkspace workspace, Diagnostic diagnostic, CodeFixProvider codeFixProvider)

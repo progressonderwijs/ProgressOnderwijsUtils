@@ -73,7 +73,7 @@ public sealed class DebounceTests
     }
 
     [Fact]
-    public void LotsOfCallsPreventHandlerFromFiring()
+    public async Task LotsOfCallsPreventHandlerFromFiring()
     {
         const int durationThatEventsAreFired = 300;
         const int debounceDurationThreshhold = 50;
@@ -113,10 +113,10 @@ public sealed class DebounceTests
             throw new($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
         }
 
-        var eventFiringTimes = eventFiringTasks.SelectMany(t => t.GetAwaiter().GetResult()).OrderBy(t => t).ToArray();
+        var eventFiringTimes = (await Task.WhenAll(eventFiringTasks)).SelectMany(t => t).OrderBy(t => t).ToArray();
         var eventFiringTimeDeltas = eventFiringTimes.Skip(1).Zip(eventFiringTimes, (later, earlier) => later - earlier);
 
-        var actualDebouncedEventDelay = debouncedHandlerTask.GetAwaiter().GetResult().TotalMilliseconds;
+        var actualDebouncedEventDelay = (await debouncedHandlerTask).TotalMilliseconds;
         var worstEventFiringDelta = eventFiringTimeDeltas.Max().TotalMilliseconds;
 
         if (worstEventFiringDelta >= debounceDurationThreshhold && actualDebouncedEventDelay < earliestExpectedDebouncedEventDelay) {
