@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Data.Common;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils;
 
@@ -55,6 +56,33 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
                 return;
             }
             nrOfRowsAffected = cmd.Command.ExecuteNonQuery();
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
+
+    public async Task ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                return;
+            }
+            _ = await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
+
+    [MustUseReturnValue]
+    public async Task<int> ExecuteWithRowCountAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                return 0;
+            }
+            return await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
@@ -123,6 +151,19 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
+
+    [MustUseReturnValue]
+    public async Task<T?> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            var value = await cmd.Command.ExecuteScalarAsync(cancel).ConfigureAwait(false);
+
+            return DbValueConverter.FromDb<T>(value);
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
 }
 
 public readonly record struct MaybeSqlCommand<TOut, TCommand>(TCommand underlying) : ITypedSqlCommand<Maybe<TOut, Exception>, MaybeSqlCommand<TOut, TCommand>>
@@ -158,6 +199,24 @@ public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, Comman
         using var cmd = this.ReusableCommand(conn);
         try {
             return ParameterizedSqlObjectMapper.ReadPlainUnpacker<T>(cmd.Command);
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
+
+    public async Task<T?[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            using var reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+            ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
+            var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
+            var builder = new ArrayBuilder<T?>();
+            while (await reader.ReadAsync(cancel).ConfigureAwait(false)) {
+                var nextRow = unpacker(reader);
+                builder.Add(nextRow);
+            }
+            return builder.ToArray();
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
@@ -206,6 +265,33 @@ public readonly record struct PocosSqlCommand<
         }
         return rows;
     }
+
+    public async Task<T[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        var rows = await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
+        var nullableVerifier = NonNullableFieldVerifier.VerificationDelegate<T>();
+        foreach (var row in rows) {
+            var nullablityError = nullableVerifier(row);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings("\n"));
+            }
+        }
+        return rows;
+    }
 }
 
 public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : IWithTimeout<JsonSqlCommand>
@@ -215,73 +301,111 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
 
     public void Execute(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, bool rowVersionAsNumber = false)
     {
+        ValidateIgnoreCondition(defaultIgnoreCondition);
+
+        using var cmd = this.ReusableCommand(conn);
+        var reader = ExecuteReader(cmd);
+        using var disposeReader = reader;
+        WriteJson(cmd, reader, buffer, options, defaultIgnoreCondition, rowVersionAsNumber);
+    }
+
+    public async Task ExecuteAsync(SqlConnection conn, IBufferWriter<byte> buffer, JsonWriterOptions options, CancellationToken cancel, JsonIgnoreCondition defaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull, bool rowVersionAsNumber = false)
+    {
+        ValidateIgnoreCondition(defaultIgnoreCondition);
+
+        using var cmd = this.ReusableCommand(conn);
+        var reader = await ExecuteReaderAsync(cmd, cancel).ConfigureAwait(false);
+        using var disposeReader = reader;
+        await WriteJsonAsync(cmd, reader, buffer, options, defaultIgnoreCondition, rowVersionAsNumber, cancel).ConfigureAwait(false);
+    }
+
+    static void ValidateIgnoreCondition(JsonIgnoreCondition defaultIgnoreCondition)
+    {
         if (defaultIgnoreCondition is JsonIgnoreCondition.Always) {
             throw new ArgumentException("The value cannot be 'Always'", nameof(defaultIgnoreCondition));
         }
         if (defaultIgnoreCondition is JsonIgnoreCondition.WhenWritingDefault) {
             throw new NotSupportedException($"defaultIgnoreCondition {JsonIgnoreCondition.WhenWritingDefault} is not supported");
         }
+    }
 
-        using var cmd = this.ReusableCommand(conn);
-        var reader = ExecuteReader(cmd);
-        using var disposeReader = reader;
-        var table = reader.GetColumnSchema()
-            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName))
-            .ToArray();
-
+    void WriteJson(ReusableCommand cmd, SqlDataReader reader, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber)
+    {
+        var table = GetColumnTable(reader);
         using var writer = new Utf8JsonWriter(buffer, options);
         writer.WriteStartArray();
         while (Read(cmd, reader)) {
-            writer.WriteStartObject();
-            for (var i = 0; i < table.Length; i++) {
-                var name = table[i].ColumnName;
-                if (reader.IsDBNull(i)) {
-                    if (defaultIgnoreCondition is JsonIgnoreCondition.Never) {
-                        writer.WriteNull(name);
-                    }
-                } else {
-                    var type = table[i].DataType;
-                    var sqlType = table[i].DataTypeName;
-                    if (type == typeof(bool)) {
-                        writer.WriteBoolean(name, reader.GetBoolean(i));
-                    } else if (type == typeof(int)) {
-                        writer.WriteNumber(name, reader.GetInt32(i));
-                    } else if (type == typeof(long)) {
-                        writer.WriteNumber(name, reader.GetInt64(i));
-                    } else if (type == typeof(decimal)) {
-                        writer.WriteNumber(name, reader.GetDecimal(i));
-                    } else if (type == typeof(double)) {
-                        writer.WriteNumber(name, reader.GetDouble(i));
-                    } else if (type == typeof(DateTime)) {
-                        var dateTime = reader.GetDateTime(i);
-                        if (sqlType == "date") {
-                            writer.WriteString(name, dateTime.ToString("yyyy-MM-dd"));
-                        } else if (name.ToString().EndsWith("_Utc", StringComparison.OrdinalIgnoreCase)) {
-                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)));
-                        } else {
-                            writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Local)));
-                        }
-                    } else if (type == typeof(DateTimeOffset)) {
-                        writer.WriteString(name, reader.GetDateTimeOffset(i));
-                    } else if (type == typeof(string)) {
-                        writer.WriteString(name, reader.GetString(i));
-                    } else if (type == typeof(byte[])) {
-                        var bytes = reader.GetFieldValue<byte[]>(i);
-                        if (sqlType is "rowversion" or "timestamp" && rowVersionAsNumber) {
-                            writer.WriteNumber(name, BinaryPrimitives.ReadUInt64BigEndian(bytes));
-                        } else {
-                            writer.WriteBase64String(name, bytes);
-                        }
-                    } else if (type == typeof(Guid)) {
-                        writer.WriteString(name, reader.GetGuid(i));
-                    } else {
-                        throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown type '{type}' for property '{name}'"), this);
-                    }
-                }
-            }
-            writer.WriteEndObject();
+            WriteRow(cmd, writer, reader, table, defaultIgnoreCondition, rowVersionAsNumber);
         }
         writer.WriteEndArray();
+    }
+
+    async Task WriteJsonAsync(ReusableCommand cmd, SqlDataReader reader, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber, CancellationToken cancel)
+    {
+        var table = GetColumnTable(reader);
+        using var writer = new Utf8JsonWriter(buffer, options);
+        writer.WriteStartArray();
+        while (await ReadAsync(cmd, reader, cancel).ConfigureAwait(false)) {
+            WriteRow(cmd, writer, reader, table, defaultIgnoreCondition, rowVersionAsNumber);
+        }
+        writer.WriteEndArray();
+    }
+
+    static (JsonEncodedText ColumnName, Type? DataType, string? DataTypeName)[] GetColumnTable(SqlDataReader reader)
+        => reader.GetColumnSchema()
+            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName))
+            .ToArray();
+
+    void WriteRow(ReusableCommand cmd, Utf8JsonWriter writer, SqlDataReader reader, (JsonEncodedText ColumnName, Type? DataType, string? DataTypeName)[] table, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber)
+    {
+        writer.WriteStartObject();
+        for (var i = 0; i < table.Length; i++) {
+            var name = table[i].ColumnName;
+            if (reader.IsDBNull(i)) {
+                if (defaultIgnoreCondition is JsonIgnoreCondition.Never) {
+                    writer.WriteNull(name);
+                }
+            } else {
+                var type = table[i].DataType;
+                var sqlType = table[i].DataTypeName;
+                if (type == typeof(bool)) {
+                    writer.WriteBoolean(name, reader.GetBoolean(i));
+                } else if (type == typeof(int)) {
+                    writer.WriteNumber(name, reader.GetInt32(i));
+                } else if (type == typeof(long)) {
+                    writer.WriteNumber(name, reader.GetInt64(i));
+                } else if (type == typeof(decimal)) {
+                    writer.WriteNumber(name, reader.GetDecimal(i));
+                } else if (type == typeof(double)) {
+                    writer.WriteNumber(name, reader.GetDouble(i));
+                } else if (type == typeof(DateTime)) {
+                    var dateTime = reader.GetDateTime(i);
+                    if (sqlType == "date") {
+                        writer.WriteString(name, dateTime.ToString("yyyy-MM-dd"));
+                    } else if (name.ToString().EndsWith("_Utc", StringComparison.OrdinalIgnoreCase)) {
+                        writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)));
+                    } else {
+                        writer.WriteString(name, new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Local)));
+                    }
+                } else if (type == typeof(DateTimeOffset)) {
+                    writer.WriteString(name, reader.GetDateTimeOffset(i));
+                } else if (type == typeof(string)) {
+                    writer.WriteString(name, reader.GetString(i));
+                } else if (type == typeof(byte[])) {
+                    var bytes = reader.GetFieldValue<byte[]>(i);
+                    if (sqlType is "rowversion" or "timestamp" && rowVersionAsNumber) {
+                        writer.WriteNumber(name, BinaryPrimitives.ReadUInt64BigEndian(bytes));
+                    } else {
+                        writer.WriteBase64String(name, bytes);
+                    }
+                } else if (type == typeof(Guid)) {
+                    writer.WriteString(name, reader.GetGuid(i));
+                } else {
+                    throw cmd.CreateExceptionWithTextAndArguments(new($"Unknown type '{type}' for property '{name}'"), this);
+                }
+            }
+        }
+        writer.WriteEndObject();
     }
 
     SqlDataReader ExecuteReader(ReusableCommand cmd)
@@ -293,10 +417,28 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         }
     }
 
+    async Task<SqlDataReader> ExecuteReaderAsync(ReusableCommand cmd, CancellationToken cancel)
+    {
+        try {
+            return await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+    }
+
     bool Read(ReusableCommand cmd, SqlDataReader reader)
     {
         try {
             return reader.Read();
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "Read failed");
+        }
+    }
+
+    async Task<bool> ReadAsync(ReusableCommand cmd, SqlDataReader reader, CancellationToken cancel)
+    {
+        try {
+            return await reader.ReadAsync(cancel).ConfigureAwait(false);
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "Read failed");
         }
@@ -391,6 +533,25 @@ public readonly record struct TuplesSqlCommand<
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
         return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+    }
+
+    public async Task<T[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.Tuples<T>.GetRowReader(reader);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        return await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
     }
 }
 

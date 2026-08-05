@@ -11,7 +11,7 @@ public enum FieldMappingMode { RequireExactColumnMatches, IgnoreExtraPocoPropert
 
 public delegate T TRowReader<in TDataReader, out T>(TDataReader reader, out int lastColumnRead);
 
-public static class ParameterizedSqlObjectMapper
+public static partial class ParameterizedSqlObjectMapper
 {
     public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
         => new(sql, CommandTimeout.DeferToConnectionDefault);

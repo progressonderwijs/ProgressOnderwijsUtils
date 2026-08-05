@@ -1,5 +1,8 @@
 using System.Threading.Tasks;
 
+#pragma warning disable VSTHRD200 // Use "Async" suffix — intentionally omitted for sync-lambda overloads on Task<Maybe>
+#pragma warning disable VSTHRD003 // Avoid awaiting foreign tasks — these are extension methods on Task<T> by design
+
 namespace ProgressOnderwijsUtils.Collections;
 
 public static class MaybeAsyncExtensions
