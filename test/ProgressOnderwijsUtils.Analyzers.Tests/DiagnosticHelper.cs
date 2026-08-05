@@ -16,15 +16,15 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests;
 
 public static class DiagnosticHelper
 {
-    public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
-        => GetDiagnostics(analyzer, CreateProjectWithTestFile(source));
+    public static async Task<Diagnostic[]> GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
+        => await GetDiagnostics(analyzer, CreateProjectWithTestFile(source));
 
-    public static Diagnostic[] GetDiagnostics(DiagnosticAnalyzer analyzer, AdhocWorkspace workspace)
+    public static async Task<Diagnostic[]> GetDiagnostics(DiagnosticAnalyzer analyzer, AdhocWorkspace workspace)
     {
         var project = workspace.CurrentSolution.Projects.Single();
-        var compilation = project.GetCompilationAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult().AssertNotNull();
+        var compilation = (await project.GetCompilationAsync(TestContext.Current.CancellationToken)).AssertNotNull();
         var compilationWithAnalyzers = compilation.WithAnalyzers([analyzer,]);
-        return [.. compilationWithAnalyzers.GetAllDiagnosticsAsync(TestContext.Current.CancellationToken).GetAwaiter().GetResult(),];
+        return [.. await compilationWithAnalyzers.GetAllDiagnosticsAsync(TestContext.Current.CancellationToken),];
     }
 
     public static async Task<int> ApplyAllCodeFixes(AdhocWorkspace workspace, Diagnostic diagnostic, CodeFixProvider codeFixProvider)

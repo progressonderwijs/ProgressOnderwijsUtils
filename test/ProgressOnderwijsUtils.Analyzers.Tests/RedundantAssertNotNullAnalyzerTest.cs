@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests;
 public sealed class RedundantAssertNotNullAnalyzerTest
 {
     [Fact]
-    public void OnField_Detected()
+    public async Task OnField_Detected()
     {
         var source = """
             #nullable enable
@@ -24,7 +24,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == RedundantAssertNotNullAnalyzer.Rule.Id);
         PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 8);
     }
@@ -46,7 +46,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -88,7 +88,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -130,7 +130,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -169,7 +169,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -208,7 +208,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -231,7 +231,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
     }
 
     [Fact]
-    public void OnField_DifferentMethod_NotDetected()
+    public async Task OnField_DifferentMethod_NotDetected()
     {
         var source = """
             #nullable enable
@@ -252,12 +252,12 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
     }
 
     [Fact]
-    public void OnNullableField_NotDetected()
+    public async Task OnNullableField_NotDetected()
     {
         var source = """
             #nullable enable
@@ -272,12 +272,12 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
     }
 
     [Fact]
-    public void OnGenericallyInferredNonNullability_Detected()
+    public async Task OnGenericallyInferredNonNullability_Detected()
     {
         var source = """
             #nullable enable
@@ -293,13 +293,13 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == RedundantAssertNotNullAnalyzer.Rule.Id);
         PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 9);
     }
 
     [Fact]
-    public void OnGenericallyInferredNullability_NotDetected()
+    public async Task OnGenericallyInferredNullability_NotDetected()
     {
         var source = """
             #nullable enable
@@ -315,12 +315,12 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.None());
     }
 
     [Fact]
-    public void OnValueField_Detected()
+    public async Task OnValueField_Detected()
     {
         var source = """
             #nullable enable
@@ -335,7 +335,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             }
             """;
 
-        var diagnostics = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
+        var diagnostics = await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), source);
         PAssert.That(() => diagnostics.Single().Id == RedundantAssertNotNullAnalyzer.Rule.Id);
         PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 8);
     }
@@ -357,7 +357,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
@@ -400,7 +400,7 @@ public sealed class RedundantAssertNotNullAnalyzerTest
             """;
 
         var workspace = DiagnosticHelper.CreateProjectWithTestFile(source);
-        var diagnostic = DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace).Single();
+        var diagnostic = (await DiagnosticHelper.GetDiagnostics(new RedundantAssertNotNullAnalyzer(), workspace)).Single();
 
         var fixesMade = await DiagnosticHelper.ApplyAllCodeFixes(workspace, diagnostic, new RedundantAssertNotNullCodeFix());
         PAssert.That(() => fixesMade == 1);
