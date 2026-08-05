@@ -141,7 +141,7 @@ public static class MaybeAsyncExtensions
             return Maybe.Ok(okValue);
         }
         await action(error).ConfigureAwait(false);
-        return Maybe.Error(Unit.Value);
+        return Maybe.Error();
     }
 
     /// <summary>
