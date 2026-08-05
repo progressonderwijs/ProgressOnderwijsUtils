@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-#pragma warning disable VSTHRD002 // Test intentionally uses synchronous task waits
 using static ProgressOnderwijsUtils.Tests.StyleClassesTestsObjects;
+#pragma warning disable VSTHRD002 // Test intentionally uses synchronous task waits
 
 namespace ProgressOnderwijsUtils.Tests;
 

@@ -1,5 +1,4 @@
 using System.IO.Pipelines;
-#pragma warning disable VSTHRD002 // Test intentionally uses synchronous task waits
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
