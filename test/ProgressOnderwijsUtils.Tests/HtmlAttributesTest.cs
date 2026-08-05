@@ -76,7 +76,7 @@ public sealed class HtmlAttributesTest
                 )
             ).ToArray();
 
-            Task.WaitAll(tasks);
+            Task.WaitAll(tasks, TestContext.Current.CancellationToken);
         }
         PAssert.That(() => errors.None());
     }

@@ -1,7 +1,6 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using AngleSharp.Html.Parser;
-using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils.Tests;
 
@@ -26,18 +25,18 @@ public sealed class HtmlDslGenerator
     public HtmlDslGenerator(ITestOutputHelper output)
         => this.output = output;
 
-    [SkippableFact]
+    [Fact]
     public async Task RegenerateHtmlTagCSharp()
     {
         if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
-            throw new SkipException("For manual regeneration; won't work on the CI");
+            Assert.Skip("For manual regeneration; won't work on the CI");
         }
         if (!localCache.RefersToExistingLocalFile() || new FileInfo(localCache.LocalPath).LastWriteTimeUtc < DateTime.UtcNow.AddDays(-1)) {
             output.WriteLine("Cache out of date; refreshing");
-            var freshContent = await client.GetStringAsync(specUri);
-            await File.WriteAllTextAsync(localCache.LocalPath, freshContent);
+            var freshContent = await client.GetStringAsync(specUri, TestContext.Current.CancellationToken);
+            await File.WriteAllTextAsync(localCache.LocalPath, freshContent, TestContext.Current.CancellationToken);
         }
-        var content = await File.ReadAllTextAsync(localCache.LocalPath);
+        var content = await File.ReadAllTextAsync(localCache.LocalPath, TestContext.Current.CancellationToken);
         var document = await new HtmlParser().ParseDocumentAsync(content);
 
         var voidElements = (document.GetElementById("void-elements")?.ParentElement?.NextElementSibling?.TextContent.Split(',').Select(s => s.Trim()).ToArray()).AssertNotNull();

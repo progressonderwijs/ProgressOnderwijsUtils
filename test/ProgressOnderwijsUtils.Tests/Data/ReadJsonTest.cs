@@ -3,44 +3,47 @@ using System.IO.Pipelines;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class ReadJsonTest : TransactedLocalConnection
 {
     [Fact]
-    public void Utf8JosonWriter_writes_invalid_json_when_aborted()
+    public async Task Utf8JosonWriter_writes_invalid_json_when_aborted()
     {
         var pipe = new Pipe();
-        using var writer = new Utf8JsonWriter(pipe.Writer);
+        await using var writer = new Utf8JsonWriter(pipe.Writer);
         writer.WriteStartArray();
         writer.WriteStartObject();
         writer.WriteString("property", "testje");
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
-        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer))).Catch<Exception>();
+        var readResult = await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken);
+        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(readResult.Buffer))).Catch<Exception>();
         PAssert.That(() => json.AssertError().Message.Contains("json", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
-    public void Utf8JosonWriter_writes_invalid_json_upon_exception()
+    public async Task Utf8JosonWriter_writes_invalid_json_upon_exception()
     {
         var pipe = new Pipe();
         try {
-            using var writer = new Utf8JsonWriter(pipe.Writer);
+            await using var writer = new Utf8JsonWriter(pipe.Writer);
             writer.WriteStartArray();
             writer.WriteStartObject();
             writer.WriteString("property", "testje");
             throw new NotSupportedException();
         } catch (NotSupportedException) { }
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
-        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer))).Catch<Exception>();
+        var readResult = await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken);
+        var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(readResult.Buffer))).Catch<Exception>();
         PAssert.That(() => json.AssertError().Message.Contains("json", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
-    public void ReadJson_can_read_all_known_used_column_types_from_the_db()
+    public async Task ReadJson_can_read_all_known_used_column_types_from_the_db()
     {
         SQL(
             $"""
@@ -102,15 +105,15 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
-        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer));
+        ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer));
     }
 
     enum ReadJsonPocoTestId { }
 
     [Fact]
-    public void ReadJson_datetime_with_timezone_information()
+    public async Task ReadJson_datetime_with_timezone_information()
     {
         SQL(
             $"""
@@ -138,9 +141,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         foreach (var line in json.Split("\r\n").Where(l => l.Contains(":"))) {
             PAssert.That(() => line.Split(": ", StringSplitOptions.None)[1].Contains("+"));
         }
@@ -161,7 +164,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     }
 
     [Fact]
-    public void Deserialize_ReadJson_gives_the_same_result_as_ReadPocos()
+    public async Task Deserialize_ReadJson_gives_the_same_result_as_ReadPocos()
     {
         SQL(
             $"""
@@ -203,8 +206,8 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         query.ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.WhenWritingNull, true);
-        pipe.Writer.Complete();
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        await pipe.Writer.CompleteAsync();
+        var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
 
         PAssert.That(() => jsonPocos.Length == pocos.Length);
@@ -223,7 +226,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     }
 
     [Fact]
-    public void Null_properties_can_be_serialized_by_configuration()
+    public async Task Null_properties_can_be_serialized_by_configuration()
     {
         SQL(
             $"""
@@ -247,9 +250,9 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
-        var json = Encoding.UTF8.GetString(pipe.Reader.ReadAsync().GetAwaiter().GetResult().Buffer);
+        var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         ApprovalTest.CreateHere().AssertUnchangedAndSave(json);
     }
 }

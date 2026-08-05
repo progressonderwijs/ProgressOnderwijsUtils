@@ -1,7 +1,6 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading.Tasks;
-using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils.Tests;
 
@@ -82,7 +81,7 @@ public sealed class ProcessRunnerTest
         var elapsedAfterExit = timer.Elapsed;
         PAssert.That(() => result.ExitCode.IsCompleted && elapsedAfterExit < TimeSpan.FromSeconds(8));
 
-        _ = await result.Output.ToTask(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(1));
+        _ = await result.Output.ToTask(CancellationToken.None).WaitAsync(TimeSpan.FromSeconds(1), TestContext.Current.CancellationToken);
         // ReSharper restore MethodSupportsCancellation
     }
 
@@ -103,7 +102,7 @@ public sealed class ProcessRunnerTest
         _ = result.Output.Subscribe(o => collected.Add(o.Line));
 
         _ = await result.Output.ToTask(CancellationToken.None);
-        _ = await result.ExitCode.WaitAsync(TimeSpan.FromMilliseconds(100));
+        _ = await result.ExitCode.WaitAsync(TimeSpan.FromMilliseconds(100), TestContext.Current.CancellationToken);
         var finalExitCodeStatus = result.ExitCode.Status;
 
         var outputLineCount = collected.Count;
