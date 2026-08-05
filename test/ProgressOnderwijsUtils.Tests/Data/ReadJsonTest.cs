@@ -12,11 +12,11 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     public async Task Utf8JosonWriter_writes_invalid_json_when_aborted()
     {
         var pipe = new Pipe();
-        using var writer = new Utf8JsonWriter(pipe.Writer);
+        await using var writer = new Utf8JsonWriter(pipe.Writer);
         writer.WriteStartArray();
         writer.WriteStartObject();
         writer.WriteString("property", "testje");
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
         var readResult = await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken);
         var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(readResult.Buffer))).Catch<Exception>();
@@ -28,13 +28,13 @@ public sealed class ReadJsonTest : TransactedLocalConnection
     {
         var pipe = new Pipe();
         try {
-            using var writer = new Utf8JsonWriter(pipe.Writer);
+            await using var writer = new Utf8JsonWriter(pipe.Writer);
             writer.WriteStartArray();
             writer.WriteStartObject();
             writer.WriteString("property", "testje");
             throw new NotSupportedException();
         } catch (NotSupportedException) { }
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
         var readResult = await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken);
         var json = Maybe.Try(() => JsonNode.Parse(Encoding.UTF8.GetString(readResult.Buffer))).Catch<Exception>();
@@ -104,7 +104,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonTest t order by t.ReadJsonTestId").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
         ApprovalTest.CreateHere().AssertUnchangedAndSave(Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer));
     }
@@ -140,7 +140,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         foreach (var line in json.Split("\r\n").Where(l => l.Contains(":"))) {
@@ -205,7 +205,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
 
         var pipe = new Pipe();
         query.ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.WhenWritingNull, true);
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         var jsonPocos = JsonSerializer.Deserialize<ReadJsonPocoTest[]>(json).AssertNotNull();
 
@@ -249,7 +249,7 @@ public sealed class ReadJsonTest : TransactedLocalConnection
         var pipe = new Pipe();
         SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, });
         SQL($"select t.* from #ReadJsonNullsTest t").ReadJson(Connection, pipe.Writer, new() { Indented = true, }, JsonIgnoreCondition.Never);
-        pipe.Writer.Complete();
+        await pipe.Writer.CompleteAsync();
 
         var json = Encoding.UTF8.GetString((await pipe.Reader.ReadAsync(TestContext.Current.CancellationToken)).Buffer);
         ApprovalTest.CreateHere().AssertUnchangedAndSave(json);
