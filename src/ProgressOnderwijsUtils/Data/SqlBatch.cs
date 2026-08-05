@@ -60,6 +60,19 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
+
+    public async Task ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                return;
+            }
+            _ = await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
 }
 
 public readonly record struct DbColumnSchemaCommand(ParameterizedSql Sql, CommandTimeout CommandTimeout) : ITypedSqlCommand<DbColumn[], DbColumnSchemaCommand>
@@ -126,11 +139,11 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
     }
 
     [MustUseReturnValue]
-    public async Task<T?> ExecuteAsync(SqlConnection conn, CancellationToken cancellationToken = default)
+    public async Task<T?> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
     {
         using var cmd = this.ReusableCommand(conn);
         try {
-            var value = await cmd.Command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+            var value = await cmd.Command.ExecuteScalarAsync(cancel).ConfigureAwait(false);
 
             return DbValueConverter.FromDb<T>(value);
         } catch (Exception e) {
@@ -176,6 +189,24 @@ public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, Comman
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
+
+    public async Task<T?[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        try {
+            using var reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+            ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
+            var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
+            var builder = new ArrayBuilder<T?>();
+            while (await reader.ReadAsync(cancel).ConfigureAwait(false)) {
+                var nextRow = unpacker(reader);
+                builder.Add(nextRow);
+            }
+            return builder.ToArray();
+        } catch (Exception e) {
+            throw cmd.CreateExceptionWithTextAndArguments(e, this);
+        }
+    }
 }
 
 public readonly record struct PocosSqlCommand<
@@ -211,6 +242,33 @@ public readonly record struct PocosSqlCommand<
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
         var rows = ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+        var nullableVerifier = NonNullableFieldVerifier.VerificationDelegate<T>();
+        foreach (var row in rows) {
+            var nullablityError = nullableVerifier(row);
+            if (nullablityError != null) {
+                throw new(nullablityError.JoinStrings("\n"));
+            }
+        }
+        return rows;
+    }
+
+    public async Task<T[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        var rows = await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
         var nullableVerifier = NonNullableFieldVerifier.VerificationDelegate<T>();
         foreach (var row in rows) {
             var nullablityError = nullableVerifier(row);
@@ -405,6 +463,25 @@ public readonly record struct TuplesSqlCommand<
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
         return ParameterizedSqlObjectMapper.ReaderToArray(this, reader, unpacker, cmd);
+    }
+
+    public async Task<T[]> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
+    {
+        using var cmd = this.ReusableCommand(conn);
+        SqlDataReader? reader;
+        try {
+            reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
+        }
+        using var disposeReader = reader;
+        TRowReader<SqlDataReader, T> unpacker;
+        try {
+            unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.Tuples<T>.GetRowReader(reader);
+        } catch (Exception ex) {
+            throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
+        }
+        return await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
     }
 }
 
