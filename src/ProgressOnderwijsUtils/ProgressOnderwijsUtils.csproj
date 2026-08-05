@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>114.12.0</Version>
-    <PackageReleaseNotes>Added DateTime.ToDateOnly() extension methods + update Nuget packages</PackageReleaseNotes>
+    <Version>114.13.0</Version>
+    <PackageReleaseNotes>Updated the HTML specifications</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
