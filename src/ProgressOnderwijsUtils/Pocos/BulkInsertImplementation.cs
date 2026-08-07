@@ -22,11 +22,10 @@ static class BulkInsertImplementation
         var mapping = CreateMapping(source, target, sourceNameForTracing);
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
+        ThrowIfSourceReaderUsesTheSameConnection(source, sqlConn, target.TableName);
         var sw = Stopwatch.StartNew();
         try {
             sqlBulkCopy.WriteToServer(source);
-            //so why no async?
-            //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
         } finally {
@@ -73,6 +72,19 @@ static class BulkInsertImplementation
     {
         var match = colidMessageRegex.Match(message);
         return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
+    }
+
+    static readonly PropertyInfo? sqlDataReaderConnectionProperty =
+        typeof(SqlDataReader).GetProperty("Connection", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+    static void ThrowIfSourceReaderUsesTheSameConnection(DbDataReader source, SqlConnection sqlConn, string tableName)
+    {
+        if (source is SqlDataReader sqlReader && sqlDataReaderConnectionProperty?.GetValue(sqlReader) is SqlConnection readerConn && readerConn == sqlConn) {
+            throw new InvalidOperationException(
+                $"Cannot bulk copy into {tableName}: the source SqlDataReader is reading from the same SqlConnection. "
+                + "This causes deadlocks with async bulk copy. Use a separate connection for the source reader."
+            );
+        }
     }
 
     static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
