@@ -128,7 +128,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     {
         var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
         var target2 = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test2"));
-        target.BulkInsert(Connection, BulkInsertTestSampleRow.SampleRows(4), cancellationToken: TestContext.Current.CancellationToken);
+        target.BulkInsert(Connection, BulkInsertTestSampleRow.SampleRows(4), cancel: TestContext.Current.CancellationToken);
 
         var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
         target2.BulkInsert(Connection, dataTable);
@@ -280,13 +280,13 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         var target = BulkInsertTarget.LoadFromTable(Connection, tableName);
 
         // by default, writing to read-only column is not allowed
-        var notAllowed = Maybe.Try(() => target.BulkInsert(Connection, new[] { record, }, cancellationToken: TestContext.Current.CancellationToken))
+        var notAllowed = Maybe.Try(() => target.BulkInsert(Connection, new[] { record, }, cancel: TestContext.Current.CancellationToken))
             .Catch<InvalidOperationException>();
 
         PAssert.That(() => notAllowed.AssertError().Message.Contains("Cannot fill readonly field ReadOnly", StringComparison.InvariantCulture));
 
         // but we can allow it
-        (target with { SilentlySkipReadonlyTargetColumns = true, }).BulkInsert(Connection, new[] { record, }, cancellationToken: TestContext.Current.CancellationToken);
+        (target with { SilentlySkipReadonlyTargetColumns = true, }).BulkInsert(Connection, new[] { record, }, cancel: TestContext.Current.CancellationToken);
 
         var allowed = SQL($"select * from {tableName}").ReadPocos<TableWithReadOnlyColumn>(Connection).Single();
         PAssert.That(() => !allowed.ReadOnly.AsEnumerable().SequenceEqual(record.ReadOnly));

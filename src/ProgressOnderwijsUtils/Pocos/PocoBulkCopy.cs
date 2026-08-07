@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;
@@ -21,4 +22,11 @@ public static class PocoBulkCopy
     public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, BulkInsertTarget target, CommandTimeout timeout = new())
         where T : IReadImplicitly
         => target.BulkInsert(sqlConn, pocos, timeout);
+    
+    /// <summary>
+    /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
+    /// </summary>
+    public static async Task BulkCopyToSqlServerAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, BulkInsertTarget target, CommandTimeout timeout = new(), CancellationToken cancel = default)
+        where T : IReadImplicitly
+        => await target.BulkInsertAsync(sqlConn, pocos, timeout, cancel).ConfigureAwait(false);
 }

@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils;
 
@@ -22,10 +23,40 @@ static class BulkInsertImplementation
         var mapping = CreateMapping(source, target, sourceNameForTracing);
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
+        var sw = Stopwatch.StartNew();
+        try {
+            //so why no async?
+            //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
+            sqlBulkCopy.WriteToServer(source);
+        } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
+            throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
+        } finally {
+            TraceBulkInsertDuration(sqlConn.Tracer(), target.TableName, sw, sqlBulkCopy, sourceNameForTracing);
+        }
+    }
+
+    public static async Task ExecuteAsync(SqlConnection sqlConn, DbDataReader source, BulkInsertTarget target, string sourceNameForTracing, CommandTimeout timeout, CancellationToken cancel)
+    {
+        if (source == null) {
+            throw new ArgumentNullException(nameof(source));
+        }
+        if (sqlConn == null) {
+            throw new ArgumentNullException(nameof(sqlConn));
+        }
+        if (sqlConn.State != ConnectionState.Open) {
+            throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
+        }
+
+        using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null);
+        sqlBulkCopy.BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn);
+        sqlBulkCopy.DestinationTableName = target.TableName;
+        var mapping = CreateMapping(source, target, sourceNameForTracing);
+
+        BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         ThrowIfSourceReaderUsesTheSameConnection(source, sqlConn, target.TableName);
         var sw = Stopwatch.StartNew();
         try {
-            sqlBulkCopy.WriteToServer(source);
+            await sqlBulkCopy.WriteToServerAsync(source, cancel).ConfigureAwait(false);
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
         } finally {
@@ -82,7 +113,7 @@ static class BulkInsertImplementation
         if (source is SqlDataReader sqlReader && sqlDataReaderConnectionProperty?.GetValue(sqlReader) is SqlConnection readerConn && readerConn == sqlConn) {
             throw new InvalidOperationException(
                 $"Cannot bulk copy into {tableName}: the source SqlDataReader is reading from the same SqlConnection. "
-                + "This causes deadlocks with async bulk copy. Use a separate connection for the source reader."
+                + "This causes corrupt state and deadlocks with async bulk copy. Use a separate connection for the source reader."
             );
         }
     }
