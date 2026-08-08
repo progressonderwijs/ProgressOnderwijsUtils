@@ -15,7 +15,7 @@ public static class MaybeExtensions
     [Pure]
     public static TError? ErrorOrNullable<TOk, TError>(this Maybe<TOk, TError> state)
         where TError : struct
-        => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
+        => state.TryGet(out _, out var whenError) ? null : whenError;
 
     [Pure]
     public static TOk? ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
@@ -30,7 +30,7 @@ public static class MaybeExtensions
     [Pure]
     public static TOk? ValueOrNullable<TOk, TError>(this Maybe<TOk, TError> state)
         where TOk : struct
-        => state.TryGet(out var okValue, out _) ? okValue : default(TOk?);
+        => state.TryGet(out var okValue, out _) ? okValue : null;
 
     public static void AssertOk<TError>(this Maybe<Unit, TError> state)
     {
@@ -409,7 +409,6 @@ public static class MaybeExtensions
         }
     }
 
-    //=> state.Extract(source => collectionSelector(source).Select(collection => resultSelector(source, collection)), Maybe.Error<TOkResult>);
     /// <summary>
     /// Equivalent to WhenOkTry (for linq compatibility)
     /// </summary>
