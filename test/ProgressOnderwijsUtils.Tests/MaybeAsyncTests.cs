@@ -4,18 +4,6 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class MaybeAsyncTests
 {
-    static async ValueTask<int> AsyncDouble(int x)
-    {
-        await Task.Yield();
-        return x * 2;
-    }
-
-    static async ValueTask<Maybe<int, string>> AsyncValidate(int x)
-    {
-        await Task.Yield();
-        return x > 0 ? Maybe.Ok(x).AsMaybeWithoutError<string>() : Maybe.Error("must be positive").AsMaybeWithoutValue<int>();
-    }
-
     [Fact]
     public async ValueTask WhenOkAsync_chain_propagates_ok_through_multiple_async_steps()
     {
@@ -68,10 +56,14 @@ public sealed class MaybeAsyncTests
         var result = await Maybe.Ok(3).AsMaybeWithoutError<string>()
             .WhenOkTryAsync(async x => {
                     await Task.Yield();
-                    return await AsyncValidate(x);
+                    return Maybe.Either(x > 0, x, "must be positive");
                 }
             )
-            .WhenOkAsync(async x => await AsyncDouble(x));
+            .WhenOkAsync(async x => {
+                    await Task.Yield();
+                    return x * 2;
+                }
+            );
 
         PAssert.That(() => result.AssertOk() == 6);
     }
@@ -82,10 +74,15 @@ public sealed class MaybeAsyncTests
         var result = await Maybe.Ok(-1).AsMaybeWithoutError<string>()
             .WhenOkTryAsync(async x => {
                     await Task.Yield();
-                    return await AsyncValidate(x);
+                    await Task.Yield();
+                    return Maybe.Either(x > 0, x, "must be positive");
                 }
             )
-            .WhenOkAsync(async x => await AsyncDouble(x));
+            .WhenOkAsync(async x => {
+                    await Task.Yield();
+                    return x * 2;
+                }
+            );
 
         PAssert.That(() => result.AssertError() == "must be positive");
     }
@@ -118,15 +115,13 @@ public sealed class MaybeAsyncTests
                     return x + 1;
                 }
             )
-            .WhenErrorAsync(TransformError);
+            .WhenErrorAsync(async err => {
+                    await Task.Yield();
+                    return $"transformed: {err}";
+                }
+            );
 
         PAssert.That(() => result.AssertError() == "transformed: oops");
-
-        static async Task<string> TransformError(string err)
-        {
-            await Task.Yield();
-            return $"transformed: {err}";
-        }
     }
 
     [Fact]
@@ -135,16 +130,26 @@ public sealed class MaybeAsyncTests
         var result = await Maybe.Ok(2).AsMaybeWithoutError<string>()
             .WhenOkTryAsync(async x => {
                     await Task.Yield();
-                    return await AsyncValidate(x);
+                    await Task.Yield();
+                    return Maybe.Either(x > 0, x, "must be positive");
                 }
             )
-            .WhenOkAsync(async x => await AsyncDouble(x))
+            .WhenOkAsync(async x => {
+                    await Task.Yield();
+                    return x * 2;
+                }
+            )
             .WhenOkTryAsync(async x => {
                     await Task.Yield();
-                    return await AsyncValidate(x);
+                    await Task.Yield();
+                    return Maybe.Either(x > 0, x, "must be positive");
                 }
             )
-            .WhenOkAsync(async x => await AsyncDouble(x));
+            .WhenOkAsync(async x => {
+                    await Task.Yield();
+                    return x * 2;
+                }
+            );
 
         PAssert.That(() => result.AssertOk() == 8);
     }
@@ -186,7 +191,7 @@ public sealed class MaybeAsyncTests
                     return x + 5;
                 }
             )
-            .WhenOkTry(x => x > 8 ? Maybe.Ok(x).AsMaybeWithoutError<string>() : Maybe.Error("too small").AsMaybeWithoutValue<int>());
+            .WhenOkTry(x => Maybe.Either(x > 8, x, "too small"));
 
         PAssert.That(() => result.AssertOk() == 10);
     }
