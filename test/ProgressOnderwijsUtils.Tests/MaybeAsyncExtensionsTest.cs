@@ -165,7 +165,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncWhenErrorAction()
     {
-        var result = await AsyncTestMaybeFunc(false).WhenError(_ => Unit.Value);
+        var result = await AsyncTestMaybeFunc(false).WhenError(_ => { });
 
         result.AssertError();
     }
