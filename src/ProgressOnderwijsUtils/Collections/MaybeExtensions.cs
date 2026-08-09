@@ -45,6 +45,13 @@ public static class MaybeExtensions
     public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state, Func<TError, Exception?> exceptionWhenError)
         => state.TryGet(out var okValue, out var error) ? okValue : throw exceptionWhenError(error) ?? new Exception($"Assertion that Maybe is Ok failed; error state: {error}");
 
+    public static void AssertError<TOk>(this Maybe<TOk, Unit> state)
+    {
+        if (state.TryGet(out var okValue, out _)) {
+            throw new($"Assertion that Maybe is Error failed; ok state: {okValue}");
+        }
+    }
+
     public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
         => state.TryGet(out var okValue, out var error) ? throw new($"Assertion that Maybe is Error failed; ok state: {okValue}") : error;
 

@@ -106,6 +106,16 @@ public static class MaybeAsyncExtensions
     }
 
     /// <summary>
+    /// Sync WhenOkTry for Unit ok values on an awaitable Maybe.
+    /// </summary>
+    [Pure]
+    public static async Task<Maybe<TOut, TError>> WhenOkTry<TError, TOut>(this Task<Maybe<Unit, TError>> stateTask, Func<Maybe<TOut, TError>> map)
+    {
+        var state = await stateTask.ConfigureAwait(false);
+        return state.WhenOkTry(map);
+    }
+
+    /// <summary>
     /// Async version of Extract: extracts a value by calling either the async ifOk or ifError function.
     /// </summary>
     [Pure]

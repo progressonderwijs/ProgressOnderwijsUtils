@@ -4,16 +4,14 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class MaybeAsyncExtensionsTest
 {
-    static void TestAction() { }
-
-    static bool TestFunc(bool value)
-        => value;
-
     static Maybe<Unit, bool> TestMaybeAction(bool value)
-        => Maybe.Either(value, () => TestAction(), () => TestFunc(value));
+        => Maybe.Either(value, Unit.Value, value);
 
     static Maybe<bool, bool> TestMaybeFunc(bool value)
-        => Maybe.Either(value, TestFunc(value), TestFunc(value));
+        => Maybe.Either(value, value, value);
+
+    static Maybe<bool, Unit> TestMaybeFuncUnitError(bool value)
+        => Maybe.Either(value, value, Unit.Value);
 
     static async Task AsyncTestAction()
         => await Task.Yield();
@@ -21,7 +19,7 @@ public sealed class MaybeAsyncExtensionsTest
     static async Task<bool> AsyncTestFunc(bool value)
     {
         await Task.Yield();
-        return TestFunc(value);
+        return value;
     }
 
     static async Task<Maybe<Unit, bool>> AsyncTestMaybeAction(bool value)
@@ -36,10 +34,16 @@ public sealed class MaybeAsyncExtensionsTest
         return TestMaybeFunc(value);
     }
 
+    static async Task<Maybe<bool, Unit>> AsyncTestMaybeFuncUnitError(bool value)
+    {
+        await Task.Yield();
+        return TestMaybeFuncUnitError(value);
+    }
+
     [Fact]
     public async Task AsyncMaybeWhenOkAction()
     {
-        var result = await AsyncTestMaybeFunc(true).WhenOk(_ => TestAction());
+        var result = await AsyncTestMaybeFunc(true).WhenOk(_ => Unit.Value);
 
         result.AssertOk();
     }
@@ -47,7 +51,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeWhenOkFunc()
     {
-        var result = await AsyncTestMaybeFunc(true).WhenOk(value => TestFunc(value));
+        var result = await AsyncTestMaybeFunc(true).WhenOk(value => value);
 
         PAssert.That(() => result.AssertOk());
     }
@@ -103,7 +107,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeActionWhenOkTrySyncFunc()
     {
-        var result = await AsyncTestMaybeAction(true).WhenOkTry(_ => TestMaybeFunc(true));
+        var result = await AsyncTestMaybeAction(true).WhenOkTry(() => TestMaybeFunc(true));
 
         PAssert.That(() => result.AssertOk());
     }
@@ -112,6 +116,106 @@ public sealed class MaybeAsyncExtensionsTest
     public async Task AsyncMaybeFuncWhenOkTryAsyncFunc()
     {
         var result = await AsyncTestMaybeFunc(true).WhenOkTryAsync(async value => await AsyncTestMaybeFunc(value));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    // WhenError
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorFunc()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenError(value => !value);
+
+        PAssert.That(() => result.AssertError());
+    }
+
+    [Fact]
+    public async Task SyncMaybeFuncWhenErrorAsyncFunc()
+    {
+        var result = await TestMaybeFunc(false).WhenErrorAsync(async value => await AsyncTestFunc(!value));
+
+        PAssert.That(() => result.AssertError());
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorAsyncFunc()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenErrorAsync(async value => await AsyncTestFunc(!value));
+
+        PAssert.That(() => result.AssertError());
+    }
+
+    [Fact]
+    public async Task SyncMaybeFuncWhenErrorAsyncAction()
+    {
+        var result = await TestMaybeFunc(false).WhenErrorAsync(async _ => await AsyncTestAction());
+
+        result.AssertError();
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorAsyncAction()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenErrorAsync(async _ => await AsyncTestAction());
+
+        result.AssertError();
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorAction()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenError(_ => Unit.Value);
+
+        result.AssertError();
+    }
+
+    // WhenErrorTry
+
+    [Fact]
+    public async Task SyncMaybeFuncWhenErrorTryAsyncFunc()
+    {
+        var result = await TestMaybeFunc(false).WhenErrorTryAsync(async value => await AsyncTestMaybeFunc(!value));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    [Fact]
+    public async Task SyncMaybeFuncUnitErrorWhenErrorTryAsyncFunc()
+    {
+        var result = await TestMaybeFuncUnitError(false).WhenErrorTryAsync(async () => await AsyncTestMaybeFunc(true));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorTryAsyncFunc()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenErrorTryAsync(async value => await AsyncTestMaybeFunc(!value));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncWhenErrorTrySyncFunc()
+    {
+        var result = await AsyncTestMaybeFunc(false).WhenErrorTry(value => TestMaybeFunc(!value));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncUnitErrorWhenErrorTryAsyncFunc()
+    {
+        var result = await AsyncTestMaybeFuncUnitError(false).WhenErrorTryAsync(async () => await AsyncTestMaybeFunc(true));
+
+        PAssert.That(() => result.AssertOk());
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncUnitErrorWhenErrorTrySyncFunc()
+    {
+        var result = await AsyncTestMaybeFuncUnitError(false).WhenErrorTry(() => TestMaybeFunc(true));
 
         PAssert.That(() => result.AssertOk());
     }
