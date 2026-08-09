@@ -219,4 +219,62 @@ public sealed class MaybeAsyncExtensionsTest
 
         PAssert.That(() => result.AssertOk());
     }
+
+    // Extract
+
+    [Fact]
+    public async Task SyncMaybeFuncExtractAsyncBothAsync()
+    {
+        var result = await TestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), async err => await AsyncTestFunc(err));
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task SyncMaybeFuncExtractAsyncAsyncOkSyncError()
+    {
+        var result = await TestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), err => err);
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task SyncMaybeFuncExtractAsyncSyncOkAsyncError()
+    {
+        var result = await TestMaybeFunc(false).ExtractAsync(ok => ok, async err => await AsyncTestFunc(!err));
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncExtractBothSync()
+    {
+        var result = await AsyncTestMaybeFunc(true).Extract(ok => ok, err => err);
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncExtractAsyncBothAsync()
+    {
+        var result = await AsyncTestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), async err => await AsyncTestFunc(err));
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncExtractAsyncAsyncOkSyncError()
+    {
+        var result = await AsyncTestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), err => err);
+
+        PAssert.That(() => result);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncExtractAsyncSyncOkAsyncError()
+    {
+        var result = await AsyncTestMaybeFunc(false).ExtractAsync(ok => ok, async err => await AsyncTestFunc(!err));
+
+        PAssert.That(() => result);
+    }
 }
