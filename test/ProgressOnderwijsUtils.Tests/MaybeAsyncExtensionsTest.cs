@@ -253,4 +253,82 @@ public sealed class MaybeAsyncExtensionsTest
 
         PAssert.That(() => result);
     }
+
+    // If family
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfOk()
+    {
+        var called = false;
+        await AsyncTestMaybeFunc(true).IfOk(value => { called = value; });
+
+        PAssert.That(() => called);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfOkAsync()
+    {
+        var called = false;
+        await AsyncTestMaybeFunc(true).IfOkAsync(async value => { await AsyncTestAction(); called = value; });
+
+        PAssert.That(() => called);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfError()
+    {
+        var called = false;
+        await AsyncTestMaybeFunc(false).IfError(err => { called = !err; });
+
+        PAssert.That(() => called);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfErrorAsync()
+    {
+        var called = false;
+        await AsyncTestMaybeFunc(false).IfErrorAsync(async err => { await AsyncTestAction(); called = !err; });
+
+        PAssert.That(() => called);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfBothSync()
+    {
+        var okCalled = false;
+        var errorCalled = false;
+        await AsyncTestMaybeFunc(true).If(value => { okCalled = value; }, err => { errorCalled = !err; });
+
+        PAssert.That(() => okCalled && !errorCalled);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfAsyncOkSyncError()
+    {
+        var okCalled = false;
+        var errorCalled = false;
+        await AsyncTestMaybeFunc(true).IfAsync(async value => { await AsyncTestAction(); okCalled = value; }, err => { errorCalled = !err; });
+
+        PAssert.That(() => okCalled && !errorCalled);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfSyncOkAsyncError()
+    {
+        var okCalled = false;
+        var errorCalled = false;
+        await AsyncTestMaybeFunc(false).IfAsync(value => { okCalled = value; }, async err => { await AsyncTestAction(); errorCalled = !err; });
+
+        PAssert.That(() => !okCalled && errorCalled);
+    }
+
+    [Fact]
+    public async Task AsyncMaybeFuncIfBothAsync()
+    {
+        var okCalled = false;
+        var errorCalled = false;
+        await AsyncTestMaybeFunc(true).IfAsync(async value => { await AsyncTestAction(); okCalled = value; }, async err => { await AsyncTestAction(); errorCalled = !err; });
+
+        PAssert.That(() => okCalled && !errorCalled);
+    }
 }
