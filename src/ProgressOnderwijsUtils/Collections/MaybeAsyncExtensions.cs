@@ -27,30 +27,24 @@ public static class MaybeAsyncExtensions
     }
 
     /// <summary>
+    /// Async WhenOk with a side-effect-only action. Returns Maybe&lt;Unit, TError&gt;.
+    /// </summary>
+    public static async Task<Maybe<Unit, TError>> WhenOkAsync<TOk, TError>(this Maybe<TOk, TError> state, Func<TOk, Task> action)
+    {
+        if (state.TryGet(out var okValue, out var error)) {
+            await action(okValue).ConfigureAwait(false);
+            return Maybe.Ok(Unit.Value);
+        }
+        return Maybe.Error(error);
+    }
+
+    /// <summary>
     /// Async version of WhenOk: maps a possibly failed value to a new value using an async mapping function.
     /// When the input state is failed, the output state is also failed (with the same message).
     /// </summary>
     [Pure]
     public static async Task<Maybe<TOkOut, TError>> WhenOkAsync<TOk, TError, TOkOut>(this Maybe<TOk, TError> state, Func<TOk, Task<TOkOut>> map)
         => state.TryGet(out var okValue, out var error) ? Maybe.Ok(await map(okValue).ConfigureAwait(false)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
-
-    /// <summary>
-    /// Async version of WhenOk for Unit ok values.
-    /// </summary>
-    [Pure]
-    public static async Task<Maybe<TOkOut, TError>> WhenOkAsync<TOkOut, TError>(this Maybe<Unit, TError> state, Func<Task<TOkOut>> map)
-        => state.TryGet(out _, out var error) ? Maybe.Ok(await map().ConfigureAwait(false)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
-
-    /// <summary>
-    /// Async version of WhenOk: maps a possibly failed value to a new value using an async mapping function.
-    /// Operates on an awaitable Maybe.
-    /// </summary>
-    [Pure]
-    public static async Task<Maybe<TOkOut, TError>> WhenOkAsync<TOk, TError, TOkOut>(this Task<Maybe<TOk, TError>> stateTask, Func<TOk, Task<TOkOut>> map)
-    {
-        var state = await stateTask.ConfigureAwait(false);
-        return state.TryGet(out var okValue, out var error) ? Maybe.Ok(await map(okValue).ConfigureAwait(false)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
-    }
 
     /// <summary>
     /// Async WhenOk with a side-effect-only action on an awaitable Maybe. Returns Maybe&lt;Unit, TError&gt;.
@@ -66,15 +60,14 @@ public static class MaybeAsyncExtensions
     }
 
     /// <summary>
-    /// Async WhenOk with a side-effect-only action. Returns Maybe&lt;Unit, TError&gt;.
+    /// Async version of WhenOk: maps a possibly failed value to a new value using an async mapping function.
+    /// Operates on an awaitable Maybe.
     /// </summary>
-    public static async Task<Maybe<Unit, TError>> WhenOkAsync<TOk, TError>(this Maybe<TOk, TError> state, Func<TOk, Task> action)
+    [Pure]
+    public static async Task<Maybe<TOkOut, TError>> WhenOkAsync<TOk, TError, TOkOut>(this Task<Maybe<TOk, TError>> stateTask, Func<TOk, Task<TOkOut>> map)
     {
-        if (state.TryGet(out var okValue, out var error)) {
-            await action(okValue).ConfigureAwait(false);
-            return Maybe.Ok(Unit.Value);
-        }
-        return Maybe.Error(error);
+        var state = await stateTask.ConfigureAwait(false);
+        return state.TryGet(out var okValue, out var error) ? Maybe.Ok(await map(okValue).ConfigureAwait(false)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
     }
 
     /// <summary>
