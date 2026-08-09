@@ -268,6 +268,15 @@ public static class MaybeAsyncExtensions
     /// <summary>
     /// Asserts that an awaitable Maybe is Error, returning the error value or throwing if it is in an Ok state.
     /// </summary>
+    public static async Task AssertError<TOk>(this Task<Maybe<TOk, Unit>> stateTask)
+    {
+        var state = await stateTask.ConfigureAwait(false);
+        state.AssertError();
+    }
+
+    /// <summary>
+    /// Asserts that an awaitable Maybe is Error, returning the error value or throwing if it is in an Ok state.
+    /// </summary>
     public static async Task<TError> AssertError<TOk, TError>(this Task<Maybe<TOk, TError>> stateTask)
     {
         var state = await stateTask.ConfigureAwait(false);
