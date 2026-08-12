@@ -74,7 +74,6 @@ public sealed class MaybeAsyncTests
         var result = await Maybe.Ok(-1).AsMaybeWithoutError<string>()
             .WhenOkTryAsync(async x => {
                     await Task.Yield();
-                    await Task.Yield();
                     return Maybe.Either(x > 0, x, "must be positive");
                 }
             )
