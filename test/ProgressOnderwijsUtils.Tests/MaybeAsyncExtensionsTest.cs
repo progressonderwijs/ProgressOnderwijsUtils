@@ -53,7 +53,7 @@ public sealed class MaybeAsyncExtensionsTest
     }
 
     [Fact]
-    public async Task SyncMaybeWhenOkAsynAction()
+    public async Task SyncMaybeWhenOkAsyncAction()
         => await TestMaybeFunc(true).WhenOkAsync(async _ => await AsyncTestAction()).AssertOk();
 
     [Fact]
