@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace ProgressOnderwijsUtils;
 
 public static class Utils
@@ -132,10 +134,47 @@ public static class Utils
     public static void TryWithCleanup(Action computation, Action cleanup)
         => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
+    public static async Task<T> TryWithCleanupAsync<T>(Func<Task<T>> computation, Func<Task> cleanup)
+    {
+        var completedOk = false;
+        try {
+            var retval = await computation().ConfigureAwait(false);
+            completedOk = true;
+            await cleanup().ConfigureAwait(false);
+            return retval;
+        } catch (Exception computationEx) when (!completedOk) {
+            if (await CatchAsync(cleanup).ConfigureAwait(false) is { } cleanupEx) {
+                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            }
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
+    public static Task TryWithCleanupAsync(Func<Task> computation, Func<Task> cleanup)
+        => TryWithCleanupAsync(async () => { await computation().ConfigureAwait(false); return default(Unit); }, cleanup);
+
     static Exception? Catch(Action cleanup)
     {
         try {
             cleanup();
+        } catch (Exception e) {
+            return e;
+        }
+        return null;
+    }
+
+    static async Task<Exception?> CatchAsync(Func<Task> cleanup)
+    {
+        try {
+            await cleanup().ConfigureAwait(false);
         } catch (Exception e) {
             return e;
         }
