@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>11.0.0</Version>
-    <PackageReleaseNotes>Fixed Microsoft.VisualStudio.Threading.Analyzers warnings</PackageReleaseNotes>
+    <Version>11.1.0</Version>
+    <PackageReleaseNotes>Update NuGet packages.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add NumericEnumBinder and ModelStateFilter.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -19,6 +19,6 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.400" />
   </ItemGroup>
 </Project>

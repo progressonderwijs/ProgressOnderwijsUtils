@@ -4,7 +4,7 @@
     <Description>Bump dependencies</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageReleaseNotes>Update Nuget packages</PackageReleaseNotes>
-    <Version>2.9.0</Version>
+    <Version>2.10.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <NoWarn>$(NoWarn), RS1038</NoWarn>
@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.301" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.400" />
   </ItemGroup>
 
 </Project>
