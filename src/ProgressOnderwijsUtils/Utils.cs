@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+#pragma warning disable VSTHRD200 // Use "Async" suffix — intentionally omitted for sync-lambda overloads on Task<Maybe>
+
 namespace ProgressOnderwijsUtils;
 
 public static class Utils
@@ -138,6 +140,20 @@ public static class Utils
     /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
+    public static Task<T> TryWithCleanup<T>(Func<Task<T>> computation, Action cleanup)
+        => TryWithCleanupAsync(computation, () => { cleanup(); return Task.CompletedTask; });
+
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
+    public static Task TryWithCleanup(Func<Task> computation, Action cleanup)
+        => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
+
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
     public static async Task<T> TryWithCleanupAsync<T>(Func<Task<T>> computation, Func<Task> cleanup)
     {
         var completedOk = false;
@@ -159,7 +175,21 @@ public static class Utils
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task TryWithCleanupAsync(Func<Task> computation, Func<Task> cleanup)
-        => TryWithCleanupAsync(async () => { await computation().ConfigureAwait(false); return default(Unit); }, cleanup);
+        => TryWithCleanupAsync(computation.ToUnitReturningFunc(), cleanup);
+
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
+    public static Task<T> TryWithCleanupAsync<T>(Func<T> computation, Func<Task> cleanup)
+        => TryWithCleanupAsync(() => Task.FromResult(computation()), cleanup);
+
+    /// <summary>
+    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// </summary>
+    public static Task TryWithCleanupAsync(Action computation, Func<Task> cleanup)
+        => TryWithCleanupAsync(computation.ToUnitReturningFunc(), cleanup);
 
     static Exception? Catch(Action cleanup)
     {
