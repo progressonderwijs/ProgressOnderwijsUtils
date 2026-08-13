@@ -307,4 +307,35 @@ public sealed class UtilsTest
         PAssert.That(() => innerExceptions[1].Message == "42" && innerExceptions[1].TargetSite == buggyCleanup.Method);
         PAssert.That(() => cleanupCalled == 1);
     }
+
+    [Fact]
+    public async Task TryWithCleanupAsync_CleansUpOnceWhenComputationAndCleanupFail()
+    {
+        var cleanupCalled = 0;
+        var value = 0;
+        var buggyCleanup = async () => {
+            await Task.CompletedTask;
+            cleanupCalled++;
+            throw new("42");
+        };
+        Func<Task<int>> buggyComputation = async () => {
+            await Task.CompletedTask;
+            try {
+                return 42;
+            } finally {
+#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
+                throw new("1337");
+#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
+            }
+        };
+
+        var aggEx = await Assert.ThrowsAnyAsync<AggregateException>(async () => value = await Utils.TryWithCleanupAsync(buggyComputation, buggyCleanup));
+
+        var innerExceptions = aggEx.InnerExceptions;
+        PAssert.That(() => innerExceptions.Count == 2);
+        PAssert.That(() => innerExceptions[0].Message == "1337");
+        PAssert.That(() => innerExceptions[1].Message == "42");
+        PAssert.That(() => value == 0);
+        PAssert.That(() => cleanupCalled == 1);
+    }
 }
