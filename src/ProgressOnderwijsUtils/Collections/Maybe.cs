@@ -216,13 +216,8 @@ public static class Maybe
         => new(tryBody);
 }
 
-public readonly struct MaybeTryBody
+public readonly struct MaybeTryBody(Action tryBody)
 {
-    readonly Action tryBody;
-
-    public MaybeTryBody(Action tryBody)
-        => this.tryBody = tryBody;
-
     public Maybe<Unit, TError> Catch<TError>()
         where TError : Exception
     {
@@ -250,13 +245,8 @@ public readonly struct MaybeTryBody
     }
 }
 
-public readonly struct MaybeTryBody<TOk>
+public readonly struct MaybeTryBody<TOk>(Func<TOk> tryBody)
 {
-    readonly Func<TOk> tryBody;
-
-    public MaybeTryBody(Func<TOk> tryBody)
-        => this.tryBody = tryBody;
-
     public Maybe<TOk, TError> Catch<TError>()
         where TError : Exception
     {
