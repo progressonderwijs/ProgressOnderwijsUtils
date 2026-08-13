@@ -151,7 +151,7 @@ public static class Utils
         => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static async Task<T> TryWithCleanupAsync<T>(Func<Task<T>> computation, Func<Task> cleanup)
