@@ -4,23 +4,17 @@ using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Collections;
 
-public sealed class Maybe_Ok<TOk>
+public sealed class Maybe_Ok<TOk>(TOk value)
 {
-    public readonly TOk Value;
-
-    public Maybe_Ok(TOk value)
-        => Value = value;
+    public readonly TOk Value = value;
 
     public Maybe<TOk, TError> AsMaybeWithoutError<TError>()
         => this;
 }
 
-public sealed class Maybe_Error<TError>
+public sealed class Maybe_Error<TError>(TError error)
 {
-    public readonly TError Error;
-
-    public Maybe_Error(TError error)
-        => Error = error;
+    public readonly TError Error = error;
 
     public Maybe<TOk, TError> AsMaybeWithoutValue<TOk>()
         => this;
