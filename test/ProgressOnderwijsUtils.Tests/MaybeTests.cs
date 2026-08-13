@@ -112,6 +112,63 @@ public sealed class MaybeTests
         => Assert.ThrowsAny<Exception>(() => Maybe.Try(() => "123".Substring(4, 10)).Catch<NotSupportedException>());
 
     [Fact]
+    public async Task Maybe_try_async_is_ok_unless_exception_is_thrown()
+    {
+        var result1 = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42"))).Catch<Exception>();
+        PAssert.That(() => result1.Contains(42));
+
+        var result2 = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42e"))).Catch<Exception>();
+        PAssert.That(() => result2.ContainsError(e => e is FormatException));
+
+        var result3 = await Maybe.TryAsync(async () => { await Task.CompletedTask; _ = int.Parse("42e"); }).Catch<Exception>();
+        PAssert.That(() => result3.ContainsError(e => e is FormatException));
+    }
+
+    [Fact]
+    public async Task Maybe_try_async_finally_cleansUpOnce()
+    {
+        var cleanupCalled = 0;
+        var maybeWithCleanup = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42e"))).FinallyAsync(async () => { await Task.CompletedTask; cleanupCalled++; });
+        PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is FormatException));
+
+        cleanupCalled = 0;
+        maybeWithCleanup = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42"))).FinallyAsync(async () => { await Task.CompletedTask; cleanupCalled++; });
+        PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.Contains(42));
+
+        cleanupCalled = 0;
+        maybeWithCleanup = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42"))).FinallyAsync(
+            async () => {
+                await Task.CompletedTask;
+                cleanupCalled++;
+                throw new InvalidOperationException();
+            }
+        );
+        PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is InvalidOperationException));
+
+        cleanupCalled = 0;
+        maybeWithCleanup = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42e"))).FinallyAsync(
+            async () => {
+                await Task.CompletedTask;
+                cleanupCalled++;
+                throw new();
+            }
+        );
+        PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is AggregateException));
+
+        cleanupCalled = 0;
+        var unitMaybeWithCleanup = await Maybe.TryAsync(async () => { await Task.CompletedTask; throw new("bla"); }).FinallyAsync(
+            async () => {
+                await Task.CompletedTask;
+                cleanupCalled++;
+                throw new();
+            }
+        );
+        PAssert.That(() => cleanupCalled == 1 && unitMaybeWithCleanup.ContainsError(e => e is AggregateException));
+    }
+
+
+
+    [Fact]
     public void ErrorWhenNotNull_is_error_for_nonnull()
     {
         PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsError());
