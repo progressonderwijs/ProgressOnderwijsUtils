@@ -17,6 +17,7 @@ global using global::System.Text.RegularExpressions;
 global using global::System.Xml;
 global using global::System.Xml.Linq;
 global using global::System.Threading;
+global using global::System.Threading.Tasks;
 global using global::System.IO;
 global using global::ProgressOnderwijsUtils.Collections;
 global using global::ProgressOnderwijsUtils.SchemaReflection;
