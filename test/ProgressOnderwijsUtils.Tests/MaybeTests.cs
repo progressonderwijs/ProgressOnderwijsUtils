@@ -125,7 +125,7 @@ public sealed class MaybeTests
     }
 
     [Fact]
-    public async Task Maybe_try_async_finally_cleansUpOnce()
+    public async Task Maybe_try_async_finally_cleansupOnce()
     {
         var cleanupCalled = 0;
         var maybeWithCleanup = await Maybe.TryAsync(async () => await Task.FromResult(int.Parse("42e"))).FinallyAsync(async () => { await Task.CompletedTask; cleanupCalled++; });

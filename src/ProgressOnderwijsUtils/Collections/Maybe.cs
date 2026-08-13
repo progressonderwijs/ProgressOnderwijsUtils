@@ -226,13 +226,13 @@ public static class Maybe
         => new(tryBody);
 
     /// <summary>
-    /// Usage: Maybe.Try( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
+    /// Usage: await Maybe.TryAsync( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
     /// </summary>
     public static MaybeTryBodyAsync TryAsync(Func<Task> tryBody)
         => new(tryBody);
 
     /// <summary>
-    /// Usage: Maybe.Try( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
+    /// Usage: await Maybe.TrAsyncy( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
     /// </summary>
     public static MaybeTryBodyAsync<TOk> TryAsync<TOk>(Func<Task<TOk>> tryBody)
         => new(tryBody);
@@ -252,7 +252,7 @@ public readonly struct MaybeTryBody(Action tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -267,7 +267,7 @@ public readonly struct MaybeTryBody(Action tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -295,7 +295,7 @@ public readonly struct MaybeTryBody<TOk>(Func<TOk> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -309,7 +309,7 @@ public readonly struct MaybeTryBody<TOk>(Func<TOk> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -337,7 +337,7 @@ public readonly struct MaybeTryBodyAsync(Func<Task> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -352,7 +352,7 @@ public readonly struct MaybeTryBodyAsync(Func<Task> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -380,7 +380,7 @@ public readonly struct MaybeTryBodyAsync<TOk>(Func<Task<TOk>> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -394,7 +394,7 @@ public readonly struct MaybeTryBodyAsync<TOk>(Func<Task<TOk>> tryBody)
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
