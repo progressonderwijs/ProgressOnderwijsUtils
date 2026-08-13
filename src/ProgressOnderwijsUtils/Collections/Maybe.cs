@@ -1,22 +1,20 @@
+using System.Threading.Tasks;
+
+#pragma warning disable VSTHRD200 // Use "Async" suffix — intentionally omitted for sync-lambda overloads on Task<Maybe>
+
 namespace ProgressOnderwijsUtils.Collections;
 
-public sealed class Maybe_Ok<TOk>
+public sealed class Maybe_Ok<TOk>(TOk value)
 {
-    public readonly TOk Value;
-
-    public Maybe_Ok(TOk value)
-        => Value = value;
+    public readonly TOk Value = value;
 
     public Maybe<TOk, TError> AsMaybeWithoutError<TError>()
         => this;
 }
 
-public sealed class Maybe_Error<TError>
+public sealed class Maybe_Error<TError>(TError error)
 {
-    public readonly TError Error;
-
-    public Maybe_Error(TError error)
-        => Error = error;
+    public readonly TError Error = error;
 
     public Maybe<TOk, TError> AsMaybeWithoutValue<TOk>()
         => this;
@@ -165,11 +163,23 @@ public static class Maybe
     public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, TOk whenOk, TError whenError)
         => isOk ? Ok(whenOk).AsMaybeWithoutError<TError>() : Error(whenError);
 
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<Task<TOk>> whenOk, Func<Task<TError>> whenError)
+        => isOk ? Ok(await whenOk().ConfigureAwait(false)).AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
+
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<Task<TOk>> whenOk, Func<TError> whenError)
+        => isOk ? Ok(await whenOk().ConfigureAwait(false)).AsMaybeWithoutError<TError>() : Error(whenError());
+
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<TOk> whenOk, Func<Task<TError>> whenError)
+        => isOk ? Ok(whenOk()).AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
+
     public static Maybe<Unit, TError> Verify<TError>(bool isOk, Func<TError> whenError)
         => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError());
 
     public static Maybe<Unit, TError> Verify<TError>(bool isOk, TError whenError)
         => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError);
+
+    public static async Task<Maybe<Unit, TError>> VerifyAsync<TError>(bool isOk, Func<Task<TError>> whenError)
+        => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
 
     /// <summary>
     /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
@@ -214,15 +224,22 @@ public static class Maybe
     /// </summary>
     public static MaybeTryBody<TOk> Try<TOk>(Func<TOk> tryBody)
         => new(tryBody);
+
+    /// <summary>
+    /// Usage: await Maybe.TryAsync( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
+    /// </summary>
+    public static MaybeTryBodyAsync TryAsync(Func<Task> tryBody)
+        => new(tryBody);
+
+    /// <summary>
+    /// Usage: await Maybe.TrAsyncy( async () => await Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
+    /// </summary>
+    public static MaybeTryBodyAsync<TOk> TryAsync<TOk>(Func<Task<TOk>> tryBody)
+        => new(tryBody);
 }
 
-public readonly struct MaybeTryBody
+public readonly struct MaybeTryBody(Action tryBody)
 {
-    readonly Action tryBody;
-
-    public MaybeTryBody(Action tryBody)
-        => this.tryBody = tryBody;
-
     public Maybe<Unit, TError> Catch<TError>()
         where TError : Exception
     {
@@ -235,7 +252,7 @@ public readonly struct MaybeTryBody
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -248,15 +265,25 @@ public readonly struct MaybeTryBody
             return Maybe.Error(e);
         }
     }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<Unit, Exception>> FinallyAsync(Func<Task> cleanup)
+    {
+        try {
+            await Utils.TryWithCleanupAsync(tryBody, cleanup).ConfigureAwait(false);
+            return Maybe.Ok();
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
 }
 
-public readonly struct MaybeTryBody<TOk>
+public readonly struct MaybeTryBody<TOk>(Func<TOk> tryBody)
 {
-    readonly Func<TOk> tryBody;
-
-    public MaybeTryBody(Func<TOk> tryBody)
-        => this.tryBody = tryBody;
-
     public Maybe<TOk, TError> Catch<TError>()
         where TError : Exception
     {
@@ -268,7 +295,7 @@ public readonly struct MaybeTryBody<TOk>
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// Instead of throwing, this method returns exceptions in a Maybe.Error().
     /// </summary>
@@ -276,6 +303,105 @@ public readonly struct MaybeTryBody<TOk>
     {
         try {
             return Maybe.Ok(Utils.TryWithCleanup(tryBody, cleanup));
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<TOk, Exception>> FinallyAsync(Func<Task> cleanup)
+    {
+        try {
+            return Maybe.Ok(await Utils.TryWithCleanupAsync(tryBody, cleanup).ConfigureAwait(false));
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+}
+
+public readonly struct MaybeTryBodyAsync(Func<Task> tryBody)
+{
+    public async Task<Maybe<Unit, TError>> Catch<TError>()
+        where TError : Exception
+    {
+        try {
+            await tryBody().ConfigureAwait(false);
+            return Maybe.Ok();
+        } catch (TError e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<Unit, Exception>> Finally(Action cleanup)
+    {
+        try {
+            await Utils.TryWithCleanup(tryBody, cleanup).ConfigureAwait(false);
+            return Maybe.Ok();
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<Unit, Exception>> FinallyAsync(Func<Task> cleanup)
+    {
+        try {
+            await Utils.TryWithCleanupAsync(tryBody, cleanup).ConfigureAwait(false);
+            return Maybe.Ok();
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+}
+
+public readonly struct MaybeTryBodyAsync<TOk>(Func<Task<TOk>> tryBody)
+{
+    public async Task<Maybe<TOk, TError>> Catch<TError>()
+        where TError : Exception
+    {
+        try {
+            return Maybe.Ok(await tryBody().ConfigureAwait(false));
+        } catch (TError e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<TOk, Exception>> Finally(Action cleanup)
+    {
+        try {
+            return Maybe.Ok(await Utils.TryWithCleanup(tryBody, cleanup).ConfigureAwait(false));
+        } catch (Exception e) {
+            return Maybe.Error(e);
+        }
+    }
+
+    /// <summary>
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+    /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+    /// </summary>
+    public async Task<Maybe<TOk, Exception>> FinallyAsync(Func<Task> cleanup)
+    {
+        try {
+            return Maybe.Ok(await Utils.TryWithCleanupAsync(tryBody, cleanup).ConfigureAwait(false));
         } catch (Exception e) {
             return Maybe.Error(e);
         }
