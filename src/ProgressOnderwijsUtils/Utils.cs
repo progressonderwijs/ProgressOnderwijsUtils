@@ -108,7 +108,7 @@ public static class Utils
         => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static T TryWithCleanup<T>(Func<T> computation, Action cleanup)
@@ -130,28 +130,28 @@ public static class Utils
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static void TryWithCleanup(Action computation, Action cleanup)
         => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task<T> TryWithCleanup<T>(Func<Task<T>> computation, Action cleanup)
         => TryWithCleanupAsync(computation, () => { cleanup(); return Task.CompletedTask; });
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task TryWithCleanup(Func<Task> computation, Action cleanup)
         => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static async Task<T> TryWithCleanupAsync<T>(Func<Task<T>> computation, Func<Task> cleanup)
@@ -171,21 +171,21 @@ public static class Utils
     }
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task TryWithCleanupAsync(Func<Task> computation, Func<Task> cleanup)
         => TryWithCleanupAsync(computation.ToUnitReturningFunc(), cleanup);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task<T> TryWithCleanupAsync<T>(Func<T> computation, Func<Task> cleanup)
         => TryWithCleanupAsync(() => Task.FromResult(computation()), cleanup);
 
     /// <summary>
-    /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+    /// Executes a computation with reliable cleanup (like try...finally or using(...) {}).
     /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
     /// </summary>
     public static Task TryWithCleanupAsync(Action computation, Func<Task> cleanup)
