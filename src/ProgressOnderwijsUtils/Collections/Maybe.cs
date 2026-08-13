@@ -163,11 +163,23 @@ public static class Maybe
     public static Maybe<TOk, TError> Either<TOk, TError>(bool isOk, TOk whenOk, TError whenError)
         => isOk ? Ok(whenOk).AsMaybeWithoutError<TError>() : Error(whenError);
 
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<Task<TOk>> whenOk, Func<Task<TError>> whenError)
+        => isOk ? Ok(await whenOk().ConfigureAwait(false)).AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
+
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<Task<TOk>> whenOk, Func<TError> whenError)
+        => isOk ? Ok(await whenOk().ConfigureAwait(false)).AsMaybeWithoutError<TError>() : Error(whenError());
+
+    public static async Task<Maybe<TOk, TError>> EitherAsync<TOk, TError>(bool isOk, Func<TOk> whenOk, Func<Task<TError>> whenError)
+        => isOk ? Ok(whenOk()).AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
+
     public static Maybe<Unit, TError> Verify<TError>(bool isOk, Func<TError> whenError)
         => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError());
 
     public static Maybe<Unit, TError> Verify<TError>(bool isOk, TError whenError)
         => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(whenError);
+
+    public static async Task<Maybe<Unit, TError>> VerifyAsync<TError>(bool isOk, Func<Task<TError>> whenError)
+        => isOk ? Ok().AsMaybeWithoutError<TError>() : Error(await whenError().ConfigureAwait(false));
 
     /// <summary>
     /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
