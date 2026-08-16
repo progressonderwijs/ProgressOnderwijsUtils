@@ -4,13 +4,8 @@ using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Collections;
 
-public sealed record MaybeAdd<T1, E>
+public readonly struct MaybeAdd<T1, E>(Maybe<T1, E> maybe)
 {
-    readonly Maybe<T1, E> maybe;
-
-    public MaybeAdd(Maybe<T1, E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<T1, E> ToMaybe()
         => maybe;
 
@@ -42,13 +37,8 @@ public sealed record MaybeAdd<T1, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, E>
+public readonly struct MaybeAdd<T1, T2, E>(Maybe<(T1, T2), E> maybe)
 {
-    readonly Maybe<(T1, T2), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2), E> ToMaybe()
         => maybe;
 
@@ -80,13 +70,8 @@ public sealed record MaybeAdd<T1, T2, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, E>
+public readonly struct MaybeAdd<T1, T2, T3, E>(Maybe<(T1, T2, T3), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3), E> ToMaybe()
         => maybe;
 
@@ -118,13 +103,8 @@ public sealed record MaybeAdd<T1, T2, T3, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, E>(Maybe<(T1, T2, T3, T4), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4), E> ToMaybe()
         => maybe;
 
@@ -156,13 +136,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, E>(Maybe<(T1, T2, T3, T4, T5), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5), E> ToMaybe()
         => maybe;
 
@@ -194,13 +169,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, T5, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, T6, E>(Maybe<(T1, T2, T3, T4, T5, T6), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5, T6), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5, T6), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5, T6), E> ToMaybe()
         => maybe;
 
@@ -232,13 +202,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>(Maybe<(T1, T2, T3, T4, T5, T6, T7), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5, T6, T7), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5, T6, T7), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5, T6, T7), E> ToMaybe()
         => maybe;
 
@@ -270,13 +235,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> ToMaybe()
         => maybe;
 
@@ -308,13 +268,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> ToMaybe()
         => maybe;
 
@@ -346,13 +301,8 @@ public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
 }
 
-public sealed record MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>
+public readonly struct MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> maybe)
 {
-    readonly Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> maybe;
-
-    public MaybeAdd(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> maybe)
-        => this.maybe = maybe;
-
     public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> ToMaybe()
         => maybe;
 
