@@ -11,6 +11,9 @@ public sealed record MaybeAddState<T1, E>
     public MaybeAddState(Maybe<T1, E> maybe)
         => this.maybe = maybe;
 
+    public Maybe<T1, E> ToMaybe()
+        => maybe;
+
     public MaybeAddState<T1, T2, E> WhenOkTryAdd<T2>(Maybe<T2, E> value)
         => new(maybe.WhenOkTry(v1 => value.WhenOk(v2 => (v1, v2))));
 
@@ -37,9 +40,6 @@ public sealed record MaybeAddState<T1, E>
 
     public async Task<MaybeAddState<T1, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<T1, E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, E>
@@ -48,6 +48,9 @@ public sealed record MaybeAddState<T1, T2, E>
 
     public MaybeAddState(Maybe<(T1, T2), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, E> WhenOkTryAdd<T3>(Maybe<T3, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v3 => (a.Item1, a.Item2, v3))));
@@ -75,9 +78,6 @@ public sealed record MaybeAddState<T1, T2, E>
 
     public async Task<MaybeAddState<T1, T2, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, E>
@@ -86,6 +86,9 @@ public sealed record MaybeAddState<T1, T2, T3, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, E> WhenOkTryAdd<T4>(Maybe<T4, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v4 => (a.Item1, a.Item2, a.Item3, v4))));
@@ -113,9 +116,6 @@ public sealed record MaybeAddState<T1, T2, T3, E>
 
     public async Task<MaybeAddState<T1, T2, T3, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, E>
@@ -124,6 +124,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, E> WhenOkTryAdd<T5>(Maybe<T5, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v5 => (a.Item1, a.Item2, a.Item3, a.Item4, v5))));
@@ -151,9 +154,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, E>
@@ -162,6 +162,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, E> WhenOkTryAdd<T6>(Maybe<T6, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v6 => (a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, v6))));
@@ -189,9 +192,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, E>
@@ -200,6 +200,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5, T6), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5, T6), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, T7, E> WhenOkTryAdd<T7>(Maybe<T7, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v7 => (a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, v7))));
@@ -227,9 +230,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, T6, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5, T6), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, E>
@@ -238,6 +238,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5, T6, T7), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5, T6, T7), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, E> WhenOkTryAdd<T8>(Maybe<T8, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v8 => (a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, a.Item7, v8))));
@@ -265,9 +268,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, T6, T7, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5, T6, T7), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, E>
@@ -276,6 +276,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, E> WhenOkTryAdd<T9>(Maybe<T9, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v9 => (a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, a.Item7, a.Item8, v9))));
@@ -303,9 +306,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>
@@ -314,6 +314,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E> WhenOkTryAdd<T10>(Maybe<T10, E> value)
         => new(maybe.WhenOkTry(a => value.WhenOk(v10 => (a.Item1, a.Item2, a.Item3, a.Item4, a.Item5, a.Item6, a.Item7, a.Item8, a.Item9, v10))));
@@ -341,9 +344,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> ToMaybe()
-        => maybe;
 }
 
 public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>
@@ -352,6 +352,9 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>
 
     public MaybeAddState(Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> maybe)
         => this.maybe = maybe;
+
+    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> ToMaybe()
+        => maybe;
 
     public MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E> WhenOk(Func<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), Maybe<Unit, E>> check)
         => new(maybe.WhenOkTry(a => check(a).WhenOk(_ => a)));
@@ -364,9 +367,6 @@ public sealed record MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>
 
     public async Task<MaybeAddState<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, F>> WhenErrorAsync<F>(Func<E, Task<F>> selector)
         => new(await maybe.WhenErrorAsync(selector).ConfigureAwait(false));
-
-    public Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> ToMaybe()
-        => maybe;
 }
 
 #pragma warning disable VSTHRD003 // Awaiting task passed in as parameter is intentional
