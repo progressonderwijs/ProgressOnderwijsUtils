@@ -22,15 +22,15 @@ public sealed class MaybeAddTest
             .ToMaybeAdd()
             .WhenOkTryAdd(Maybe.Either(true, b, "no B"))
             .WhenOkAdd(_ => c)
-            .WhenOk(acc => Maybe.Either(object.ReferenceEquals(acc.Item1, a), Unit.Value, "missing A"))
+            .WhenOk(acc => Maybe.Either(ReferenceEquals(acc.Item1, a), Unit.Value, "missing A"))
             .WhenOkTryAdd(Maybe.Ok(d).AsMaybeWithoutError<string>())
             .ToMaybe(); // Maybe<(A, B, C, D), string>
 
         var ok = sut.AssertOk();
-        PAssert.That(() => object.ReferenceEquals(ok.Item1, a));
-        PAssert.That(() => object.ReferenceEquals(ok.Item2, b));
-        PAssert.That(() => object.ReferenceEquals(ok.Item3, c));
-        PAssert.That(() => object.ReferenceEquals(ok.Item4, d));
+        PAssert.That(() => ReferenceEquals(ok.Item1, a));
+        PAssert.That(() => ReferenceEquals(ok.Item2, b));
+        PAssert.That(() => ReferenceEquals(ok.Item3, c));
+        PAssert.That(() => ReferenceEquals(ok.Item4, d));
     }
 
 }
