@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
 
 namespace ProgressOnderwijsUtils.SeleniumWebDriverPool;
 
@@ -14,12 +13,10 @@ public sealed class WebDriverPool : IDisposable
 {
     bool disposed;
     public readonly ConcurrentBag<IWebDriver> cachedIdleDrivers; //TODO: in .net core 3, consider DisposableObjectPool
-    readonly DriverService server;
     readonly Func<IWebDriver> driverFactory;
 
     public static WebDriverPool ChromePool((string Name, object Value)[] profilePreferences, string[] arguments)
     {
-        var driverService = ChromeDriverService.CreateDefaultService();
         var driverOptions = new ChromeOptions { AcceptInsecureCertificates = true, Proxy = null, };
         driverOptions.SetLoggingPreference(LogType.Browser, LogLevel.All);
         driverOptions.SetLoggingPreference(LogType.Driver, LogLevel.Warning);
@@ -29,12 +26,11 @@ public sealed class WebDriverPool : IDisposable
         foreach (var profilePreference in profilePreferences) {
             driverOptions.AddUserProfilePreference(profilePreference.Name, profilePreference.Value);
         }
-        return new(driverService, () => new ChromeDriver(driverService, driverOptions));
+        return new(() => new ChromeDriver(driverOptions));
     }
 
-    public WebDriverPool(DriverService server, Func<IWebDriver> driverFactory)
+    public WebDriverPool(Func<IWebDriver> driverFactory)
     {
-        this.server = server;
         this.driverFactory = driverFactory;
         cachedIdleDrivers = new();
         AppDomain.CurrentDomain.DomainUnload += Cleanup;
@@ -83,8 +79,6 @@ public sealed class WebDriverPool : IDisposable
         while (cachedIdleDrivers.TryTake(out var driver)) {
             driver.Dispose();
         }
-
-        server.Dispose();
     }
 
     ~WebDriverPool()

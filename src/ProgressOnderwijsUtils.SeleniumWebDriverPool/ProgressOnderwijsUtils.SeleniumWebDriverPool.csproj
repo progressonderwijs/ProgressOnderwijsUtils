@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
-        <Version>6.10.0</Version>
-        <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
+        <Version>6.10.1</Version>
+        <PackageReleaseNotes>Remove the not needed, and unused, driver-service.</PackageReleaseNotes>
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
         <PackageTags>ProgressOnderwijsUtils Selenium WebDriver Web</PackageTags>
