@@ -17,8 +17,8 @@ build_script:
 - cmd: dotnet build -c Release
 - cmd: dotnet pack -c Release --include-symbols --include-source
 test_script:
-- cmd: dotnet test --use-active-runner test/ProgressOnderwijsUtils.Tests -c Release
-- cmd: dotnet test --use-active-runner test/ProgressOnderwijsUtils.Analyzers.Tests -c Release
+- cmd: dotnet run --project test/ProgressOnderwijsUtils.Tests -c Release
+- cmd: dotnet run --project test/ProgressOnderwijsUtils.Analyzers.Tests -c Release
 artifacts:
 - path: '**\*.nupkg'
 deploy:
