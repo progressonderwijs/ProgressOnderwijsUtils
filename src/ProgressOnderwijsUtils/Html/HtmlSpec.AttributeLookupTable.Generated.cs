@@ -3531,11 +3531,12 @@ public static class AttributeLookupTable
                 ["title"] = "_title",
                 ["translate"] = "_translate",
                 ["writingsuggestions"] = "_writingsuggestions",
+                ["for"] = "_for",
                 ["shadowrootmode"] = "_shadowrootmode",
                 ["shadowrootdelegatesfocus"] = "_shadowrootdelegatesfocus",
+                ["shadowrootserializable"] = "_shadowrootserializable",
                 ["shadowrootslotassignment"] = "_shadowrootslotassignment",
                 ["shadowrootclonable"] = "_shadowrootclonable",
-                ["shadowrootserializable"] = "_shadowrootserializable",
                 ["shadowrootcustomelementregistry"] = "_shadowrootcustomelementregistry"
             },
             ["textarea"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
