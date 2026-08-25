@@ -2051,7 +2051,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>, IHasAttr_for, IHasAttr_shadowrootmode, IHasAttr_shadowrootdelegatesfocus, IHasAttr_shadowrootserializable, IHasAttr_shadowrootslotassignment, IHasAttr_shadowrootclonable, IHasAttr_shadowrootcustomelementregistry
+    public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>, IHasAttr_shadowrootmode, IHasAttr_shadowrootdelegatesfocus, IHasAttr_shadowrootslotassignment, IHasAttr_shadowrootclonable, IHasAttr_shadowrootserializable, IHasAttr_shadowrootcustomelementregistry
     {
         public string TagName => "template";
         string IHtmlElement.TagStart => "<template";

@@ -117,9 +117,9 @@ public interface IHasAttr_rowspan { }
 public interface IHasAttr_headers { }
 public interface IHasAttr_shadowrootmode { }
 public interface IHasAttr_shadowrootdelegatesfocus { }
-public interface IHasAttr_shadowrootserializable { }
 public interface IHasAttr_shadowrootslotassignment { }
 public interface IHasAttr_shadowrootclonable { }
+public interface IHasAttr_shadowrootserializable { }
 public interface IHasAttr_shadowrootcustomelementregistry { }
 public interface IHasAttr_cols { }
 public interface IHasAttr_rows { }
