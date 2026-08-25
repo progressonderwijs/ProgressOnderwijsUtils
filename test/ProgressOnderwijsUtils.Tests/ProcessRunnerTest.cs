@@ -43,7 +43,7 @@ public sealed class ProcessRunnerTest
         {
             var result = new ProcessStartSettings {
                 ExecutableName = "xcopy",
-            }.StartProcess(CancellationToken.None);
+            }.StartProcess(TestContext.Current.CancellationToken);
 
             result.WriteToConsoleWithPrefix("x");
             var stdOut = await result.StdOutput();
@@ -77,7 +77,7 @@ public sealed class ProcessRunnerTest
         PAssert.That(() => hasStartedPinging && !result.ExitCode.IsCompleted && elapsedAfterFirstOutput < TimeSpan.FromSeconds(4));
         await cancel.CancelAsync();
         try {
-            await result.ExitCode;
+            _ = await result.ExitCode;
         } catch (OperationCanceledException) { }
 
         var elapsedAfterExit = timer.Elapsed;

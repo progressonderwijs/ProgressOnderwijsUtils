@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>116.6.0</Version>
-    <PackageReleaseNotes>Added MaybeAdd abstraction to automatically collect the ok-ed data.</PackageReleaseNotes>
+    <Version>116.7.0</Version>
+    <PackageReleaseNotes>Updated NuGet packages.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -14,11 +14,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.298">
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.321">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="AngleSharp" Version="1.7.1" />
+    <PackageReference Include="AngleSharp" Version="1.7.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
     <PackageReference Include="System.Drawing.Common" Version="10.0.11" />
     <PackageReference Include="System.Reactive" Version="7.0.0" />
