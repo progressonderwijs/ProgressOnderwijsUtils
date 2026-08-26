@@ -254,4 +254,28 @@ public sealed class FromDbValueConverterTest
     [Fact]
     public void CanCastToNullableConvertibleOfValueType()
         => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123)).AssertNotNull().Value == -123);
+
+    [Fact]
+    public void DateOnly_passthrough_when_value_is_already_DateOnly()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly>(new DateOnly(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void NullableDateOnly_passthrough_when_value_is_already_DateOnly()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly?>(new DateOnly(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void DateOnly_converts_from_DateTime()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly>(new DateTime(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void NullableDateOnly_converts_from_DateTime()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly?>(new DateTime(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void DateOnly_nullable_enumerable_is_not_a_valid_TVP_source()
+        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new DateOnly?[] { new DateOnly(2025, 6, 1) }));
+
+    [Fact]
+    public void DateOnly_enumerable_is_not_a_valid_TVP_source()
+        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new DateOnly[] { new DateOnly(2025, 6, 1) }));
 }

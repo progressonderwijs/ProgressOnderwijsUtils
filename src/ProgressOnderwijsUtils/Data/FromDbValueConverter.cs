@@ -81,7 +81,11 @@ public static class DbValueConverter
                         ? alreadyCast
                         : (T?)converter.ConvertFromProvider(obj);
             } else {
-                return obj => obj == null ? throw new InvalidCastException($"Cannot convert null to {type.ToCSharpFriendlyTypeName()}") : (T?)converter.ConvertFromProvider(obj);
+                return obj => obj == null 
+                    ? throw new InvalidCastException($"Cannot convert null to {type.ToCSharpFriendlyTypeName()}")
+                    : obj is T alreadyCast
+                        ? alreadyCast
+                    : (T?)converter.ConvertFromProvider(obj);
             }
         }
     }

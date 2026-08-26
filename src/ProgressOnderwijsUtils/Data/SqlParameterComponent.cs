@@ -87,7 +87,7 @@ static class SqlParameterComponent
         if (elementType == null) {
             return null;
         }
-        var converter = elementType != typeof(DateOnly) ? AutomaticValueConverters.GetOrNull(elementType) : null;
+        var converter = elementType.GetNonNullableType() != typeof(DateOnly) ? AutomaticValueConverters.GetOrNull(elementType) : null;
         var underlyingType = converter?.ProviderClrType ?? elementType.GetUnderlyingType();
         var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetValueOrDefault(underlyingType);
         if (sqlTableTypeName == null) {
