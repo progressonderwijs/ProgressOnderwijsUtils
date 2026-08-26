@@ -87,7 +87,7 @@ static class SqlParameterComponent
         if (elementType == null) {
             return null;
         }
-        var converter = AutomaticValueConverters.GetOrNull(elementType);
+        var converter = elementType != typeof(DateOnly) ? AutomaticValueConverters.GetOrNull(elementType) : null;
         var underlyingType = converter?.ProviderClrType ?? elementType.GetUnderlyingType();
         var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetValueOrDefault(underlyingType);
         if (sqlTableTypeName == null) {
@@ -187,7 +187,7 @@ static class SqlParameterComponent
             sql.AppendTo(ref factory);
         } else if (argument is INestableSql nestableSql) {
             nestableSql.Sql.AppendTo(ref factory);
-        } else if (argument is { } and not Enum && AutomaticValueConverters.GetOrNull(argument.GetType()) is { } converter) {
+        } else if (argument is { } and not Enum and not DateOnly && AutomaticValueConverters.GetOrNull(argument.GetType()) is { } converter) {
             AppendParamTo(ref factory, converter.ConvertToProvider(argument));
         } else {
             AppendParamTo(ref factory, argument);
