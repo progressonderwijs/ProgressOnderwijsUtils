@@ -273,9 +273,9 @@ public sealed class FromDbValueConverterTest
 
     [Fact]
     public void DateOnly_nullable_enumerable_is_not_a_valid_TVP_source()
-        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new DateOnly?[] { new DateOnly(2025, 6, 1) }));
+        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new DateOnly?[] { new DateOnly(2025, 6, 1), }));
 
     [Fact]
     public void DateOnly_enumerable_is_not_a_valid_TVP_source()
-        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new DateOnly[] { new DateOnly(2025, 6, 1) }));
+        => Assert.Throws<ArgumentException>(() => SqlParameterComponent.ToTableValuedParameterFromPlainValues(new[] { new DateOnly(2025, 6, 1), }));
 }
