@@ -57,14 +57,9 @@ public static class DbValueConverter
 
         static Func<object?, T?> MakeConverter(Type type)
         {
-            if (type == typeof(DateOnly)) {
+            if (type == typeof(DateOnly) || type == typeof(DateOnly?)) {
                 return obj => obj == null
-                    ? throw new InvalidCastException("Cannot convert null to DateOnly")
-                    : (T?)(object)(obj is DateOnly d ? d : DateOnly.FromDateTime((DateTime)obj));
-            }
-            if (type == typeof(DateOnly?)) {
-                return obj => obj == null
-                    ? default(T)
+                    ? default(T?)
                     : (T?)(object)(obj is DateOnly d ? d : DateOnly.FromDateTime((DateTime)obj));
             }
             var converter = AutomaticValueConverters.GetOrNull(type);
