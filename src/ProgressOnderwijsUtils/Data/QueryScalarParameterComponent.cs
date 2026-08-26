@@ -11,18 +11,17 @@ struct QueryScalarParameterComponent : IQueryParameter
 
     static object MapParameterToSqlValue(object val)
     {
-        var mapper = mappings.GetOrAdd(
-            val.GetType(),
-            type =>
-                type == typeof(CurrentTimeToken)
-                    ? _ => DateTime.Now
-                    : AutomaticValueConverters.GetOrNull(type) is { } pocoConvertible
-                        ? o => pocoConvertible.ConvertToProvider(o)
-                        : null
-        );
-
+        var mapper = mappings.GetOrAdd(val.GetType(), CreateMapper);
         return mapper?.Invoke(val) ?? val;
     }
+
+    static Func<object, object?>? CreateMapper(Type type)
+        => type switch {
+            _ when type == typeof(CurrentTimeToken) => _ => DateTime.Now,
+            _ when type == typeof(DateOnly) => null,
+            _ when AutomaticValueConverters.GetOrNull(type) is { } pocoConvertible => o => pocoConvertible.ConvertToProvider(o),
+            _ => null,
+        };
 
     public static byte[] UInt64ToSqlBinary(ulong uint64val)
     {
