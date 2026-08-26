@@ -18,7 +18,6 @@ struct QueryScalarParameterComponent : IQueryParameter
     static Func<object, object?>? CreateMapper(Type type)
         => type switch {
             _ when type == typeof(CurrentTimeToken) => _ => DateTime.Now,
-            _ when type == typeof(DateOnly) => null,
             _ when AutomaticValueConverters.GetOrNull(type) is { } pocoConvertible => o => pocoConvertible.ConvertToProvider(o),
             _ => null,
         };

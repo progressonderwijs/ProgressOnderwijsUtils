@@ -41,7 +41,6 @@ public static class AutomaticValueConverters
     static readonly ValueConverter<uint, byte[]> uintConverter = Define<uint, byte[]>(codeVal => QueryScalarParameterComponent.UInt32ToSqlBinary(codeVal), dbVal => ParameterizedSqlObjectMapper.SqlBinaryToUInt32(dbVal));
     static readonly ValueConverter<int, int> intPassThroughConverter = Define<int, int>(codeVal => codeVal, dbVal => dbVal);
     static readonly ValueConverter<long, long> longPassThroughConverter = Define<long, long>(codeVal => codeVal, dbVal => dbVal);
-    static readonly ValueConverter<DateOnly, DateTime> dateOnlyConverter = Define<DateOnly, DateTime>(codeVal => codeVal.ToDateTime(TimeOnly.MinValue), dbVal => DateOnly.FromDateTime(dbVal));
     static readonly ConcurrentDictionary<Type, ValueConverter?> propertyConverterCache = new();
 
     static readonly Func<Type, ValueConverter?> cachedFactoryDelegate = type => {
@@ -51,8 +50,6 @@ public static class AutomaticValueConverters
             return ulongConverter;
         } else if (type == typeof(uint)) {
             return uintConverter;
-        } else if (type == typeof(DateOnly)) { 
-            return dateOnlyConverter; 
         } else if (type.IsEnum) {
             var underlyingType = type.GetEnumUnderlyingType();
             if (underlyingType == typeof(ulong)) {
