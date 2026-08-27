@@ -262,4 +262,8 @@ public sealed class FromDbValueConverterTest
     [Fact]
     public void CanCastToNullableDateOnlyFromDateTime()
         => PAssert.That(() => DbValueConverter.FromDb<DateOnly?>(new DateTime(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void CanNotCastDateOnlyFromDateTime()
+        => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<DateTime>(new DateOnly(2026, 6, 1)) == new DateTime(2026, 6, 1));
 }
