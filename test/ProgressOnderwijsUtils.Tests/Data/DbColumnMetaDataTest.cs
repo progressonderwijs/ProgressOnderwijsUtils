@@ -55,4 +55,34 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
     [Fact]
     public void DateOnly_ToSqlColumnDefinition_ExampleWorks()
         => PAssert.That(() => DbColumnMetaData.Create("test", typeof(DateOnly), false, null, null).ToSqlColumnDefinition() == "test Date not null");
+
+    public sealed record DateOnlyPoco : IWrittenImplicitly
+    {
+        public DateOnly Datum { get; init; }
+        public DateOnly? NullabeleDatum { get; init; }
+    }
+
+    [Fact]
+    public void DateOnly_roundtrips_via_database()
+    {
+        SQL($"""
+            create table #DateTest (
+                Datum date not null,
+                NullabeleDatum date null
+            )
+            """).ExecuteNonQuery(Connection);
+
+        SQL($"insert into #DateTest values ({new DateOnly(2025, 6, 1)}, {new DateOnly(2000, 12, 31)})").ExecuteNonQuery(Connection);
+        SQL($"insert into #DateTest values ({new DateOnly(1999, 1, 1)}, {(DateOnly?)null})").ExecuteNonQuery(Connection);
+
+        var plainResults = SQL($"select Datum from #DateTest order by Datum").ReadPlain<DateOnly>(Connection);
+        PAssert.That(() => Enumerable.SequenceEqual(plainResults, new[] { new DateOnly(1999, 1, 1), new DateOnly(2025, 6, 1), }));
+
+        var pocoResults = SQL($"select Datum, NullabeleDatum from #DateTest order by Datum").ReadPocos<DateOnlyPoco>(Connection);
+        PAssert.That(() => pocoResults[0] == new DateOnlyPoco { Datum = new(1999, 1, 1), NullabeleDatum = null, });
+        PAssert.That(() => pocoResults[1] == new DateOnlyPoco { Datum = new(2025, 6, 1), NullabeleDatum = new(2000, 12, 31), });
+
+        var filtered = SQL($"select Datum from #DateTest where 1=1 and Datum = {new DateOnly(2025, 6, 1)}").ReadPlain<DateOnly>(Connection);
+        PAssert.That(() => filtered.Single() == new DateOnly(2025, 6, 1));
+    }
 }
