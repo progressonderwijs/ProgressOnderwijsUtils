@@ -113,6 +113,7 @@ static class SqlParameterComponent
         public static readonly CustomTableType[] All = {
             new(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
             new(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
+            new(typeof(DateOnly), "TVar_Date", "querytablevalue date not null"),
             new(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
             new(typeof(decimal), "TVar_Decimal", "querytablevalue decimal(18, 0) not null"),
             new(typeof(double), "TVar_Float", "querytablevalue float not null"),
