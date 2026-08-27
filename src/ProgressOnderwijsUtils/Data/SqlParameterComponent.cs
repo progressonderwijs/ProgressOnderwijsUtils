@@ -114,6 +114,7 @@ static class SqlParameterComponent
             new(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
             new(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
             new(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
+            new(typeof(DateOnly), "TVar_Date", "querytablevalue date not null"),
             new(typeof(decimal), "TVar_Decimal", "querytablevalue decimal(18, 0) not null"),
             new(typeof(double), "TVar_Float", "querytablevalue float not null"),
             new(typeof(int), "TVar_Int", "querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off)"),
