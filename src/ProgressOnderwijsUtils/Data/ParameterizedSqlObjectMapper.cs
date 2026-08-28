@@ -249,7 +249,14 @@ public static partial class ParameterizedSqlObjectMapper
     static readonly MethodInfo getDateOnly = ((Func<IDataRecord, int, DateOnly>)ReadDateOnly).Method;
 
     static DateOnly ReadDateOnly(IDataRecord reader, int i)
-     => DateOnly.FromDateTime(reader.GetDateTime(i));
+    {
+        if (reader.GetDataTypeName(i) is not "date") {
+            throw new InvalidCastException(
+                $"Column '{reader.GetName(i)}' has database type '{reader.GetDataTypeName(i)}' which cannot safely be read as DateOnly because time information would be lost. Use DateTime instead."
+            );
+        }
+        return DateOnly.FromDateTime(reader.GetDateTime(i));
+    }
 
     internal static class DataReaderSpecialization<TReader>
         where TReader : IDataReader
