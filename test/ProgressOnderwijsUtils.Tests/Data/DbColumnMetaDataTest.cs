@@ -62,26 +62,65 @@ public sealed class DbColumnMetaDataTest : TransactedLocalConnection
         public DateOnly? NullabeleDatum { get; init; }
     }
 
+    public sealed record DateTimePoco : IWrittenImplicitly
+    {
+        public DateTime Datum { get; init; }
+        public DateTime? NullabeleDatum { get; init; }
+    }
+
+    public sealed record DateTimeDatumTijdPoco : IWrittenImplicitly
+    {
+        public DateTime DatumTijd { get; init; }
+    }
+
+    public sealed record DateOnlyVanDateTimePoco : IWrittenImplicitly
+    {
+        public DateOnly DatumTijd { get; init; }
+    }
+
     [Fact]
     public void DateOnly_roundtrips_via_database()
     {
         SQL($"""
             create table #DateTest (
                 Datum date not null,
-                NullabeleDatum date null
+                NullabeleDatum date null,
+                DatumTijd datetime2 not null
             )
             """).ExecuteNonQuery(Connection);
 
-        SQL($"insert into #DateTest values ({new DateOnly(2025, 6, 1)}, {new DateOnly(2000, 12, 31)})").ExecuteNonQuery(Connection);
-        SQL($"insert into #DateTest values ({new DateOnly(1999, 1, 1)}, {(DateOnly?)null})").ExecuteNonQuery(Connection);
+        SQL($"insert into #DateTest values ({new DateOnly(2025, 6, 1)}, {new DateOnly(2000, 12, 31)}, {new DateTime(2026, 7, 1, 1, 1, 1)})").ExecuteNonQuery(Connection);
+        SQL($"insert into #DateTest values ({new DateOnly(1999, 1, 1)}, {(DateOnly?)null}, {new DateTime(2005, 6, 9, 1, 1, 1)})").ExecuteNonQuery(Connection);
 
-        var plainResults = SQL($"select Datum from #DateTest order by Datum").ReadPlain<DateOnly>(Connection);
-        PAssert.That(() => Enumerable.SequenceEqual(plainResults, new[] { new DateOnly(1999, 1, 1), new DateOnly(2025, 6, 1), }));
+        // db: date -> code: DateOnly -> OK
+        var dateToDateOnly = SQL($"select Datum from #DateTest order by Datum").ReadPlain<DateOnly>(Connection);
+        PAssert.That(() => Enumerable.SequenceEqual(dateToDateOnly, new[] { new DateOnly(1999, 1, 1), new DateOnly(2025, 6, 1), }));
 
         var pocoResults = SQL($"select Datum, NullabeleDatum from #DateTest order by Datum").ReadPocos<DateOnlyPoco>(Connection);
         PAssert.That(() => pocoResults[0] == new DateOnlyPoco { Datum = new(1999, 1, 1), NullabeleDatum = null, });
         PAssert.That(() => pocoResults[1] == new DateOnlyPoco { Datum = new(2025, 6, 1), NullabeleDatum = new(2000, 12, 31), });
 
+        // db: datetime2 -> code: DateOnly -> FAIL
+        Assert.ThrowsAny<Exception>(() => SQL($"select DatumTijd from #DateTest order by DatumTijd").ReadPlain<DateOnly>(Connection));
+        Assert.ThrowsAny<Exception>(() => SQL($"select DatumTijd from #DateTest order by DatumTijd").ReadPocos<DateOnlyVanDateTimePoco>(Connection));
+
+        // db: date -> code: DateTime -> OK (for now)
+        var dateToDateTime = SQL($"select Datum from #DateTest order by Datum").ReadPlain<DateTime>(Connection);
+        PAssert.That(() => Enumerable.SequenceEqual(dateToDateTime, new[] { new DateTime(1999, 1, 1), new DateTime(2025, 6, 1), }));
+
+        var dateTimePocoResults = SQL($"select Datum, NullabeleDatum from #DateTest order by Datum").ReadPocos<DateTimePoco>(Connection);
+        PAssert.That(() => dateTimePocoResults[0] == new DateTimePoco { Datum = new(1999, 1, 1), NullabeleDatum = null, });
+        PAssert.That(() => dateTimePocoResults[1] == new DateTimePoco { Datum = new(2025, 6, 1), NullabeleDatum = new(2000, 12, 31), });
+
+        // db: datetime2 -> code: DateTime -> OK
+        var datetime2ToDateTime = SQL($"select DatumTijd from #DateTest order by DatumTijd").ReadPlain<DateTime>(Connection);
+        PAssert.That(() => Enumerable.SequenceEqual(datetime2ToDateTime, new[] { new DateTime(2005, 6, 9, 1, 1, 1), new DateTime(2026, 7, 1, 1, 1, 1), }));
+
+        var datetime2PocoResults = SQL($"select DatumTijd from #DateTest order by DatumTijd").ReadPocos<DateTimeDatumTijdPoco>(Connection);
+        PAssert.That(() => datetime2PocoResults[0] == new DateTimeDatumTijdPoco { DatumTijd = new(2005, 6, 9, 1, 1, 1), });
+        PAssert.That(() => datetime2PocoResults[1] == new DateTimeDatumTijdPoco { DatumTijd = new(2026, 7, 1, 1, 1, 1), });
+
+        // DateOnly as filter parameter
         var filtered = SQL($"select Datum from #DateTest where 1=1 and Datum = {new DateOnly(2025, 6, 1)}").ReadPlain<DateOnly>(Connection);
         PAssert.That(() => filtered.Single() == new DateOnly(2025, 6, 1));
     }
