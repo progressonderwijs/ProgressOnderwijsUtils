@@ -83,6 +83,8 @@ struct CommandFactory : ICommandFactory
                 cmdParams[i].TypeName = paramObjs[i].TypeName;
             } else if (paramObjs[i].Value is DateTime) {
                 cmdParams[i].SqlDbType = SqlDbType.DateTime2;
+            } else if (paramObjs[i].Value is DateOnly) {
+                cmdParams[i].SqlDbType = SqlDbType.Date;
             } else {
                 cmdParams[i].ResetSqlDbType();
             }
