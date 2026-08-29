@@ -7,7 +7,7 @@ public static class ExceptionExtensions
     extension(Exception? exception)
     {
         /// <summary>
-        /// Tests whether an exception is non-null and matches a predicate, or any of its inner exceptions do.  For AggregateExceptions, tests wether *all* children match.
+        /// Tests whether an exception is non-null and matches a predicate, or any of its inner exceptions do.  For AggregateExceptions, tests whether *all* children match.
         /// </summary>
         public bool AnyNestingLevelMatches(Func<Exception, bool> predicate)
         {
