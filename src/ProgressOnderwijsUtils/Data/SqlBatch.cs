@@ -311,12 +311,7 @@ public readonly record struct PocosSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
-        T[] rows;
-        try {
-            rows = await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
-        } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
-            throw SqlCancellationBoundary.ToOperationCancelled(ex, cancel);
-        }
+        var rows = await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
         var nullableVerifier = NonNullableFieldVerifier.VerificationDelegate<T>();
         foreach (var row in rows) {
             var nullablityError = nullableVerifier(row);
@@ -591,11 +586,7 @@ public readonly record struct TuplesSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "DataReaderToSingleRowUnpacker failed");
         }
-        try {
-            return await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
-        } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
-            throw SqlCancellationBoundary.ToOperationCancelled(ex, cancel);
-        }
+        return await ParameterizedSqlObjectMapper.ReaderToArrayAsync(this, reader, unpacker, cmd, cancel).ConfigureAwait(false);
     }
 }
 
