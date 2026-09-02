@@ -25,6 +25,15 @@ public static class ExceptionExtensions
         public bool IsSqlTimeoutException()
             => exception.AnyNestingLevelMatches(sqlTimeoutPredicate);
 
+        /// <summary>
+        /// Detects a cancellation that was propagated to SQL Server (typically via <see cref="System.Data.Common.DbCommand.Cancel"/>
+        /// triggered by a <see cref="CancellationToken"/>). Such cancellations surface as a <see cref="SqlException"/> — not an
+        /// <see cref="OperationCanceledException"/> — so <see cref="IsCancellationExceptionOfToken"/> will not catch them.
+        /// Matched by error number (3617 "Operation cancelled by user." and 3980) because messages are localized.
+        /// </summary>
+        public bool IsSqlCancelledException()
+            => exception.AnyNestingLevelMatches(sqlCancelledPredicate);
+
         public bool IsRetriableConnectionFailure()
             => exception.AnyNestingLevelMatches(retriableConnFailurePredicate);
 
@@ -39,11 +48,16 @@ public static class ExceptionExtensions
 
         /// <summary>
         /// Check whether the exception is or contains a cancellation of the specified token.
+        /// Also returns true when <paramref name="token"/> has been cancelled and the exception is a SQL-side
+        /// cancellation (see <see cref="IsSqlCancelledException"/>), because a token-triggered
+        /// <see cref="System.Data.Common.DbCommand.Cancel"/> surfaces as a <see cref="SqlException"/> rather than
+        /// an <see cref="OperationCanceledException"/>.
         /// </summary>
         public bool IsCancellationExceptionOfToken(CancellationToken token)
             => exception is OperationCanceledException ex && ex.CancellationToken == token
                 || exception is AggregateException aggregated && aggregated.InnerExceptions.Any(child => child.IsCancellationExceptionOfToken(token))
-                || exception?.InnerException.IsCancellationExceptionOfToken(token) == true;
+                || exception?.InnerException.IsCancellationExceptionOfToken(token) == true
+                || token.IsCancellationRequested && exception.IsSqlCancelledException();
     }
 
     static readonly Func<Exception, bool> retriableConnFailurePredicate = ex =>
@@ -52,6 +66,8 @@ public static class ExceptionExtensions
         || ex is DataException && ex.Message == "The underlying provider failed on Open.";
 
     static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException { Number: -2, };
+
+    static readonly Func<Exception, bool> sqlCancelledPredicate = ex => ex is SqlException { Number: 3617 or 3980, };
 
     static bool IsRetriableSqlException(SqlException sqlException)
     { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
