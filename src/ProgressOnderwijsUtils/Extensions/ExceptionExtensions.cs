@@ -81,7 +81,7 @@ public static class ExceptionExtensions
             sqlEx.Number == 3617
             // LocalDB case: a cancelled batch (e.g. WAITFOR) surfaces via SqlClient with
             // Number == 0, so match the localized 3617 message text as a fallback.
-            || sqlEx.Errors.Cast<SqlError>().Any(e => e.Number == 3617 || e.Message == "Operation cancelled by user.")
+            || sqlEx.Errors.Cast<SqlError>().Any(e => e.Number == 3617 || e is { Number: 0, Message: "Operation cancelled by user.", })
         );
 
     static bool IsRetriableSqlException(SqlException sqlException)
