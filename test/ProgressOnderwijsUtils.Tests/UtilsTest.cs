@@ -174,17 +174,20 @@ public sealed class UtilsTest
         var task = slowQuery.ExecuteAsync(localdb.Connection, cts.Token);
 
         // Give SqlClient time to actually dispatch the WAITFOR to the server;
-        // cancelling before dispatch would surface as OperationCanceledException instead of SqlException 3617.
+        // cancelling before dispatch would surface as OperationCanceledException directly.
         await Task.Delay(TimeSpan.FromSeconds(1), TestContext.Current.CancellationToken);
         await cts.CancelAsync();
 
         var ex = await Assert.ThrowsAnyAsync<Exception>(() => task);
 
-        PAssert.That(() => ex.IsSqlCancelledException(), "SQL-side cancel (error 3617) should be detected");
-        // IsCancellationExceptionOfToken deliberately does NOT match a SqlException, even when the
-        // token has been cancelled: the SqlException carries no reference to the triggering token,
-        // so attributing it would misfire when multiple tokens are cancelled concurrently.
-        PAssert.That(() => !ex.IsCancellationExceptionOfToken(cts.Token));
+        // ExecuteAsync now translates a SQL-side cancel triggered by the passed token into an
+        // OperationCanceledException carrying that token, matching the standard .NET async
+        // cancellation contract. The original SqlException / ParameterizedSqlExecutionException
+        // is preserved as InnerException.
+        var oce = Assert.IsType<OperationCanceledException>(ex);
+        PAssert.That(() => oce.CancellationToken == cts.Token);
+        PAssert.That(() => oce.InnerException.IsSqlCancelledException(), "InnerException should still expose the underlying SQL cancel");
+        PAssert.That(() => ex.IsCancellationExceptionOfToken(cts.Token));
         PAssert.That(() => !ex.IsCancellationExceptionOfToken(CancellationToken.None));
     }
 
