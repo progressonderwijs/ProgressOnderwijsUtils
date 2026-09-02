@@ -2,7 +2,13 @@ version: build-{build}
 branches:
   only:
   - master
-image: Visual Studio 2026
+image: Visual Studio 2022
+# The VS2022 image ships with SDKs up to 9.x; install .NET 10 SDK on top.
+install:
+- ps: |
+    Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:TEMP\dotnet-install.ps1"
+    & "$env:TEMP\dotnet-install.ps1" -Channel 10.0 -Quality GA -InstallDir "$env:ProgramFiles\dotnet"
+    $env:PATH = "$env:ProgramFiles\dotnet;$env:PATH"
 before_build:
   - cmd: dotnet --version
 environment:
