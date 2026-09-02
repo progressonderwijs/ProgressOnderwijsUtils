@@ -181,8 +181,11 @@ public sealed class UtilsTest
         var ex = await Assert.ThrowsAnyAsync<Exception>(() => task);
 
         PAssert.That(() => ex.IsSqlCancelledException(), "SQL-side cancel (error 3617) should be detected");
-        PAssert.That(() => ex.IsCancellationExceptionOfToken(cts.Token), "and should also be recognized as a cancellation of the triggering token");
-        PAssert.That(() => !ex.IsCancellationExceptionOfToken(CancellationToken.None), "but not as a cancellation of an unrelated (never-cancelled) token");
+        // IsCancellationExceptionOfToken deliberately does NOT match a SqlException, even when the
+        // token has been cancelled: the SqlException carries no reference to the triggering token,
+        // so attributing it would misfire when multiple tokens are cancelled concurrently.
+        PAssert.That(() => !ex.IsCancellationExceptionOfToken(cts.Token));
+        PAssert.That(() => !ex.IsCancellationExceptionOfToken(CancellationToken.None));
     }
 
     [Fact]

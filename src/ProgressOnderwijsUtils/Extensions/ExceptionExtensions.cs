@@ -49,16 +49,19 @@ public static class ExceptionExtensions
 
         /// <summary>
         /// Check whether the exception is or contains a cancellation of the specified token.
-        /// Also returns true when <paramref name="token"/> has been cancelled and the exception is a SQL-side
-        /// cancellation (see <see cref="IsSqlCancelledException"/>), because a token-triggered
-        /// <see cref="System.Data.Common.DbCommand.Cancel"/> surfaces as a <see cref="SqlException"/> rather than
-        /// an <see cref="OperationCanceledException"/>.
+        /// Only matches <see cref="OperationCanceledException"/>s whose <see cref="OperationCanceledException.CancellationToken"/>
+        /// is the given token — that identity is the only causal link the framework guarantees.
+        /// A SQL-side cancel (see <see cref="IsSqlCancelledException"/>) is NOT considered here: the
+        /// <see cref="SqlException"/> carries no reference to the token that triggered
+        /// <see cref="System.Data.Common.DbCommand.Cancel"/>, so attributing it to any currently-cancelled
+        /// token would be a heuristic that misfires when multiple tokens are cancelled concurrently.
+        /// Callers that know they registered <paramref name="token"/> with the command should combine
+        /// the two checks explicitly at the call site.
         /// </summary>
         public bool IsCancellationExceptionOfToken(CancellationToken token)
             => exception is OperationCanceledException ex && ex.CancellationToken == token
                 || exception is AggregateException aggregated && aggregated.InnerExceptions.Any(child => child.IsCancellationExceptionOfToken(token))
-                || exception?.InnerException.IsCancellationExceptionOfToken(token) == true
-                || token.IsCancellationRequested && exception.IsSqlCancelledException();
+                || exception?.InnerException.IsCancellationExceptionOfToken(token) == true;
     }
 
     static readonly Func<Exception, bool> retriableConnFailurePredicate = ex =>
