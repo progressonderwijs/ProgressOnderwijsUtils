@@ -28,7 +28,7 @@ public static class ExceptionExtensions
         /// <summary>
         /// Detects a cancellation that was propagated to SQL Server (typically via <see cref="System.Data.Common.DbCommand.Cancel"/>
         /// triggered by a <see cref="CancellationToken"/>). Such cancellations surface as a <see cref="SqlException"/> — not an
-        /// <see cref="OperationCanceledException"/> — so <see cref="IsCancellationExceptionOfToken"/> will not catch them.
+        /// <see cref="OperationCanceledException"/> — so they require SQL-specific detection.
         /// Matched by error number (3617 "Operation cancelled by user." and 3980) because messages are localized.
         /// </summary>
         public bool IsSqlCancelledException()
