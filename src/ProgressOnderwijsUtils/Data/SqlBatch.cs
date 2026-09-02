@@ -66,11 +66,12 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
     public void Execute(SqlConnection conn, out int nrOfRowsAffected)
     {
         using var cmd = this.ReusableCommand(conn);
+        if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+            nrOfRowsAffected = 0;
+            return;
+        }
+
         try {
-            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                nrOfRowsAffected = 0;
-                return;
-            }
             nrOfRowsAffected = cmd.Command.ExecuteNonQuery();
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
@@ -80,10 +81,11 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
     public async Task ExecuteAsync(SqlConnection conn, CancellationToken cancel)
     {
         using var cmd = this.ReusableCommand(conn);
+        if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+            return;
+        }
+
         try {
-            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                return;
-            }
             _ = await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
@@ -96,10 +98,11 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
     public async Task<int> ExecuteWithRowCountAsync(SqlConnection conn, CancellationToken cancel)
     {
         using var cmd = this.ReusableCommand(conn);
+        if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+            return 0;
+        }
+
         try {
-            if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                return 0;
-            }
             return await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
