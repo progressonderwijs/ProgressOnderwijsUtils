@@ -29,7 +29,8 @@ public static class ExceptionExtensions
         /// Detects a cancellation that was propagated to SQL Server (typically via <see cref="System.Data.Common.DbCommand.Cancel"/>
         /// triggered by a <see cref="CancellationToken"/>). Such cancellations surface as a <see cref="SqlException"/> — not an
         /// <see cref="OperationCanceledException"/> — so they require SQL-specific detection.
-        /// Matched by error number (3617 "Operation cancelled by user." and 3980) because messages are localized.
+        /// Matched by error number 3617 ("Operation cancelled by user."). Error 3980 is intentionally not
+        /// matched because it can also indicate an aborted batch for reasons other than a user cancel.
         /// </summary>
         public bool IsSqlCancelledException()
             => exception.AnyNestingLevelMatches(sqlCancelledPredicate);
@@ -67,7 +68,18 @@ public static class ExceptionExtensions
 
     static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException { Number: -2, };
 
-    static readonly Func<Exception, bool> sqlCancelledPredicate = ex => ex is SqlException { Number: 3617 or 3980, };
+    static readonly Func<Exception, bool> sqlCancelledPredicate = ex =>
+        ex is SqlException sqlEx
+        && (
+            // Canonical case: server reports error 3617 "Operation cancelled by user." by number.
+            // Note: error 3980 is deliberately NOT matched — it indicates a batch was aborted, but
+            // that can happen for reasons other than a user cancel (MARS/session-busy, etc.), so
+            // matching it would produce false positives.
+            sqlEx.Number == 3617
+            // LocalDB case: a cancelled batch (e.g. WAITFOR) surfaces via SqlClient with
+            // Number == 0, so match the localized 3617 message text as a fallback.
+            || sqlEx.Errors.Cast<SqlError>().Any(e => e.Number == 3617 || e.Message == "Operation cancelled by user.")
+        );
 
     static bool IsRetriableSqlException(SqlException sqlException)
     { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx

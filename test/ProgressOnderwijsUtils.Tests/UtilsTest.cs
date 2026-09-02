@@ -163,6 +163,29 @@ public sealed class UtilsTest
     }
 
     [Fact]
+    public async Task IsSqlCancelledExceptionDetectsTokenTriggeredCancel()
+    {
+        PAssert.That(() => !new Exception().IsSqlCancelledException());
+        PAssert.That(() => !default(Exception).IsSqlCancelledException());
+
+        using var localdb = new TransactedLocalConnection();
+        using var cts = new CancellationTokenSource();
+        var slowQuery = SQL($"waitfor delay '00:00:10'").OfNonQuery();
+        var task = slowQuery.ExecuteAsync(localdb.Connection, cts.Token);
+
+        // Give SqlClient time to actually dispatch the WAITFOR to the server;
+        // cancelling before dispatch would surface as OperationCanceledException instead of SqlException 3617.
+        await Task.Delay(TimeSpan.FromSeconds(1), TestContext.Current.CancellationToken);
+        await cts.CancelAsync();
+
+        var ex = await Assert.ThrowsAnyAsync<Exception>(() => task);
+
+        PAssert.That(() => ex.IsSqlCancelledException(), "SQL-side cancel (error 3617) should be detected");
+        PAssert.That(() => ex.IsCancellationExceptionOfToken(cts.Token), "and should also be recognized as a cancellation of the triggering token");
+        PAssert.That(() => !ex.IsCancellationExceptionOfToken(CancellationToken.None), "but not as a cancellation of an unrelated (never-cancelled) token");
+    }
+
+    [Fact]
     public void ClrDefaultIsSemanticDefault()
         => PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
 
