@@ -288,15 +288,7 @@ public sealed class UtilsTest
             cleanupCalled++;
             throw new("42");
         };
-        var buggyComputation = () => {
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
-        };
+        Func<int> buggyComputation = () => throw new("1337");
 
         var aggEx = Assert.ThrowsAny<AggregateException>(() => value = Utils.TryWithCleanup(buggyComputation, buggyCleanup));
 
@@ -341,13 +333,7 @@ public sealed class UtilsTest
         };
         Func<Task<int>> buggyComputation = async () => {
             await Task.CompletedTask;
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
+            throw new("1337");
         };
 
         var aggEx = await Assert.ThrowsAnyAsync<AggregateException>(async () => value = await Utils.TryWithCleanupAsync(buggyComputation, buggyCleanup));
