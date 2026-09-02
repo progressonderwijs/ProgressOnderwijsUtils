@@ -230,7 +230,7 @@ public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, Comman
     {
         using var cmd = this.ReusableCommand(conn);
         try {
-            using var reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+            await using var reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
             ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
             var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
             var builder = new ArrayBuilder<T?>();
@@ -301,7 +301,7 @@ public readonly record struct PocosSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
-        using var disposeReader = reader;
+        await using var disposeReader = reader;
         TRowReader<SqlDataReader, T> unpacker;
         try {
             unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
@@ -347,7 +347,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         using var cmd = this.ReusableCommand(conn);
         try {
             var reader = await ExecuteReaderAsync(cmd, cancel).ConfigureAwait(false);
-            using var disposeReader = reader;
+            await using var disposeReader = reader;
             await WriteJsonAsync(cmd, reader, buffer, options, defaultIgnoreCondition, rowVersionAsNumber, cancel).ConfigureAwait(false);
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(e, cancel);
@@ -378,7 +378,7 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     async Task WriteJsonAsync(ReusableCommand cmd, SqlDataReader reader, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber, CancellationToken cancel)
     {
         var table = GetColumnTable(reader);
-        using var writer = new Utf8JsonWriter(buffer, options);
+        await using var writer = new Utf8JsonWriter(buffer, options);
         writer.WriteStartArray();
         while (await ReadAsync(cmd, reader, cancel).ConfigureAwait(false)) {
             WriteRow(cmd, writer, reader, table, defaultIgnoreCondition, rowVersionAsNumber);
@@ -581,7 +581,7 @@ public readonly record struct TuplesSqlCommand<
         } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
-        using var disposeReader = reader;
+        await using var disposeReader = reader;
         TRowReader<SqlDataReader, T> unpacker;
         try {
             unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.Tuples<T>.GetRowReader(reader);
