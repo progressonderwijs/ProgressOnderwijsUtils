@@ -247,15 +247,7 @@ public sealed class UtilsTest
         var cleanupCalled = 0;
         var value = 0;
         Action cleanup = () => cleanupCalled++;
-        var buggyComputation = () => {
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
-        };
+        Func<int> buggyComputation = () => throw new("1337");
 
         var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
 
