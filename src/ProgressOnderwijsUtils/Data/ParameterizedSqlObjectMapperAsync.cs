@@ -53,9 +53,11 @@ public static partial class ParameterizedSqlObjectMapper
                 builder.Add(nextRow);
             }
             return builder.ToArray();
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(ex, command, UnpackingErrorMessage<T>(reader, lastColumnRead)), cancel);
-        } catch (Exception ex) when (!ex.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, command, UnpackingErrorMessage<T>(reader, lastColumnRead));
         }
     }

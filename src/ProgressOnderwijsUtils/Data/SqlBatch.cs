@@ -22,10 +22,11 @@ static class ErrorMessageHelpers
 /// </summary>
 static class SqlCancellationBoundary
 {
+    // SqlClient may surface a cancellation via its own internal linked CancellationTokenSource; the resulting
+    // OperationCanceledException then carries a default (CancellationToken.None) token rather than ours. Callers
+    // must first rethrow OCEs whose token is `cancel` (already correctly attributed) and only route the rest here.
     public static bool ShouldConvertToOperationCancelled(Exception exception, CancellationToken cancel)
-        => cancel.IsCancellationRequested
-            && (exception.IsSqlCancelledException()
-                || exception.AnyNestingLevelMatches(e => e is OperationCanceledException oce && (oce.CancellationToken == cancel || oce.CancellationToken == CancellationToken.None)));
+        => cancel.IsCancellationRequested && (exception.IsSqlCancelledException() || exception.IsCancellationExceptionOfToken(CancellationToken.None));
 
     public static OperationCanceledException ToOperationCancelled(Exception inner, CancellationToken cancel)
         => new("SQL operation was cancelled.", inner, cancel);
@@ -89,9 +90,11 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
 
         try {
             _ = await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
+        } catch (Exception e) when (e.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
-        } catch (Exception e) when (!e.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
@@ -106,9 +109,11 @@ public readonly record struct NonQuerySqlCommand(ParameterizedSql Sql, CommandTi
 
         try {
             return await cmd.Command.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
+        } catch (Exception e) when (e.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
-        } catch (Exception e) when (!e.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
@@ -185,9 +190,11 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
             var value = await cmd.Command.ExecuteScalarAsync(cancel).ConfigureAwait(false);
 
             return DbValueConverter.FromDb<T>(value);
+        } catch (Exception e) when (e.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
-        } catch (Exception e) when (!e.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
@@ -244,9 +251,11 @@ public readonly record struct BuiltinsSqlCommand<T>(ParameterizedSql Sql, Comman
                 builder.Add(nextRow);
             }
             return builder.ToArray();
+        } catch (Exception e) when (e.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(e, this), cancel);
-        } catch (Exception e) when (!e.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
     }
@@ -301,9 +310,11 @@ public readonly record struct PocosSqlCommand<
         SqlDataReader? reader;
         try {
             reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed"), cancel);
-        } catch (Exception ex) when (!ex.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
         await using var disposeReader = reader;
@@ -452,9 +463,11 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     {
         try {
             return await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed"), cancel);
-        } catch (Exception ex) when (!ex.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
     }
@@ -472,9 +485,11 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     {
         try {
             return await reader.ReadAsync(cancel).ConfigureAwait(false);
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(ex, this, "Read failed"), cancel);
-        } catch (Exception ex) when (!ex.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "Read failed");
         }
     }
@@ -576,9 +591,11 @@ public readonly record struct TuplesSqlCommand<
         SqlDataReader? reader;
         try {
             reader = await cmd.Command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancel).ConfigureAwait(false);
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
         } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
             throw SqlCancellationBoundary.ToOperationCancelled(cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed"), cancel);
-        } catch (Exception ex) when (!ex.IsCancellationExceptionOfToken(cancel)) {
+        } catch (Exception ex) {
             throw cmd.CreateExceptionWithTextAndArguments(ex, this, "ExecuteReader failed");
         }
         await using var disposeReader = reader;
