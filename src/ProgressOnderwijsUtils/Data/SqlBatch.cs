@@ -23,7 +23,9 @@ static class ErrorMessageHelpers
 static class SqlCancellationBoundary
 {
     public static bool ShouldConvertToOperationCancelled(Exception exception, CancellationToken cancel)
-        => cancel.IsCancellationRequested && (exception.IsSqlCancelledException() || exception.AnyNestingLevelMatches(e => e is OperationCanceledException));
+        => cancel.IsCancellationRequested
+            && (exception.IsSqlCancelledException()
+                || exception.AnyNestingLevelMatches(e => e is OperationCanceledException oce && (oce.CancellationToken == cancel || oce.CancellationToken == default)));
 
     public static OperationCanceledException ToOperationCancelled(Exception inner, CancellationToken cancel)
         => new("SQL operation was cancelled.", inner, cancel);
