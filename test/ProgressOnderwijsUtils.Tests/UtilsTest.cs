@@ -163,6 +163,35 @@ public sealed class UtilsTest
     }
 
     [Fact]
+    public async Task IsSqlCancelledExceptionDetectsTokenTriggeredCancel()
+    {
+        PAssert.That(() => !new Exception().IsSqlCancelledException());
+        PAssert.That(() => !default(Exception).IsSqlCancelledException());
+
+        using var localdb = new TransactedLocalConnection();
+        using var cts = new CancellationTokenSource();
+        var slowQuery = SQL($"waitfor delay '00:00:10'").OfNonQuery();
+        var task = slowQuery.ExecuteAsync(localdb.Connection, cts.Token);
+
+        // Give SqlClient time to actually dispatch the WAITFOR to the server;
+        // cancelling before dispatch would surface as OperationCanceledException directly.
+        await Task.Delay(TimeSpan.FromSeconds(1), TestContext.Current.CancellationToken);
+        await cts.CancelAsync();
+
+        var ex = await Assert.ThrowsAnyAsync<Exception>(() => task);
+
+        // ExecuteAsync now translates a SQL-side cancel triggered by the passed token into an
+        // OperationCanceledException carrying that token, matching the standard .NET async
+        // cancellation contract. The original SqlException / ParameterizedSqlExecutionException
+        // is preserved as InnerException.
+        var oce = Assert.IsType<OperationCanceledException>(ex);
+        PAssert.That(() => oce.CancellationToken == cts.Token);
+        PAssert.That(() => oce.InnerException.IsSqlCancelledException(), "InnerException should still expose the underlying SQL cancel");
+        PAssert.That(() => ex.IsCancellationExceptionOfToken(cts.Token));
+        PAssert.That(() => !ex.IsCancellationExceptionOfToken(CancellationToken.None));
+    }
+
+    [Fact]
     public void ClrDefaultIsSemanticDefault()
         => PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
 
@@ -218,15 +247,7 @@ public sealed class UtilsTest
         var cleanupCalled = 0;
         var value = 0;
         Action cleanup = () => cleanupCalled++;
-        var buggyComputation = () => {
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
-        };
+        Func<int> buggyComputation = () => throw new("1337");
 
         var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
 
@@ -267,15 +288,7 @@ public sealed class UtilsTest
             cleanupCalled++;
             throw new("42");
         };
-        var buggyComputation = () => {
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
-        };
+        Func<int> buggyComputation = () => throw new("1337");
 
         var aggEx = Assert.ThrowsAny<AggregateException>(() => value = Utils.TryWithCleanup(buggyComputation, buggyCleanup));
 
@@ -320,13 +333,7 @@ public sealed class UtilsTest
         };
         Func<Task<int>> buggyComputation = async () => {
             await Task.CompletedTask;
-            try {
-                return 42;
-            } finally {
-#pragma warning disable CA2219 // Do not raise exceptions in finally clauses
-                throw new("1337");
-#pragma warning restore CA2219 // Do not raise exceptions in finally clauses
-            }
+            throw new("1337");
         };
 
         var aggEx = await Assert.ThrowsAnyAsync<AggregateException>(async () => value = await Utils.TryWithCleanupAsync(buggyComputation, buggyCleanup));

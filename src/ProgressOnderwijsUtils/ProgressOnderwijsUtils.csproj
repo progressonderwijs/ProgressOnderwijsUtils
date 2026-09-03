@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>116.9.0</Version>
-    <PackageReleaseNotes>Added nested determination of whether an exception represents cancellation of a token or is fatal to the program.</PackageReleaseNotes>
+    <Version>116.10.0</Version>
+    <PackageReleaseNotes>Added SQL Server cancellation handling to the exception extensions.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
