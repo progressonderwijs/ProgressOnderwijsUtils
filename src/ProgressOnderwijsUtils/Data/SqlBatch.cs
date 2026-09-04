@@ -173,23 +173,22 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
     public T? Execute(SqlConnection conn)
     {
         using var cmd = this.ReusableCommand(conn);
+        object? value;
         try {
-            var value = cmd.Command.ExecuteScalar();
-
-            return DbValueConverter.FromDb<T>(value);
+            value = cmd.Command.ExecuteScalar();
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
+        return DbValueConverter.FromDb<T>(value);
     }
 
     [MustUseReturnValue]
     public async Task<T?> ExecuteAsync(SqlConnection conn, CancellationToken cancel)
     {
         using var cmd = this.ReusableCommand(conn);
+        object value;
         try {
-            var value = await cmd.Command.ExecuteScalarAsync(cancel).ConfigureAwait(false);
-
-            return DbValueConverter.FromDb<T>(value);
+            value = await cmd.Command.ExecuteScalarAsync(cancel).ConfigureAwait(false);
         } catch (Exception e) when (e.IsCancellationExceptionOfToken(cancel)) {
             throw;
         } catch (Exception e) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(e, cancel)) {
@@ -197,6 +196,7 @@ public readonly record struct ScalarSqlCommand<T>(ParameterizedSql Sql, CommandT
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
+        return DbValueConverter.FromDb<T>(value);
     }
 }
 
