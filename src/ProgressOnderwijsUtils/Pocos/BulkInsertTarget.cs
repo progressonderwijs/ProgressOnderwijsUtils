@@ -46,7 +46,7 @@ public sealed record BulkInsertTarget
     public async Task BulkInsertAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = default)
         where T : IReadImplicitly
     {
-        if (SmallBatchInsertImplementation.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is { } toInsertViaSqlBulkCopy) {
+        if (await SmallBatchInsertImplementation.TrySmallBatchInsertOptimizationAsync(sqlConn, this, pocos, timeout, cancel).ConfigureAwait(false) is { } toInsertViaSqlBulkCopy) {
             await using var dbDataReader = new PocoDataReader<T>(toInsertViaSqlBulkCopy, cancel.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
             await BulkInsertAsync(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout, cancel).ConfigureAwait(false);
         }
