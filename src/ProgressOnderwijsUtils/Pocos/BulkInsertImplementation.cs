@@ -24,7 +24,9 @@ static class BulkInsertImplementation
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         var sw = Stopwatch.StartNew();
-        _ = connectionsInBulkCopy.TryAdd(sqlConn, 0);
+        if (!connectionsInBulkCopy.TryAdd(sqlConn, 0)) {
+            throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: another bulk copy is already in progress on this SqlConnection.");
+        }
         try {
             sqlBulkCopy.WriteToServer(source);
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
@@ -64,7 +66,9 @@ static class BulkInsertImplementation
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         var sw = Stopwatch.StartNew();
-        _ = connectionsInBulkCopy.TryAdd(sqlConn, 0);
+        if (!connectionsInBulkCopy.TryAdd(sqlConn, 0)) {
+            throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: another bulk copy is already in progress on this SqlConnection.");
+        }
         try {
             await sqlBulkCopy.WriteToServerAsync(source, cancel).ConfigureAwait(false);
         } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
