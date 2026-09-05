@@ -57,6 +57,10 @@ static class BulkInsertImplementation
         var sw = Stopwatch.StartNew();
         try {
             await sqlBulkCopy.WriteToServerAsync(source, cancel).ConfigureAwait(false);
+        } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
+            throw;
+        } catch (Exception ex) when (SqlCancellationBoundary.ShouldConvertToOperationCancelled(ex, cancel)) {
+            throw SqlCancellationBoundary.ToOperationCancelled(ex, cancel);
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
         } finally {
