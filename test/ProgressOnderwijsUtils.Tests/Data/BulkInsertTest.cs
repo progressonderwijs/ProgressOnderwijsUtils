@@ -528,4 +528,25 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         TestContext.Current.TestOutputHelper?.WriteLine($"Async observed: {observed?.GetType().FullName}: {observed?.Message}");
         await destConn.DisposeAsync();
     }
+
+    [Fact]
+    public async Task BulkInsertAsync_CanBeCancelledMidCopy()
+    {
+        // Dedicated connection: cancellation of an in-flight WriteToServerAsync leaves the
+        // SqlConnection in a broken state, so we don't want to disturb the shared fixture.
+        await using var conn = new SqlConnection(ConnectionString);
+        await conn.OpenAsync(TestContext.Current.CancellationToken);
+
+        var target = BulkInsertTestSampleRow.CreateTable(conn, SQL($"#test"));
+        // Enough rows so cancellation reliably fires before the bulk copy completes.
+        var manyRows = BulkInsertTestSampleRow.SampleRows(200_000);
+
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        cts.CancelAfter(TimeSpan.FromMilliseconds(50));
+
+        var ex = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => target.BulkInsertAsync(conn, manyRows, cancel: cts.Token)
+        );
+        PAssert.That(() => ex.CancellationToken == cts.Token);
+    }
 }
