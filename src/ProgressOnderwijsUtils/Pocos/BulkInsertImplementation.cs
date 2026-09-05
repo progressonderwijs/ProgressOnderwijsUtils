@@ -25,8 +25,6 @@ static class BulkInsertImplementation
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         var sw = Stopwatch.StartNew();
         try {
-            //so why no async?
-            //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
             sqlBulkCopy.WriteToServer(source);
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
@@ -35,6 +33,10 @@ static class BulkInsertImplementation
         }
     }
 
+    /// <summary>
+    /// WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos,
+    /// and that's hard to detect and very nasty on production servers. The sync version throws exceptions instead.
+    /// </summary>
     public static async Task ExecuteAsync(SqlConnection sqlConn, DbDataReader source, BulkInsertTarget target, string sourceNameForTracing, CommandTimeout timeout, CancellationToken cancel)
     {
         if (source == null) {
