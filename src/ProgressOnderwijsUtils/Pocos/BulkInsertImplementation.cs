@@ -48,9 +48,9 @@ static class BulkInsertImplementation
         if (sqlConn.State != ConnectionState.Open) {
             throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
         }
-        if (source is SqlDataReader sqlReader && sqlDataReaderConnectionProperty?.GetValue(sqlReader) is SqlConnection readerConn && ReferenceEquals(readerConn, sqlConn)) {
+        if (TryGetReaderConnection(source) is { } readerConn && ReferenceEquals(readerConn, sqlConn)) {
             throw new InvalidOperationException(
-                $"Cannot bulk copy into {target.TableName}: the source SqlDataReader is reading from the same SqlConnection. "
+                $"Cannot bulk copy into {target.TableName}: the source DbDataReader is reading from the same SqlConnection. "
                 + "This causes corrupt state and deadlocks with async bulk copy. Use a separate connection for the source reader."
             );
         }
@@ -116,8 +116,28 @@ static class BulkInsertImplementation
         return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
     }
 
-    static readonly PropertyInfo? sqlDataReaderConnectionProperty =
-        typeof(SqlDataReader).GetProperty("Connection", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+    /// <summary>
+    /// Best-effort discovery of the <see cref="SqlConnection"/> a <see cref="DbDataReader"/> is reading from.
+    /// Duck-types on a public/non-public instance property named <c>Connection</c> whose type is (assignable to) <see cref="SqlConnection"/>.
+    /// Catches <see cref="SqlDataReader"/> and common wrapper readers that faithfully expose their underlying connection.
+    /// Returns null when the reader type has no such property (e.g. hostile custom wrappers).
+    /// </summary>
+    static readonly ConcurrentDictionary<Type, Func<DbDataReader, SqlConnection?>?> readerConnectionAccessorByType = new();
+
+    static SqlConnection? TryGetReaderConnection(DbDataReader source)
+    {
+        var accessor = readerConnectionAccessorByType.GetOrAdd(
+            source.GetType(),
+            static type => {
+                var prop = type.GetProperty("Connection", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if (prop?.GetMethod == null || !typeof(DbConnection).IsAssignableFrom(prop.PropertyType)) {
+                    return null;
+                }
+                return reader => prop.GetValue(reader) as SqlConnection;
+            }
+        );
+        return accessor?.Invoke(source);
+    }
 
     static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
         => target.CreateValidatedMapping(ColumnDefinition.GetFromReader(source))
