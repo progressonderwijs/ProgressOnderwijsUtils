@@ -246,6 +246,17 @@ public static partial class ParameterizedSqlObjectMapper
     static readonly MethodInfo getUInt32 = ((Func<IDataRecord, int, uint>)ReadUInt32).Method;
     static readonly MethodInfo getBytes = ((Func<IDataRecord, int, byte[]>)GetBytes).Method;
     static readonly MethodInfo getChars = ((Func<IDataRecord, int, char[]>)GetChars).Method;
+    static readonly MethodInfo getDateOnly = ((Func<IDataRecord, int, DateOnly>)ReadDateOnly).Method;
+
+    static DateOnly ReadDateOnly(IDataRecord reader, int i)
+    {
+        if (reader.GetDataTypeName(i) is not "date") {
+            throw new InvalidCastException(
+                $"Column '{reader.GetName(i)}' has database type '{reader.GetDataTypeName(i)}' which cannot safely be read as DateOnly because time information would be lost. Use DateTime instead."
+            );
+        }
+        return DateOnly.FromDateTime(reader.GetDateTime(i));
+    }
 
     internal static class DataReaderSpecialization<TReader>
         where TReader : IDataReader
@@ -266,6 +277,7 @@ public static partial class ParameterizedSqlObjectMapper
                 _ when underlyingType == typeof(char[]) => getChars,
                 _ when underlyingType == typeof(TimeSpan) && isSqlDataReader => getTimeSpan_SqlDataReader,
                 _ when underlyingType == typeof(DateTimeOffset) && isSqlDataReader => getDateTimeOffset_SqlDataReader,
+                _ when underlyingType == typeof(DateOnly) => getDateOnly,
                 _ when getterMethodsByType.TryGetValue(underlyingType, out var interfaceGetter) => InterfaceMap[interfaceGetter],
                 _ => null,
             };

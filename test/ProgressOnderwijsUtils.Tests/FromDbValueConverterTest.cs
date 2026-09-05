@@ -254,4 +254,16 @@ public sealed class FromDbValueConverterTest
     [Fact]
     public void CanCastToNullableConvertibleOfValueType()
         => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123)).AssertNotNull().Value == -123);
+
+    [Fact]
+    public void CanCastToDateOnlyFromDateTime()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly>(new DateTime(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void CanCastToNullableDateOnlyFromDateTime()
+        => PAssert.That(() => DbValueConverter.FromDb<DateOnly?>(new DateTime(2025, 6, 1)) == new DateOnly(2025, 6, 1));
+
+    [Fact]
+    public void CanNotCastDateOnlyFromDateTime()
+        => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<DateTime>(new DateOnly(2026, 6, 1)) == new DateTime(2026, 6, 1));
 }
