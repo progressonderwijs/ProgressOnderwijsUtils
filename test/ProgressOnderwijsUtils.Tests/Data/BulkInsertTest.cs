@@ -92,6 +92,29 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     }
 
     [Fact]
+    public async Task BulkInsertAsyncAndReadRoundTrips_BelowSmallBatchThreshold()
+    {
+        // Row count strictly below SmallBatchInsertImplementation.ThresholdForUsingSqlBulkCopy (=6),
+        // so BulkInsertAsync goes through TrySmallBatchInsertOptimizationAsync (per-row async INSERT path).
+        var rowCount = SmallBatchInsertImplementation.ThresholdForUsingSqlBulkCopy - 2;
+        var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
+        await target.BulkInsertAsync(Connection, BulkInsertTestSampleRow.SampleRows(rowCount), cancel: TestContext.Current.CancellationToken);
+        var fromDb = await SQL($"select * from #test").ReadPocosAsync<BulkInsertTestSampleRow>(Connection, TestContext.Current.CancellationToken);
+        AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(rowCount), fromDb);
+    }
+
+    [Fact]
+    public async Task BulkInsertAsyncAndReadRoundTrips_AtOrAboveSmallBatchThreshold()
+    {
+        // Row count at/above the threshold so BulkInsertAsync goes through WriteToServerAsync (SqlBulkCopy path).
+        var rowCount = SmallBatchInsertImplementation.ThresholdForUsingSqlBulkCopy + 2;
+        var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
+        await target.BulkInsertAsync(Connection, BulkInsertTestSampleRow.SampleRows(rowCount), cancel: TestContext.Current.CancellationToken);
+        var fromDb = await SQL($"select * from #test").ReadPocosAsync<BulkInsertTestSampleRow>(Connection, TestContext.Current.CancellationToken);
+        AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(rowCount), fromDb);
+    }
+
+    [Fact]
     public void BulkInsertIsTraceable()
     {
         var sqlCommandTracer = SqlCommandTracer.CreateAlwaysOnTracer(SqlTracerAgumentInclusion.IncludingArgumentValues);
@@ -258,8 +281,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     public void CanCreateDbColumnMetaData()
     {
         var pocoProperties = PocoProperties<BulkInsertTestSampleRow>.Instance;
-        var dbProps = pocoProperties.Select(
-            property => DbColumnMetaData.Create(
+        var dbProps = pocoProperties.Select(property => DbColumnMetaData.Create(
                 property.Name,
                 property.DataType,
                 property.IsKey,
@@ -346,9 +368,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         // ExecuteAsync contains a pre-check (ThrowIfSourceReaderUsesTheSameConnection) that
         // detects a SqlDataReader bound to the destination SqlConnection and fails fast with
         // InvalidOperationException instead of allowing the deadlock this scenario would cause.
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-            () => BulkInsertImplementation.ExecuteAsync(Connection, reader, target, "same-conn-async", CommandTimeout.WithoutTimeout, TestContext.Current.CancellationToken)
-        );
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => BulkInsertImplementation.ExecuteAsync(Connection, reader, target, "same-conn-async", CommandTimeout.WithoutTimeout, TestContext.Current.CancellationToken));
         PAssert.That(() => ex.Message.Contains("same SqlConnection", StringComparison.Ordinal));
     }
 
@@ -573,9 +593,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
         cts.CancelAfter(TimeSpan.FromMilliseconds(50));
 
-        var ex = await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => target.BulkInsertAsync(conn, manyRows, cancel: cts.Token)
-        );
+        var ex = await Assert.ThrowsAnyAsync<OperationCanceledException>(() => target.BulkInsertAsync(conn, manyRows, cancel: cts.Token));
         PAssert.That(() => ex.CancellationToken == cts.Token);
     }
 }
