@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ProgressOnderwijsUtils.Tests.Data;
@@ -290,5 +291,241 @@ public sealed class BulkInsertTest : TransactedLocalConnection
 
         var allowed = SQL($"select * from {tableName}").ReadPocos<TableWithReadOnlyColumn>(Connection).Single();
         PAssert.That(() => !allowed.ReadOnly.AsEnumerable().SequenceEqual(record.ReadOnly));
+    }
+
+    static ParameterizedSql CreateSampleRow2Table(SqlConnection conn)
+    {
+        SQL(
+            $"""
+            create table #tmp (
+                intNonNull int not null
+                , intNull int null
+                , stringNull nvarchar(max) null
+                , stringNonNull nvarchar(max) not null
+            )
+            """
+        ).ExecuteNonQuery(conn);
+        return SQL($"#tmp");
+    }
+
+    static ParameterizedSql SampleRow2SourceQuery
+        => SQL(
+            $"""
+            select *
+            from (
+                values (1, null, 'test', 'test2')
+                , (2, 1, null, 'test3')
+            ) x(intNonNull, intNull, stringNull, stringNonNull)
+            """
+        );
+
+    [Fact]
+    public void BulkInsertSync_WithReaderOnSameConnection_ShowsBehaviour()
+    {
+        var tableName = CreateSampleRow2Table(Connection);
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+
+        using var cmd = SampleRow2SourceQuery.CreateSqlCommand(Connection, new());
+        using var reader = cmd.Command.ExecuteReader();
+        // No assertion: this test documents whatever the sync bulk-copy path does when the
+        // source reader is tied to the same SqlConnection as the bulk-copy destination.
+        // Per the comment on Execute, sync bulk copy is expected to throw rather than deadlock.
+        var observed = Record.Exception(() => BulkInsertImplementation.Execute(Connection, reader, target, "same-conn-sync", CommandTimeout.WithoutTimeout));
+        TestContext.Current.TestOutputHelper?.WriteLine($"Sync observed: {observed?.GetType().FullName}: {observed?.Message}");
+    }
+
+    [Fact]
+    public async Task BulkInsertAsync_WithReaderOnSameConnection_ThrowsInvalidOperationException()
+    {
+        var tableName = CreateSampleRow2Table(Connection);
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+
+        using var cmd = SampleRow2SourceQuery.CreateSqlCommand(Connection, new());
+        await using var reader = await cmd.Command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+
+        // ExecuteAsync contains a pre-check (ThrowIfSourceReaderUsesTheSameConnection) that
+        // detects a SqlDataReader bound to the destination SqlConnection and fails fast with
+        // InvalidOperationException instead of allowing the deadlock this scenario would cause.
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => BulkInsertImplementation.ExecuteAsync(Connection, reader, target, "same-conn-async", CommandTimeout.WithoutTimeout, TestContext.Current.CancellationToken)
+        );
+        PAssert.That(() => ex.Message.Contains("same SqlConnection", StringComparison.Ordinal));
+    }
+
+    /// <summary>
+    /// Wraps an inner DbDataReader (backed by some OTHER connection so it can yield rows) but
+    /// during every Read/ReadAsync call it fires a small query on <paramref name="sharedConn"/>.
+    /// When <paramref name="sharedConn"/> is the same connection SqlBulkCopy is writing to,
+    /// this simulates buggy user code touching the destination connection mid-copy.
+    /// </summary>
+    sealed class ConnectionAbusingDbDataReader(DbDataReader inner, SqlConnection sharedConn) : DbDataReader
+    {
+        void AbuseConnection()
+            => _ = SQL($"select 1").ReadScalar<int>(sharedConn);
+
+        public override bool Read()
+        {
+            var advanced = inner.Read();
+            if (advanced) {
+                AbuseConnection();
+            }
+            return advanced;
+        }
+
+        public override async Task<bool> ReadAsync(CancellationToken cancellationToken)
+        {
+            var advanced = await inner.ReadAsync(cancellationToken).ConfigureAwait(false);
+            if (advanced) {
+                AbuseConnection();
+            }
+            return advanced;
+        }
+
+        // straight delegations
+        public override int Depth
+            => inner.Depth;
+
+        public override int FieldCount
+            => inner.FieldCount;
+
+        public override bool HasRows
+            => inner.HasRows;
+
+        public override bool IsClosed
+            => inner.IsClosed;
+
+        public override int RecordsAffected
+            => inner.RecordsAffected;
+
+        public override object this[int ordinal]
+            => inner[ordinal];
+
+        public override object this[string name]
+            => inner[name];
+
+        public override bool GetBoolean(int ordinal)
+            => inner.GetBoolean(ordinal);
+
+        public override byte GetByte(int ordinal)
+            => inner.GetByte(ordinal);
+
+        public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length)
+            => inner.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
+
+        public override char GetChar(int ordinal)
+            => inner.GetChar(ordinal);
+
+        public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length)
+            => inner.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
+
+        public override string GetDataTypeName(int ordinal)
+            => inner.GetDataTypeName(ordinal);
+
+        public override DateTime GetDateTime(int ordinal)
+            => inner.GetDateTime(ordinal);
+
+        public override decimal GetDecimal(int ordinal)
+            => inner.GetDecimal(ordinal);
+
+        public override double GetDouble(int ordinal)
+            => inner.GetDouble(ordinal);
+
+        public override Type GetFieldType(int ordinal)
+            => inner.GetFieldType(ordinal);
+
+        public override float GetFloat(int ordinal)
+            => inner.GetFloat(ordinal);
+
+        public override Guid GetGuid(int ordinal)
+            => inner.GetGuid(ordinal);
+
+        public override short GetInt16(int ordinal)
+            => inner.GetInt16(ordinal);
+
+        public override int GetInt32(int ordinal)
+            => inner.GetInt32(ordinal);
+
+        public override long GetInt64(int ordinal)
+            => inner.GetInt64(ordinal);
+
+        public override string GetName(int ordinal)
+            => inner.GetName(ordinal);
+
+        public override int GetOrdinal(string name)
+            => inner.GetOrdinal(name);
+
+        public override string GetString(int ordinal)
+            => inner.GetString(ordinal);
+
+        public override object GetValue(int ordinal)
+            => inner.GetValue(ordinal);
+
+        public override int GetValues(object[] values)
+            => inner.GetValues(values);
+
+        public override bool IsDBNull(int ordinal)
+            => inner.IsDBNull(ordinal);
+
+        public override bool NextResult()
+            => inner.NextResult();
+
+        public override IEnumerator GetEnumerator()
+            => ((IEnumerable)inner).GetEnumerator();
+    }
+
+    [Fact]
+    public void BulkInsertSync_ReaderTouchesDestinationConnectionMidCopy_ShowsBehaviour()
+    {
+        using var sourceConn = new SqlConnection(ConnectionString);
+        sourceConn.Open();
+
+        var tableName = CreateSampleRow2Table(Connection);
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+
+        using var cmd = SampleRow2SourceQuery.CreateSqlCommand(sourceConn, new());
+        using var innerReader = cmd.Command.ExecuteReader();
+        using var evilReader = new ConnectionAbusingDbDataReader(innerReader, Connection);
+
+        var observed = Record.Exception(() => BulkInsertImplementation.Execute(Connection, evilReader, target, "mid-copy-sync", CommandTimeout.WithoutTimeout));
+        TestContext.Current.TestOutputHelper?.WriteLine($"Sync observed: {observed?.GetType().FullName}: {observed?.Message}");
+    }
+
+    [Fact]
+    public async Task BulkInsertAsync_ReaderTouchesDestinationConnectionMidCopy_ShowsBehaviour()
+    {
+        // Dedicated destConn (not the shared TransactedLocalConnection.Connection) so that a
+        // stuck bulk-copy cannot hang test-fixture teardown. NOTE: destConn is intentionally NOT
+        // wrapped in `await using` — on the deadlock path its DisposeAsync would itself block
+        // forever trying to acquire the same internal semaphore the stuck bulk task holds
+        // (which is precisely why the "deadlock detected" message never showed up before).
+        // We dispose it manually only on the non-deadlock path; on deadlock we leak it (the
+        // whole test host will be torn down anyway).
+        var destConn = new SqlConnection(ConnectionString);
+        await destConn.OpenAsync(TestContext.Current.CancellationToken);
+        await using var sourceConn = new SqlConnection(ConnectionString);
+        await sourceConn.OpenAsync(TestContext.Current.CancellationToken);
+
+        var tableName = CreateSampleRow2Table(destConn);
+        var target = BulkInsertTarget.LoadFromTable(destConn, tableName.CommandText());
+
+        using var cmd = SampleRow2SourceQuery.CreateSqlCommand(sourceConn, new());
+        await using var innerReader = await cmd.Command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
+        var evilReader = new ConnectionAbusingDbDataReader(innerReader, destConn);
+
+        var bulkTask = Task.Run(
+            () => BulkInsertImplementation.ExecuteAsync(destConn, evilReader, target, "mid-copy-async", CommandTimeout.WithoutTimeout, TestContext.Current.CancellationToken),
+            TestContext.Current.CancellationToken
+        );
+        var completed = await Task.WhenAny(bulkTask, Task.Delay(TimeSpan.FromSeconds(5), TestContext.Current.CancellationToken));
+        if (completed != bulkTask) {
+            _ = bulkTask.ContinueWith(t => _ = t.Exception, TaskScheduler.Default); // observe eventual exception
+            // Deliberately do NOT dispose destConn here: it would block on the same semaphore.
+            Assert.Fail("ExecuteAsync deadlocked when the source DbDataReader used the destination SqlConnection mid-copy.");
+            return;
+        }
+
+        var observed = await Record.ExceptionAsync(() => bulkTask);
+        TestContext.Current.TestOutputHelper?.WriteLine($"Async observed: {observed?.GetType().FullName}: {observed?.Message}");
+        await destConn.DisposeAsync();
     }
 }
