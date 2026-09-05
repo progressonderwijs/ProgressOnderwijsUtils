@@ -24,11 +24,13 @@ static class BulkInsertImplementation
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         var sw = Stopwatch.StartNew();
+        _ = connectionsInBulkCopy.TryAdd(sqlConn, 0);
         try {
             sqlBulkCopy.WriteToServer(source);
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
         } finally {
+            _ = connectionsInBulkCopy.TryRemove(sqlConn, out _);
             TraceBulkInsertDuration(sqlConn.Tracer(), target.TableName, sw, sqlBulkCopy, sourceNameForTracing);
         }
     }
@@ -62,6 +64,7 @@ static class BulkInsertImplementation
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
         var sw = Stopwatch.StartNew();
+        _ = connectionsInBulkCopy.TryAdd(sqlConn, 0);
         try {
             await sqlBulkCopy.WriteToServerAsync(source, cancel).ConfigureAwait(false);
         } catch (Exception ex) when (ex.IsCancellationExceptionOfToken(cancel)) {
@@ -71,7 +74,28 @@ static class BulkInsertImplementation
         } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is { } destinationColumnIndex) {
             throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
         } finally {
+            _ = connectionsInBulkCopy.TryRemove(sqlConn, out _);
             TraceBulkInsertDuration(sqlConn.Tracer(), target.TableName, sw, sqlBulkCopy, sourceNameForTracing);
+        }
+    }
+
+    /// <summary>
+    /// Set of <see cref="SqlConnection"/> instances that currently have a bulk-copy operation in flight.
+    /// Checked by SQL execution entry points (<see cref="ParameterizedSql.CreateSqlCommand"/>) to fail fast
+    /// when user code accidentally tries to run a query on the destination connection while it is being
+    /// written to — this would otherwise deadlock async bulk copy on the connection's internal semaphore.
+    /// Uses reference equality (the default for reference types).
+    /// </summary>
+    static readonly ConcurrentDictionary<SqlConnection, byte> connectionsInBulkCopy = new();
+
+    internal static void ThrowIfConnectionInBulkCopy(SqlConnection conn)
+    {
+        if (connectionsInBulkCopy.ContainsKey(conn)) {
+            throw new InvalidOperationException(
+                "Cannot execute a query on this SqlConnection: a bulk copy is currently in progress on it. "
+                + "Running a query on the destination connection during bulk copy causes corrupt state and deadlocks with async bulk copy. "
+                + "Use a separate SqlConnection for any queries that run while enumerating the bulk-copy source."
+            );
         }
     }
 
