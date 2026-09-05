@@ -488,6 +488,8 @@ public sealed class BulkInsertTest : TransactedLocalConnection
 
         var observed = Record.Exception(() => BulkInsertImplementation.Execute(Connection, evilReader, target, "mid-copy-sync", CommandTimeout.WithoutTimeout));
         TestContext.Current.TestOutputHelper?.WriteLine($"Sync observed: {observed?.GetType().FullName}: {observed?.Message}");
+        var guardEx = FindBulkCopyInProgressGuardException(observed);
+        PAssert.That(() => guardEx != null, "Expected guard #2 InvalidOperationException to surface (possibly wrapped) when a query runs on the destination connection mid-copy.");
     }
 
     [Fact]
@@ -526,7 +528,34 @@ public sealed class BulkInsertTest : TransactedLocalConnection
 
         var observed = await Record.ExceptionAsync(() => bulkTask);
         TestContext.Current.TestOutputHelper?.WriteLine($"Async observed: {observed?.GetType().FullName}: {observed?.Message}");
+        var guardEx = FindBulkCopyInProgressGuardException(observed);
+        PAssert.That(() => guardEx != null, "Expected guard #2 InvalidOperationException to surface (possibly wrapped) when a query runs on the destination connection mid-copy.");
         await destConn.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Walks the exception chain (including <see cref="AggregateException.InnerExceptions"/>) looking for the
+    /// <see cref="InvalidOperationException"/> raised by <c>BulkInsertImplementation.ThrowIfConnectionInBulkCopy</c>.
+    /// SqlBulkCopy may wrap the source-reader exception; asserting on the wrapped exception's presence keeps the
+    /// test resilient to wrapping while still verifying that guard #2 fired.
+    /// </summary>
+    static InvalidOperationException? FindBulkCopyInProgressGuardException(Exception? ex)
+    {
+        while (ex != null) {
+            if (ex is InvalidOperationException ioe && ioe.Message.Contains("bulk copy is currently in progress", StringComparison.Ordinal)) {
+                return ioe;
+            }
+            if (ex is AggregateException aggregate) {
+                foreach (var inner in aggregate.InnerExceptions) {
+                    if (FindBulkCopyInProgressGuardException(inner) is { } found) {
+                        return found;
+                    }
+                }
+                return null;
+            }
+            ex = ex.InnerException;
+        }
+        return null;
     }
 
     [Fact]
