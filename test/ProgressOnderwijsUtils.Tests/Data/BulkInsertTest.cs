@@ -237,7 +237,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         CheckPostConditions(Enumerable.Range(1, 4).ToArray(), 2);
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-        void CheckPostConditions(IEnumerable<int> enumerable, int count)
+        static void CheckPostConditions(IEnumerable<int> enumerable, int count)
         {
             var output = SmallBatchInsertImplementation.PeekAtPrefix(enumerable, count);
             PAssert.That(() => output.head.SequenceEqual(enumerable.Take(count)));
