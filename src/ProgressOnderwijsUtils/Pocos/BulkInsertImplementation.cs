@@ -46,6 +46,12 @@ static class BulkInsertImplementation
         if (sqlConn.State != ConnectionState.Open) {
             throw new InvalidOperationException($"Cannot bulk copy into {target.TableName}: connection isn't open but {sqlConn.State}.");
         }
+        if (source is SqlDataReader sqlReader && sqlDataReaderConnectionProperty?.GetValue(sqlReader) is SqlConnection readerConn && readerConn == sqlConn) {
+            throw new InvalidOperationException(
+                $"Cannot bulk copy into {target.TableName}: the source SqlDataReader is reading from the same SqlConnection. "
+                + "This causes corrupt state and deadlocks with async bulk copy. Use a separate connection for the source reader."
+            );
+        }
 
         using var sqlBulkCopy = new SqlBulkCopy(sqlConn, target.Options, null);
         sqlBulkCopy.BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn);
@@ -53,7 +59,6 @@ static class BulkInsertImplementation
         var mapping = CreateMapping(source, target, sourceNameForTracing);
 
         BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
-        ThrowIfSourceReaderUsesTheSameConnection(source, sqlConn, target.TableName);
         var sw = Stopwatch.StartNew();
         try {
             await sqlBulkCopy.WriteToServerAsync(source, cancel).ConfigureAwait(false);
@@ -111,16 +116,6 @@ static class BulkInsertImplementation
 
     static readonly PropertyInfo? sqlDataReaderConnectionProperty =
         typeof(SqlDataReader).GetProperty("Connection", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-
-    static void ThrowIfSourceReaderUsesTheSameConnection(DbDataReader source, SqlConnection sqlConn, string tableName)
-    {
-        if (source is SqlDataReader sqlReader && sqlDataReaderConnectionProperty?.GetValue(sqlReader) is SqlConnection readerConn && readerConn == sqlConn) {
-            throw new InvalidOperationException(
-                $"Cannot bulk copy into {tableName}: the source SqlDataReader is reading from the same SqlConnection. "
-                + "This causes corrupt state and deadlocks with async bulk copy. Use a separate connection for the source reader."
-            );
-        }
-    }
 
     static BulkInsertFieldMapping[] CreateMapping(DbDataReader source, BulkInsertTarget target, string sourceName)
         => target.CreateValidatedMapping(ColumnDefinition.GetFromReader(source))
