@@ -22,6 +22,7 @@ public readonly struct ParameterizedSql : IEquatable<ParameterizedSql>
     /// </summary>
     public ReusableCommand CreateSqlCommand(SqlConnection conn, CommandTimeout timeout)
     {
+        BulkInsertImplementation.ThrowIfConnectionInBulkCopy(conn);
         var factory = CommandFactory.Create();
         impl?.AppendTo(ref factory);
         return factory.FinishBuilding(conn, timeout);
