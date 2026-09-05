@@ -34,7 +34,7 @@ public sealed record BulkInsertTarget
     public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns)
         => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
-    public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = new())
+    public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = default)
         where T : IReadImplicitly
     {
         if (SmallBatchInsertImplementation.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is { } toInsertViaSqlBulkCopy) {
@@ -43,12 +43,12 @@ public sealed record BulkInsertTarget
         }
     }
 
-    public async Task BulkInsertAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = new())
+    public async Task BulkInsertAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = default)
         where T : IReadImplicitly
     {
         if (SmallBatchInsertImplementation.TrySmallBatchInsertOptimization(sqlConn, this, pocos, timeout) is { } toInsertViaSqlBulkCopy) {
             await using var dbDataReader = new PocoDataReader<T>(toInsertViaSqlBulkCopy, cancel.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
-            await BulkInsertAsync(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout, cancel);
+            await BulkInsertAsync(sqlConn, dbDataReader, typeof(T).ToCSharpFriendlyTypeName(), timeout, cancel).ConfigureAwait(false);
         }
     }
 
