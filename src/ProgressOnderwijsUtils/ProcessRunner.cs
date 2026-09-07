@@ -40,7 +40,7 @@ public struct ProcessStartSettings
         return proc;
     }
 
-    public AsyncProcessResult StartProcess(CancellationToken token = new())
+    public AsyncProcessResult StartProcess(CancellationToken token = default)
     {
         var exitCodeCompletion = new TaskCompletionSource<int>();
         var proc = CreateProcessObj();
