@@ -325,6 +325,63 @@ public static class AsyncMaybeAddExtensions
     public static MaybeAdd<T1, E> ToMaybeAdd<T1, E>(this Maybe<T1, E> value)
         => new(value);
 
+    public static async Task<MaybeAdd<T1, E>> ToMaybeAdd<T1, E>(this Task<Maybe<T1, E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, E> ToMaybeAdd<T1, T2, E>(this Maybe<(T1, T2), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, E>> ToMaybeAdd<T1, T2, E>(this Task<Maybe<(T1, T2), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, E> ToMaybeAdd<T1, T2, T3, E>(this Maybe<(T1, T2, T3), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, E>> ToMaybeAdd<T1, T2, T3, E>(this Task<Maybe<(T1, T2, T3), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, E> ToMaybeAdd<T1, T2, T3, T4, E>(this Maybe<(T1, T2, T3, T4), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, E>> ToMaybeAdd<T1, T2, T3, T4, E>(this Task<Maybe<(T1, T2, T3, T4), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, E> ToMaybeAdd<T1, T2, T3, T4, T5, E>(this Maybe<(T1, T2, T3, T4, T5), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, E>> ToMaybeAdd<T1, T2, T3, T4, T5, E>(this Task<Maybe<(T1, T2, T3, T4, T5), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, T6, E> ToMaybeAdd<T1, T2, T3, T4, T5, T6, E>(this Maybe<(T1, T2, T3, T4, T5, T6), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, T6, E>> ToMaybeAdd<T1, T2, T3, T4, T5, T6, E>(this Task<Maybe<(T1, T2, T3, T4, T5, T6), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, T6, T7, E> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>(this Maybe<(T1, T2, T3, T4, T5, T6, T7), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, E>(this Task<Maybe<(T1, T2, T3, T4, T5, T6, T7), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>(this Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, E>(this Task<Maybe<(T1, T2, T3, T4, T5, T6, T7, T8), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>(this Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, E>(this Task<Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9), E>> value)
+        => new(await value.ConfigureAwait(false));
+
+    public static MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>(this Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E> value)
+        => new(value);
+
+    public static async Task<MaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>> ToMaybeAdd<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, E>(this Task<Maybe<(T1, T2, T3, T4, T5, T6, T7, T8, T9, T10), E>> value)
+        => new(await value.ConfigureAwait(false));
+
     // ── Task<MaybeAdd<T1, E>> ───────────────────────────────────────────────
     public static async Task<MaybeAdd<T1, T2, E>> WhenOkTryAdd<T1, T2, E>(this Task<MaybeAdd<T1, E>> step, Maybe<T2, E> value)
         => (await step.ConfigureAwait(false)).WhenOkTryAdd(value);
