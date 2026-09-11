@@ -105,6 +105,9 @@ public static class Utils
     /// Geeft het verschil in maanden tussen twee datums
     /// </summary>
     public static int MaandSpan(DateTime d1, DateTime d2)
+        => MaandSpan(d1.ToDateOnly(), d2.ToDateOnly());
+
+    public static int MaandSpan(DateOnly d1, DateOnly d2)
         => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
     /// <summary>
