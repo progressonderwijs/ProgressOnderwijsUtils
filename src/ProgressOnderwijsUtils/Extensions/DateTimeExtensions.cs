@@ -17,7 +17,7 @@ public static class DateTimeExtensions
     public static bool Overlapt(this Periode periode1, Periode periode2)
         => periode1.DatumVan < periode2.DatumTot && periode1.DatumTot > periode2.DatumVan;
 
-    public sealed record Periode(DateTime DatumVan, DateTime DatumTot);
+    public sealed record Periode(DateOnly DatumVan, DateOnly DatumTot);
 
     extension(DateTime datetime)
     {
