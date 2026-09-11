@@ -106,14 +106,14 @@ public sealed class UtilsTest
     [Fact]
     public void MaandSpanTest()
     {
-        PAssert.That(() => Utils.MaandSpan(new(2000, 1, 1), new(2000, 1, 1)) == 0);
-        PAssert.That(() => Utils.MaandSpan(new(2000, 5, 1), new(2000, 1, 1)) == 4);
-        PAssert.That(() => Utils.MaandSpan(new(2000, 1, 1), new(2001, 1, 1)) == 12);
-        PAssert.That(() => Utils.MaandSpan(new(2001, 1, 1), new(2000, 1, 1)) == 12);
-        PAssert.That(() => Utils.MaandSpan(new(2000, 9, 1), new(2001, 2, 1)) == 5);
-        PAssert.That(() => Utils.MaandSpan(new(2000, 9, 1), new(2001, 4, 1)) == 7);
-        PAssert.That(() => Utils.MaandSpan(new(2001, 6, 1), new(2000, 9, 1)) == 9);
-        PAssert.That(() => Utils.MaandSpan(new(2000, 12, 1), new(2001, 1, 1)) == 1);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 1, 1), new(2000, 1, 1)) == 0);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 5, 1), new(2000, 1, 1)) == 4);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 1, 1), new(2001, 1, 1)) == 12);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2001, 1, 1), new(2000, 1, 1)) == 12);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 9, 1), new(2001, 2, 1)) == 5);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 9, 1), new(2001, 4, 1)) == 7);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2001, 6, 1), new(2000, 9, 1)) == 9);
+        PAssert.That(() => Utils.MaandSpan(new DateOnly(2000, 12, 1), new(2001, 1, 1)) == 1);
     }
 
     [Fact]
