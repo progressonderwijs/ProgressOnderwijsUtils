@@ -33,4 +33,19 @@ public sealed class MaybeAddTest
         PAssert.That(() => ReferenceEquals(ok.Item4, d));
     }
 
+    [Fact]
+    public async Task ToMaybeAdd_on_Task_awaits_and_wraps()
+    {
+        var a = new A(1);
+        var b = new B(2);
+
+        var sut = await Task.FromResult(Maybe.Ok(a).AsMaybeWithoutError<string>())
+            .ToMaybeAdd()
+            .WhenOkTryAdd(Maybe.Either(true, b, "no B"))
+            .ToMaybe();
+
+        var ok = sut.AssertOk();
+        PAssert.That(() => ReferenceEquals(ok.Item1, a));
+        PAssert.That(() => ReferenceEquals(ok.Item2, b));
+    }
 }
