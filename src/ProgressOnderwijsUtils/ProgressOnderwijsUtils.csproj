@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>117.1.0</Version>
-    <PackageReleaseNotes>Added the Maybe.ToMaybeAdd() for all nof tuples + async versions.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Maybe.ToMaybeAdd() for every supported tuple arity, including async versions.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
