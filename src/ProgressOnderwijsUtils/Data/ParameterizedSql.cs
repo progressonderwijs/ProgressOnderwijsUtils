@@ -493,6 +493,9 @@ public ref struct InterpolatedSqlFragment
     public void AppendFormatted(IEnumerable<DateTime> t)
         => AppendParam(t);
 
+    public void AppendFormatted(IEnumerable<DateOnly> t)
+        => AppendParam(t);
+
     public void AppendFormatted(IEnumerable<double> t)
         => AppendParam(t);
 
