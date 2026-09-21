@@ -199,7 +199,7 @@ public static class HtmlFragmentSanitizeExtension
             }
             if (safety == TagSafety.SafeToKeep) {
                 return elem.ReplaceAttributesAndContents(
-                    HtmlAttributes.FromArray(elem.Attributes.Where(filter.AllowAttribute).ToArray()),
+                    HtmlAttributes.FromArray([.. elem.Attributes.Where(filter.AllowAttribute),]),
                     safeChildren
                 ).AsFragment();
             }

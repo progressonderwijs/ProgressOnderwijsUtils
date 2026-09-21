@@ -32,7 +32,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
         return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText());
     }
 
-    static readonly BulkInsertTestSampleRow[] FourSampleRows = {
+    static readonly BulkInsertTestSampleRow[] FourSampleRows = [
         new() {
             ADateTime = new DateTime(2003, 4, 5).AddHours(17.345),
             AnEnum = DayOfWeek.Saturday,
@@ -66,10 +66,10 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             CustomBla = TrivialConvertibleValue.Create("aap"),
             CustomBlaThanCanBeNull = TrivialConvertibleValue.Create("noot"),
         },
-    };
+    ];
 
     public static BulkInsertTestSampleRow[] SampleRows(int n)
-        => Enumerable.Range(0, (n + 3) / 4).SelectMany(_ => FourSampleRows).ToArray();
+        => [.. Enumerable.Range(0, (n + 3) / 4).SelectMany(_ => FourSampleRows),];
 }
 
 public sealed class BulkInsertTest : TransactedLocalConnection

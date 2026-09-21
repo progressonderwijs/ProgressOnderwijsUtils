@@ -208,7 +208,7 @@ public static class EnumerableExtensions
         foreach (var elem in list) {
             var key = keyLookup(elem);
             if (!groups.TryGetValue(key, out var group)) {
-                groups.Add(key, group = new());
+                groups.Add(key, group = []);
             }
             group.Add(elem);
         }

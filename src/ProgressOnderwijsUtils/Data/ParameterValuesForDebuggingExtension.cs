@@ -7,7 +7,7 @@ public static class ParameterValuesForDebuggingExtension
     {
         var collector = EquatableParameterValueCollector.Create();
         sql.AppendTo(ref collector);
-        return collector.arguments.ToArray();
+        return [.. collector.arguments,];
     }
 
     struct EquatableParameterValueCollector : ICommandFactory
@@ -24,6 +24,6 @@ public static class ParameterValuesForDebuggingExtension
         public void AppendSql(ReadOnlySpan<char> sql) { }
 
         public static EquatableParameterValueCollector Create()
-            => new() { arguments = new(), };
+            => new() { arguments = [], };
     }
 }

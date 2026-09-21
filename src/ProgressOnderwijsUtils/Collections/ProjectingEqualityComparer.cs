@@ -21,7 +21,7 @@ public sealed class ProjectingEqualityComparer<T>
         => AddKey_WithoutColumn(([DisallowNull] a, [DisallowNull] b) => partComparer.Equals(part(a), part(b)), ([DisallowNull] o) => part(o) is { } nonNull ? partComparer.GetHashCode(nonNull) : 0);
 
     public ProjectingEqualityComparer<T> AddKey_WithoutColumn(EqualsComparer compare, HashComputation hash)
-        => new(Equality.Append(compare).ToArray(), Hash.Append(hash).ToArray());
+        => new([.. Equality, compare,], [.. Hash, hash,]);
 
     public ProjectingEqualityComparer<T> AddKeyColumn<TPart>(Func<T, TPart> part)
         where TPart : IEquatable<TPart>

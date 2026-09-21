@@ -106,17 +106,17 @@ public sealed class PropertyMappers
     readonly Dictionary<Type, IPropertyMapper> mapperByPropertyType;
 
     public PropertyMappers()
-        : this(Array.Empty<IPropertyMapper>()) { }
+        : this([]) { }
 
     public PropertyMappers(params IPropertyMapper[] mappers)
         => mapperByPropertyType = mappers.ToDictionary(o => o.MappedPropertyType());
 
     [UsefulToKeep("Library function")]
     public Type[] MappedPropertyTypes()
-        => mapperByPropertyType.Keys.ToArray();
+        => [.. mapperByPropertyType.Keys,];
 
     public PropertyMappers CloneWithExtraMappers(PropertyMappers extraMappers)
-        => new(mapperByPropertyType.Values.Concat(extraMappers.mapperByPropertyType.Values).ToArray());
+        => new([.. mapperByPropertyType.Values, .. extraMappers.mapperByPropertyType.Values,]);
 
     public T[] Map<T>(T[] objects)
         where T : class, ICopyable<T>, IWrittenImplicitly, IEquatable<T>

@@ -73,7 +73,7 @@ struct ForeignKeyColumnEntry : IWrittenImplicitly
                         UpdateReferentialAction = fkColEntry.UpdateReferentialAction,
                         ReferencingChildTable = fkColEntry.ReferencingChildTable,
                         ReferencedParentTable = fkColEntry.ReferencedParentTable,
-                        Columns = fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)).ToArray(),
+                        Columns = [.. fk.Select(c => (c.ReferencedParentColumn, c.ReferencingChildColumn)),],
                     };
                 }
             )

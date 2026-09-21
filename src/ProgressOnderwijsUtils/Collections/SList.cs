@@ -175,7 +175,7 @@ public static class SList
         if (enumerable is IList<T> list) {
             return Create(list); //use IList interface for reverse iterability
         } else {
-            return Create(enumerable.ToArray()); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
+            return Create([.. enumerable,]); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
         }
     }
 

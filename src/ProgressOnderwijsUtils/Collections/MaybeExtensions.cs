@@ -332,7 +332,7 @@ public static class MaybeExtensions
                 errValues.Add(error);
             }
         }
-        return (okValues: okValues.ToArray(), errorValues: errValues.ToArray());
+        return (okValues: [.. okValues,], errorValues: [.. errValues,]);
     }
 
     /// <summary>

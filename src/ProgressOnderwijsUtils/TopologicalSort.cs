@@ -29,7 +29,7 @@ public static class TopologicalSort
         foreach (var seed in seeds) {
             TopologicalSortVisit(seed);
         }
-        return (hasCycle, output.ToArray());
+        return (hasCycle, [.. output,]);
 
         void TopologicalSortVisit(T r)
         {

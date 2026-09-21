@@ -200,14 +200,14 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
                 i++;
             }
         }
-        columnInfos = columnInfosBuilder.ToArray();
+        columnInfos = [.. columnInfosBuilder,];
     }
 
     static DataTable CreateEmptySchemaTable()
     {
         var dt = new DataTable();
         dt.Columns.AddRange(
-            new[] {
+            [
                 new DataColumn("ColumnName", typeof(string)),
                 new DataColumn("ColumnOrdinal", typeof(int)),
                 new DataColumn("ColumnSize", typeof(int)),
@@ -226,7 +226,7 @@ public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListFor
                 new DataColumn("BaseSchemaName", typeof(string)),
                 new DataColumn("BaseTableName", typeof(string)),
                 new DataColumn("BaseColumnName", typeof(string)),
-            }
+            ]
         );
         return dt;
     }

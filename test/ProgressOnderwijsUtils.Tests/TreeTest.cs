@@ -169,7 +169,7 @@ public sealed class TreeTest
     [Fact]
     public void TreeRebuildSingleNodeToTwo()
     {
-        var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value, newKids), });
+        var output = Tree.Node(1u).Rebuild(node => (long)node.NodeValue, (_, value, newKids) => [Tree.Node(value, newKids), Tree.Node(value, newKids),]);
         var expected = Enumerable.Repeat(Tree.Node(1L), 2);
         PAssert.That(() => output.SequenceEqual(expected));
     }
@@ -185,7 +185,7 @@ public sealed class TreeTest
     public void TreeRebuildOneChildDoubleEverything()
     {
         var input = Tree.Node(1u, Tree.Node(2u));
-        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (_, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), });
+        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (_, value, newKids) => [Tree.Node(value, newKids), Tree.Node(value + 1, newKids),]);
         var expected = new[] {
             Tree.Node(2L, Tree.Node(4L), Tree.Node(5L)),
             Tree.Node(3L, Tree.Node(4L), Tree.Node(5L)),
@@ -197,7 +197,7 @@ public sealed class TreeTest
     public void TreeRebuildCanBeEmptyEvenWhenThereAreDescendants()
     {
         var input = Tree.Node(1u, Tree.Node(2u));
-        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), }.Where(_ => oldNode.NodeValue != 1).ToArray());
+        var output = input.Rebuild(node => 2 * (long)node.NodeValue, (oldNode, value, newKids) => [.. new[] { Tree.Node(value, newKids), Tree.Node(value + 1, newKids), }.Where(_ => oldNode.NodeValue != 1),]);
         // ReSharper disable once CollectionNeverUpdated.Local
         var expected = Array.Empty<Tree<long>>();
         PAssert.That(() => output.AsEnumerable().SequenceEqual(expected));
@@ -234,7 +234,7 @@ public sealed class TreeTest
         var input = Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(6u), Tree.Node(4u), Tree.Node(5u)), Tree.Node(4u));
         var output = input.Rebuild(
             node => (long)node.NodeValue,
-            (_, value, newKids) => value % 2 == 0 ? [] : Enumerable.Repeat(Tree.Node(value, newKids), 2).ToArray()
+            (_, value, newKids) => value % 2 == 0 ? [] : [.. Enumerable.Repeat(Tree.Node(value, newKids), 2),]
         );
         var n5 = Tree.Node(5L);
         var n3 = Tree.Node(3L, n5, n5);

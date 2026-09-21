@@ -49,7 +49,7 @@ public static class HtmlHelpers
     [Pure]
     public static HtmlFragment AsFragment<T>(this IEnumerable<T> htmlContents)
         where T : IConvertibleToFragment
-        => HtmlFragment.Fragment(htmlContents.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
+        => HtmlFragment.Fragment([.. htmlContents.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty),]);
 
     public static HtmlFragment EmptyIfNull<TContent>(this TContent? htmlFragmentOrNull)
         where TContent : struct, IConvertibleToFragment
@@ -111,7 +111,7 @@ public static class HtmlHelpers
         => elemWithContent.GetContent().NodesOfFragment();
 
     public static HtmlAttributes ToHtmlAttributes(this IEnumerable<HtmlAttribute> attributes)
-        => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
+        => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? [.. attributes,]);
 
     public static bool IsNamed(this IHtmlElement element, string tagName)
         => element.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
