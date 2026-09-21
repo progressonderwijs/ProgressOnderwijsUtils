@@ -10,8 +10,8 @@ public sealed class ApprovalTest
     static string ToApprovalPath(SourceLocation sourceLocation)
     {
         var filename = Path.GetFileNameWithoutExtension(sourceLocation.FilePath);
-        var filedir = Path.GetDirectoryName(sourceLocation.FilePath);
-        var approvalPath = Path.Combine(filedir.AssertNotNull(), $"{filename}.{sourceLocation.MemberName}.approved.txt");
+        var filedir = Path.GetDirectoryName(sourceLocation.FilePath).AssertNotNull();
+        var approvalPath = Path.Combine(filedir, $"{filename}.{sourceLocation.MemberName}.approved.txt");
         return approvalPath;
     }
 
