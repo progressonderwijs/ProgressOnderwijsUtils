@@ -27,20 +27,20 @@ public static class DbColumnExtensions
     public static ParameterizedSql SqlColumnName(this IDbColumn column)
         => ParameterizedSql.RawSql_PotentialForSqlInjection(isSafeForSql.IsMatch(column.ColumnName) ? column.ColumnName : throw new NotSupportedException("this isn't safe!"));
 
-    public static string ToSqlColumnDefinition(this IDbColumn column)
-        => $"{column.ColumnName} {column.ToSqlTypeName()}";
+    public static string ToSqlColumnDefinition(this IDbColumn column, SqlTypeToClrType sqlTypeToClrType)
+        => $"{column.ColumnName} {column.ToSqlTypeName(sqlTypeToClrType)}";
 
-    public static ParameterizedSql ToSqlColumnDefinitionSql(this IDbColumn column)
-        => ParameterizedSql.RawSql_PotentialForSqlInjection($"{column.ColumnName} {column.ToSqlTypeName()}");
+    public static ParameterizedSql ToSqlColumnDefinitionSql(this IDbColumn column, SqlTypeToClrType sqlTypeToClrType)
+        => ParameterizedSql.RawSql_PotentialForSqlInjection($"{column.ColumnName} {column.ToSqlTypeName(sqlTypeToClrType)}");
 
-    public static string ToSqlTypeName(this IDbColumn column)
-        => column.ToSqlTypeNameWithoutNullability() + CollationForStringColumn(column) + column.NullabilityAnnotation();
+    public static string ToSqlTypeName(this IDbColumn column, SqlTypeToClrType sqlTypeToClrType)
+        => column.ToSqlTypeNameWithoutNullability(sqlTypeToClrType) + CollationForStringColumn(column) + column.NullabilityAnnotation();
 
     static string CollationForStringColumn(IDbColumn column)
         => column is { IsString: true, UserTypeId: not SqlSystemTypeId.Xml, } ? $" collate {column.ColumnMetaData.CollationName ?? DefaultDbCollation}" : "";
 
-    public static string ToSqlTypeNameWithoutNullability(this IDbColumn column)
-        => column.UserTypeId.SqlUnderlyingTypeInfo().SqlTypeName + column.ColumnPrecisionSpecifier();
+    public static string ToSqlTypeNameWithoutNullability(this IDbColumn column, SqlTypeToClrType sqlTypeToClrType)
+        => column.UserTypeId.SqlUnderlyingTypeInfo(sqlTypeToClrType).SqlTypeName + column.ColumnPrecisionSpecifier();
 
     static string NullabilityAnnotation(this IDbColumn column)
         => column.IsNullable ? " null" : " not null";
@@ -53,8 +53,8 @@ public static class DbColumnExtensions
             _ => "",
         };
 
-    public static DataColumn ToDataColumn(this IDbColumn column)
-        => new(column.ColumnName, column.UserTypeId.SqlUnderlyingTypeInfo().ClrType);
+    public static DataColumn ToDataColumn(this IDbColumn column, SqlTypeToClrType sqlTypeToClrType)
+        => new(column.ColumnName, column.UserTypeId.SqlUnderlyingTypeInfo(sqlTypeToClrType).ClrType);
 
     public static IDbColumn AsStaticRowVersion(this IDbColumn column)
     {

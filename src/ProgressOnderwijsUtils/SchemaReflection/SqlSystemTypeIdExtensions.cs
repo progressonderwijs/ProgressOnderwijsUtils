@@ -1,10 +1,6 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-public enum SqlTypeToClrType
-{
-    UseDateTimeForDate,
-    UseDateOnlyForDate,
-}
+public enum SqlTypeToClrType { UseDateTimeForDate, UseDateOnlyForDate, }
 
 public enum SqlSystemTypeId
 {
@@ -96,19 +92,18 @@ public static class SqlSystemTypeIdExtensions
     };
 
     static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateOnly =
-        typeLookup_DateIsDateTime.ArraySelect(
-            s => s.typeId == SqlSystemTypeId.Date
-                ? (typeof(DateOnly), s.typeId)
-                : s
+        typeLookup_DateIsDateTime.ArraySelect(s => s.typeId == SqlSystemTypeId.Date
+            ? (typeof(DateOnly), s.typeId)
+            : s
         );
 
     /// <summary>
     /// Finds the best mapping of this sql type id to a clr-type.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
-    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType = SqlTypeToClrType.UseDateTimeForDate)
+    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType)
     {
-        foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateOnlyForDate ? typeLookup_DateIsDateOnly : typeLookup_DateIsDateTime) {
+        foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateTimeForDate ? typeLookup_DateIsDateTime : typeLookup_DateIsDateOnly) {
             if (o.typeId == sqlSystemTypeId) {
                 return new(sqlSystemTypeId, o.clrType);
             }

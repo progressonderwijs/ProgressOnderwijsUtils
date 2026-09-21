@@ -12,9 +12,9 @@ public static class PocoBulkCopy
     /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default) and checks constraints.
     /// For more fine-grained control, create a BulkInsertTarget instance instead of using DatabaseDescription.Table.
     /// </summary>
-    public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, DatabaseDescription.Table table, CommandTimeout timeout = new())
+    public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, DatabaseDescription.Table table, SqlTypeToClrType sqlTypeToClrType, CommandTimeout timeout = new())
         where T : IReadImplicitly
-        => BulkCopyToSqlServer(pocos, sqlConn, BulkInsertTarget.FromDatabaseDescription(table), timeout);
+        => BulkCopyToSqlServer(pocos, sqlConn, BulkInsertTarget.FromDatabaseDescription(table, sqlTypeToClrType), timeout);
 
     /// <summary>
     /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).

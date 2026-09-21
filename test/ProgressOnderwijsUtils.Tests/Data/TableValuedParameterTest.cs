@@ -114,7 +114,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         var tableName = SQL($"#strings");
         SQL($"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
         //manual bulk insert because our default TVP types explicitly forbid null
-        pocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+        pocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate));
 
         var output = SQL($"select x.querytablevalue from #strings x").ReadPlain<string>(Connection);
         SQL($"drop table #strings").ExecuteNonQuery(Connection);
