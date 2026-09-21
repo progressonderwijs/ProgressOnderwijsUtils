@@ -109,6 +109,12 @@ public struct FieldMappingValidation
     {
         var sourceBaseType = src.DataType.GetNonNullableUnderlyingType();
         var destinationBaseType = dst.DataType.GetNonNullableUnderlyingType();
-        return sourceBaseType != destinationBaseType;
+
+        return sourceBaseType != destinationBaseType && !IsDateOnlyVsDateTime(sourceBaseType, destinationBaseType);
     }
+
+    static bool IsDateOnlyVsDateTime(Type a, Type b)
+        => a == typeof(DateTime) && b == typeof(DateOnly)
+            ||
+            b == typeof(DateTime) && a == typeof(DateOnly);
 }
