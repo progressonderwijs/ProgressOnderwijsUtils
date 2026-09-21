@@ -21,13 +21,13 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
         => new([]);
 
     public static SortedSet<T, TOrder> FromValues(IEnumerable<T> values)
-        => FromValues(values as T[] ?? values.ToArray());
+        => FromValues(values as T[] ?? [.. values,]);
 
     public static SortedSet<T, TOrder> FromValues(T[] values)
     {
         for (var i = 1; i < values.Length; i++) {
             if (!Ordering.LessThan(values[i - 1], values[i])) {
-                return FromMutableUnsortedTmpArray(values.ToArray());
+                return FromMutableUnsortedTmpArray([.. values,]);
             }
         }
         return new(values);

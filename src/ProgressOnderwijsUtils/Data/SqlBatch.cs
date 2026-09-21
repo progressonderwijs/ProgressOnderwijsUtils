@@ -129,7 +129,7 @@ public readonly record struct DbColumnSchemaCommand(ParameterizedSql Sql, Comman
         using var cmd = this.ReusableCommand(conn);
         try {
             using var sqlReader = cmd.Command.ExecuteReader(CommandBehavior.SchemaOnly);
-            return sqlReader.GetColumnSchema().ToArray();
+            return [.. sqlReader.GetColumnSchema(),];
         } catch (Exception e) {
             throw cmd.CreateExceptionWithTextAndArguments(e, this);
         }
@@ -394,9 +394,10 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
     }
 
     static (JsonEncodedText ColumnName, Type? DataType, string? DataTypeName)[] GetColumnTable(SqlDataReader reader)
-        => reader.GetColumnSchema()
-            .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName))
-            .ToArray();
+        => [
+            .. reader.GetColumnSchema()
+                .Select(column => (ColumnName: JsonEncodedText.Encode(column.ColumnName), column.DataType, column.DataTypeName)),
+        ];
 
     void WriteRow(ReusableCommand cmd, Utf8JsonWriter writer, SqlDataReader reader, (JsonEncodedText ColumnName, Type? DataType, string? DataTypeName)[] table, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber)
     {

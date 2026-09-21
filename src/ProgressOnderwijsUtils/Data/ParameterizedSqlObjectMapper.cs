@@ -497,7 +497,7 @@ public static partial class ParameterizedSqlObjectMapper
             }
 
             if (bestCtor == null && minimalViaConstructorCount == 0 && rowType.IsValueType) {
-                bestCtorParameters = Array.Empty<ParameterInfo>(); // use implied parameterless pseudo-constructor for value types
+                bestCtorParameters = []; // use implied parameterless pseudo-constructor for value types
             }
 
             if (bestCtorParameters == null) {
@@ -532,7 +532,7 @@ public static partial class ParameterizedSqlObjectMapper
             statements.Add(Expression.MemberInit(newExpression, memberInits));
             var constructRowExpr = Expression.Block(rowType, propertyFlags.Values.Select(o => o.Variable), statements);
 
-            return (constructRowExpr, unmappedProperties.ToArray());
+            return (constructRowExpr, [.. unmappedProperties,]);
         }
     }
 

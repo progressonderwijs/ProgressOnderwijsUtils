@@ -2,13 +2,13 @@ namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class MaybeAddTest
 {
-    sealed record A(int Id);
+    sealed record A([UsedImplicitly] int Id);
 
-    sealed record B(int Id);
+    sealed record B([UsedImplicitly] int Id);
 
-    sealed record C(int Id);
+    sealed record C([UsedImplicitly] int Id);
 
-    sealed record D(int Id);
+    sealed record D([UsedImplicitly] int Id);
 
     [Fact]
     public void Collects_ok_values_in_tuple()

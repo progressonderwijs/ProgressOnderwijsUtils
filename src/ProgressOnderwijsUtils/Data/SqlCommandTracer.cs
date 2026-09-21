@@ -37,7 +37,7 @@ public static class SqlCommandTracer
             => ArgumentInclusion = agumentInclusion;
 
         public SqlTraceEvent[] ListAllCommands()
-            => Array.Empty<SqlTraceEvent>();
+            => [];
 
         public void RegisterEvent(string commandText, TimeSpan duration) { }
         public SqlTracerAgumentInclusion ArgumentInclusion { get; }
@@ -49,7 +49,7 @@ public static class SqlCommandTracer
     sealed class AlwaysOnTracer : ISqlCommandTracer
     {
         readonly Stopwatch ElapsedTime = Stopwatch.StartNew();
-        readonly List<SqlTraceEvent> allqueries = new();
+        readonly List<SqlTraceEvent> allqueries = [];
         const int maxTotalEventContentSize = 100_000_000;
         int totalEventContentSize;
 
@@ -59,7 +59,7 @@ public static class SqlCommandTracer
         public SqlTraceEvent[] ListAllCommands()
         {
             lock (allqueries) {
-                return allqueries.ToArray();
+                return [.. allqueries,];
             }
         }
 

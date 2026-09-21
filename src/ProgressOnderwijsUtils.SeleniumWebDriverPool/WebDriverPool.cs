@@ -36,7 +36,7 @@ public sealed class WebDriverPool : IDisposable
     {
         this.server = server;
         this.driverFactory = driverFactory;
-        cachedIdleDrivers = new();
+        cachedIdleDrivers = [];
         AppDomain.CurrentDomain.DomainUnload += Cleanup;
         AppDomain.CurrentDomain.ProcessExit += Cleanup;
     }

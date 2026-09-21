@@ -8,12 +8,12 @@ public static class DistinctArray
 
     [Pure]
     public static DistinctArray<T> ToDistinctArray<T>(this ISet<T> items)
-        => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
+        => ToDistinctArrayFromDistinct_Unchecked([.. items,]);
 
     [Pure]
     public static DistinctArray<T> ToDistinctArray<T, TVal>(this Dictionary<T, TVal>.KeyCollection items)
         where T : notnull
-        => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
+        => ToDistinctArrayFromDistinct_Unchecked([.. items,]);
 
     [Pure]
     public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
@@ -21,11 +21,11 @@ public static class DistinctArray
 
     [Pure]
     public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items)
-        => DistinctArray<T>.FromDistinctNonMutatedArray(items.ToArray(), EqualityComparer<T>.Default);
+        => DistinctArray<T>.FromDistinctNonMutatedArray([.. items,], EqualityComparer<T>.Default);
 
     [Pure]
     public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
-        => DistinctArray<T>.FromDistinctNonMutatedArray(items.ToArray(), comparer);
+        => DistinctArray<T>.FromDistinctNonMutatedArray([.. items,], comparer);
 
     [Pure]
     public static DistinctArray<T> ToDistinctArrayFromDistinct_Unchecked<T>(this T[] items)
@@ -36,7 +36,7 @@ public static class DistinctArray
 public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
 {
     public static DistinctArray<T> Empty
-        => new(Array.Empty<T>());
+        => new([]);
 
     public static DistinctArray<T> FromDistinct_ClaimDistinctnessWithoutCheck(T[] items)
         => new(items);
@@ -59,7 +59,7 @@ public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
         => this.items = items;
 
     public T[] UnderlyingArrayThatShouldNeverBeMutated()
-        => items ?? Array.Empty<T>();
+        => items ?? [];
 
     public int Count
         => UnderlyingArrayThatShouldNeverBeMutated().Length;

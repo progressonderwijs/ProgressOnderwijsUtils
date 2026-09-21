@@ -152,12 +152,14 @@ public static class SsoProcessor
         ).SingleOrNull();
 
     static string[] GetAttributes(XElement assertion, string key)
-        => (
+        => [
+            ..
             from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
             // ReSharper disable PossibleNullReferenceException
             where attribute.Parent?.Attribute("Name")?.Value == key
             // ReSharper restore PossibleNullReferenceException
-            select attribute.Value).ToArray();
+            select attribute.Value,
+        ];
 
     static readonly XmlSchemaSet schemaSet = new() { XmlResolver = null, };
 

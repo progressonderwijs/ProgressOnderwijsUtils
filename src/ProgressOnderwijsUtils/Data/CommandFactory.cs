@@ -121,7 +121,7 @@ struct CommandFactory : ICommandFactory
     const int ParameterNameCacheSize = 100;
 
     static readonly string[] CachedParameterNames =
-        Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => $"@par{parameterIndex}").ToArray();
+        [.. Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => $"@par{parameterIndex}"),];
 
     public static string IndexToParameterName(int parameterIndex)
         => parameterIndex < CachedParameterNames.Length

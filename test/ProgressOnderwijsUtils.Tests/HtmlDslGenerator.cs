@@ -71,7 +71,7 @@ public sealed class HtmlDslGenerator
         static string toClassName(string s)
             => s.Replace('-', '_');
         static string[] splitList(string list)
-            => list.Split(';').Select(s => s.Trim().TrimEnd('*')).Where(s => s != "").ToArray();
+            => [.. list.Split(';').Select(s => s.Trim().TrimEnd('*')).Where(s => s != ""),];
 
         var elements = tableOfElements.QuerySelectorAll("tbody tr")
             .SelectMany(tableRow => {
@@ -245,7 +245,7 @@ public sealed class HtmlDslGenerator
                 """
             ),
 
-            AssertFileExistsAndApproveContent(AttributeLookupTable_GeneratedOutputFilePath, GenerateAttributeLookupTable(elements.Select(el => (el.elementName, el.attributes)).ToArray())),
+            AssertFileExistsAndApproveContent(AttributeLookupTable_GeneratedOutputFilePath, GenerateAttributeLookupTable([.. elements.Select(el => (el.elementName, el.attributes)),])),
         }.WhereNotNull().ToArray();
 
         PAssert.That(() => diff.None());

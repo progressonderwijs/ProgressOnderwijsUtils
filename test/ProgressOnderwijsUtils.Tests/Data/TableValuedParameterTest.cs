@@ -140,7 +140,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
     }
 
-    static readonly byte[] testData = Enumerable.Range(0, 100).Select(i => (byte)i).ToArray();
+    static readonly byte[] testData = [.. Enumerable.Range(0, 100).Select(i => (byte)i),];
 
     [Fact]
     public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()

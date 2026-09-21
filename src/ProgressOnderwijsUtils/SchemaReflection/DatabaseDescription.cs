@@ -107,13 +107,13 @@ public sealed class DatabaseDescription
             ContainingObject = containingObject;
             IndexMetaData = indexMetaData;
 
-            List<IndexColumn> cols = new(), included = new();
+            List<IndexColumn> cols = [], included = [];
             foreach (var col in dataByTableId.IndexColumns[(ObjectId, IndexId)]) {
                 (col.IsIncluded ? included : cols).Add(new(this, col));
             }
-            IndexColumns = cols.ToArray();
+            IndexColumns = [.. cols,];
             Array.Sort(IndexColumns, colOrdering);
-            IncludedColumns = included.ToArray();
+            IncludedColumns = [.. included,];
             Array.Sort(IncludedColumns, colOrdering);
         }
 
@@ -255,7 +255,7 @@ public sealed class DatabaseDescription
             NamedObjectId = namedObjectId;
             Columns = rawSchemaById.Columns.GetValueOrDefault(namedObjectId.ObjectId).EmptyIfNull().ArraySelect(col => DefineColumn(this, rawSchemaById, col));
             ColumnsById = Columns.ToDictionary(o => o.ColumnId);
-            Indexes = rawSchemaById.Indexes[namedObjectId.ObjectId].Select(index => new Index<TObject>((TObject)this, index, rawSchemaById)).ToArray();
+            Indexes = [.. rawSchemaById.Indexes[namedObjectId.ObjectId].Select(index => new Index<TObject>((TObject)this, index, rawSchemaById)),];
         }
 
         public Column<TObject>[] Columns { get; }
@@ -307,13 +307,14 @@ public sealed class DatabaseDescription
             => Database.fksByReferencedParentObjectId[ObjectId];
 
         public ForeignKeyInfo[] ChildColumnsReferencingColumn(string pkColumn)
-            => KeysFromReferencingChildren
-                .SelectMany(
-                    fk =>
+            => [
+                .. KeysFromReferencingChildren
+                    .SelectMany(fk =>
                         fk.Columns
                             .Where(fkCol => fkCol.ReferencedParentColumn.ColumnName.EqualsOrdinalCaseInsensitive(pkColumn))
                             .Select(fkCol => new ForeignKeyInfo(fk.ReferencingChildTable.QualifiedName, fkCol.ReferencingChildColumn.ColumnName))
-                ).ToArray();
+                    ),
+            ];
 
         public override string ToString()
             => $"TABLE: {QualifiedName}";
@@ -325,7 +326,7 @@ public sealed class DatabaseDescription
 
         internal View(DbNamedObjectId namedObject, DatabaseDescriptionById rawSchemaById, DatabaseDescription db) : base(namedObject, rawSchemaById, db)
         {
-            ReferencedTables = rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull().ToArray();
+            ReferencedTables = [.. rawSchemaById.SqlExpressionDependsOn[namedObject.ObjectId].Select(db.TryGetTableById).WhereNotNull(),];
         }
 
         public string SchemaName

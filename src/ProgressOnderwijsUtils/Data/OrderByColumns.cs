@@ -32,7 +32,7 @@ public readonly struct OrderByColumns : IEquatable<OrderByColumns>
                 retval.Add(col);
             }
         }
-        return retval.ToArray();
+        return [.. retval,];
     }
 
     OrderByColumns(ColumnSort[] order)
@@ -71,11 +71,11 @@ public readonly struct OrderByColumns : IEquatable<OrderByColumns>
 
     [Pure]
     public static OrderByColumns Asc(string column)
-        => new(new[] { new ColumnSort(column, SortDirection.Asc), });
+        => new([new ColumnSort(column, SortDirection.Asc),]);
 
     [Pure]
     public static OrderByColumns Desc(string column)
-        => new(new[] { new ColumnSort(column, SortDirection.Desc), });
+        => new([new ColumnSort(column, SortDirection.Desc),]);
 
     [Pure]
     public OrderByColumns ThenSortBy(OrderByColumns thenby)
@@ -109,7 +109,7 @@ public readonly struct OrderByColumns : IEquatable<OrderByColumns>
         var assumedCols = BaseSortOrder.Columns;
         for (var matchLen = Math.Min(assumedCols.Length, myCols.Length); 0 < matchLen; matchLen--) {
             if (myCols.AsSpan(myCols.Length - matchLen, matchLen).SequenceEqual(assumedCols.AsSpan(0, matchLen))) {
-                return new(myCols.AsSpan(0, myCols.Length - matchLen).ToArray());
+                return new([.. myCols.AsSpan(0, myCols.Length - matchLen),]);
             }
         }
         return this;

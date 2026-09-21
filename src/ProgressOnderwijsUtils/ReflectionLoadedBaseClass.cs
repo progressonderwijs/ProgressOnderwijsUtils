@@ -52,13 +52,13 @@ public abstract class ReflectionLoadedBaseClass<T>
         }
 
         if (problems.Count == 0) {
-            uncheckedInstances = instantiableSubTypes.Values.ToArray();
+            uncheckedInstances = [.. instantiableSubTypes.Values,];
             uncheckedInstancesBySubType = instantiableSubTypes;
-            initializationError = Array.Empty<string>();
+            initializationError = [];
         } else {
             uncheckedInstances = null;
             uncheckedInstancesBySubType = null;
-            initializationError = problems.ToArray();
+            initializationError = [.. problems,];
         }
     }
 }

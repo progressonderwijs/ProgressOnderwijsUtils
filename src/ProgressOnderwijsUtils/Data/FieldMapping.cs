@@ -38,7 +38,7 @@ public readonly struct BulkInsertFieldMapping
         }
         list.AddRange(dstColumnsByName.Values.Select(dstColumn => new Suggestion(null, dstColumn)));
 
-        return list.ToArray();
+        return [.. list,];
     }
 
     public static void ApplyFieldMappingsToBulkCopy(BulkInsertFieldMapping[] mapping, SqlBulkCopy bulkCopy)

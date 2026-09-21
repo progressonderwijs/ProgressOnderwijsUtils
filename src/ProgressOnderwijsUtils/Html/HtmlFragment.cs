@@ -213,7 +213,7 @@ public struct HtmlFragment : IConvertibleToFragment
         => this;
 
     public HtmlFragment[] NodesOfFragment()
-        => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this, });
+        => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : [this,]);
 
     public HtmlFragment[] ChildNodes()
         => Implementation is IHtmlElementAllowingContent elem
@@ -221,7 +221,7 @@ public struct HtmlFragment : IConvertibleToFragment
             : Implementation as HtmlFragment[] ?? EmptyNodes;
 
     public static HtmlFragment[] EmptyNodes
-        => Array.Empty<HtmlFragment>();
+        => [];
 
     /// <summary>
     /// Attempts to parse an html fragment as html5.
@@ -255,8 +255,8 @@ public struct HtmlFragment : IConvertibleToFragment
         if (node is IElement element) {
             return Element(
                 element.TagName.ToLowerInvariant(),
-                element.Attributes.Select(attr => new HtmlAttribute(attr.Name, attr.Value)).ToArray(),
-                (node is IHtmlTemplateElement templateElement ? templateElement.Content.ChildNodes : element.ChildNodes).Select(CreateFromAngleSharpNode).ToArray()
+                [.. element.Attributes.Select(attr => new HtmlAttribute(attr.Name, attr.Value)),],
+                [.. (node is IHtmlTemplateElement templateElement ? templateElement.Content.ChildNodes : element.ChildNodes).Select(CreateFromAngleSharpNode),]
             );
         }
         if (node is IDocumentFragment) {

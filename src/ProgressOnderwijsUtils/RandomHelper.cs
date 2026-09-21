@@ -142,7 +142,7 @@ public sealed class RandomHelper
         );
 
     static readonly char[] UriPrintableCharacters =
-        Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
+        [.. Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i), .. "_-~",];
 
     public string GetStringOfUriPrintableCharacters(int length)
         => string.Create(

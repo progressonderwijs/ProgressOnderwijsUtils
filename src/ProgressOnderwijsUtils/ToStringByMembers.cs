@@ -58,10 +58,11 @@ public static class ToStringByMembers<T>
 
         var toStringExpr =
             concatStringExpressions(
-                new[] { Expression.Constant($"new {type.Name} {{\n"), }
-                    .Concat(nonCompilerGeneratedMembers.Select(MemberToStringExpression))
-                    .Concat(new[] { Expression.Constant("}"), })
-                    .ToArray()
+                [
+                    Expression.Constant($"new {type.Name} {{\n"),
+                    .. nonCompilerGeneratedMembers.Select(MemberToStringExpression),
+                    Expression.Constant("}"),
+                ]
             );
 
         return Expression.Lambda<Func<T, string>>(toStringExpr, parA).CompileFast();

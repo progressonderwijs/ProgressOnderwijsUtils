@@ -22,7 +22,7 @@ public static class CascadedDelete
             outputAllDeletedRows,
             logger,
             foreignKeyPredicate,
-            new[] { pkColumn, },
+            [pkColumn,],
             SQL(
                 $"""
                 select {pkColumnSql} = q.QueryTableValue 
@@ -143,7 +143,7 @@ public static class CascadedDelete
         }
 
         log($"{totalDeletes} rows Deleted");
-        return perflog.ToArray();
+        return [.. perflog,];
 
         void DeleteKids(DatabaseDescription.Table table, ParameterizedSql tempTableName, ParameterizedSql[] columnsToJoinOn, SList<string> logStack)
         {
