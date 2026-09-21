@@ -37,6 +37,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
     static readonly BulkInsertTestSampleRow[] FourSampleRows = [
         new() {
             ADateTime = new DateTime(2003, 4, 5).AddHours(17.345),
+            ADate = new(2003, 4, 5),
             AnEnum = DayOfWeek.Saturday,
             LotsOfMoney = -12.34m,
             VagueNumber = 123.456,
@@ -45,6 +46,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
         },
         new() {
             ADateTime = new DateTime(2013, 8, 7),
+            ADate = new(2013, 8, 7),
             AnEnum = DayOfWeek.Monday,
             LotsOfMoney = null,
             //VagueNumer = double.NaN,
@@ -53,6 +55,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
         },
         new() {
             ADateTime = null,
+            ADate = null,
             AnEnum = (DayOfWeek)12345,
             LotsOfMoney = 6543,
             VagueNumber = 1 / 3.0,
@@ -61,6 +64,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
         },
         new() {
             ADateTime = DateTime.MaxValue,
+            ADate = DateOnly.MaxValue,
             AnEnum = DayOfWeek.Friday,
             LotsOfMoney = 1000_000_000.00m,
             VagueNumber = Math.E,
