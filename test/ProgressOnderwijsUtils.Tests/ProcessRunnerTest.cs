@@ -1,16 +1,10 @@
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
-using System.Threading.Tasks;
 
 namespace ProgressOnderwijsUtils.Tests;
 
-public sealed class ProcessRunnerTest
+public sealed class ProcessRunnerTest(ITestOutputHelper output)
 {
-    readonly ITestOutputHelper output;
-
-    public ProcessRunnerTest(ITestOutputHelper output)
-        => this.output = output;
-
     [Fact]
     public async Task CanCollectOutputErrorAndCode()
     {
