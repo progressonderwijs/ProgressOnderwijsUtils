@@ -11,6 +11,7 @@ public sealed class ApprovalTest
     {
         var filename = Path.GetFileNameWithoutExtension(sourceLocation.FilePath);
         var filedir = Path.GetDirectoryName(sourceLocation.FilePath).AssertNotNull();
+        // ReSharper disable once AvoidPathCombine
         var approvalPath = Path.Combine(filedir, $"{filename}.{sourceLocation.MemberName}.approved.txt");
         return approvalPath;
     }
