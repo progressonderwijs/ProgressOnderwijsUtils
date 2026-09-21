@@ -33,7 +33,7 @@ public sealed class ProcessRunnerTest(ITestOutputHelper output)
     [Fact(Timeout = 5000)]
     public async Task CanCollectOutputAfterUsingWriteToConsoleWithPrefix()
     {
-        async Task DoTest()
+        static async Task DoTest()
         {
             var result = new ProcessStartSettings {
                 ExecutableName = "xcopy",
