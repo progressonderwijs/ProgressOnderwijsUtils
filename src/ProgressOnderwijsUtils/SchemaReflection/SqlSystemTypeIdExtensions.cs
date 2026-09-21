@@ -108,7 +108,7 @@ public static class SqlSystemTypeIdExtensions
     /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
     public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType)
     {
-        foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateOnlyForDate ? typeLookup_DateIsDateOnly : typeLookup_DateIsDateTime) {
+        foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateTimeForDate ? typeLookup_DateIsDateTime : typeLookup_DateIsDateOnly) {
             if (o.typeId == sqlSystemTypeId) {
                 return new(sqlSystemTypeId, o.clrType);
             }
