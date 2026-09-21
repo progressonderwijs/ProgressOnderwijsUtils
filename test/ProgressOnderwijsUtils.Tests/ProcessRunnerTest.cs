@@ -14,7 +14,7 @@ public sealed class ProcessRunnerTest
     [Fact]
     public async Task CanCollectOutputErrorAndCode()
     {
-        async Task DoTest()
+        static async Task DoTest()
         {
             var result = new ProcessStartSettings {
                 ExecutableName = "xcopy",
