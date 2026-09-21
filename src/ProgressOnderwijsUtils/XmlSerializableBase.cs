@@ -34,15 +34,14 @@ public static class XmlSerializerHelper
     public static XDocument SerializeToXDocument(object o, XmlSerializerNamespaces? namespaces)
     {
         var doc = new XDocument();
-        using (var xw = doc.CreateWriter()) {
-            ((IXmlSerializeHelper)
-                    typeof(XmlSerializerHelper<>)
-                        .MakeGenericType(o.GetType())
-                        .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                        .Single()
-                        .Invoke(null)
-                ).SerializeToInst(xw, o, namespaces);
-        }
+        using var xw = doc.CreateWriter();
+        ((IXmlSerializeHelper)
+                typeof(XmlSerializerHelper<>)
+                    .MakeGenericType(o.GetType())
+                    .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                    .Single()
+                    .Invoke(null)
+            ).SerializeToInst(xw, o, namespaces);
 
         return doc;
     }
