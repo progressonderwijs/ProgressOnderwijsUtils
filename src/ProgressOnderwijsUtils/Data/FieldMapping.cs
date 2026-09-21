@@ -107,6 +107,8 @@ public struct FieldMappingValidation
 
     static bool TypesDiffer(ColumnDefinition src, ColumnDefinition dst)
     {
-        return src.DataType.GetNonNullableUnderlyingType() != dst.DataType.GetNonNullableUnderlyingType();
+        var sourceBaseType = src.DataType.GetNonNullableUnderlyingType();
+        var destinationBaseType = dst.DataType.GetNonNullableUnderlyingType();
+        return sourceBaseType != destinationBaseType;
     }
 }
