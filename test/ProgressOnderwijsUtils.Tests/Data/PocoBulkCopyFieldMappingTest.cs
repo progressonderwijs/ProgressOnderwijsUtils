@@ -54,7 +54,7 @@ public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
             """
         ).ExecuteNonQuery(Connection);
 
-        return BulkInsertTarget.FromCompleteSetOfColumns(testTableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Connection, testTableName));
+        return BulkInsertTarget.FromCompleteSetOfColumns(testTableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Connection, testTableName), SqlTypeToClrType.UseDateOnlyForDate);
     }
 
     [Fact]

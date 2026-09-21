@@ -7,6 +7,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
 {
     public DayOfWeek AnEnum { get; set; }
     public DateTime? ADateTime { get; set; }
+    public DateOnly? ADate { get; set; }
     public string? SomeString { get; set; }
     public decimal? LotsOfMoney { get; set; }
     public double VagueNumber { get; set; }
@@ -20,6 +21,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             create table {tempTableName} (
                 AnEnum int not null
                 , ADateTime datetime2
+                , ADate date
                 , SomeString nvarchar(max)
                 , LotsOfMoney decimal(19, 5)
                 , VagueNumber float not null
@@ -29,7 +31,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             """
         ).ExecuteNonQuery(sqlConnection);
 
-        return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText());
+        return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
     }
 
     static readonly BulkInsertTestSampleRow[] FourSampleRows = [
@@ -201,7 +203,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
             )
             """
         ).ExecuteNonQuery(Connection);
-        var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
+        var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp", SqlTypeToClrType.UseDateOnlyForDate);
 
         using (var cmd = query.Sql.CreateSqlCommand(conn2, new()))
         using (var reader = cmd.Command.ExecuteReader()) {
@@ -234,7 +236,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
             )
             """
         ).ExecuteNonQuery(Connection);
-        var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
+        var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp", SqlTypeToClrType.UseDateOnlyForDate);
         new[] { new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test", }, }
             .BulkCopyToSqlServer(Connection, target);
         new[] { new SampleRow2 { intNonNull = 2, intNull = null, stringNull = "test", stringNonNull = "test", }, }
@@ -300,7 +302,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         var tableName = SQL($"#TableWithReadOnlyColumn");
         SQL($"create table {tableName} (X int not null, ReadOnly rowversion not null);").ExecuteNonQuery(Connection);
         var record = new TableWithReadOnlyColumn(1, [1, 2, 3, 4, 5, 6, 7, 8,]);
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName);
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate);
 
         // by default, writing to read-only column is not allowed
         var notAllowed = Maybe.Try(() => target.BulkInsert(Connection, new[] { record, }, cancel: TestContext.Current.CancellationToken))
@@ -345,7 +347,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     public void BulkInsertSync_WithReaderOnSameConnection_ShowsBehaviour()
     {
         var tableName = CreateSampleRow2Table(Connection);
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
 
         using var cmd = SampleRow2SourceQuery.CreateSqlCommand(Connection, new());
         using var reader = cmd.Command.ExecuteReader();
@@ -360,7 +362,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     public async Task BulkInsertAsync_WithReaderOnSameConnection_ThrowsInvalidOperationException()
     {
         var tableName = CreateSampleRow2Table(Connection);
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
 
         using var cmd = SampleRow2SourceQuery.CreateSqlCommand(Connection, new());
         await using var reader = await cmd.Command.ExecuteReaderAsync(TestContext.Current.CancellationToken);
@@ -500,7 +502,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         sourceConn.Open();
 
         var tableName = CreateSampleRow2Table(Connection);
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
 
         using var cmd = SampleRow2SourceQuery.CreateSqlCommand(sourceConn, new());
         using var innerReader = cmd.Command.ExecuteReader();
@@ -528,7 +530,7 @@ public sealed class BulkInsertTest : TransactedLocalConnection
         await sourceConn.OpenAsync(TestContext.Current.CancellationToken);
 
         var tableName = CreateSampleRow2Table(destConn);
-        var target = BulkInsertTarget.LoadFromTable(destConn, tableName.CommandText());
+        var target = BulkInsertTarget.LoadFromTable(destConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
 
         using var cmd = SampleRow2SourceQuery.CreateSqlCommand(sourceConn, new());
         await using var innerReader = await cmd.Command.ExecuteReaderAsync(TestContext.Current.CancellationToken);

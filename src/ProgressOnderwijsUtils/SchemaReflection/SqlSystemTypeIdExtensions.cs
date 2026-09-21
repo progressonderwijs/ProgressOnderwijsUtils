@@ -106,7 +106,7 @@ public static class SqlSystemTypeIdExtensions
     /// Finds the best mapping of this sql type id to a clr-type.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
-    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType = SqlTypeToClrType.UseDateTimeForDate)
+    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType)
     {
         foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateOnlyForDate ? typeLookup_DateIsDateOnly : typeLookup_DateIsDateTime) {
             if (o.typeId == sqlSystemTypeId) {

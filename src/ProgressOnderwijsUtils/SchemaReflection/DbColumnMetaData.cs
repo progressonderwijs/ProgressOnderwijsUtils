@@ -76,7 +76,7 @@ public sealed record DbColumnMetaData(
     }
 
     public bool IsString
-        => UserTypeId.SqlUnderlyingTypeInfo().ClrType == typeof(string);
+        => UserTypeId.SqlUnderlyingTypeInfo(SqlTypeToClrType.UseDateOnlyForDate).ClrType == typeof(string);
 
     public bool IsUnicode
         => UserTypeId == SqlSystemTypeId.NVarChar || UserTypeId == SqlSystemTypeId.NChar;
@@ -151,7 +151,7 @@ public sealed record DbColumnMetaData(
 public static class DbColumnMetaDataExtensions
 {
     [Pure]
-    public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<IDbColumn> columns, ParameterizedSql tableName)
+    public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<IDbColumn> columns, ParameterizedSql tableName, SqlTypeToClrType sqlTypeToClrType)
     {
         var keyColumns = columns
             .Where(md => md.IsPrimaryKey)
@@ -161,7 +161,7 @@ public static class DbColumnMetaDataExtensions
         // zolang er dus geen pk's over meerdere kolommen worden gedefinieerd gaat onderstaande ook goed voor temp. tables in een contained db
         var columnDefinitionSql = ParameterizedSql.RawSql_PotentialForSqlInjection(
             columns
-                .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
+                .Select(md => $"{md.ToSqlColumnDefinition(sqlTypeToClrType)}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
                 .JoinStrings("\n    , ")
         );
         var primaryKeyDefinitionSql = keyColumns.Length > 1

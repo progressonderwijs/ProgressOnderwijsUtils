@@ -343,7 +343,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
         var rowsAfterDelete = SQL($"select * from {tableName} order by Counter").ReadPocos<PocoWithRowVersions>(Connection);
         PAssert.That(() => rowsAfterDelete.None());
 
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate) with {
             Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             SilentlySkipReadonlyTargetColumns = true,
         };
@@ -383,7 +383,7 @@ public sealed class PocoObjectMapperTest : TransactedLocalConnection
             )
             .ToArray();
 
-        var target = BulkInsertTarget.LoadFromTable(Connection, tableName) with {
+        var target = BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate) with {
             Mode = BulkCopyFieldMappingMode.AllowExtraPocoProperties,
             SilentlySkipReadonlyTargetColumns = true,
         };
