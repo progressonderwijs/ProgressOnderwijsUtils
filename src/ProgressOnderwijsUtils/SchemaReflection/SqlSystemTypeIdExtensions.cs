@@ -1,10 +1,6 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-public enum SqlTypeToClrType
-{
-    UseDateTimeForDate,
-    UseDateOnlyForDate,
-}
+public enum SqlTypeToClrType { UseDateTimeForDate, UseDateOnlyForDate, }
 
 public enum SqlSystemTypeId
 {
@@ -96,10 +92,9 @@ public static class SqlSystemTypeIdExtensions
     };
 
     static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateOnly =
-        typeLookup_DateIsDateTime.ArraySelect(
-            s => s.typeId == SqlSystemTypeId.Date
-                ? (typeof(DateOnly), s.typeId)
-                : s
+        typeLookup_DateIsDateTime.ArraySelect(s => s.typeId == SqlSystemTypeId.Date
+            ? (typeof(DateOnly), s.typeId)
+            : s
         );
 
     /// <summary>
