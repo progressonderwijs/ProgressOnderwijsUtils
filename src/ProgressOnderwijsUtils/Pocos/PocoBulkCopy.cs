@@ -26,7 +26,7 @@ public static class PocoBulkCopy
     /// <summary>
     /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
     /// </summary>
-    public static async Task BulkCopyToSqlServerAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, BulkInsertTarget target, CommandTimeout timeout = new(), CancellationToken cancel = default)
+    public static Task BulkCopyToSqlServerAsync<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(this IEnumerable<T> pocos, SqlConnection sqlConn, BulkInsertTarget target, CommandTimeout timeout = new(), CancellationToken cancel = default)
         where T : IReadImplicitly
-        => await target.BulkInsertAsync(sqlConn, pocos, timeout, cancel).ConfigureAwait(false);
+        => target.BulkInsertAsync(sqlConn, pocos, timeout, cancel);
 }

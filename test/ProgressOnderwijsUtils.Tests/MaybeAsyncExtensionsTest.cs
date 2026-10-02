@@ -41,8 +41,8 @@ public sealed class MaybeAsyncExtensionsTest
     }
 
     [Fact]
-    public async Task AsyncMaybeWhenOkAction()
-        => await AsyncTestMaybeFunc(true).WhenOk(_ => Unit.Value).AssertOk();
+    public Task AsyncMaybeWhenOkAction()
+        => AsyncTestMaybeFunc(true).WhenOk(_ => Unit.Value).AssertOk();
 
     [Fact]
     public async Task AsyncMaybeWhenOkFunc()
@@ -53,25 +53,25 @@ public sealed class MaybeAsyncExtensionsTest
     }
 
     [Fact]
-    public async Task SyncMaybeWhenOkAsyncAction()
-        => await TestMaybeFunc(true).WhenOkAsync(async _ => await AsyncTestAction()).AssertOk();
+    public Task SyncMaybeWhenOkAsyncAction()
+        => TestMaybeFunc(true).WhenOkAsync(_ => AsyncTestAction()).AssertOk();
 
     [Fact]
     public async Task SyncMaybeWhenOkAsynFunc()
     {
-        var result = await TestMaybeFunc(true).WhenOkAsync(async value => await AsyncTestFunc(value)).AssertOk();
+        var result = await TestMaybeFunc(true).WhenOkAsync(value => AsyncTestFunc(value)).AssertOk();
 
         PAssert.That(() => result);
     }
 
     [Fact]
-    public async Task AsyncMaybeWhenOkAsyncAction()
-        => await AsyncTestMaybeFunc(true).WhenOkAsync(async _ => await AsyncTestAction()).AssertOk();
+    public Task AsyncMaybeWhenOkAsyncAction()
+        => AsyncTestMaybeFunc(true).WhenOkAsync(_ => AsyncTestAction()).AssertOk();
 
     [Fact]
     public async Task AsyncMaybeWhenOkAsyncFunc()
     {
-        var result = await AsyncTestMaybeFunc(true).WhenOkAsync(async value => await AsyncTestFunc(value)).AssertOk();
+        var result = await AsyncTestMaybeFunc(true).WhenOkAsync(value => AsyncTestFunc(value)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -79,7 +79,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeActionWhenOkTryAsyncFunc()
     {
-        var result = await TestMaybeAction(true).WhenOkTryAsync(async () => await AsyncTestMaybeFunc(true)).AssertOk();
+        var result = await TestMaybeAction(true).WhenOkTryAsync(() => AsyncTestMaybeFunc(true)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -87,7 +87,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncWhenOkTryAsyncFunc()
     {
-        var result = await TestMaybeFunc(true).WhenOkTryAsync(async value => await AsyncTestMaybeFunc(value)).AssertOk();
+        var result = await TestMaybeFunc(true).WhenOkTryAsync(value => AsyncTestMaybeFunc(value)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -103,7 +103,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncWhenOkTryAsyncFunc()
     {
-        var result = await AsyncTestMaybeFunc(true).WhenOkTryAsync(async value => await AsyncTestMaybeFunc(value)).AssertOk();
+        var result = await AsyncTestMaybeFunc(true).WhenOkTryAsync(value => AsyncTestMaybeFunc(value)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -121,7 +121,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncWhenErrorAsyncFunc()
     {
-        var result = await TestMaybeFunc(false).WhenErrorAsync(async value => await AsyncTestFunc(!value)).AssertError();
+        var result = await TestMaybeFunc(false).WhenErrorAsync(value => AsyncTestFunc(!value)).AssertError();
 
         PAssert.That(() => result);
     }
@@ -129,29 +129,29 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncWhenErrorAsyncFunc()
     {
-        var result = await AsyncTestMaybeFunc(false).WhenErrorAsync(async value => await AsyncTestFunc(!value)).AssertError();
+        var result = await AsyncTestMaybeFunc(false).WhenErrorAsync(value => AsyncTestFunc(!value)).AssertError();
 
         PAssert.That(() => result);
     }
 
     [Fact]
-    public async Task SyncMaybeFuncWhenErrorAsyncAction()
-        => await TestMaybeFunc(false).WhenErrorAsync(async _ => await AsyncTestAction()).AssertError();
+    public Task SyncMaybeFuncWhenErrorAsyncAction()
+        => TestMaybeFunc(false).WhenErrorAsync(_ => AsyncTestAction()).AssertError();
 
     [Fact]
-    public async Task AsyncMaybeFuncWhenErrorAsyncAction()
-        => await AsyncTestMaybeFunc(false).WhenErrorAsync(async _ => await AsyncTestAction()).AssertError();
+    public Task AsyncMaybeFuncWhenErrorAsyncAction()
+        => AsyncTestMaybeFunc(false).WhenErrorAsync(_ => AsyncTestAction()).AssertError();
 
     [Fact]
-    public async Task AsyncMaybeFuncWhenErrorAction()
-        => await AsyncTestMaybeFunc(false).WhenError(_ => { }).AssertError();
+    public Task AsyncMaybeFuncWhenErrorAction()
+        => AsyncTestMaybeFunc(false).WhenError(_ => { }).AssertError();
 
     // WhenErrorTry
 
     [Fact]
     public async Task SyncMaybeFuncWhenErrorTryAsyncFunc()
     {
-        var result = await TestMaybeFunc(false).WhenErrorTryAsync(async value => await AsyncTestMaybeFunc(!value)).AssertOk();
+        var result = await TestMaybeFunc(false).WhenErrorTryAsync(value => AsyncTestMaybeFunc(!value)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -159,7 +159,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncUnitErrorWhenErrorTryAsyncFunc()
     {
-        var result = await TestMaybeFuncUnitError(false).WhenErrorTryAsync(async () => await AsyncTestMaybeFunc(true)).AssertOk();
+        var result = await TestMaybeFuncUnitError(false).WhenErrorTryAsync(() => AsyncTestMaybeFunc(true)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -167,7 +167,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncWhenErrorTryAsyncFunc()
     {
-        var result = await AsyncTestMaybeFunc(false).WhenErrorTryAsync(async value => await AsyncTestMaybeFunc(!value)).AssertOk();
+        var result = await AsyncTestMaybeFunc(false).WhenErrorTryAsync(value => AsyncTestMaybeFunc(!value)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -183,7 +183,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncUnitErrorWhenErrorTryAsyncFunc()
     {
-        var result = await AsyncTestMaybeFuncUnitError(false).WhenErrorTryAsync(async () => await AsyncTestMaybeFunc(true)).AssertOk();
+        var result = await AsyncTestMaybeFuncUnitError(false).WhenErrorTryAsync(() => AsyncTestMaybeFunc(true)).AssertOk();
 
         PAssert.That(() => result);
     }
@@ -201,7 +201,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncExtractAsyncBothAsync()
     {
-        var result = await TestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), async err => await AsyncTestFunc(err));
+        var result = await TestMaybeFunc(true).ExtractAsync(ok => AsyncTestFunc(ok), err => AsyncTestFunc(err));
 
         PAssert.That(() => result);
     }
@@ -209,7 +209,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncExtractAsyncAsyncOkSyncError()
     {
-        var result = await TestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), err => err);
+        var result = await TestMaybeFunc(true).ExtractAsync(ok => AsyncTestFunc(ok), err => err);
 
         PAssert.That(() => result);
     }
@@ -217,7 +217,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task SyncMaybeFuncExtractAsyncSyncOkAsyncError()
     {
-        var result = await TestMaybeFunc(false).ExtractAsync(ok => ok, async err => await AsyncTestFunc(!err));
+        var result = await TestMaybeFunc(false).ExtractAsync(ok => ok, err => AsyncTestFunc(!err));
 
         PAssert.That(() => result);
     }
@@ -233,7 +233,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncExtractAsyncBothAsync()
     {
-        var result = await AsyncTestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), async err => await AsyncTestFunc(err));
+        var result = await AsyncTestMaybeFunc(true).ExtractAsync(ok => AsyncTestFunc(ok), err => AsyncTestFunc(err));
 
         PAssert.That(() => result);
     }
@@ -241,7 +241,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncExtractAsyncAsyncOkSyncError()
     {
-        var result = await AsyncTestMaybeFunc(true).ExtractAsync(async ok => await AsyncTestFunc(ok), err => err);
+        var result = await AsyncTestMaybeFunc(true).ExtractAsync(ok => AsyncTestFunc(ok), err => err);
 
         PAssert.That(() => result);
     }
@@ -249,7 +249,7 @@ public sealed class MaybeAsyncExtensionsTest
     [Fact]
     public async Task AsyncMaybeFuncExtractAsyncSyncOkAsyncError()
     {
-        var result = await AsyncTestMaybeFunc(false).ExtractAsync(ok => ok, async err => await AsyncTestFunc(!err));
+        var result = await AsyncTestMaybeFunc(false).ExtractAsync(ok => ok, err => AsyncTestFunc(!err));
 
         PAssert.That(() => result);
     }
