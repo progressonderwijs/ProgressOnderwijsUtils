@@ -260,7 +260,7 @@ public sealed class MaybeAsyncExtensionsTest
     public async Task AsyncMaybeFuncIfOk()
     {
         var called = false;
-        await AsyncTestMaybeFunc(true).IfOk(value => { called = value; });
+        await AsyncTestMaybeFunc(true).IfOk(value => called = value);
 
         PAssert.That(() => called);
     }
@@ -278,7 +278,7 @@ public sealed class MaybeAsyncExtensionsTest
     public async Task AsyncMaybeFuncIfError()
     {
         var called = false;
-        await AsyncTestMaybeFunc(false).IfError(err => { called = !err; });
+        await AsyncTestMaybeFunc(false).IfError(err => called = !err);
 
         PAssert.That(() => called);
     }
@@ -297,7 +297,7 @@ public sealed class MaybeAsyncExtensionsTest
     {
         var okCalled = false;
         var errorCalled = false;
-        await AsyncTestMaybeFunc(true).If(value => { okCalled = value; }, err => { errorCalled = !err; });
+        await AsyncTestMaybeFunc(true).If(value => okCalled = value, err => errorCalled = !err);
 
         PAssert.That(() => okCalled && !errorCalled);
     }
@@ -307,7 +307,7 @@ public sealed class MaybeAsyncExtensionsTest
     {
         var okCalled = false;
         var errorCalled = false;
-        await AsyncTestMaybeFunc(true).IfAsync(async value => { await AsyncTestAction(); okCalled = value; }, err => { errorCalled = !err; });
+        await AsyncTestMaybeFunc(true).IfAsync(async value => { await AsyncTestAction(); okCalled = value; }, err => errorCalled = !err);
 
         PAssert.That(() => okCalled && !errorCalled);
     }
@@ -317,7 +317,7 @@ public sealed class MaybeAsyncExtensionsTest
     {
         var okCalled = false;
         var errorCalled = false;
-        await AsyncTestMaybeFunc(false).IfAsync(value => { okCalled = value; }, async err => { await AsyncTestAction(); errorCalled = !err; });
+        await AsyncTestMaybeFunc(false).IfAsync(value => okCalled = value, async err => { await AsyncTestAction(); errorCalled = !err; });
 
         PAssert.That(() => !okCalled && errorCalled);
     }
