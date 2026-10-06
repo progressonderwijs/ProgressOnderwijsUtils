@@ -67,8 +67,8 @@ public sealed record BulkInsertTarget
     public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = new())
         => BulkInsertImplementation.Execute(sqlConn, dbDataReader, this, sourceNameForTracing, timeout);
 
-    public async Task BulkInsertAsync(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = new(), CancellationToken cancel = default)
-        => await BulkInsertImplementation.ExecuteAsync(sqlConn, dbDataReader, this, sourceNameForTracing, timeout, cancel).ConfigureAwait(false);
+    public Task BulkInsertAsync(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = new(), CancellationToken cancel = default)
+        => BulkInsertImplementation.ExecuteAsync(sqlConn, dbDataReader, this, sourceNameForTracing, timeout, cancel);
 
     public Maybe<BulkInsertFieldMapping[], string> CreateValidatedMapping(ColumnDefinition[] sourceFields)
         => new FieldMappingValidation {

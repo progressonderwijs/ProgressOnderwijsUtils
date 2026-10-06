@@ -26,9 +26,9 @@ public sealed class ParameterizedSqlObjectMapperAsyncTest : TransactedLocalConne
     }
 
     [Fact]
-    public async Task ExecuteNonQueryAsync_executes_without_error()
+    public Task ExecuteNonQueryAsync_executes_without_error()
     {
-        await SQL($"select 1").ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
+        return SQL($"select 1").ExecuteNonQueryAsync(Connection, TestContext.Current.CancellationToken);
     }
 
     [Fact]

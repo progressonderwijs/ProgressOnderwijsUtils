@@ -10,9 +10,7 @@ public sealed class ApprovalTest
     static string ToApprovalPath(SourceLocation sourceLocation)
     {
         var filename = Path.GetFileNameWithoutExtension(sourceLocation.FilePath);
-        var filedir = Path.GetDirectoryName(sourceLocation.FilePath).AssertNotNull();
-        // ReSharper disable once AvoidPathCombine
-        var approvalPath = Path.Combine(filedir, $"{filename}.{sourceLocation.MemberName}.approved.txt");
+        var approvalPath = new Uri(sourceLocation.FilePath).Combine(Uri.EscapeDataString($"{filename}.{sourceLocation.MemberName}.approved.txt")).LocalPath;
         return approvalPath;
     }
 

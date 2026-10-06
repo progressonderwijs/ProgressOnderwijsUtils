@@ -16,8 +16,8 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests;
 
 public static class DiagnosticHelper
 {
-    public static async Task<Diagnostic[]> GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
-        => await GetDiagnostics(analyzer, CreateProjectWithTestFile(source));
+    public static Task<Diagnostic[]> GetDiagnostics(DiagnosticAnalyzer analyzer, string source)
+        => GetDiagnostics(analyzer, CreateProjectWithTestFile(source));
 
     public static async Task<Diagnostic[]> GetDiagnostics(DiagnosticAnalyzer analyzer, AdhocWorkspace workspace)
     {
