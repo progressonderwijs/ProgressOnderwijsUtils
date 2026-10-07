@@ -46,7 +46,7 @@ public static class CascadedDelete
         var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.RawSql_PotentialForSqlInjection);
 
         var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
-        pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
+        pkColumnsMetaData.CreateNewTableQuery(pksTable, SqlTypeToClrType.UseDateOnlyForDate).ExecuteNonQuery(conn);
 
         var target = new BulkInsertTarget(
             pksTable.CommandText(),
@@ -74,8 +74,8 @@ public static class CascadedDelete
         var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.RawSql_PotentialForSqlInjection);
 
         var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
-        pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
-        BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
+        pkColumnsMetaData.CreateNewTableQuery(pksTable, SqlTypeToClrType.UseDateOnlyForDate).ExecuteNonQuery(conn);
+        BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData, SqlTypeToClrType.UseDateOnlyForDate).BulkInsert(conn, pksToDelete);
 
         var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
         var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
@@ -109,7 +109,7 @@ public static class CascadedDelete
         var delTable = SQL($"#del_init");
 
         var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
-        pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
+        pkColumnsMetaData.CreateNewTableQuery(delTable, SqlTypeToClrType.UseDateOnlyForDate).ExecuteNonQuery(conn);
 
         var idsToDelete = SQL(
             $"""
@@ -166,8 +166,7 @@ public static class CascadedDelete
 
             var ttPkJoin = columnsToJoinOn.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
-            deletionStack.Push(
-                () => {
+            deletionStack.Push(() => {
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
                     log($"Delete {nrRowsToDelete} from {table.QualifiedName}...");
 
@@ -192,7 +191,7 @@ public static class CascadedDelete
                             return DeletionQuery(SQL($"output deleted.*")).OfDataTable().Execute(conn);
                         }
 
-                        var outputColumnsSpecification = table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql()).ConcatenateSql(SQL($", "));
+                        var outputColumnsSpecification = table.Columns.Select(col => col.AsStaticRowVersion().ToSqlColumnDefinitionSql(SqlTypeToClrType.UseDateOnlyForDate)).ConcatenateSql(SQL($", "));
                         return SQL(
                             $"""
                             declare @output_deleted table({outputColumnsSpecification});

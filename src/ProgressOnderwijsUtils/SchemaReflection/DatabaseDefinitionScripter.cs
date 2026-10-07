@@ -2,9 +2,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection;
 
 public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
 {
-    public void TableDefinitionScript(StringBuilder sb, DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
+    public void TableDefinitionScript(StringBuilder sb, DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds, SqlTypeToClrType sqlTypeToClrType)
     {
-        _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds));
+        _ = sb.Append(TableScript(table, includeNondeterminisiticObjectIds, sqlTypeToClrType));
         _ = sb.Append(IndexesScript(table));
         _ = sb.Append(ForeignKeyConstraintsScript(table));
         _ = sb.Append(CheckConstraintsScript(table));
@@ -17,7 +17,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
     static string SchemaScript(string SchemaName)
         => $"create schema {SchemaName};\ngo\n";
 
-    static StringBuilder TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds)
+    static StringBuilder TableScript(DatabaseDescription.Table table, bool includeNondeterminisiticObjectIds, SqlTypeToClrType sqlTypeToClrType)
     {
         var sb = new StringBuilder();
         var objectIdLineComment = includeNondeterminisiticObjectIds ? " --objectid:" + table.ObjectId : "";
@@ -32,7 +32,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                         ? " persisted"
                         : " persisted not null";
                 var columnTrivia = "--"
-                    + colMetaData.ToSqlTypeNameWithoutNullability()
+                    + colMetaData.ToSqlTypeNameWithoutNullability(sqlTypeToClrType)
                     + ";"
                     + (colMetaData.IsPrimaryKey ? "PK;" : "");
                 _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ColumnName + " as " + SqlServerUtils.PrettifySqlExpressionLeaveParens(definition.Definition) + persistedClause + columnTrivia + "\n");
@@ -41,7 +41,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
                 var columnTrivia = "--"
                     + (colMetaData.DefaultValueConstraint is not null ? "hasDefault;" : "")
                     + (colMetaData.IsPrimaryKey ? "PK;" : "");
-                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition() + identitySpecification + columnTrivia + "\n");
+                _ = sb.Append("    " + separatorFromPreviousCol + colMetaData.ToSqlColumnDefinition(sqlTypeToClrType) + identitySpecification + columnTrivia + "\n");
             }
             separatorFromPreviousCol = ", ";
         }
@@ -117,7 +117,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return creation + disabled;
     }
 
-    public string StringifySchema(bool includeNondeterminisiticObjectIds)
+    public string StringifySchema(bool includeNondeterminisiticObjectIds, SqlTypeToClrType sqlTypeToClrType)
     {
         var sb = new StringBuilder();
         foreach (var schema in db.RawDescription.Schemas.Order()) {
@@ -129,7 +129,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         _ = sb.Append('\n');
 
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
-            TableDefinitionScript(sb, table, includeNondeterminisiticObjectIds);
+            TableDefinitionScript(sb, table, includeNondeterminisiticObjectIds, sqlTypeToClrType);
         }
         foreach (var trigger in db.RawDescription.DatabaseTriggers.OrderBy(o => o.Name)) {
             _ = sb.Append(DatabaseTriggersScript(trigger));
@@ -137,7 +137,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         return sb.ToString();
     }
 
-    public string StringifySchemaForDbCreation()
+    public string StringifySchemaForDbCreation(SqlTypeToClrType sqlTypeToClrType)
     {
         var sb = new StringBuilder();
         foreach (var schema in db.RawDescription.Schemas.Order()) {
@@ -149,7 +149,7 @@ public sealed record DatabaseDefinitionScripter(DatabaseDescription db)
         }
         _ = sb.Append('\n');
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
-            _ = sb.Append(TableScript(table, false));
+            _ = sb.Append(TableScript(table, false, sqlTypeToClrType));
         }
         foreach (var table in db.AllTables.OrderBy(o => o.QualifiedName)) {
             _ = sb.Append(IndexesScript(table));
