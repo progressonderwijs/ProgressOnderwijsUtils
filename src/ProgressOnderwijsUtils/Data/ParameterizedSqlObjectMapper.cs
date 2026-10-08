@@ -318,7 +318,7 @@ public static partial class ParameterizedSqlObjectMapper
         public static class ByPocoImpl<T>
             where T : IWrittenImplicitly
         {
-            static readonly object constructionSync = new();
+            static readonly Lock constructionSync = new();
             static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, string[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
             public static TRowReader<TReader, T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
@@ -351,7 +351,7 @@ public static partial class ParameterizedSqlObjectMapper
         {
             static TRowReader<TReader, T>? cachedRowReader;
             static int tupleArity;
-            static readonly object sync = new();
+            static readonly Lock sync = new();
 
             static TRowReader<TReader, T> Init()
             {
