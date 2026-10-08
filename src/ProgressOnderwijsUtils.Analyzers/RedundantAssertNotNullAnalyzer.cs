@@ -23,7 +23,7 @@ public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
     );
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        => ImmutableArray.Create(Rule);
+        => [Rule];
 
     static readonly NameSyntax
         AssertNotNull_Name = SyntaxFactory.ParseName("AssertNotNull");
@@ -44,7 +44,7 @@ public sealed class RedundantAssertNotNullAnalyzer : DiagnosticAnalyzer
                 Expression: MemberAccessExpressionSyntax memberAccess,
             }
             && memberAccess.Name.IsEquivalentTo(AssertNotNull_Name)
-            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsValueType: { } isValueType }
+            && context.SemanticModel.GetTypeInfo(memberAccess.Expression, token) is { Nullability.FlowState: NullableFlowState.NotNull, Type.IsValueType: var isValueType }
             && context.SemanticModel.GetSymbolInfo(memberAccess.Name, token) is {
                 Symbol: {
                     ContainingNamespace: { Name: "ProgressOnderwijsUtils", ContainingNamespace.IsGlobalNamespace: true, },

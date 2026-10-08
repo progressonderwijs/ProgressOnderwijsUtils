@@ -8,7 +8,7 @@ public sealed class ApprovalTestTest
         var approval = ApprovalTest.CreateHere();
         File.WriteAllText(approval.ApprovalPath, "test\nthis\n");
         Utils.TryWithCleanup(
-            () => approval.AssertUnchangedAndSave(new[] { "test", "this", }),
+            () => approval.AssertUnchangedAndSave(["test", "this",]),
             () => File.Delete(approval.ApprovalPath)
         );
     }

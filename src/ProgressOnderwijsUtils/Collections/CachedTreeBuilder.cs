@@ -48,11 +48,11 @@ static class TreeBuilder<TInput, TOutput>
                 if (parent == null) {
                     return finishedNode;
                 } else if (toGenerate.idxInParent == 0) {
-                    Debug.Assert(parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                    Debug.Assert(parent.kids[toGenerate.idxInParent] is null, "has already been generated");
                     parent.kids[toGenerate.idxInParent] = finishedNode;
                     toGenerate = parent;
                 } else {
-                    Debug.Assert(parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                    Debug.Assert(parent.kids[toGenerate.idxInParent] is null, "has already been generated");
                     parent.kids[toGenerate.idxInParent] = finishedNode;
                     break;
                 }

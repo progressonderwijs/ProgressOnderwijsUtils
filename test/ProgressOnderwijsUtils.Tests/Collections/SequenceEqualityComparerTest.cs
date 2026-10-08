@@ -18,22 +18,22 @@ public sealed class SequenceEqualityComparerTest
     [Fact]
     public void Null_vs_Empty()
     {
-        AssertEquality(defaultEq, null, new int[0], false);
-        AssertEquality(defaultEq, new int[0], null, false);
+        AssertEquality(defaultEq, null, [], false);
+        AssertEquality(defaultEq, [], null, false);
         AssertEquality(defaultEq, null, null, true);
-        AssertEquality(defaultEq, Array.Empty<int>(), new int[0], true);
+        AssertEquality(defaultEq, [], [], true);
 
-        AssertEquality(nullIsEmptyEq, null, new int[0], true);
-        AssertEquality(nullIsEmptyEq, new int[0], null, true);
+        AssertEquality(nullIsEmptyEq, null, [], true);
+        AssertEquality(nullIsEmptyEq, [], null, true);
         AssertEquality(nullIsEmptyEq, null, null, true);
-        AssertEquality(nullIsEmptyEq, Array.Empty<int>(), new int[0], true);
+        AssertEquality(nullIsEmptyEq, [], [], true);
     }
 
     [Fact]
     public void SingleElementArraysCompare()
     {
-        AssertEquality(defaultEq, new[] { 1, }, new[] { 2, }, false);
-        AssertEquality(defaultEq, new[] { 2, }, new[] { 2, }, true);
+        AssertEquality(defaultEq, [1,], [2,], false);
+        AssertEquality(defaultEq, [2,], [2,], true);
         var sharedRef = new[] { int.MinValue, };
         AssertEquality(defaultEq, sharedRef, sharedRef, true);
     }
@@ -41,16 +41,16 @@ public sealed class SequenceEqualityComparerTest
     [Fact]
     public void AdditionalElementsArentRelevant()
     {
-        AssertEquality(defaultEq, new[] { 1, }, new[] { 1, }, true);
-        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 1, 0, }, false);
-        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 1, 100, }, true);
-        AssertEquality(defaultEq, new[] { 1, 100, }, new[] { 0, 100, }, false);
+        AssertEquality(defaultEq, [1,], [1,], true);
+        AssertEquality(defaultEq, [1, 100,], [1, 0,], false);
+        AssertEquality(defaultEq, [1, 100,], [1, 100,], true);
+        AssertEquality(defaultEq, [1, 100,], [0, 100,], false);
     }
 
     [Fact]
     public void LengthDifferencesMatter()
     {
-        AssertEquality(defaultEq, new[] { 1, 2, 3, }, new[] { 1, 2, 3, 4, }, false);
-        AssertEquality(defaultEq, new[] { 1, 2, 3, 4, }, new[] { 1, 2, 3, }, false);
+        AssertEquality(defaultEq, [1, 2, 3,], [1, 2, 3, 4,], false);
+        AssertEquality(defaultEq, [1, 2, 3, 4,], [1, 2, 3,], false);
     }
 }

@@ -15,7 +15,7 @@ public static class RsaStringSigner
 
     public static string? VerifySignedString(X509Certificate2 certificate, string input)
     {
-        var splitInput = input.Split(new[] { ' ', }, 2);
+        var splitInput = input.Split([' ',], 2);
         if (splitInput.Length != 2) {
             return null;
         }

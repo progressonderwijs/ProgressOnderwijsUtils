@@ -61,7 +61,7 @@ public readonly struct SqlUnderlyingTypeInfo
 
 public static class SqlSystemTypeIdExtensions
 {
-    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateTime = {
+    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateTime = [
         //this list is ordered: earlier rows are better matches, and picked first.
         (typeof(bool), SqlSystemTypeId.Bit),
         (typeof(byte), SqlSystemTypeId.TinyInt),
@@ -93,7 +93,7 @@ public static class SqlSystemTypeIdExtensions
         (typeof(string), SqlSystemTypeId.SysName),
         (typeof(char), SqlSystemTypeId.NChar),
         (typeof(TimeSpan), SqlSystemTypeId.Time),
-    };
+    ];
 
     static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateOnly =
         typeLookup_DateIsDateTime.ArraySelect(

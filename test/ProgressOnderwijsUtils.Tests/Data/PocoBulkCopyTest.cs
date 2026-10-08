@@ -4,13 +4,13 @@ namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class PocoBulkCopyTest : TransactedLocalConnection
 {
-    static readonly BlaOk[] SampleObjects = {
+    static readonly BlaOk[] SampleObjects = [
         new() { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1, },
         new() { Bla = "bla", Bla2 = "bla2", Id = 0, },
         new() { Bla = "dfg", Bla2 = "bla342", Id = 1, },
         new() { Bla = "blfgjha", Bla2 = "  bla2  ", Id = 2, },
         new() { Bla2 = "", Id = 3, },
-    };
+    ];
 
     public sealed record BlaOk : IWrittenImplicitly, IReadImplicitly
     {

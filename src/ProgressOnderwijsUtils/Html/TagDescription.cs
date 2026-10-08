@@ -23,14 +23,14 @@ struct TagDescription
                     EmptyValue = field.FieldValue,
                     FieldName = field.FieldName,
                     IsSelfClosing = field.FieldValue is not IHtmlElementAllowingContent,
-                    AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue),
+                    AttributeMethodsByName = AttributeLookup(field.FieldValue),
                 },
                 StringComparer.OrdinalIgnoreCase
             );
 
-    static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
+    static Dictionary<string, string> AttributeLookup(IHtmlElement emptyValue)
         => AttributeLookupTable.ByTagName.TryGetValue(emptyValue.TagName, out var lookup)
-            ? new Dictionary<string, string>(lookup, StringComparer.OrdinalIgnoreCase)
+            ? new(lookup, StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(AttributeLookupTable.DefaultAttributes, StringComparer.OrdinalIgnoreCase);
 
     public static TagDescription LookupTag(string tagName)

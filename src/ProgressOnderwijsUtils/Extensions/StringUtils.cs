@@ -140,7 +140,7 @@ public static class StringUtils
 
     [Pure]
     public static string ToFlatDebugString<T>(IEnumerable<T>? self)
-        => $"[{self.EmptyIfNull().Select(item => item == null ? "" : item.ToString()).JoinStrings(", ")}]";
+        => $"[{self.EmptyIfNull().Select(item => item is null ? "" : item.ToString()).JoinStrings(", ")}]";
 
     [Pure]
     static bool IsVowel(char c)

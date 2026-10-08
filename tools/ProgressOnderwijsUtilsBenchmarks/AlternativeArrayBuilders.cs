@@ -44,7 +44,7 @@ static class AlternativeArrayBuilders
         {
             if (current == null) {
                 if (idx == 0) {
-                    return Array.Empty<T>();
+                    return [];
                 }
                 var retval = new T[idx];
                 for (var j = 0; j < retval.Length; j++) {
@@ -107,7 +107,7 @@ static class AlternativeArrayBuilders
         {
             if (current == null) {
                 if (idx == 0) {
-                    return Array.Empty<T>();
+                    return [];
                 }
                 var retval = new T[idx];
                 for (var j = 0; j < retval.Length; j++) {
@@ -167,7 +167,7 @@ static class AlternativeArrayBuilders
         {
             if (current == null) {
                 if (idx == 0) {
-                    return Array.Empty<T>();
+                    return [];
                 }
                 var retval = new T[idx];
                 for (var j = 0; j < retval.Length; j++) {

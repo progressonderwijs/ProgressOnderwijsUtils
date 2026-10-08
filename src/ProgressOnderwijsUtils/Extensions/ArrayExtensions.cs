@@ -18,7 +18,7 @@ public static class ArrayExtensions
     /// </summary>
     [Pure]
     public static T[] EmptyIfNull<T>(this T[]? array)
-        => array ?? Array.Empty<T>();
+        => array ?? [];
 
     /// <summary>
     /// Like Enumerable.Select, but faster due to specialization for arrays.
@@ -78,7 +78,7 @@ public static class ArrayExtensions
     public static T[] ConcatArray<T>(this T[]? beginning, T[]? end)
     {
         if (end == null || end.Length == 0) {
-            return beginning ?? Array.Empty<T>();
+            return beginning ?? [];
         } else if (beginning == null || beginning.Length == 0) {
             return end;
         }

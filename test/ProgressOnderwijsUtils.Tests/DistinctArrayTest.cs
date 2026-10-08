@@ -32,7 +32,7 @@ public sealed class DistinctArrayTest
     public void Creating_DistinctArray_from_not_distinct_gives_error()
         => Assert.ThrowsAny<ArgumentException>(
             () => {
-                var unused = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct();
+                _ = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct();
             }
         );
 
@@ -40,7 +40,7 @@ public sealed class DistinctArrayTest
     public void Creating_DistinctArray_from_not_disBtinct_with_custom_comparer_gives_error()
         => Assert.ThrowsAny<ArgumentException>(
             () => {
-                var unused = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
+                _ = new[] { 1, 1, 2, }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
             }
         );
 

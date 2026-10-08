@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
-using Microsoft.CodeAnalysis;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests;

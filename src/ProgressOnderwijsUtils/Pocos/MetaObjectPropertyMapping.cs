@@ -76,7 +76,7 @@ public sealed class PropertyMapper<TProperty> : IPropertyMapper
         static Func<Func<TProperty, TProperty>, Func<T, T>> CreateMapper()
         {
             var relevantProperties = PocoUtils.GetProperties<T>()
-                .Where(property => property.DataType == typeof(TProperty) && property.CanRead && property.CanWrite)
+                .Where(property => property.DataType == typeof(TProperty) && property is { CanRead: true, CanWrite: true })
                 .ToArray();
             if (relevantProperties.None()) {
                 return _ => NoopLambda<T>.Instance;

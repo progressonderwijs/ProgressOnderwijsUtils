@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace ProgressOnderwijsUtils.Tests.Data;
 
 public sealed class ParameterizedSqlObjectMapperAsyncTest : TransactedLocalConnection

@@ -21,7 +21,7 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void MergeOfASetWithItselfIsThatSet()
     {
-        var set = IntSet.FromValues(new[] { 3, 5, 2, 9, 9, });
+        var set = IntSet.FromValues([3, 5, 2, 9, 9,]);
         var mergeResult = new[] { set, set, set, set, }.MergeSets();
         PAssert.That(() => set.Equals(mergeResult));
     }
@@ -29,9 +29,9 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void MergeRemovesDuplicatedItems()
     {
-        var setA = IntSet.FromValues(new[] { 3, 5, 2, 9, 9, });
-        var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2, });
-        var setC = IntSet.FromValues(new[] { 1, 3, 4, });
+        var setA = IntSet.FromValues([3, 5, 2, 9, 9,]);
+        var setB = IntSet.FromValues([2, 8, 7, 6, 2,]);
+        var setC = IntSet.FromValues([1, 3, 4,]);
         var setExpected = IntSet.FromValues(Enumerable.Range(1, 9));
         var mergeResult = new[] { setA, setB, setC, }.MergeSets();
         PAssert.That(() => setExpected.Equals(mergeResult));
@@ -40,8 +40,8 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void MergeWorksShortSetFirst()
     {
-        var setA = IntSet.FromValues(new[] { 3, 5, });
-        var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1, });
+        var setA = IntSet.FromValues([3, 5,]);
+        var setB = IntSet.FromValues([2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1,]);
         var setExpected = IntSet.FromValues(Enumerable.Range(1, 10));
         var mergeResult = new[] { setA, setB, }.MergeSets();
         PAssert.That(() => setExpected.Equals(mergeResult));
@@ -50,8 +50,8 @@ public sealed class SortedSet_MergeSetsTest
     [Fact]
     public void MergeWorksLongSetFirst()
     {
-        var setA = IntSet.FromValues(new[] { 3, 5, });
-        var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1, });
+        var setA = IntSet.FromValues([3, 5,]);
+        var setB = IntSet.FromValues([2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1,]);
         var setExpected = IntSet.FromValues(Enumerable.Range(1, 10));
         var mergeResult = new[] { setB, setA, }.MergeSets();
         PAssert.That(() => setExpected.Equals(mergeResult));

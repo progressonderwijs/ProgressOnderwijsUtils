@@ -56,13 +56,13 @@ public static class AutomaticValueConverters
         } else if (type.IsEnum) {
             var underlyingType = type.GetEnumUnderlyingType();
             if (underlyingType == typeof(ulong)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, ulongConverter.ProviderClrType).Invoke(null, new object[] { ulongConverter, }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, ulongConverter.ProviderClrType).Invoke(null, [ulongConverter,]).AssertNotNull();
             } else if (underlyingType == typeof(uint)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, uintConverter.ProviderClrType).Invoke(null, new object[] { uintConverter, }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, uintConverter.ProviderClrType).Invoke(null, [uintConverter,]).AssertNotNull();
             } else if (underlyingType == typeof(int)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, intPassThroughConverter.ProviderClrType).Invoke(null, new object[] { intPassThroughConverter, }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, intPassThroughConverter.ProviderClrType).Invoke(null, [intPassThroughConverter,]).AssertNotNull();
             } else if (underlyingType == typeof(long)) {
-                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, longPassThroughConverter.ProviderClrType).Invoke(null, new object[] { longPassThroughConverter, }).AssertNotNull();
+                return (ValueConverter)LiftToEnum_OpenGenericMethod.MakeGenericMethod(type, underlyingType, longPassThroughConverter.ProviderClrType).Invoke(null, [longPassThroughConverter,]).AssertNotNull();
             }
         }
 
@@ -116,7 +116,7 @@ public static class AutomaticValueConverters
 
     public static Expression IsExpressionNonNull(Expression propertyValue)
         => propertyValue.Type.IsNullableValueType()
-            ? Expression.Property(propertyValue, nameof(Nullable<int>.HasValue))
+            ? Expression.Property(propertyValue, nameof(Nullable<>.HasValue))
             : propertyValue.Type.IsValueType
                 ? Expression.Constant(false)
                 : Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));

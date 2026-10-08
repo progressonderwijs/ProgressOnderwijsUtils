@@ -9,7 +9,7 @@ public sealed class RandomHelperTest
     public void Check_AllNumbersHit()
     {
         var numTo37 = Enumerable.Range(0, 37).Select(i => (uint)i).ToHashSet();
-        var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32(37));
+        var randumNumTo37s = Iter10K().Select(_ => RandomHelper.Secure.GetUInt32(37));
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
 
@@ -17,14 +17,14 @@ public sealed class RandomHelperTest
     public void Check_AllNumbersHit_UInt64()
     {
         var numTo37 = Enumerable.Range(0, 37).Select(i => (ulong)i).ToHashSet();
-        var randumNumTo37s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64(37));
+        var randumNumTo37s = Iter10K().Select(_ => RandomHelper.Secure.GetUInt64(37));
         PAssert.That(() => numTo37.SetEquals(randumNumTo37s)); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
     }
 
     [Fact]
     public void CheckBasic_UInt8()
     {
-        var bytes = Iter10K().Select(i => RandomHelper.Secure.GetByte());
+        var bytes = Iter10K().Select(_ => RandomHelper.Secure.GetByte());
         PAssert.That(() => bytes.Any(num => num > byte.MaxValue / 4 * 3));
         PAssert.That(() => bytes.Any(num => num < byte.MaxValue / 4));
     }
@@ -41,7 +41,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void CheckBasic_UInt32()
     {
-        var uint32s = Iter10K().Select(i => RandomHelper.Secure.GetUInt32());
+        var uint32s = Iter10K().Select(_ => RandomHelper.Secure.GetUInt32());
         PAssert.That(() => uint32s.Any(num => num > uint.MaxValue / 4 * 3));
         PAssert.That(() => uint32s.Any(num => num < uint.MaxValue / 4));
     }
@@ -49,7 +49,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void CheckBasic_NonNegativeInt32()
     {
-        var int32s = Iter10K().Select(i => RandomHelper.Secure.GetNonNegativeInt32());
+        var int32s = Iter10K().Select(_ => RandomHelper.Secure.GetNonNegativeInt32());
         PAssert.That(() => int32s.Any(num => num > int.MaxValue / 4 * 3));
         PAssert.That(() => int32s.Any(num => num < int.MaxValue / 4));
         PAssert.That(() => int32s.None(num => num < 0));
@@ -58,7 +58,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void CheckBasic_UInt64()
     {
-        var uint64s = Iter10K().Select(i => RandomHelper.Secure.GetUInt64());
+        var uint64s = Iter10K().Select(_ => RandomHelper.Secure.GetUInt64());
         PAssert.That(() => uint64s.Any(num => num > ulong.MaxValue / 4 * 3));
         PAssert.That(() => uint64s.Any(num => num < ulong.MaxValue / 4));
     }
@@ -66,7 +66,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void CheckBasic_Int64()
     {
-        var int64s = Iter10K().Select(i => RandomHelper.Secure.GetInt64());
+        var int64s = Iter10K().Select(_ => RandomHelper.Secure.GetInt64());
         PAssert.That(() => int64s.Any(num => num > long.MaxValue / 4 * 3));
         PAssert.That(() => int64s.Any(num => num < long.MinValue / 4 * 3));
     }
@@ -74,7 +74,7 @@ public sealed class RandomHelperTest
     [Fact]
     public void CheckBasic_Int32()
     {
-        var int32s = Iter10K().Select(i => RandomHelper.Secure.GetInt32());
+        var int32s = Iter10K().Select(_ => RandomHelper.Secure.GetInt32());
         PAssert.That(() => int32s.Any(num => num > int.MaxValue / 4 * 3));
         PAssert.That(() => int32s.Any(num => num < int.MinValue / 4 * 3));
     }
