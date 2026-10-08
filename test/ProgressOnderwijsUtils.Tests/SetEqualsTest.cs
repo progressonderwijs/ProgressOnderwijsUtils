@@ -4,7 +4,7 @@ public sealed class SetEqualsTest
 {
     [Fact]
     public void SetEqualWorksOnEmpty()
-        => PAssert.That(() => new int[0].SetEqual(new List<int>()));
+        => PAssert.That(() => Array.Empty<int>().SetEqual(new List<int>()));
 
     [Fact]
     public void SetEqualWorksOnEqualStringSets()
