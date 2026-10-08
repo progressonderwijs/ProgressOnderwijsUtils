@@ -11,7 +11,7 @@ public static class HtmlElementAlterations
     public static IHtmlElement ReplaceAttributesAndContents(this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
         => element.ApplyAlteration(new ContentAlteration(children)).ReplaceAttributesWith(attributes);
 
-    struct ContentAlteration : IHtmlElementAlteration
+    readonly struct ContentAlteration : IHtmlElementAlteration
     {
         readonly HtmlFragment newContent;
 
@@ -27,7 +27,7 @@ public static class HtmlElementAlterations
             => typed.ReplaceContentWith(newContent);
     }
 
-    struct AttributeAlteration : IHtmlElementAlteration
+    readonly struct AttributeAlteration : IHtmlElementAlteration
     {
         readonly HtmlAttributes newAttributes;
 
