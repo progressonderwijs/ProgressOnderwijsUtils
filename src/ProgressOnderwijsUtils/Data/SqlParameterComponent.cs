@@ -110,7 +110,7 @@ static class SqlParameterComponent
             TableDeclaration = tableDeclaration;
         }
 
-        public static readonly CustomTableType[] All = {
+        public static readonly CustomTableType[] All = [
             new(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
             new(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
             new(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
@@ -125,7 +125,7 @@ static class SqlParameterComponent
             new(typeof(byte), "TVar_Tinyint", "querytablevalue tinyint not null"),
             new(typeof(byte[]), "TVar_VarBinaryMax", "querytablevalue varbinary(max) not null"),
             new(typeof(Guid), "TVar_Uniqueidentifier", "querytablevalue uniqueidentifier not null"),
-        };
+        ];
 
         public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
 

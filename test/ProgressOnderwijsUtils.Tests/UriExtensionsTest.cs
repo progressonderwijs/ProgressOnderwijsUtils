@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace ProgressOnderwijsUtils.Tests;
 
 public sealed class UriExtensionsTest

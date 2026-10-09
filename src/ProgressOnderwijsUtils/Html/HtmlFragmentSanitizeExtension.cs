@@ -82,10 +82,7 @@ public static class HtmlFilters
                     || uri.Scheme.EqualsOrdinalCaseInsensitive("https")
                     || uri.Scheme.EqualsOrdinalCaseInsensitive("mailto")
                     && attr.Name.EqualsOrdinalCaseInsensitive("href")
-                    && uri.IsDefaultPort
-                    && uri.Fragment == ""
-                    && uri.HostNameType == UriHostNameType.Dns
-                    && uri.AbsolutePath == ""
+                    && uri is { IsDefaultPort: true, Fragment: "", HostNameType: UriHostNameType.Dns, AbsolutePath: "" }
                     && IsMailtoQuerySafe(uri)
                 );
 

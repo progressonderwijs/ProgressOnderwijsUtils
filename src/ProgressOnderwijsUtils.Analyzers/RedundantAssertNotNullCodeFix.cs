@@ -19,7 +19,7 @@ public sealed class RedundantAssertNotNullCodeFix : CodeFixProvider
         => WellKnownFixAllProviders.BatchFixer;
 
     public override ImmutableArray<string> FixableDiagnosticIds
-        => ImmutableArray.Create(RedundantAssertNotNullAnalyzer.Rule.Id);
+        => [RedundantAssertNotNullAnalyzer.Rule.Id];
 
     public override Task RegisterCodeFixesAsync(CodeFixContext context)
     {

@@ -127,7 +127,7 @@ public sealed class TableValuedParameterTest : TransactedLocalConnection
         var dataLengthSumQuery = SQL(
             $"""
             select sum(datalength(hashes.QueryTableValue))
-            from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef"), }} hashes
+            from {new[] { "0123456789"u8.ToArray(), "abcdef"u8.ToArray(), }} hashes
             """
         );
         PAssert.That(() => dataLengthSumQuery.ReadPlain<long>(Connection).Single() == 16);

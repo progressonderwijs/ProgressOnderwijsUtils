@@ -10,7 +10,7 @@ public sealed class OrderByColumnsTest
     static readonly ColumnSort monsterD = new("monster", SortDirection.Desc);
     static readonly ColumnSort acolA = new("acol", SortDirection.Asc);
     static readonly ColumnSort acolD = new("acol", SortDirection.Desc);
-    static readonly ColumnSort[] someOrder = { ziggyA, abcA, acolD, };
+    static readonly ColumnSort[] someOrder = [ziggyA, abcA, acolD,];
     static readonly OrderByColumns colSort = new(someOrder);
 
     [Fact]

@@ -47,7 +47,7 @@ public sealed class NullabilityBenchmark
         SomeFilledObjectArray = [new(),],
     };
 
-    public static NullablityTestClass[] ObjectsToTest { get; set; } = { EverythingInvalidTestCase, ValidTestCase, OneNullInNonNullTestCase, };
+    public static NullablityTestClass[] ObjectsToTest { get; set; } = [EverythingInvalidTestCase, ValidTestCase, OneNullInNonNullTestCase,];
 
     [ParamsSource(nameof(ObjectsToTest))]
     // ReSharper disable once FieldCanBeMadeReadOnly.Global

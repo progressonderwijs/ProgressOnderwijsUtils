@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using static ProgressOnderwijsUtils.Tests.StyleClassesTestsObjects;
 #pragma warning disable VSTHRD002 // Test intentionally uses synchronous task waits
 
@@ -64,7 +63,7 @@ public sealed class HtmlAttributesTest
                             var initLength = i % (maxInitAttrListLength + 1);
 
                             if (attrList.Count != initLength + 2
-                                || !attrList.Take(initLength).All(attr => attr.Name == "X" && attr.Value == "value")
+                                || !attrList.Take(initLength).All(attr => attr is { Name: "X", Value: "value" })
                                 || !attrList.Skip(initLength).All(attr => attr.Name == threadName && attr.Value == "value")) {
                                 errors.Enqueue($"{threadI} / attrList[{i}]: expected {initLength + 2} attrs, have {attrList.Count}; names: {attrList.Select(attr => attr.Name).JoinStrings(", ")}");
                             }
@@ -188,7 +187,7 @@ public sealed class HtmlAttributesTest
     public void You_cannot_check_multiple_classes_in_one_call()
     {
         var div = _div._class(A, X)._id("B")._class(None, D, None, C, E, null, None)._class(None)._class(Y);
-        PAssert.That(() => !GetAttributes(div).HasClass(new CssClass("A X")));
+        PAssert.That(() => !GetAttributes(div).HasClass(new("A X")));
     }
 
     [Fact]

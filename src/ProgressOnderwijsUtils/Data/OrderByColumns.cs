@@ -71,11 +71,11 @@ public readonly struct OrderByColumns : IEquatable<OrderByColumns>
 
     [Pure]
     public static OrderByColumns Asc(string column)
-        => new([new ColumnSort(column, SortDirection.Asc),]);
+        => new([new(column, SortDirection.Asc),]);
 
     [Pure]
     public static OrderByColumns Desc(string column)
-        => new([new ColumnSort(column, SortDirection.Desc),]);
+        => new([new(column, SortDirection.Desc),]);
 
     [Pure]
     public OrderByColumns ThenSortBy(OrderByColumns thenby)

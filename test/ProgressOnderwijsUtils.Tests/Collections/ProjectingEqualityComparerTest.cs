@@ -15,9 +15,9 @@ public sealed class ProjectingEqualityComparerTest
     readonly Example A0_date = new("A", 0, new(2021, 2, 3), null);
     readonly Example a1_date = new("a", 1, new(2021, 2, 3), null);
     readonly Example b0_date = new("b", 0, new(2021, 2, 3), null);
-    readonly Example A1_arr123 = new("A", 1, null, new[] { 1, 2, 3, });
-    readonly Example A1_arr123_other = new("A", 1, null, new[] { 1, 2, 3, });
-    readonly Example A1_arr456 = new("A", 1, null, new[] { 4, 5, 6, });
+    readonly Example A1_arr123 = new("A", 1, null, [1, 2, 3,]);
+    readonly Example A1_arr123_other = new("A", 1, null, [1, 2, 3,]);
+    readonly Example A1_arr456 = new("A", 1, null, [4, 5, 6,]);
 
     [Fact]
     public void Precondition_ExamplesAreUnique()

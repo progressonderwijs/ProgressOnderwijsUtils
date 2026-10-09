@@ -80,13 +80,13 @@ public sealed class TreeWhereTest
         var orderOfWhereTrueCalls = new List<string>();
         var orderOfWhereFalseCalls = new List<string>();
 
-        var unused1 = tree.Where(
+        _ = tree.Where(
             n => {
                 orderOfWhereTrueCalls.Add(n.NodeValue);
                 return true;
             }
         );
-        var unused2 = tree.Where(
+        _ = tree.Where(
             n => {
                 orderOfWhereFalseCalls.Add(n.NodeValue);
                 return false;

@@ -250,7 +250,7 @@ public static class EnumerableExtensions
             return csvValueWithoutQuotes;
         }
 
-        if (item == null) {
+        if (item is null) {
             return "\"\"";
         }
 

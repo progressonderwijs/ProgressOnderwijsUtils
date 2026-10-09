@@ -51,10 +51,9 @@ public static class PocoProperty
         public bool IsKey { get; }
         public string Name { get; }
         public bool CanContainNull { get; }
-        ParameterizedSql sqlColumnName;
 
         public ParameterizedSql SqlColumnName
-            => sqlColumnName ? sqlColumnName : sqlColumnName = ParameterizedSql.RawSql_PotentialForSqlInjection(Name);
+            => field ? field : field = ParameterizedSql.RawSql_PotentialForSqlInjection(Name);
 
         public IReadOnlyList<object> CustomAttributes { get; }
         public int Index { get; }
@@ -70,20 +69,14 @@ public static class PocoProperty
         public bool CanWrite
             => setterMethod != null;
 
-        Func<TOwner, object?>? getter;
-
         public Func<TOwner, object?>? Getter
-            => getter ??= MkGetter(getterMethod, PropertyInfo.PropertyType);
-
-        Setter<TOwner>? setter;
+            => field ??= MkGetter(getterMethod, PropertyInfo.PropertyType);
 
         public Setter<TOwner>? Setter
-            => setter ??= MkSetter(setterMethod, PropertyInfo.PropertyType);
-
-        Func<object, object?>? untypedGetter;
+            => field ??= MkSetter(setterMethod, PropertyInfo.PropertyType);
 
         public Func<object, object?>? UntypedGetter
-            => untypedGetter ??= Getter is { } localGetter ? o => localGetter((TOwner)o) : null;
+            => field ??= Getter is { } localGetter ? o => localGetter((TOwner)o) : null;
 
         public object? UnsafeSetPropertyAndReturnObject(object o, object? newValue)
         {

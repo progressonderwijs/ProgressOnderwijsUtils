@@ -18,13 +18,13 @@ public static class BenchmarkProgram
     {
         IntArrayBuilderBenchmark.SanityCheck(10000);
         _ = new BenchmarkSwitcher(
-            new[] {
+            [
                 typeof(IntArrayBuilderBenchmark),
                 typeof(BigStructArrayBuilderBenchmark),
                 typeof(ByteArrayBuilderBenchmark),
                 typeof(ReferenceTypeArrayBuilderBenchmark),
                 typeof(SmallStructArrayBuilderBenchmark),
-            }
+            ]
         ).RunAllJoined();
     }
 

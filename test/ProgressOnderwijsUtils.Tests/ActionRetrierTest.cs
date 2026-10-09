@@ -5,7 +5,7 @@ public sealed class ActionRetrierTest
     [Fact]
     public void DoesNotRetryOnSuccess()
     {
-        var immediateRetry = new ActionRetrier((e, n) => null);
+        var immediateRetry = new ActionRetrier((_, _) => null);
         var count = 0;
         _ = immediateRetry.ExecuteWithRetries(() => count++, CancellationToken.None);
         PAssert.That(() => count == 1);
@@ -14,7 +14,7 @@ public sealed class ActionRetrierTest
     [Fact]
     public void RetriesNoMoreThanRequestedOnSuccess()
     {
-        var immediateRetry = new ActionRetrier((e, n) => n < 3 ? TimeSpan.Zero : null);
+        var immediateRetry = new ActionRetrier((_, n) => n < 3 ? TimeSpan.Zero : null);
         var count = 0;
         try {
             _ = immediateRetry.ExecuteWithRetries<Unit>(
@@ -32,7 +32,7 @@ public sealed class ActionRetrierTest
     [Fact]
     public void CanFilterExceptions()
     {
-        var immediateRetry = new ActionRetrier((e, n) => e is InvalidOperationException ? TimeSpan.Zero : null);
+        var immediateRetry = new ActionRetrier((e, _) => e is InvalidOperationException ? TimeSpan.Zero : null);
         var count = 0;
         try {
             _ = immediateRetry.ExecuteWithRetries<Unit>(
@@ -53,7 +53,7 @@ public sealed class ActionRetrierTest
     [Fact]
     public void ActuallyWaitsToo()
     {
-        var immediateRetry = new ActionRetrier((e, n) => TimeSpan.FromSeconds(0.5));
+        var immediateRetry = new ActionRetrier((_, _) => TimeSpan.FromSeconds(0.5));
         var sw = Stopwatch.StartNew();
 
         var count = 0;
@@ -74,7 +74,7 @@ public sealed class ActionRetrierTest
     [Fact]
     public void DoesntRetryWhenCancelled()
     {
-        var immediateRetry = new ActionRetrier((e, n) => TimeSpan.Zero);
+        var immediateRetry = new ActionRetrier((_, _) => TimeSpan.Zero);
 
         var count = 0;
         var ex = Assert.ThrowsAny<ApplicationException>(

@@ -596,6 +596,15 @@ public static class AttributeConstructionMethods
     public static THtmlTag _shadowrootdelegatesfocus<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootdelegatesfocus, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootdelegatesfocus", attrValue);
+    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
+        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootserializable", attrValue ? "" : null);
+    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootserializable", "");
+    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("shadowrootserializable", attrValue);
     public static THtmlTag _shadowrootslotassignment<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootslotassignment, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootslotassignment", attrValue);
@@ -608,15 +617,6 @@ public static class AttributeConstructionMethods
     public static THtmlTag _shadowrootclonable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootclonable, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootclonable", attrValue);
-    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
-        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootserializable", attrValue ? "" : null);
-    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr)
-        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootserializable", "");
-    public static THtmlTag _shadowrootserializable<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
-        where THtmlTag : struct, IHasAttr_shadowrootserializable, IHtmlElement<THtmlTag>
-        => htmlTagExpr.Attribute("shadowrootserializable", attrValue);
     public static THtmlTag _shadowrootcustomelementregistry<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
         where THtmlTag : struct, IHasAttr_shadowrootcustomelementregistry, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("shadowrootcustomelementregistry", attrValue ? "" : null);

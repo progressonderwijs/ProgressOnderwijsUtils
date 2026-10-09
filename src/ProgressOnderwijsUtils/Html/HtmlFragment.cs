@@ -4,7 +4,7 @@ using AngleSharp.Html.Parser;
 
 namespace ProgressOnderwijsUtils.Html;
 
-public struct HtmlFragment : IConvertibleToFragment
+public readonly struct HtmlFragment : IConvertibleToFragment
 {
     /// <summary>
     /// Either a string, an IHtmlElement, a non-empty HtmlFragment[], or null (the empty fragment).

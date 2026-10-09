@@ -403,10 +403,10 @@ public sealed class MaybeTests
     }
 
     static Maybe<Unit, int>[] ThreeMixedMaybes
-        => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2), };
+        => [Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2),];
 
     static Maybe<int, Unit>[] TwoOkMaybes
-        => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2), };
+        => [Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2),];
 
     [Fact]
     public void WhenOkTry_is_ok_iif_both_input_and_delegate_are_ok()

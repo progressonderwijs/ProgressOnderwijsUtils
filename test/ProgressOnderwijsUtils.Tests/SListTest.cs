@@ -5,7 +5,7 @@ public sealed class SListTest
     [Fact]
     public void CanContainValues()
     {
-        var list = SList.Create(new[] { 1, 3, 4, 1, });
+        var list = SList.Create([1, 3, 4, 1,]);
         PAssert.That(() => list.SequenceEqual(new[] { 1, 3, 4, 1, }));
     }
 
@@ -33,16 +33,16 @@ public sealed class SListTest
     [Fact]
     public void SkipTest()
     {
-        var list = SList.Create(new[] { 1, 3, 4, 1, });
+        var list = SList.Create([1, 3, 4, 1,]);
         PAssert.That(() => list.Skip(2).SequenceEqual(new[] { 4, 1, }));
     }
 
     [Fact]
     public void EqualsTest()
     {
-        var a = SList.Create(new[] { 1, 2, 3, });
+        var a = SList.Create([1, 2, 3,]);
         var b = SList<int>.Empty.Prepend(3).Prepend(2).Prepend(1);
-        var c = SList.Create(new[] { 1, 2, 3, 4, });
+        var c = SList.Create([1, 2, 3, 4,]);
 
         PAssert.That(() => a == b);
         PAssert.That(() => a.GetHashCode() == b.GetHashCode());
@@ -59,7 +59,7 @@ public sealed class SListTest
     [Fact]
     public void ReverseTest()
     {
-        var a = SList.Create(new[] { 1, 2, 3, });
+        var a = SList.Create([1, 2, 3,]);
         var b = SList<int>.Empty.Prepend(1).Prepend(2).Prepend(3).Reverse();
 
         PAssert.That(() => a == b);
@@ -76,7 +76,7 @@ public sealed class SListTest
     [Fact]
     public void TailTest()
     {
-        var list = SList.Create(new[] { 1, 2, 3, });
+        var list = SList.Create([1, 2, 3,]);
 
         PAssert.That(() => list.Tail.Tail.Tail.IsEmpty);
         PAssert.That(() => list.Tail.Prepend(1) == list);
@@ -91,7 +91,7 @@ public sealed class SListTest
     [Fact]
     public void HeadTest()
     {
-        var list = SList.Create(new[] { 1, 2, 3, });
+        var list = SList.Create([1, 2, 3,]);
 
         PAssert.That(() => list.Head == 1);
         var tryGet1 = list.TryGet(out var head1, out var tail1);
@@ -136,12 +136,12 @@ public sealed class SListTest
     public void HashConsistentWithEquals()
     {
         var lists = new[] {
-            SList.Create(new[] { 1, 2, 3, }),
-            SList.Create(new[] { 1, 2, 3, }).Reverse().Reverse(),
-            SList.Create(new[] { 1, 2, 3, 3, }).Reverse().Reverse(),
-            SList.Create(new[] { 1, 2, 3, 3, }),
-            SList.Create(new[] { 1, 2, 1, }),
-            SList.Create(new[] { 1, 2, 1, }).Reverse(),
+            SList.Create([1, 2, 3,]),
+            SList.Create([1, 2, 3,]).Reverse().Reverse(),
+            SList.Create([1, 2, 3, 3,]).Reverse().Reverse(),
+            SList.Create([1, 2, 3, 3,]),
+            SList.Create([1, 2, 1,]),
+            SList.Create([1, 2, 1,]).Reverse(),
         };
 
         PAssert.That(

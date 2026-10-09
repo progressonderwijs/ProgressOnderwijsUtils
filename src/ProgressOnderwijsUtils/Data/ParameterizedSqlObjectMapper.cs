@@ -318,7 +318,7 @@ public static partial class ParameterizedSqlObjectMapper
         public static class ByPocoImpl<T>
             where T : IWrittenImplicitly
         {
-            static readonly object constructionSync = new();
+            static readonly Lock constructionSync = new();
             static readonly ConcurrentDictionary<ColumnOrdering, (TRowReader<TReader, T> rowToPoco, string[] unmappedProperties)> rowToPocoByColumnOrdering = new();
 
             public static TRowReader<TReader, T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
@@ -351,7 +351,7 @@ public static partial class ParameterizedSqlObjectMapper
         {
             static TRowReader<TReader, T>? cachedRowReader;
             static int tupleArity;
-            static readonly object sync = new();
+            static readonly Lock sync = new();
 
             static TRowReader<TReader, T> Init()
             {
@@ -430,7 +430,7 @@ public static partial class ParameterizedSqlObjectMapper
         public static (BlockExpression constructRowExpr, string[] unmappedProperties) ReadAllFieldsExpression(ParameterExpression dataReaderParamExpr, string[] cols, ParameterExpression lastColumnReadParamExpr, Dictionary<string, (MemberInfo Member, Type DataType)> pocoProperties, Type rowType)
         {
             static bool CanWrite(MemberInfo member)
-                => member is not PropertyInfo pi || pi.CanWrite && pi.SetMethod?.IsPublic == true;
+                => member is not PropertyInfo pi || pi is { CanWrite: true, SetMethod.IsPublic: true };
             var statements = new List<Expression>(2 + cols.Length * 2);
 
             var propertyFlags = new Dictionary<MemberInfo, MemberMapping>();

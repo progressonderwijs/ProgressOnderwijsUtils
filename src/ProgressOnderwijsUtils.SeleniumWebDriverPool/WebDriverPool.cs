@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
 
 namespace ProgressOnderwijsUtils.SeleniumWebDriverPool;
 

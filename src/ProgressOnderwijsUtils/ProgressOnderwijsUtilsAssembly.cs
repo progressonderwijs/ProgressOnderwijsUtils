@@ -1,31 +1,31 @@
 // ReSharper disable RedundantNameQualifier
 
-global using global::ExpressionToCodeLib;
-global using global::FastExpressionCompiler;
-global using global::JetBrains.Annotations;
-global using global::Microsoft.Data.SqlClient;
-global using global::System;
-global using global::System.Collections;
-global using global::System.Collections.Concurrent;
-global using global::System.Collections.Generic;
-global using global::System.Data;
-global using global::System.Diagnostics;
-global using global::System.Diagnostics.CodeAnalysis;
-global using global::System.Linq;
-global using global::System.Linq.Expressions;
-global using global::System.Reflection;
-global using global::System.Text;
-global using global::System.Globalization;
-global using global::System.Security.Cryptography;
-global using global::System.Text.RegularExpressions;
-global using global::System.Xml;
-global using global::System.Xml.Linq;
-global using global::System.Threading;
-global using global::System.IO;
-global using global::System.Runtime.CompilerServices;
-global using global::ProgressOnderwijsUtils.Collections;
+global using ExpressionToCodeLib;
+global using FastExpressionCompiler;
+global using JetBrains.Annotations;
+global using Microsoft.Data.SqlClient;
+global using System;
+global using System.Collections;
+global using System.Collections.Concurrent;
+global using System.Collections.Generic;
+global using System.Data;
+global using System.Diagnostics;
+global using System.Diagnostics.CodeAnalysis;
+global using System.Linq;
+global using System.Linq.Expressions;
+global using System.Reflection;
+global using System.Text;
+global using System.Globalization;
+global using System.Security.Cryptography;
+global using System.Text.RegularExpressions;
+global using System.Xml;
+global using System.Xml.Linq;
+global using System.Threading;
+global using System.IO;
+global using System.Runtime.CompilerServices;
+global using ProgressOnderwijsUtils.Collections;
 global using global::ProgressOnderwijsUtils.Internal;
-global using static global::ProgressOnderwijsUtils.SafeSql;
-global using PureAttribute = global::System.Diagnostics.Contracts.PureAttribute;
+global using static ProgressOnderwijsUtils.SafeSql;
+global using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 [assembly: InternalsVisibleTo("ProgressOnderwijsUtils.Tests")]

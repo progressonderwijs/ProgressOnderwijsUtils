@@ -70,7 +70,7 @@ public static class SqlErrorParser
                 ConstraintType = match.Groups["ConstraintType"].Value,
                 ConstraintName = match.Groups["ConstraintName"].Value,
                 ObjectName = match.Groups["ObjectName"].Value,
-                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", ", }, StringSplitOptions.None),
+                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split([", ",], StringSplitOptions.None),
             };
         }
         return null;
@@ -83,7 +83,7 @@ public static class SqlErrorParser
             return new DuplicateKeyUniqueIndex {
                 IndexName = match.Groups["IndexName"].Value,
                 ObjectName = match.Groups["ObjectName"].Value,
-                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split(new[] { ", ", }, StringSplitOptions.None),
+                DuplicateKeyValue = match.Groups["DuplicateKeyValue"].Value.Split([", ",], StringSplitOptions.None),
             };
         }
         return null;
