@@ -116,7 +116,7 @@ public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnectio
             )
             """
         ).ExecuteNonQuery(Connection);
-        return BulkInsertTarget.LoadFromTable(Connection, tableName);
+        return BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate);
     }
 
     [Fact]

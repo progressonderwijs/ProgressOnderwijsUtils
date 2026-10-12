@@ -22,17 +22,17 @@ public sealed record BulkInsertTarget
     BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
         => (TableName, Columns, Mode, Options, SilentlySkipReadonlyTargetColumns) = (tableName, columnDefinition, mode, options, false);
 
-    public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table)
-        => new(table.QualifiedName, table.Columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
+    public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table, SqlTypeToClrType sqlTypeToClrType)
+        => new(table.QualifiedName, table.Columns.ArraySelect((c, i) => ColumnDefinition.FromDbColumnMetaData(c, i, sqlTypeToClrType)));
 
-    public static BulkInsertTarget LoadFromTable(SqlConnection conn, ParameterizedSql tableName)
-        => LoadFromTable(conn, tableName.CommandText());
+    public static BulkInsertTarget LoadFromTable(SqlConnection conn, ParameterizedSql tableName, SqlTypeToClrType sqlTypeToClrType)
+        => LoadFromTable(conn, tableName.CommandText(), sqlTypeToClrType);
 
-    public static BulkInsertTarget LoadFromTable(SqlConnection conn, string tableName)
-        => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
+    public static BulkInsertTarget LoadFromTable(SqlConnection conn, string tableName, SqlTypeToClrType sqlTypeToClrType)
+        => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName), sqlTypeToClrType);
 
-    public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns)
-        => new(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
+    public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, IDbColumn[] columns, SqlTypeToClrType sqlTypeToClrType)
+        => new(tableName, columns.ArraySelect((c, i) => ColumnDefinition.FromDbColumnMetaData(c, i, sqlTypeToClrType)));
 
     public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = new(), CancellationToken cancel = default)
         where T : IReadImplicitly

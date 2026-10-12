@@ -31,14 +31,14 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         return retval;
     }
 
-    public static ColumnDefinition FromSqlSystemTypeId(int columnOrdinal, string columnName, SqlSystemTypeId sqlSystemTypeId, ColumnAccessibility columnAccessibility)
-        => new(sqlSystemTypeId.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
+    public static ColumnDefinition FromSqlSystemTypeId(int columnOrdinal, string columnName, SqlSystemTypeId sqlSystemTypeId, ColumnAccessibility columnAccessibility, SqlTypeToClrType sqlTypeToClrType)
+        => new(sqlSystemTypeId.SqlUnderlyingTypeInfo(sqlTypeToClrType).ClrType, columnName, columnOrdinal, columnAccessibility);
 
     public override string ToString()
         => $"{DataType.ToCSharpFriendlyTypeName()} {Name}";
 
-    public static ColumnDefinition FromDbColumnMetaData(IDbColumn col, int colIdx)
-        => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
+    public static ColumnDefinition FromDbColumnMetaData(IDbColumn col, int colIdx, SqlTypeToClrType sqlTypeToClrType)
+        => FromSqlSystemTypeId(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col), sqlTypeToClrType);
 
     static ColumnAccessibility DbColumnMetaDataAccessibility(IDbColumn col)
         => col switch {

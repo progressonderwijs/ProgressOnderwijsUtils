@@ -32,7 +32,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 """
             ).ExecuteNonQuery(conn);
 
-            return BulkInsertTarget.LoadFromTable(conn, tableName);
+            return BulkInsertTarget.LoadFromTable(conn, tableName, SqlTypeToClrType.UseDateOnlyForDate);
         }
     }
 
@@ -110,7 +110,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 )
                 """
             ).ExecuteNonQuery(conn);
-            return BulkInsertTarget.LoadFromTable(conn, tableName) with { SilentlySkipReadonlyTargetColumns = true, };
+            return BulkInsertTarget.LoadFromTable(conn, tableName, SqlTypeToClrType.UseDateOnlyForDate) with { SilentlySkipReadonlyTargetColumns = true, };
         }
     }
 
@@ -252,7 +252,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
                 )
                 """
             ).ExecuteNonQuery(conn);
-            return BulkInsertTarget.LoadFromTable(conn, tableName);
+            return BulkInsertTarget.LoadFromTable(conn, tableName, SqlTypeToClrType.UseDateOnlyForDate);
         }
     }
 
@@ -336,7 +336,7 @@ public sealed class PocoBulkCopyTest : TransactedLocalConnection
 
         SQL($"alter table {tableName} drop column ToDrop;").ExecuteNonQuery(Connection);
 
-        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName) with { SilentlySkipReadonlyTargetColumns = true, };
+        var bulkInsertTarget = BulkInsertTarget.LoadFromTable(Connection, tableName, SqlTypeToClrType.UseDateOnlyForDate) with { SilentlySkipReadonlyTargetColumns = true, };
 
         new[] {
             new ComputedColumnExample {

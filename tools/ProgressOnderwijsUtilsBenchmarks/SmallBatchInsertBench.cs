@@ -1,5 +1,6 @@
 using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
+using ProgressOnderwijsUtils.SchemaReflection;
 using ProgressOnderwijsUtils.Tests.Data;
 
 namespace ProgressOnderwijsUtilsBenchmarks;
@@ -45,7 +46,7 @@ public class SmallBatchInsertBench : IDisposable
 
     [Benchmark]
     public void BulkInsertTarget_LoadFromTable()
-        => BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText());
+        => BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate);
 
     [Benchmark]
     public void BulkCopyToSqlServer_cachedTarget_0()
@@ -69,21 +70,21 @@ public class SmallBatchInsertBench : IDisposable
 
     [Benchmark]
     public void BulkCopyToSqlServer_uncachedTarget_0()
-        => BulkInsertTestSampleRow.SampleRows(0).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+        => BulkInsertTestSampleRow.SampleRows(0).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate));
 
     [Benchmark]
     public void BulkCopyToSqlServer_uncachedTarget_1()
-        => BulkInsertTestSampleRow.SampleRows(1).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+        => BulkInsertTestSampleRow.SampleRows(1).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate));
 
     [Benchmark]
     public void BulkCopyToSqlServer_uncachedTarget_9()
-        => BulkInsertTestSampleRow.SampleRows(9).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+        => BulkInsertTestSampleRow.SampleRows(9).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate));
 
     [Benchmark]
     public void BulkCopyToSqlServer_uncachedTarget_81()
-        => BulkInsertTestSampleRow.SampleRows(81).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+        => BulkInsertTestSampleRow.SampleRows(81).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate));
 
     [Benchmark]
     public void BulkCopyToSqlServer_uncachedTarget_729()
-        => BulkInsertTestSampleRow.SampleRows(729).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText()));
+        => BulkInsertTestSampleRow.SampleRows(729).BulkCopyToSqlServer(sqlConn, BulkInsertTarget.LoadFromTable(sqlConn, tableName.CommandText(), SqlTypeToClrType.UseDateOnlyForDate));
 }
