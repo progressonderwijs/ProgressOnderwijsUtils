@@ -14,18 +14,12 @@ public static class VirusScan
             return false;
         }
 
-        var context = default(HAMSICONTEXT);
+        PInvoke.AmsiInitialize(sessionName, out var context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
 
-        try {
-            PInvoke.AmsiInitialize(sessionName, out context).AssertResultOk(nameof(PInvoke.AmsiInitialize), sessionName);
-
-            var hresult = PInvoke.AmsiScanBuffer(context, buffer, contentName, default(HAMSISESSION), out var result);
+        using (context) {
+            var hresult = PInvoke.AmsiScanBuffer(new(context.DangerousGetHandle()), buffer, contentName, default(HAMSISESSION), out var result);
             hresult.AssertResultOk("AmsiScanBuffer", "");
             return ResultIsMalware(result);
-        } finally {
-            if (context != default(HAMSICONTEXT)) {
-                PInvoke.AmsiUninitialize(context);
-            }
         }
     }
 
