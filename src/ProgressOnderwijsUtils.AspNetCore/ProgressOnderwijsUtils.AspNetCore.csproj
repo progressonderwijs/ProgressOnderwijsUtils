@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>11.2.0</Version>
+    <Version>11.3.0</Version>
     <PackageReleaseNotes>Update NuGet packages.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>Add NumericEnumBinder and ModelStateFilter.</Description>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2026.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.7.23">
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="18.12.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -19,6 +19,6 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.401" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.402" />
   </ItemGroup>
 </Project>
