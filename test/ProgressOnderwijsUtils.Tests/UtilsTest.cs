@@ -192,6 +192,17 @@ public sealed class UtilsTest
     }
 
     [Fact]
+    public void IsSqlCancelledExceptionDetectsWriteSideInvalidOperationException()
+    {
+        var writeSideCancel = new InvalidOperationException("Operation cancelled by user.");
+        PAssert.That(() => writeSideCancel.IsSqlCancelledException());
+        PAssert.That(() => new Exception("wrapper", writeSideCancel).IsSqlCancelledException());
+        PAssert.That(() => new AggregateException(writeSideCancel).IsSqlCancelledException());
+        PAssert.That(() => !new InvalidOperationException("Some other message.").IsSqlCancelledException());
+        PAssert.That(() => !new Exception("Operation cancelled by user.").IsSqlCancelledException());
+    }
+
+    [Fact]
     public void ClrDefaultIsSemanticDefault()
         => PAssert.That(() => Equals(default(CommandTimeout), CommandTimeout.DeferToConnectionDefault));
 
