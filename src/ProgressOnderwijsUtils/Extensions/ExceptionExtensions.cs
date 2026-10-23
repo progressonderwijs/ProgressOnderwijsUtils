@@ -27,10 +27,12 @@ public static class ExceptionExtensions
 
         /// <summary>
         /// Detects a cancellation that was propagated to SQL Server (typically via <see cref="System.Data.Common.DbCommand.Cancel"/>
-        /// triggered by a <see cref="CancellationToken"/>). Such cancellations surface as a <see cref="SqlException"/> — not an
-        /// <see cref="OperationCanceledException"/> — so they require SQL-specific detection.
+        /// triggered by a <see cref="CancellationToken"/>). Such cancellations never surface as an
+        /// <see cref="OperationCanceledException"/>, so they require SQL-specific detection.
         /// Matched by error number 3617 ("Operation cancelled by user."). Error 3980 is intentionally not
         /// matched because it can also indicate an aborted batch for reasons other than a user cancel.
+        /// A cancel that lands while SqlClient is still writing the request to the wire never reaches the server at all
+        /// and surfaces as an <see cref="InvalidOperationException"/> carrying that same message; that case is matched too.
         /// </summary>
         public bool IsSqlCancelledException()
             => exception.AnyNestingLevelMatches(sqlCancelledPredicate);
@@ -72,6 +74,10 @@ public static class ExceptionExtensions
     static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException { Number: -2, };
 
     static readonly Func<Exception, bool> sqlCancelledPredicate = ex =>
+        // Write-side case: the cancel aborts the TDS request before the server ever sees it
+        // (TdsParserStateObject.ExecuteFlush), so SqlClient reports it as an InvalidOperationException
+        // carrying the 3617 message instead of as a SqlException.
+        ex is InvalidOperationException { Message: "Operation cancelled by user.", } ||
         ex is SqlException sqlEx
         && (
             // Canonical case: server reports error 3617 "Operation cancelled by user." by number.
