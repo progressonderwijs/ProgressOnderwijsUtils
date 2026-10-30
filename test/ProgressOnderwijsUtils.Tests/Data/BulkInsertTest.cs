@@ -7,6 +7,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
 {
     public DayOfWeek AnEnum { get; set; }
     public DateTime? ADateTime { get; set; }
+    public DateOnly? ADate { get; set; }
     public string? SomeString { get; set; }
     public decimal? LotsOfMoney { get; set; }
     public double VagueNumber { get; set; }
@@ -20,6 +21,7 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
             create table {tempTableName} (
                 AnEnum int not null
                 , ADateTime datetime2
+                , ADate date
                 , SomeString nvarchar(max)
                 , LotsOfMoney decimal(19, 5)
                 , VagueNumber float not null
