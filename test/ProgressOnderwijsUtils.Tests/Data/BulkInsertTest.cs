@@ -76,7 +76,74 @@ public sealed record BulkInsertTestSampleRow : IWrittenImplicitly, IReadImplicit
     public static BulkInsertTestSampleRow[] SampleRows(int n)
         => [.. Enumerable.Range(0, (n + 3) / 4).SelectMany(_ => FourSampleRows),];
 }
+public sealed record BulkInsertTestSampleRowWithoutDateOnly : IWrittenImplicitly, IReadImplicitly
+{
+    public DayOfWeek AnEnum { get; set; }
+    public DateTime? ADateTime { get; set; }
+    public string? SomeString { get; set; }
+    public decimal? LotsOfMoney { get; set; }
+    public double VagueNumber { get; set; }
+    public TrivialValue<string> CustomBla { get; set; }
+    public TrivialValue<string>? CustomBlaThanCanBeNull { get; set; }
 
+    public static BulkInsertTarget CreateTable(SqlConnection sqlConnection, ParameterizedSql tempTableName)
+    {
+        SQL(
+            $"""
+            create table {tempTableName} (
+                AnEnum int not null
+                , ADateTime datetime2
+                , SomeString nvarchar(max)
+                , LotsOfMoney decimal(19, 5)
+                , VagueNumber float not null
+                , CustomBla nvarchar(max) not null
+                , CustomBlaThanCanBeNull nvarchar(max) null
+            )
+            """
+        ).ExecuteNonQuery(sqlConnection);
+
+        return BulkInsertTarget.LoadFromTable(sqlConnection, tempTableName.CommandText());
+    }
+
+    static readonly BulkInsertTestSampleRowWithoutDateOnly[] FourSampleRows = [
+        new() {
+            ADateTime = new DateTime(2003, 4, 5).AddHours(17.345),
+            AnEnum = DayOfWeek.Saturday,
+            LotsOfMoney = -12.34m,
+            VagueNumber = 123.456,
+            SomeString = "sdf",
+            CustomBla = TrivialConvertibleValue.Create("aap"),
+        },
+        new() {
+            ADateTime = new DateTime(2013, 8, 7),
+            AnEnum = DayOfWeek.Monday,
+            LotsOfMoney = null,
+            //VagueNumer = double.NaN,
+            SomeString = null,
+            CustomBla = TrivialConvertibleValue.Create("aap"),
+        },
+        new() {
+            ADateTime = null,
+            AnEnum = (DayOfWeek)12345,
+            LotsOfMoney = 6543,
+            VagueNumber = 1 / 3.0,
+            SomeString = "Hello world!",
+            CustomBla = TrivialConvertibleValue.Create("aap"),
+        },
+        new() {
+            ADateTime = DateTime.MaxValue,
+            AnEnum = DayOfWeek.Friday,
+            LotsOfMoney = 1000_000_000.00m,
+            VagueNumber = Math.E,
+            SomeString = "annual income",
+            CustomBla = TrivialConvertibleValue.Create("aap"),
+            CustomBlaThanCanBeNull = TrivialConvertibleValue.Create("noot"),
+        },
+    ];
+
+    public static BulkInsertTestSampleRowWithoutDateOnly[] SampleRows(int n)
+        => [.. Enumerable.Range(0, (n + 3) / 4).SelectMany(_ => FourSampleRows),];
+}
 public sealed class BulkInsertTest : TransactedLocalConnection
 {
     [Fact]
@@ -155,15 +222,15 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     [Fact]
     public void CanInsertDatatable()
     {
-        var target = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test"));
-        var target2 = BulkInsertTestSampleRow.CreateTable(Connection, SQL($"#test2"));
-        target.BulkInsert(Connection, BulkInsertTestSampleRow.SampleRows(4), cancel: TestContext.Current.CancellationToken);
+        var target = BulkInsertTestSampleRowWithoutDateOnly.CreateTable(Connection, SQL($"#test"));
+        var target2 = BulkInsertTestSampleRowWithoutDateOnly.CreateTable(Connection, SQL($"#test2"));
+        target.BulkInsert(Connection, BulkInsertTestSampleRowWithoutDateOnly.SampleRows(4), cancel: TestContext.Current.CancellationToken);
 
         var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
         target2.BulkInsert(Connection, dataTable);
 
-        var fromDb = SQL($"select * from #test2").ReadPocos<BulkInsertTestSampleRow>(Connection);
-        AssertCollectionsEquivalent(BulkInsertTestSampleRow.SampleRows(4), fromDb);
+        var fromDb = SQL($"select * from #test2").ReadPocos<BulkInsertTestSampleRowWithoutDateOnly>(Connection);
+        AssertCollectionsEquivalent(BulkInsertTestSampleRowWithoutDateOnly.SampleRows(4), fromDb);
     }
 
     sealed record SampleRow2 : IWrittenImplicitly, IReadImplicitly
