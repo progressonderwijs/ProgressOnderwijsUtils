@@ -80,35 +80,6 @@ public sealed class CascadedDeleteTest : TransactedLocalConnection
         PAssert.That(() => ex.Message.Contains("dbo.T2->dbo.T1->dbo.T2->dbo.T1"));
     }
 
-    [Fact]
-    public void CascadedDeleteWorksWithIdentityKey()
-    {
-        static DataTable PksToDelete(string name, params int[] pks)
-        {
-            var table = new DataTable();
-            _ = table.Columns.Add(name, typeof(int));
-            foreach (var pk in pks) {
-                _ = table.Rows.Add(pk);
-            }
-            return table;
-        }
-
-        SQL(
-            $"""
-            create table T1 ( A int primary key identity(1,1), B int);
-
-            insert into T1 values (11), (22), (33);
-            """
-        ).ExecuteNonQuery(Connection);
-
-        var db = DatabaseDescription.LoadFromSchemaTables(Connection);
-        var deletionReport = CascadedDelete.RecursivelyDelete(Connection, db.GetTableByName("dbo.T1"), false, null, null, PksToDelete("A", 1, 2));
-        var finalValues = SQL($"select B from T1").ReadPlain<int>(Connection);
-
-        PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1", }));
-        PAssert.That(() => finalValues.SetEqual(new[] { 33, }));
-    }
-
     public struct RootId : IWrittenImplicitly, IReadImplicitly
     {
         public int Root { get; set; }

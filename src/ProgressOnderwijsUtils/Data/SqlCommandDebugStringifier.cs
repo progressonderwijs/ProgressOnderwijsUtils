@@ -58,6 +58,8 @@ public static class SqlCommandDebugStringifier
     {
         if (p is DBNull || p == null) {
             return "NULL";
+        } else if (p is DateOnly dateOnly) {
+            return $"'{dateOnly.ToString("yyyy'-'MM'-'dd", CultureInfo.InvariantCulture)}'";
         } else if (p is DateTime dateTime) {
             return $"'{dateTime.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'", CultureInfo.InvariantCulture)}'";
         } else if (p is string s) {

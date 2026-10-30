@@ -1,3 +1,4 @@
+using System.Data.Common;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils;
@@ -22,11 +23,18 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
     static Type DataColumnType(DataColumn col)
         => (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType;
 
-    public static ColumnDefinition[] GetFromReader(IDataRecord reader)
+    public static ColumnDefinition[] GetFromReader(DbDataReader reader)
     {
+        var columnSchemas = reader.CanGetColumnSchema()
+            ? reader.GetColumnSchema().ToArray()
+            : null;
         var retval = new ColumnDefinition[reader.FieldCount];
         for (var index = 0; index < retval.Length; index++) {
-            retval[index] = new(reader.GetFieldType(index), reader.GetName(index), index, ColumnAccessibility.Readonly);
+            var columnSchema = columnSchemas?[index];
+            var type = columnSchema?.DataTypeName?.Equals("date", StringComparison.InvariantCultureIgnoreCase) == true
+                ? typeof(DateOnly) // special case for 'date' as it always will be a 'DateTime'
+                : reader.GetFieldType(index);
+            retval[index] = new(type, reader.GetName(index), index, ColumnAccessibility.Readonly);
         }
         return retval;
     }
