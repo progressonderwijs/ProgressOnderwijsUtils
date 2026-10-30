@@ -1,11 +1,5 @@
 namespace ProgressOnderwijsUtils.SchemaReflection;
 
-public enum SqlTypeToClrType
-{
-    UseDateTimeForDate,
-    UseDateOnlyForDate,
-}
-
 public enum SqlSystemTypeId
 {
     // ReSharper disable UnusedMember.Global
@@ -61,7 +55,7 @@ public readonly struct SqlUnderlyingTypeInfo
 
 public static class SqlSystemTypeIdExtensions
 {
-    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateTime = [
+    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup = [
         //this list is ordered: earlier rows are better matches, and picked first.
         (typeof(bool), SqlSystemTypeId.Bit),
         (typeof(byte), SqlSystemTypeId.TinyInt),
@@ -74,7 +68,7 @@ public static class SqlSystemTypeIdExtensions
         (typeof(uint), SqlSystemTypeId.Binary),
         (typeof(DateTime), SqlSystemTypeId.DateTime2),
         (typeof(DateTime), SqlSystemTypeId.DateTime),
-        (typeof(DateTime), SqlSystemTypeId.Date),
+        (typeof(DateOnly), SqlSystemTypeId.Date),
         (typeof(DateTime), SqlSystemTypeId.SmallDateTime),
         (typeof(DateTimeOffset), SqlSystemTypeId.DateTimeOffset),
         (typeof(decimal), SqlSystemTypeId.Decimal),
@@ -95,20 +89,13 @@ public static class SqlSystemTypeIdExtensions
         (typeof(TimeSpan), SqlSystemTypeId.Time),
     ];
 
-    static readonly (Type clrType, SqlSystemTypeId typeId)[] typeLookup_DateIsDateOnly =
-        typeLookup_DateIsDateTime.ArraySelect(
-            s => s.typeId == SqlSystemTypeId.Date
-                ? (typeof(DateOnly), s.typeId)
-                : s
-        );
-
     /// <summary>
     /// Finds the best mapping of this sql type id to a clr-type.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
-    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId, SqlTypeToClrType sqlTypeToClrType = SqlTypeToClrType.UseDateTimeForDate)
+    public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlSystemTypeId sqlSystemTypeId)
     {
-        foreach (var o in sqlTypeToClrType == SqlTypeToClrType.UseDateOnlyForDate ? typeLookup_DateIsDateOnly : typeLookup_DateIsDateTime) {
+        foreach (var o in typeLookup) {
             if (o.typeId == sqlSystemTypeId) {
                 return new(sqlSystemTypeId, o.clrType);
             }
@@ -129,7 +116,7 @@ public static class SqlSystemTypeIdExtensions
         if (convertedType != null) {
             return convertedType.Value;
         }
-        foreach (var o in typeLookup_DateIsDateOnly) {
+        foreach (var o in typeLookup) {
             if (o.clrType == underlyingType) {
                 return o.typeId;
             }
