@@ -382,7 +382,14 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
         writer.WriteEndArray();
     }
 
-    async Task WriteJsonAsync(ReusableCommand cmd, SqlDataReader reader, IBufferWriter<byte> buffer, JsonWriterOptions options, JsonIgnoreCondition defaultIgnoreCondition, bool rowVersionAsNumber, CancellationToken cancel)
+    async Task WriteJsonAsync(
+        ReusableCommand cmd,
+        SqlDataReader reader,
+        IBufferWriter<byte> buffer,
+        JsonWriterOptions options,
+        JsonIgnoreCondition defaultIgnoreCondition,
+        bool rowVersionAsNumber,
+        CancellationToken cancel)
     {
         var table = GetColumnTable(reader);
         await using var writer = new Utf8JsonWriter(buffer, options);
@@ -421,6 +428,9 @@ public readonly record struct JsonSqlCommand(ParameterizedSql Sql, CommandTimeou
                     writer.WriteNumber(name, reader.GetDecimal(i));
                 } else if (type == typeof(double)) {
                     writer.WriteNumber(name, reader.GetDouble(i));
+                } else if (type == typeof(DateOnly)) {
+                    var dateTime = reader.GetDateTime(i).ToDateOnly();
+                    writer.WriteString(name, dateTime.ToString("yyyy-MM-dd"));
                 } else if (type == typeof(DateTime)) {
                     var dateTime = reader.GetDateTime(i);
                     if (sqlType == "date") {
