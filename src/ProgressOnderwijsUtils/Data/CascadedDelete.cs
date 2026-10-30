@@ -61,30 +61,6 @@ public static class CascadedDelete
         return report;
     }
 
-    public static DeletionReport[] RecursivelyDelete(
-        SqlConnection conn,
-        DatabaseDescription.Table initialTableAsEntered,
-        bool outputAllDeletedRows,
-        Action<string>? logger,
-        Func<DatabaseDescription.ForeignKey, bool>? foreignKeyPredicate,
-        DataTable pksToDelete)
-    {
-        var pksTable = SQL($"#pksTable");
-        var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
-        var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.RawSql_PotentialForSqlInjection);
-
-        var pkColumnsMetaData = initialTableAsEntered.Columns.Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
-        pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
-        BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
-
-        var pksTvParameter = SQL($"select {pkColumnsSql.ConcatenateSql(SQL($", "))} from {pksTable}");
-        var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, foreignKeyPredicate, pkColumns, pksTvParameter);
-
-        SQL($"drop table {pksTable}").ExecuteNonQuery(conn);
-
-        return report;
-    }
-
     /// <summary>
     /// Recursively deletes records from a database table, including all its foreign-key dependents.
     /// 
