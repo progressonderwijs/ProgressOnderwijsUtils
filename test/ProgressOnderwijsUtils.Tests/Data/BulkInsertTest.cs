@@ -281,7 +281,8 @@ public sealed class BulkInsertTest : TransactedLocalConnection
     public void CanCreateDbColumnMetaData()
     {
         var pocoProperties = PocoProperties<BulkInsertTestSampleRow>.Instance;
-        var dbProps = pocoProperties.Select(property => DbColumnMetaData.Create(
+        var dbProps = pocoProperties.Select(
+            property => DbColumnMetaData.Create(
                 property.Name,
                 property.DataType,
                 property.IsKey,
