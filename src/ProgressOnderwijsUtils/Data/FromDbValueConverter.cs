@@ -57,6 +57,9 @@ public static class DbValueConverter
 
         static Func<object?, T?> MakeConverter(Type type)
         {
+            if (type == typeof(DateOnly) || type == typeof(DateOnly?)) {
+                return ForDateOnly(type.IsNullableValueType());
+            }
             var converter = AutomaticValueConverters.GetOrNull(type);
             if (converter != null) {
                 return ForConvertible(type, converter);
@@ -71,6 +74,14 @@ public static class DbValueConverter
 
             return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
         }
+
+        static Func<object?, T?> ForDateOnly(bool isNullable)
+            => obj => obj switch {
+                null when isNullable => default,
+                null => throw new InvalidCastException("Cannot convert null to DateOnly"),
+                DateTime dateTime => (T?)(object)DateOnly.FromDateTime(dateTime),
+                _ => (T?)obj,
+            };
 
         static Func<object?, T?> ForConvertible(Type type, ValueConverter converter)
         {
