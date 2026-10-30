@@ -25,14 +25,16 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     public static ColumnDefinition[] GetFromReader(DbDataReader reader)
     {
-        var columnSchemas = reader.GetColumnSchema();
+        var columnSchemas = reader.CanGetColumnSchema()
+            ? reader.GetColumnSchema().ToArray()
+            : null;
         var retval = new ColumnDefinition[reader.FieldCount];
         for (var index = 0; index < retval.Length; index++) {
-            var columnSchema = columnSchemas[index];
-            var type = columnSchema.DataTypeName != null
+            var columnSchema = columnSchemas?[index];
+            var type = columnSchema?.DataTypeName != null
                 ? Enum.Parse<SqlSystemTypeId>(columnSchema.DataTypeName.AssertNotNull()).SqlUnderlyingTypeInfo().ClrType
                 : reader.GetFieldType(index); // reader.GetFieldType(index) only as a fallback, because it will be DateTime for a sql date column
-            retval[index] = new(type, columnSchema.ColumnName, index, ColumnAccessibility.Readonly);
+            retval[index] = new(type, reader.GetName(index), index, ColumnAccessibility.Readonly);
         }
         return retval;
     }
