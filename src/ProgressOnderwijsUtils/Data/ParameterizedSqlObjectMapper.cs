@@ -149,6 +149,7 @@ public static partial class ParameterizedSqlObjectMapper
             { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding).AssertNotNull() },
             { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding).AssertNotNull() },
             { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding).AssertNotNull() },
+            { typeof(DateOnly), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding).AssertNotNull() },
             { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding).AssertNotNull() },
             { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding).AssertNotNull() },
             { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding).AssertNotNull() },
