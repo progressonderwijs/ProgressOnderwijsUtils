@@ -402,6 +402,9 @@ public sealed class BulkInsertTest : TransactedLocalConnection
             return advanced;
         }
 
+        public override DataTable? GetSchemaTable()
+            => inner.GetSchemaTable();
+
         // straight delegations
         public override int Depth
             => inner.Depth;
