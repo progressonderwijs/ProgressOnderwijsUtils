@@ -31,9 +31,9 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
         var retval = new ColumnDefinition[reader.FieldCount];
         for (var index = 0; index < retval.Length; index++) {
             var columnSchema = columnSchemas?[index];
-            var type = columnSchema?.DataTypeName != null
-                ? Enum.Parse<SqlSystemTypeId>(columnSchema.DataTypeName.AssertNotNull()).SqlUnderlyingTypeInfo().ClrType
-                : reader.GetFieldType(index); // reader.GetFieldType(index) only as a fallback, because it will be DateTime for a sql date column
+            var type = columnSchema?.DataTypeName?.Equals("date", StringComparison.InvariantCultureIgnoreCase) == true
+                ? typeof(DateOnly) // special case for 'date' as it always will be a 'DateTime'
+                : reader.GetFieldType(index);
             retval[index] = new(type, reader.GetName(index), index, ColumnAccessibility.Readonly);
         }
         return retval;
