@@ -25,9 +25,12 @@ public sealed record ColumnDefinition(Type DataType, string Name, int Index, Col
 
     public static ColumnDefinition[] GetFromReader(DbDataReader reader)
     {
-        var columnSchemas = reader.CanGetColumnSchema()
-            ? reader.GetColumnSchema().ToArray()
-            : null;
+        DbColumn[]? columnSchemas = null;
+        try {
+            columnSchemas = [.. reader.GetColumnSchema(),];
+        } catch (NotSupportedException) {
+            // ignored: Some DbDataReaders don't implement GetColumnSchema, but there is no way of telling
+        }
         var retval = new ColumnDefinition[reader.FieldCount];
         for (var index = 0; index < retval.Length; index++) {
             var columnSchema = columnSchemas?[index];
