@@ -26,7 +26,7 @@ artifacts:
 deploy:
 - provider: NuGet
   api_key:
-    # to regenerate, log in to https://www.nuget.org/packages/ProgressOnderwijsUtils/ as ProgressOnderwijs, (re)generate the key
+    # to regenerate, log in to https://www.nuget.org/packages/ProgressOnderwijsUtils/ as ProgressOnderwijs, navigate to https://www.nuget.org/account/apikeys?forceApiKeys=true and (re)generate the key
     # login to appveyor with your github account, and select the progressonderwijs persona (https://ci.appveyor.com/account/progressonderwijs) in the leftmost column to act on behalf of the org, not yourself.
     # Encrypt the nuget key using the appveyor tool: https://ci.appveyor.com/account/progressonderwijs/tools/encrypt
     secure: HsBWdJ1g94CeY3JdWw/MITKXipnOlpzMBSwTCNLolCXU3qk1sEbjaCcsMhCBDTFk
