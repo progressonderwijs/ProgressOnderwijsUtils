@@ -9,29 +9,29 @@ public sealed class VirusScanTest
     const string virusString = @"X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
     const string schoneString = "Dit is geen virus";
 
-    [FactIgnoreOnAppVeyor]
+    [FactIgnoreOnCI]
     [SupportedOSPlatform("windows10.0.10240")]
     public void VirusAlsByte_wordt_herkend()
         => PAssert.That(() => VirusScan.IsMalware(Encoding.ASCII.GetBytes(virusString), "EICAR", "Utils test"));
 
-    [FactIgnoreOnAppVeyor]
+    [FactIgnoreOnCI]
     [SupportedOSPlatform("windows10.0.10240")]
     public void SchoneString_als_byte_wordt_niet_als_virus_herkend()
         => PAssert.That(() => !VirusScan.IsMalware(Encoding.ASCII.GetBytes(schoneString), "Progress.Net", "Utils test"));
 
-    [FactIgnoreOnAppVeyor]
+    [FactIgnoreOnCI]
     [SupportedOSPlatform("windows10.0.10240")]
     public void LegeString_als_byte_wordt_niet_als_virus_herkend()
         => PAssert.That(() => !VirusScan.IsMalware(Encoding.ASCII.GetBytes(""), "Progress.Net", "Utils test"));
 }
 
-public sealed class FactIgnoreOnAppVeyorAttribute : FactAttribute
+public sealed class FactIgnoreOnCIAttribute : FactAttribute
 {
-    public FactIgnoreOnAppVeyorAttribute([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+    public FactIgnoreOnCIAttribute([CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
         : base(sourceFilePath, sourceLineNumber)
     {
-        if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
-            Skip = "Ignore when run via AppVeyor";
+        if (Environment.GetEnvironmentVariable("APPVEYOR") != null || Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null) {
+            Skip = "Ignore when run via AppVeyor or GitHub Actions";
         }
     }
 }

@@ -33,13 +33,16 @@ public sealed class ApprovalTest
         }
     }
 
+    static string NormalizeNewlines(string s)
+        => s.Replace("\r\n", "\n");
+
     [Pure]
     public bool IsChangedFrom(string text, out string diff)
     {
         if (File.Exists(ApprovalPath)) {
             var approved = File.ReadAllText(ApprovalPath);
-            if (approved != text) {
-                var x = approved.Zip(text).SkipWhile(c => c.First == c.Second).Take(50).ToArray();
+            if (NormalizeNewlines(approved) != NormalizeNewlines(text)) {
+                var x = NormalizeNewlines(approved).Zip(NormalizeNewlines(text)).SkipWhile(c => c.First == c.Second).Take(50).ToArray();
                 diff = $"'{new(x.ArraySelect(d => d.First))}' »» '{new(x.ArraySelect(d => d.Second))}'";
                 return true;
             } else {

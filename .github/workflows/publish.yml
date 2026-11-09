@@ -1,0 +1,117 @@
+# Plaats dit bestand als .github/workflows/publish.yml
+# De bestandsnaam "publish.yml" moet exact overeenkomen met de Trusted Publishing policy op nuget.org.
+name: Build, test & publish
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      sql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: Password12!
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P 'Password12!' -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'Password12!' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 12
+
+    env:
+      CONNECTION_STRING: Server=localhost,1433;Database=master;User ID=sa;Password=Password12!;Encrypt=False
+      DOTNET_NOLOGO: true
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # handig voor SourceLink / versioning-tools
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - run: dotnet --version
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Test
+        run: |
+          dotnet run --project test/ProgressOnderwijsUtils.Tests -c Release
+          dotnet run --project test/ProgressOnderwijsUtils.Analyzers.Tests -c Release
+
+      - name: Pack
+        run: dotnet pack -c Release --no-build -o artifacts -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
+
+  test-windows:
+    runs-on: windows-latest
+
+    env:
+      DOTNET_NOLOGO: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Start LocalDB
+        run: |
+          sqllocaldb create MSSQLLocalDB -s
+          sqllocaldb info MSSQLLocalDB
+          sqlcmd -S "(localdb)\MSSQLLocalDB" -E -Q "SELECT @@VERSION"
+
+      - name: Build
+        run: dotnet build -c Release
+
+      - name: Test
+        run: dotnet run --project test/ProgressOnderwijsUtils.Tests -c Release
+
+      - name: Test analyzers
+        run: dotnet run --project test/ProgressOnderwijsUtils.Analyzers.Tests -c Release
+
+  publish:
+    needs: [build, test-windows]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: nuget          # optioneel; als je dit gebruikt, ook invullen in de nuget.org policy
+    permissions:
+      id-token: write           # nodig voor OIDC / trusted publishing
+      contents: read
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: packages
+          path: artifacts
+
+      - name: NuGet login (OIDC -> tijdelijke API-key)
+        id: login
+        uses: NuGet/login@v1
+        with:
+          user: ProgressOnderwijs   # nuget.org-profielnaam, niet het e-mailadres
+
+      - name: Push naar nuget.org
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --api-key ${{ steps.login.outputs.NUGET_API_KEY }}
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate
