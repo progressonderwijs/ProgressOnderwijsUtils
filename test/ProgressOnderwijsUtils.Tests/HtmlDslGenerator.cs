@@ -27,7 +27,7 @@ public sealed class HtmlDslGenerator
     [Fact]
     public async Task RegenerateHtmlTagCSharp()
     {
-        if (Environment.GetEnvironmentVariable("APPVEYOR") != null) {
+        if (Environment.GetEnvironmentVariable("APPVEYOR") != null || Environment.GetEnvironmentVariable("GITHUB_ACTIONS") != null) {
             Assert.Skip("For manual regeneration; won't work on the CI");
         }
         if (!localCache.RefersToExistingLocalFile() || new FileInfo(localCache.LocalPath).LastWriteTimeUtc < DateTime.UtcNow.AddDays(-1)) {
