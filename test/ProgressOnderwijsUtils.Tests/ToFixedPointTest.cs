@@ -26,9 +26,16 @@ public sealed class ToFixedPointTest
         }
     }
 
+    static readonly double DoubleToDecimalFix =
+        // ReSharper disable once HeuristicUnreachableCode
+        (9.85m == (decimal)9.85) ? 0 : 0.000_000_000_001;
+
     static string SimpleToFixedPointString(double x, CultureInfo culture, int precision)
-        // ReSharper disable once CompareOfFloatsByEqualityOperator
-        => (Math.Round(x, precision, MidpointRounding.AwayFromZero) is var rounded && rounded != 0 ? rounded : 0).ToString($"f{precision}", culture);
+    {
+        // Casting double -9.85 to decimal yield -9.85 in .Net 10, but -9.849999999999999644728632120 in .Net 11
+        var doubleToDecimalFix = Math.Sign(x) * DoubleToDecimalFix;
+        return (Math.Round(x + doubleToDecimalFix, precision, MidpointRounding.AwayFromZero) is var rounded && rounded != 0 ? rounded : 0).ToString($"f{precision}", culture);
+    }
 
     [Fact]
     public void FixedPointOmitsMinusForZero()
