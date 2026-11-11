@@ -105,7 +105,13 @@ public static class AutomaticValueConverters
         var providerToModelFuncType = typeof(Func<,>).MakeGenericType(possiblyNullableProviderType, nullableModelType);
         var providerToModelLambda = Expression.Lambda(providerToModelFuncType, nullableProviderToModelBody, nullableProviderArg);
 
-        return (ValueConverter)Activator.CreateInstance(typeof(ValueConverter<,>).MakeGenericType(nullableModelType, possiblyNullableProviderType), modelToProviderLambda, providerToModelLambda, null).AssertNotNull();
+        var converterType = typeof(ValueConverter<,>).MakeGenericType(nullableModelType, possiblyNullableProviderType);
+        var constructor = converterType.GetConstructor([
+            typeof(Expression<>).MakeGenericType(modelToProviderFuncType),
+            typeof(Expression<>).MakeGenericType(providerToModelFuncType),
+            typeof(ConverterMappingHints),
+        ]).AssertNotNull();
+        return (ValueConverter)constructor.Invoke([modelToProviderLambda, providerToModelLambda, null]).AssertNotNull();
     }
 
     public static ValueConverter? GetOrNull(Type propertyType)
