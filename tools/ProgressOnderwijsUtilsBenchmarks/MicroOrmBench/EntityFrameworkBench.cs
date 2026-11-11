@@ -29,12 +29,12 @@ sealed class EntityFrameworkBench : DbContext
         benchmarker.BenchSqlServer(
             "EF FromSqlInterpolated (fresh contexts)",
             (sqlConn, rows) =>
-                new EntityFrameworkBench(sqlConn).ExampleObjects.FromSqlInterpolated(ExampleObject.InterpolatedQuery(rows)).ToArray().Length
+                new EntityFrameworkBench(sqlConn).ExampleObjects.FromSql(ExampleObject.InterpolatedQuery(rows)).ToArray().Length
         );
         benchmarker.BenchEFSqlServer(
             "EF FromSqlInterpolated (reused context)",
             (ctx, rows) =>
-                ctx.ExampleObjects.FromSqlInterpolated(ExampleObject.InterpolatedQuery(rows)).ToArray().Length
+                ctx.ExampleObjects.FromSql(ExampleObject.InterpolatedQuery(rows)).ToArray().Length
         );
     }
 
@@ -43,12 +43,12 @@ sealed class EntityFrameworkBench : DbContext
         benchmarker.BenchSqlServer(
             "EF FromSqlInterpolated (26-col, fresh contexts)",
             (sqlConn, rows) =>
-                new EntityFrameworkBench(sqlConn).WideExampleObjects.FromSqlInterpolated(WideExampleObject.InterpolatedQuery(rows)).ToArray().Length
+                new EntityFrameworkBench(sqlConn).WideExampleObjects.FromSql(WideExampleObject.InterpolatedQuery(rows)).ToArray().Length
         );
         benchmarker.BenchEFSqlServer(
             "EF FromSqlInterpolated (26-col, reused context)",
             (ctx, rows) =>
-                ctx.WideExampleObjects.FromSqlInterpolated(WideExampleObject.InterpolatedQuery(rows)).ToArray().Length
+                ctx.WideExampleObjects.FromSql(WideExampleObject.InterpolatedQuery(rows)).ToArray().Length
         );
     }
 }
