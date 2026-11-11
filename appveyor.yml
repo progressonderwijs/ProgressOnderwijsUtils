@@ -7,7 +7,7 @@ image: Visual Studio 2022
 install:
 - ps: |
     Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -UseBasicParsing -OutFile "$env:TEMP\dotnet-install.ps1"
-    & "$env:TEMP\dotnet-install.ps1" -Channel 10.0 -Quality GA -InstallDir "$env:ProgramFiles\dotnet"
+    & "$env:TEMP\dotnet-install.ps1" -Channel 11.0 -Quality GA -InstallDir "$env:ProgramFiles\dotnet"
     $env:PATH = "$env:ProgramFiles\dotnet;$env:PATH"
 before_build:
   - cmd: dotnet --version
