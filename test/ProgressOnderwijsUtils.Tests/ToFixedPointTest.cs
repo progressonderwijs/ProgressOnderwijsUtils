@@ -60,12 +60,11 @@ public sealed class ToFixedPointTest
         // ReSharper disable once CompareOfFloatsByEqualityOperator
         PAssert.That(() => double.Parse(Utils.ToFixedPointString(edgeCase, NL, 0), NumberStyles.AllowDecimalPoint, NL) == edgeCase);
         PAssert.That(() => approxEqual(double.Parse(Utils.ToFixedPointString(edgeCase + 1, NL, 0), NumberStyles.AllowDecimalPoint, NL), edgeCase + 1));
-        PAssert.That(
-            () =>
-                approxEqual(
-                    double.Parse(Utils.ToFixedPointString(edgeCase - 1, NL, 0), NumberStyles.AllowDecimalPoint, NL),
-                    double.Parse(((double)(edgeCase - 1)).ToString("f0", NL), NumberStyles.AllowDecimalPoint, NL)
-                )
+        PAssert.That(() =>
+            approxEqual(
+                double.Parse(Utils.ToFixedPointString(edgeCase - 1, NL, 0), NumberStyles.AllowDecimalPoint, NL),
+                double.Parse(((double)(edgeCase - 1)).ToString("f0", NL), NumberStyles.AllowDecimalPoint, NL)
+            )
         );
     }
 }
