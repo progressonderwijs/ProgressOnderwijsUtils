@@ -2,11 +2,11 @@
     <Import Project="..\NugetPackagesCommon.props" />
     <PropertyGroup Label="Configuration">
         <Version>6.14.0</Version>
-        <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
+        <PackageReleaseNotes>Upgraded to .Net 11</PackageReleaseNotes>
         <Title>ProgressOnderwijsUtils.SeleniumWebDriverPool</Title>
         <Description>Provides a pooling mechanism for webdrivers to avoid paying the high startup cost for each instance repeatedly</Description>
         <PackageTags>ProgressOnderwijsUtils Selenium WebDriver Web</PackageTags>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net11.0</TargetFramework>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
     <ItemGroup>
