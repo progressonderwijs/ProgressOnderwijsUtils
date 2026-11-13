@@ -52,6 +52,13 @@ public sealed class ReflectionLoadableClassHelperTest
     }
 
     [Fact]
+    public void A_constructed_generic_base_is_rejected()
+    {
+        var problems = ReflectionLoadableClassHelper.AllSubclassConstructorsForType(typeof(ClosedGenericBase<int>)).AssertError();
+        PAssert.That(() => problems.Single().StartsWith($"{typeof(ClosedGenericBase<int>).ToCSharpFriendlyTypeName()} must be non-generic", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void A_closed_intermediate_is_enumerable()
     {
         var constructors = ReflectionLoadableClassHelper.AllSubclassConstructorsForType(typeof(ClosedBaseWithClosedIntermediate)).AssertOk();
@@ -109,3 +116,5 @@ public closed class ClosedBaseWithClosedIntermediate;
 public closed class ClosedIntermediate : ClosedBaseWithClosedIntermediate;
 
 public sealed class SubclassOfClosedIntermediate : ClosedIntermediate;
+
+public closed class ClosedGenericBase<T>;

@@ -19,8 +19,11 @@ public static class ReflectionLoadableClassHelper
         var instantiableSubTypes = new List<ConstructorInfo>();
         var problems = new List<string>();
 
-        if (baseType.IsGenericTypeDefinition) {
-            problems.Add($"{baseType.ToCSharpFriendlyTypeName()} can have an arbitrary number of subclasses and thus cannot be enumerated because it is an open generic type definition.");
+        if (baseType.IsGenericType) {
+            problems.Add(
+                $"{baseType.ToCSharpFriendlyTypeName()} must be non-generic, because subclasses of generic intermediates cannot be reliably enumerated "
+                + "and an open generic type definition can have an arbitrary number of subclasses."
+            );
         }
 
         if (!OnlyDerivableWithinItsAssembly(baseType)) {
