@@ -26,6 +26,10 @@ public static class ReflectionLoadableClassHelper
             );
         }
 
+        if (!baseType.IsClass) {
+            problems.Add($"{baseType.ToCSharpFriendlyTypeName()} must be a class, because implementations of an interface cannot be restricted to its assembly.");
+        }
+
         if (!OnlyDerivableWithinItsAssembly(baseType)) {
             problems.Add(
                 $"{baseType.ToCSharpFriendlyTypeName()} must be closed or have only private, internal or private protected constructors "
