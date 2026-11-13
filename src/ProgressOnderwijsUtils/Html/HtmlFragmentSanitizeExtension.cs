@@ -143,7 +143,7 @@ public static class HtmlFilters
         }
 
         static HashSet<string> MkSet(IEnumerable<string>? elems)
-            => new(elems ?? Array.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+            => [with(StringComparer.OrdinalIgnoreCase), .. elems ?? Array.Empty<string>(),];
 
         public TagSafety AllowTag(IHtmlElement elem)
             => bannedElements.Contains(elem.TagName)

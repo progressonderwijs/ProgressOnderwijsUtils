@@ -18,7 +18,7 @@ public readonly struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>, 
         => this.sortedDistinctValues = sortedDistinctValues;
 
     public static SortedSet<T, TOrder> Empty
-        => new([]);
+        => [];
 
     public static SortedSet<T, TOrder> FromValues(IEnumerable<T> values)
         => FromValues(values as T[] ?? [.. values,]);
