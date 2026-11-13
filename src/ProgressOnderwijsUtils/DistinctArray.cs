@@ -36,7 +36,7 @@ public static class DistinctArray
 public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
 {
     public static DistinctArray<T> Empty
-        => new([]);
+        => [];
 
     public static DistinctArray<T> FromDistinct_ClaimDistinctnessWithoutCheck(T[] items)
         => new(items);
