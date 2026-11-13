@@ -17,24 +17,11 @@ public sealed class ReflectionLoadableClassHelperTest
     }
 
     [Fact]
-    public void A_public_nested_base_with_a_protected_constructor_is_rejected()
+    public void An_internal_base_with_a_protected_constructor_is_rejected()
     {
-        var problems = ReflectionLoadableClassHelper.AllSubclassConstructorsForType(typeof(NestedOpenBase)).AssertError();
-        PAssert.That(() => problems.Single().Contains($"{nameof(NestedOpenBase)} must be closed", StringComparison.Ordinal));
+        var problems = ReflectionLoadableClassHelper.AllSubclassConstructorsForType(typeof(InternalBaseWithProtectedConstructor)).AssertError();
+        PAssert.That(() => problems.Single().StartsWith($"{nameof(InternalBaseWithProtectedConstructor)} must be closed", StringComparison.Ordinal));
     }
-
-    [Fact]
-    public void A_nested_base_that_is_not_visible_outside_its_assembly_is_enumerable()
-    {
-        var constructors = ReflectionLoadableClassHelper.AllSubclassConstructorsForType(typeof(NestedPrivateBase)).AssertOk();
-        PAssert.That(() => constructors.Select(c => c.DeclaringType).SequenceEqual(new[] { typeof(SubclassOfNestedPrivateBase), }));
-    }
-
-    public abstract class NestedOpenBase;
-
-    abstract class NestedPrivateBase;
-
-    sealed class SubclassOfNestedPrivateBase : NestedPrivateBase;
 
     [Fact]
     public void A_public_base_with_only_private_protected_constructors_is_enumerable()
@@ -77,6 +64,8 @@ public closed class ClosedBaseForReflectionLoading;
 public sealed class SubclassOfClosedBase : ClosedBaseForReflectionLoading;
 
 public abstract class OpenBaseForReflectionLoading;
+
+abstract class InternalBaseWithProtectedConstructor;
 
 public abstract class PrivateProtectedBaseForReflectionLoading
 {

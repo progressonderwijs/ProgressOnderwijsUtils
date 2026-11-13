@@ -2,17 +2,12 @@ namespace ProgressOnderwijsUtils;
 
 public static class ReflectionLoadableClassHelper
 {
+    // Constructor accessibility rather than type accessibility decides who can derive, so nesting doesn't matter.
+    // The constructor alternative exists for non-generic roots with generic subclasses, which cannot be closed (CS9383).
     static bool OnlyDerivableWithinItsAssembly(Type type)
-    {
-        if (!type.IsVisible || type.IsDefined(typeof(IsClosedTypeAttribute), false)) {
-            return true;
-        }
-        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        if (constructors.Any() && constructors.All(ci => ci.IsAssembly || ci.IsPrivate || ci.IsFamilyAndAssembly)) {
-            return true;
-        }
-        return false;
-    }
+        => type.IsDefined(typeof(IsClosedTypeAttribute), false)
+            || type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .All(ci => ci.IsPrivate || ci.IsAssembly || ci.IsFamilyAndAssembly);
 
     static readonly Func<Assembly, Type[]> typesIn = Utils.F((Assembly assembly) => assembly.GetTypes()).ThreadSafeMemoize();
 
@@ -30,7 +25,7 @@ public static class ReflectionLoadableClassHelper
 
         if (!OnlyDerivableWithinItsAssembly(baseType)) {
             problems.Add(
-                $"{baseType.ToCSharpFriendlyTypeName()} must be closed, assembly-internal or have only assembly-internal constructors "
+                $"{baseType.ToCSharpFriendlyTypeName()} must be closed or have only private, internal or private protected constructors "
                 + "to ensure that all subclasses are enumerable via the assembly reference."
             );
         }
@@ -46,7 +41,7 @@ public static class ReflectionLoadableClassHelper
             if (subType.IsAbstract) {
                 if (!OnlyDerivableWithinItsAssembly(subType)) {
                     problems.Add(
-                        $"{subType.ToCSharpFriendlyTypeName()} is an abstract subclass of {baseType.ToCSharpFriendlyTypeName()} that other assemblies can derive from; "
+                        $"{subType.ToCSharpFriendlyTypeName()} is an abstract subclass of {baseType.ToCSharpFriendlyTypeName()} that is not closed and has constructors other assemblies may call; "
                         + "mark it closed to ensure that all subclasses are enumerable via the assembly reference."
                     );
                 }
