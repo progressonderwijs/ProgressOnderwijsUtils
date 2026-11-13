@@ -73,6 +73,7 @@ public sealed class ReflectionLoadableClassHelperTest
     }
 }
 
+// ReSharper disable UnusedTypeParameter
 public closed class ClosedBaseForReflectionLoading;
 
 public sealed class SubclassOfClosedBase : ClosedBaseForReflectionLoading;
@@ -98,25 +99,16 @@ public abstract class PrivateProtectedBaseWithGenericIntermediate
     private protected PrivateProtectedBaseWithGenericIntermediate() { }
 }
 
-public abstract class OpenGenericIntermediate<T> : PrivateProtectedBaseWithGenericIntermediate
-{
-    protected abstract void Method(T arg);
-}
+public abstract class OpenGenericIntermediate<T> : PrivateProtectedBaseWithGenericIntermediate;
 
 public abstract class PrivateProtectedBaseWithClosedGenericIntermediate
 {
     private protected PrivateProtectedBaseWithClosedGenericIntermediate() { }
 }
 
-public closed class ClosedGenericIntermediate<T> : PrivateProtectedBaseWithClosedGenericIntermediate
-{
-    protected abstract void Method(T arg);
-}
+public closed class ClosedGenericIntermediate<T> : PrivateProtectedBaseWithClosedGenericIntermediate;
 
-public sealed class SubclassOfClosedGenericIntermediate : ClosedGenericIntermediate<int>
-{
-    protected override void Method(int arg) { }
-}
+public sealed class SubclassOfClosedGenericIntermediate : ClosedGenericIntermediate<int>;
 
 public closed class ClosedBaseWithClosedIntermediate;
 
@@ -127,3 +119,4 @@ public sealed class SubclassOfClosedIntermediate : ClosedIntermediate;
 public closed class ClosedGenericBase<T>;
 
 public interface IInterfaceBaseForReflectionLoading;
+// ReSharper restore UnusedTypeParameter
