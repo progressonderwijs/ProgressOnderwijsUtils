@@ -2,9 +2,9 @@ namespace ProgressOnderwijsUtils;
 
 public static class ReflectionLoadableClassHelper
 {
-    static bool EffectivelyAssemblyInternal(Type type)
+    static bool OnlyDerivableWithinItsAssembly(Type type)
     {
-        if (!type.IsPublic) {
+        if (!type.IsVisible || type.IsDefined(typeof(IsClosedTypeAttribute), false)) {
             return true;
         }
         var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -28,8 +28,11 @@ public static class ReflectionLoadableClassHelper
             problems.Add($"{baseType.ToCSharpFriendlyTypeName()} can have an arbitrary number of subclasses and thus cannot be enumerated because it is an open generic type definition.");
         }
 
-        if (!EffectivelyAssemblyInternal(baseType)) {
-            problems.Add($"{baseType.ToCSharpFriendlyTypeName()} must be assembly-internal or have only assembly-internal constructors to ensure that all subclasses are enumerable via the assembly reference");
+        if (!OnlyDerivableWithinItsAssembly(baseType)) {
+            problems.Add(
+                $"{baseType.ToCSharpFriendlyTypeName()} must be closed, assembly-internal or have only assembly-internal constructors "
+                + "to ensure that all subclasses are enumerable via the assembly reference."
+            );
         }
 
         if (!baseType.IsAbstract) {
@@ -37,7 +40,16 @@ public static class ReflectionLoadableClassHelper
         }
 
         foreach (var subType in baseType.Assembly.CachedTypes()) {
-            if (!baseType.IsAssignableFrom(subType) || subType.IsAbstract) {
+            if (subType == baseType || !baseType.IsAssignableFrom(subType)) {
+                continue;
+            }
+            if (subType.IsAbstract) {
+                if (!OnlyDerivableWithinItsAssembly(subType)) {
+                    problems.Add(
+                        $"{subType.ToCSharpFriendlyTypeName()} is an abstract subclass of {baseType.ToCSharpFriendlyTypeName()} that other assemblies can derive from; "
+                        + "mark it closed to ensure that all subclasses are enumerable via the assembly reference."
+                    );
+                }
                 continue;
             }
             if (!subType.IsSealed) {
