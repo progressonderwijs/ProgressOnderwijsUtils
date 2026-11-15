@@ -32,7 +32,7 @@ public readonly struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
             return false;
         } else {
             head = list.Head;
-            tail = new(list.Tail);
+            tail = [with(list.Tail),];
             return true;
         }
     }
