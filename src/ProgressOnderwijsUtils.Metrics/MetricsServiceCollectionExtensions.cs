@@ -15,14 +15,14 @@ public static class MetricsServiceCollectionExtensions
         /// stopped.
         /// </summary>
         /// <param name="collector">Typically a static instance, so that what it collected stays readable outside of the dependency injection container.</param>
-        /// <param name="samplingFailed">See <see cref="MetricsCollector{TEndpoint,TDatabase,TPoolPurpose}.Start"/>.</param>
-        public IServiceCollection AddProgressOnderwijsMetrics<TEndpoint, TDatabase, TPoolPurpose>(
-            MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> collector,
+        /// <param name="samplingFailed">See <see cref="MetricsCollector{TEndpoint,TDatabase,TPool}.Start"/>.</param>
+        public IServiceCollection AddProgressOnderwijsMetrics<TEndpoint, TDatabase, TPool>(
+            MetricsCollector<TEndpoint, TDatabase, TPool> collector,
             Action<Exception> samplingFailed
         )
             where TEndpoint : struct, Enum
             where TDatabase : struct, Enum
-            where TPoolPurpose : struct, Enum
+            where TPool : struct, Enum
         {
             _ = services.AddOpenTelemetry().WithMetrics(builder => builder.AddSqlClientInstrumentation());
             _ = services.AddHostedService(_ => new MetricsCollectorLifetime(() => collector.Start(samplingFailed), collector.Dispose));

@@ -7,20 +7,20 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// <summary>
 /// Collects, per second, the request durations and the number of active requests of ASP.NET Core, the operation
 /// durations of the OpenTelemetry SqlClient instrumentation, and samples of the thread pool and of the connection
-/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPoolPurpose}"/>, counted from the open events of SqlClient.
+/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPool}"/>, counted from the open events of SqlClient.
 /// </summary>
-public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisposable
+public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     where TEndpoint : struct, Enum
     where TDatabase : struct, Enum
-    where TPoolPurpose : struct, Enum
+    where TPool : struct, Enum
 {
     readonly SecondsSinceStart seconds;
     readonly DurationHistogramRing<TDatabase> databaseDuration;
     readonly DurationHistogramRing<TEndpoint> requestDuration;
     readonly ActiveRequests activeRequests;
     readonly ThreadPoolUsage threadPoolUsage;
-    readonly ConnectionPoolUsage<TDatabase, TPoolPurpose> connectionPoolUsage;
-    readonly ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools;
+    readonly ConnectionPoolUsage<TDatabase, TPool> connectionPoolUsage;
+    readonly ConnectionPoolRegistry<TDatabase, TPool> pools;
     readonly MeterListener listener;
     readonly ManualResetEventSlim stopSampling;
     Thread? sampler;
@@ -67,7 +67,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// The rings count their seconds on its monotonic timestamp; its real time is only read when collecting. Defaults to
     /// <see cref="TimeProvider.System"/>; a test passes a clock of its own to decide the seconds.
     /// </param>
-    public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools, TimeProvider? time = null)
+    public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPool> description, ConnectionPoolRegistry<TDatabase, TPool> pools, TimeProvider? time = null)
     {
         Description = description;
         if (Description.LargestInterval + DefaultSettleSeconds > RingCapacity) {
@@ -110,7 +110,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
         listener.Dispose();
     }
 
-    public MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; }
+    public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
 
     /// <param name="samplingFailed">
     /// Receives the exception that stopped the sampling: the windows after that have no thread pool and connection
@@ -186,7 +186,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// password, and an open never has to be matched to its end through a lookup on its OperationId.
     /// Without a subscriber SqlClient skips these events altogether, so a process whose collector does not run pays
     /// nothing. Connections that are already open when the collector starts are not counted:
-    /// <see cref="ConnectionPoolCounters{TDatabase,TPoolPurpose}.InUse"/> is too low until they are closed.
+    /// <see cref="ConnectionPoolCounters{TDatabase,TPool}.InUse"/> is too low until they are closed.
     /// </summary>
     void SqlClientEvent(KeyValuePair<string, object?> sqlClientEvent)
     {
@@ -243,7 +243,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// The window is stretched to this so that short intervals are less jerky. The result states in SecondsCovered
     /// how many seconds it really holds.
     /// </param>
-    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> Collect(int interval, int settleSeconds = DefaultSettleSeconds, int minimumWindow = DefaultMinimumWindow)
+    public MetricsCollection<TEndpoint, TDatabase, TPool> Collect(int interval, int settleSeconds = DefaultSettleSeconds, int minimumWindow = DefaultMinimumWindow)
     {
         if (interval < Description.SmallestInterval || interval > Description.LargestInterval) {
             throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be in range of the description.");
@@ -260,9 +260,9 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// The result states with LastSecond and SecondsCovered what was really processed, so a caller that lagged
     /// further behind than the ring can recognise the gap.
     /// </summary>
-    /// <param name="previousLastSecond">The <see cref="MetricsCollection{TEndpoint,TDatabase,TPoolPurpose}.LastSecond"/> of what the caller has already processed.</param>
+    /// <param name="previousLastSecond">The <see cref="MetricsCollection{TEndpoint,TDatabase,TPool}.LastSecond"/> of what the caller has already processed.</param>
     /// <param name="settleSeconds">See <see cref="Collect"/>.</param>
-    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
+    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
     {
         var lastSecond = LatestCompleteSecond(settleSeconds);
         return CollectRange(previousLastSecond + 1, lastSecond);
@@ -278,9 +278,9 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// Collects exactly the requested seconds, for a caller that keeps track itself of where it left off and wants
     /// to end at the same last second as an earlier <see cref="Collect"/>.
     /// The seconds are those of the timeline of the rings, like
-    /// <see cref="MetricsCollection{TEndpoint,TDatabase,TPoolPurpose}.LastSecond"/>.
+    /// <see cref="MetricsCollection{TEndpoint,TDatabase,TPool}.LastSecond"/>.
     /// </summary>
-    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> CollectRange(long firstSecond, long lastSecond)
+    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectRange(long firstSecond, long lastSecond)
     {
         // A window is at most LargestInterval seconds long. The ring keeps more (RingCapacity), so that the oldest
         // seconds of such a window are still there as well. Seconds from before our own start do not exist at all:

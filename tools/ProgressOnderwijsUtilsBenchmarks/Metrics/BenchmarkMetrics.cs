@@ -27,7 +27,7 @@ enum BenchmarkDatabase
 /// </summary>
 enum BenchmarkEndpoint { }
 
-enum BenchmarkPoolPurpose
+enum BenchmarkPool
 {
     ReadOnly = 1,
     ReadWrite = 2,
@@ -257,11 +257,11 @@ static class BenchmarkEndpointLookup
 
 static class BenchmarkMetrics
 {
-    public const int RingCapacity = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose>.RingCapacity;
-    public const int DefaultSettleSeconds = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose>.DefaultSettleSeconds;
+    public const int RingCapacity = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPool>.RingCapacity;
+    public const int DefaultSettleSeconds = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPool>.DefaultSettleSeconds;
     public const byte LargestInterval = 128;
 
-    public static MetricsDescription<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose> Description()
+    public static MetricsDescription<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPool> Description()
         => new() {
             SmallestInterval = 1,
             LargestInterval = LargestInterval,
@@ -272,16 +272,16 @@ static class BenchmarkMetrics
     /// <summary>
     /// A registry of its own per benchmark, so that the pools of one benchmark never show up in the samples of another.
     /// </summary>
-    public static ConnectionPoolRegistry<BenchmarkDatabase, BenchmarkPoolPurpose> Registry()
+    public static ConnectionPoolRegistry<BenchmarkDatabase, BenchmarkPool> Registry()
         => new(BenchmarkDatabaseDuration.Classify);
 
     /// <summary>
     /// Three pools per tracked database (readonly, readwrite and sysadmin), roughly as an application has them.
     /// </summary>
-    public static IEnumerable<(string ConnectionString, BenchmarkPoolPurpose Purpose)> PoolsPerDatabase()
+    public static IEnumerable<(string connectionString, BenchmarkPool pool)> PoolsPerDatabase()
         => Enum.GetValues<BenchmarkDatabase>()
             .SelectMany(
-                database => new[] { BenchmarkPoolPurpose.ReadOnly, BenchmarkPoolPurpose.ReadWrite, BenchmarkPoolPurpose.Sysadmin, }
-                    .Select(purpose => ($"Initial Catalog={BenchmarkDatabaseDuration.CatalogOf(database)};Application Name={purpose}", purpose))
+                database => new[] { BenchmarkPool.ReadOnly, BenchmarkPool.ReadWrite, BenchmarkPool.Sysadmin, }
+                    .Select(pool => ($"Initial Catalog={BenchmarkDatabaseDuration.CatalogOf(database)};Application Name={pool}", pool))
             );
 }

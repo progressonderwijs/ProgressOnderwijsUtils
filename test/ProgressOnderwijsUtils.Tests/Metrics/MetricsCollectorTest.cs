@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
 using ProgressOnderwijsUtils.Metrics;
-using MetricsCollection = ProgressOnderwijsUtils.Metrics.MetricsCollection<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPurpose>;
-using MetricsCollector = ProgressOnderwijsUtils.Metrics.MetricsCollector<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPurpose>;
+using MetricsCollection = ProgressOnderwijsUtils.Metrics.MetricsCollection<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPool>;
+using MetricsCollector = ProgressOnderwijsUtils.Metrics.MetricsCollector<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPool>;
 
 namespace ProgressOnderwijsUtils.Tests.Metrics;
 

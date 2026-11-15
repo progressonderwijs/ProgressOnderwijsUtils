@@ -3,45 +3,45 @@ using System.Collections.Concurrent;
 namespace ProgressOnderwijsUtils.Metrics;
 
 /// <summary>
-/// The connection pools of a process, one <see cref="ConnectionPoolCounters{TDatabase,TPoolPurpose}"/> per connection
+/// The connection pools of a process, one <see cref="ConnectionPoolCounters{TDatabase,TPool}"/> per connection
 /// string.
 /// </summary>
 /// <param name="classifyCatalog">
 /// The value a database name is tracked as, or null for databases that are not tracked separately. Called once per
 /// pool, when it is first requested.
 /// </param>
-public sealed class ConnectionPoolRegistry<TDatabase, TPoolPurpose>(Func<string, TDatabase?> classifyCatalog)
+public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatabase?> classifyCatalog)
     where TDatabase : struct, Enum
-    where TPoolPurpose : struct, Enum
+    where TPool : struct, Enum
 {
-    readonly ConcurrentDictionary<string, ConnectionPoolCounters<TDatabase, TPoolPurpose>> byConnectionString = new(StringComparer.Ordinal);
+    readonly ConcurrentDictionary<string, ConnectionPoolCounters<TDatabase, TPool>> byConnectionString = new(StringComparer.Ordinal);
     readonly Lock registration = new();
-    ConnectionPoolCounters<TDatabase, TPoolPurpose>[] all = [];
-    ConnectionPoolSize<TDatabase, TPoolPurpose>[] sizes = [];
+    ConnectionPoolCounters<TDatabase, TPool>[] all = [];
+    ConnectionPoolSize<TDatabase, TPool>[] sizes = [];
 
     /// <summary>
     /// The counters of the pool of this connection string; every connection string gets exactly one. A connection
-    /// string belongs to exactly one purpose: when it is requested with another purpose, one of the places where it
+    /// string belongs to exactly one pool: when it is requested with another pool, one of the places where it
     /// is built is wrong.
     /// </summary>
-    public ConnectionPoolCounters<TDatabase, TPoolPurpose> For(string connectionString, TPoolPurpose purpose)
-        => byConnectionString.TryGetValue(connectionString, out var counters) ? EnsurePurpose(counters, purpose) : Register(connectionString, purpose);
+    public ConnectionPoolCounters<TDatabase, TPool> For(string connectionString, TPool pool)
+        => byConnectionString.TryGetValue(connectionString, out var counters) ? EnsurePool(counters, pool) : Register(connectionString, pool);
 
-    static ConnectionPoolCounters<TDatabase, TPoolPurpose> EnsurePurpose(ConnectionPoolCounters<TDatabase, TPoolPurpose> counters, TPoolPurpose purpose)
-        => EqualityComparer<TPoolPurpose>.Default.Equals(counters.Purpose, purpose)
+    static ConnectionPoolCounters<TDatabase, TPool> EnsurePool(ConnectionPoolCounters<TDatabase, TPool> counters, TPool pool)
+        => EqualityComparer<TPool>.Default.Equals(counters.Pool, pool)
             ? counters
-            : throw new InvalidOperationException($"The pool of database {counters.Catalog} was registered as {counters.Purpose}, but is now requested as {purpose}.");
+            : throw new InvalidOperationException($"The pool of database {counters.Catalog} was registered as {counters.Pool}, but is now requested as {pool}.");
 
-    ConnectionPoolCounters<TDatabase, TPoolPurpose> Register(string connectionString, TPoolPurpose purpose)
+    ConnectionPoolCounters<TDatabase, TPool> Register(string connectionString, TPool pool)
     {
         lock (registration) {
             if (byConnectionString.TryGetValue(connectionString, out var existing)) {
-                return EnsurePurpose(existing, purpose);
+                return EnsurePool(existing, pool);
             }
 
-            var counters = new ConnectionPoolCounters<TDatabase, TPoolPurpose>(connectionString, purpose, classifyCatalog);
+            var counters = new ConnectionPoolCounters<TDatabase, TPool>(connectionString, pool, classifyCatalog);
             // Copy on write: the sampler runs over all pools without a lock and without an enumerator this way.
-            ConnectionPoolCounters<TDatabase, TPoolPurpose>[] registered = [.. all, counters,];
+            ConnectionPoolCounters<TDatabase, TPool>[] registered = [.. all, counters,];
             Volatile.Write(ref all, registered);
             // The sizes only change here, so they are calculated here instead of every time they are requested.
             Volatile.Write(ref sizes, PoolSizes(registered));
@@ -67,7 +67,7 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPoolPurpose>(Func<string,
     /// <summary>
     /// All pools that have been used so far. Pools are only ever added, never removed.
     /// </summary>
-    public ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPoolPurpose>> All
+    public ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPool>> All
         => Volatile.Read(ref all);
 
     /// <summary>
@@ -75,30 +75,29 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPoolPurpose>(Func<string,
     /// this is the same array every time, so a caller can see with <see cref="object.ReferenceEquals"/> that nothing
     /// changed.
     /// </summary>
-    public ConnectionPoolSize<TDatabase, TPoolPurpose>[] Sizes
+    public ConnectionPoolSize<TDatabase, TPool>[] Sizes
         => Volatile.Read(ref sizes);
 
     /// <summary>
-    /// The size of the pools per database and purpose. Pools of different purposes are never summed: a full pool of
-    /// one purpose would then be cancelled out by a barely used pool of another. Within a purpose there usually is
-    /// exactly one pool per database; when there are more, both are real room and they add up, like the databases
-    /// that are not tracked separately and are taken together just as with the usage.
+    /// The size of the pools per database. Pools are never summed: a full pool of
+    /// would then be cancelled out by a barely used pool of the same database. 
     /// </summary>
-    public static ConnectionPoolSize<TDatabase, TPoolPurpose>[] PoolSizes(IEnumerable<ConnectionPoolCounters<TDatabase, TPoolPurpose>> pools)
+    public static ConnectionPoolSize<TDatabase, TPool>[] PoolSizes(IEnumerable<ConnectionPoolCounters<TDatabase, TPool>> counters
+    )
         => [
-            .. pools
-                .GroupBy(pool => (pool.Database, pool.Purpose))
-                .Select(group => new ConnectionPoolSize<TDatabase, TPoolPurpose>(group.Key.Database, group.Key.Purpose, group.Sum(pool => pool.MaxPoolSize)))
+            .. counters
+                .GroupBy(counter => (counter.Database, counter.Pool))
+                .Select(group => new ConnectionPoolSize<TDatabase, TPool>(group.Key.Database, group.Key.Pool, group.Sum(counter => counter.MaxPoolSize)))
                 .OrderBy(size => size.Database)
-                .ThenBy(size => size.Purpose),
+                .ThenBy(size => size.Pool),
         ];
 }
 
 /// <summary>
-/// The size of the pools of a database and purpose together; see
-/// <see cref="ConnectionPoolRegistry{TDatabase,TPoolPurpose}.PoolSizes"/>. Database null are the databases that are not
+/// The size of a pools of a database together; see
+/// <see cref="ConnectionPoolRegistry{TDatabase,TPool}.PoolSizes"/>. Database null are the databases that are not
 /// tracked separately.
 /// </summary>
-public sealed record ConnectionPoolSize<TDatabase, TPoolPurpose>(TDatabase? Database, TPoolPurpose Purpose, int MaxPoolSize)
+public sealed record ConnectionPoolSize<TDatabase, TPool>(TDatabase? Database, TPool Pool, int MaxSize)
     where TDatabase : struct, Enum
-    where TPoolPurpose : struct, Enum;
+    where TPool : struct, Enum;

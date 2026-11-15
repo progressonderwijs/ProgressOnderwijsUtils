@@ -17,7 +17,7 @@ public enum TestEndpoint
     Status = 4,
 }
 
-public enum TestPurpose
+public enum TestPool
 {
     ReadOnly = 1,
     ReadWrite = 2,
@@ -105,7 +105,7 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
 
 static class TestMetrics
 {
-    public static MetricsDescription<TestEndpoint, TestDatabase, TestPurpose> Description()
+    public static MetricsDescription<TestEndpoint, TestDatabase, TestPool> Description()
         => new() {
             SmallestInterval = 1,
             LargestInterval = 128,
@@ -116,9 +116,9 @@ static class TestMetrics
     /// <summary>
     /// A registry of its own per test, so that the pools of one test never show up in the samples of another.
     /// </summary>
-    public static ConnectionPoolRegistry<TestDatabase, TestPurpose> Registry()
+    public static ConnectionPoolRegistry<TestDatabase, TestPool> Registry()
         => new(TestDatabaseDuration.Classify);
 
-    public static MetricsCollector<TestEndpoint, TestDatabase, TestPurpose> Collector(TimeProvider clock)
+    public static MetricsCollector<TestEndpoint, TestDatabase, TestPool> Collector(TimeProvider clock)
         => new(Description(), Registry(), clock);
 }

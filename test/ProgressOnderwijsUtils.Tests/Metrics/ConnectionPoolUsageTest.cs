@@ -29,45 +29,44 @@ public sealed class ConnectionPoolUsageTest
             => now = now.AddSeconds(seconds);
     }
 
-    readonly ConnectionPoolRegistry<TestDatabase, TestPurpose> registry = TestMetrics.Registry();
+    readonly ConnectionPoolRegistry<TestDatabase, TestPool> registry = TestMetrics.Registry();
 
     /// <summary>
     /// Nothing is opened; the test operates the counters along the same way as the open events of SqlClient do.
     /// </summary>
-    ConnectionPoolCounters<TestDatabase, TestPurpose> Pool(string catalog, TestPurpose purpose)
-        => registry.For($"Data Source=nowhere;Initial Catalog={catalog};Application Name={purpose}", purpose);
+    ConnectionPoolCounters<TestDatabase, TestPool> Pool(string catalog, TestPool pool)
+        => registry.For($"Data Source=nowhere;Initial Catalog={catalog};Application Name={pool}", pool);
 
     static readonly SqlConnection unopened = new();
 
-    static void Open(ConnectionPoolCounters<TestDatabase, TestPurpose> pool)
+    static void Open(ConnectionPoolCounters<TestDatabase, TestPool> pool)
     {
         using var connection = new SqlConnection();
         pool.OpenStarted(connection);
         pool.StateChangeHandler(connection, new(ConnectionState.Closed, ConnectionState.Open));
     }
 
-    static void Close(ConnectionPoolCounters<TestDatabase, TestPurpose> pool)
+    static void Close(ConnectionPoolCounters<TestDatabase, TestPool> pool)
         => pool.StateChangeHandler(unopened, new(ConnectionState.Open, ConnectionState.Closed));
 
-    ConnectionPoolUsage<TestDatabase, TestPurpose> Usage(MutableClock clock, ConnectionPoolSlots<TestDatabase, TestPurpose> slots)
+    ConnectionPoolUsage<TestDatabase, TestPool> Usage(MutableClock clock, ConnectionPoolSlots<TestDatabase, TestPool> slots)
         => new(new(new SecondsSinceStart(clock), 64), slots, registry);
 
     /// <summary>
-    /// Every pool fills up on its own, so the pools of a database stay apart per purpose: a waiting caller can be
-    /// attributed to the pool that is full this way. Only pools with the same database and the same purpose coincide,
-    /// like the databases that are not tracked on the other slot. Of the gauges the highest sampled level counts, of
+    /// Every pool fills up on its own, so the pools of a database stay apart: a waiting caller can be
+    /// attributed to the pool that is full this way. Of the gauges the highest sampled level counts, of
     /// the opens the increase since the level from before the window.
     /// </summary>
     [Fact]
-    public void The_pools_of_a_database_are_kept_apart_per_purpose()
+    public void The_pools_of_a_database_are_kept_apart()
     {
         var clock = new MutableClock();
-        var slots = new ConnectionPoolSlots<TestDatabase, TestPurpose>(new TestDatabaseDuration());
+        var slots = new ConnectionPoolSlots<TestDatabase, TestPool>(new TestDatabaseDuration());
         var usage = Usage(clock, slots);
-        var alphaReadWrite = Pool("Alpha", TestPurpose.ReadWrite);
-        var alphaDebugLog = Pool("Alpha", TestPurpose.DebugLog);
-        var master = Pool("master", TestPurpose.Sysadmin);
-        var blob = Pool("Blob", TestPurpose.Sysadmin);
+        var alphaReadWrite = Pool("Alpha", TestPool.ReadWrite);
+        var alphaDebugLog = Pool("Alpha", TestPool.DebugLog);
+        var master = Pool("master", TestPool.Sysadmin);
+        var blob = Pool("Blob", TestPool.Sysadmin);
 
         // a starting level from just before the window, so that all opens below fall within the window
         usage.Measurement();
@@ -92,10 +91,10 @@ public sealed class ConnectionPoolUsageTest
         var lastSecond = clock.Second;
 
         var window = usage.Collect(firstSecond, lastSecond).AssertNotNull();
-        var readWrite = slots.SlotOf(TestDatabase.Alpha, TestPurpose.ReadWrite);
-        var debugLog = slots.SlotOf(TestDatabase.Alpha, TestPurpose.DebugLog);
-        var otherSysadmin = slots.SlotOf(null, TestPurpose.Sysadmin);
-        var betaReadWrite = slots.SlotOf(TestDatabase.Beta, TestPurpose.ReadWrite);
+        var readWrite = slots.SlotOf(TestDatabase.Alpha, TestPool.ReadWrite);
+        var debugLog = slots.SlotOf(TestDatabase.Alpha, TestPool.DebugLog);
+        var otherSysadmin = slots.SlotOf(null, TestPool.Sysadmin);
+        var betaReadWrite = slots.SlotOf(TestDatabase.Beta, TestPool.ReadWrite);
 
         PAssert.That(() => window.MaxUsedConnections[readWrite] == 2 && window.MaxPendingConnections[readWrite] == 1 && window.OpenedConnections[readWrite] == 2);
         PAssert.That(() => window.MaxUsedConnections[debugLog] == 1 && window.MaxPendingConnections[debugLog] == 0 && window.OpenedConnections[debugLog] == 1);
@@ -113,7 +112,7 @@ public sealed class ConnectionPoolUsageTest
     {
         var clock = new MutableClock();
         var usage = Usage(clock, new(new TestDatabaseDuration()));
-        _ = Pool("Gamma", TestPurpose.ReadOnly);
+        _ = Pool("Gamma", TestPool.ReadOnly);
 
         usage.Measurement();
         var sampled = clock.Second;
@@ -127,22 +126,22 @@ public sealed class ConnectionPoolUsageTest
 
     /// <summary>
     /// Sampling, collecting and storing all calculate through the same layout; every combination of database and
-    /// purpose therefore has to have exactly one slot of its own, and that slot has to point back to the same
-    /// database and the same purpose.
+    /// pool therefore has to have exactly one slot of its own, and that slot has to point back to the same
+    /// database and the same pool.
     /// </summary>
     [Fact]
-    public void Every_database_and_purpose_has_its_own_slot_that_points_back_to_it()
+    public void Every_database_and_pool_has_its_own_slot_that_points_back_to_it()
     {
         var databases = new TestDatabaseDuration();
-        var slots = new ConnectionPoolSlots<TestDatabase, TestPurpose>(databases);
+        var slots = new ConnectionPoolSlots<TestDatabase, TestPool>(databases);
 
         var combinations = (
             from databaseSlot in Enumerable.Range(0, databases.Values.Length)
-            from purpose in ConnectionPoolSlots<TestDatabase, TestPurpose>.Purposes
-            select (databaseSlot, purpose, slot: slots.SlotOf(databaseSlot, purpose))
+            from pool in ConnectionPoolSlots<TestDatabase, TestPool>.Pools
+            select (databaseSlot, pool, slot: slots.SlotOf(databaseSlot, pool))
         ).ToArray();
 
-        var everySlotPointsBack = combinations.All(o => slots.DatabaseSlotOf(o.slot) == o.databaseSlot && slots.PurposeOf(o.slot) == o.purpose);
+        var everySlotPointsBack = combinations.All(o => slots.DatabaseSlotOf(o.slot) == o.databaseSlot && slots.PoolOf(o.slot) == o.pool);
         var distinctSlots = combinations.Select(o => o.slot).Distinct().Count();
         PAssert.That(() => everySlotPointsBack);
         PAssert.That(() => distinctSlots == slots.Count && combinations.All(o => o.slot >= 0 && o.slot < slots.Count));

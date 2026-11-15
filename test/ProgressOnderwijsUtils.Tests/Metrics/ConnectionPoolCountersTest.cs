@@ -6,14 +6,14 @@ public sealed class ConnectionPoolCountersTest
 {
     static readonly string localConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
 
-    readonly ConnectionPoolRegistry<TestDatabase, TestPurpose> registry = TestMetrics.Registry();
+    readonly ConnectionPoolRegistry<TestDatabase, TestPool> registry = TestMetrics.Registry();
 
     /// <summary>
     /// The pools are only counted while a collector runs.
     /// </summary>
-    MetricsCollector<TestEndpoint, TestDatabase, TestPurpose> StartedCollector()
+    MetricsCollector<TestEndpoint, TestDatabase, TestPool> StartedCollector()
     {
-        var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPurpose>(TestMetrics.Description(), registry);
+        var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPool>(TestMetrics.Description(), registry);
         collector.Start(_ => { });
         return collector;
     }
@@ -57,7 +57,7 @@ public sealed class ConnectionPoolCountersTest
     {
         using var collector = StartedCollector();
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
 
         var first = Open(connectionString);
         PAssert.That(() => pool.InUse == 1 && pool.Pending == 0 && pool.Opened == 1);
@@ -75,7 +75,7 @@ public sealed class ConnectionPoolCountersTest
     }
 
     /// <summary>
-    /// Only registered pools are counted: the registry knows their purpose, and the opens of the rest of the process
+    /// Only registered pools are counted: the registry knows the pools and the opens of the rest of the process
     /// should not register pools of their own.
     /// </summary>
     [Fact]
@@ -98,7 +98,7 @@ public sealed class ConnectionPoolCountersTest
     {
         using var collector = StartedCollector();
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
 
         using var connection = Open(connectionString);
         connection.Close();
@@ -113,7 +113,7 @@ public sealed class ConnectionPoolCountersTest
     public void A_connection_that_is_opened_without_a_running_collector_is_opened_but_not_counted()
     {
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
         StartedCollector().Dispose();
 
         using var connection = Open(connectionString);
@@ -130,7 +130,7 @@ public sealed class ConnectionPoolCountersTest
     public void A_disposed_collector_no_longer_counts_next_to_its_successor()
     {
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
         StartedCollector().Dispose();
         using var collector = StartedCollector();
 
@@ -147,7 +147,7 @@ public sealed class ConnectionPoolCountersTest
     public void A_counted_connection_that_is_closed_after_the_collector_stopped_is_no_longer_in_use()
     {
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
         var collector = StartedCollector();
         var connection = Open(connectionString);
         collector.Dispose();
@@ -162,7 +162,7 @@ public sealed class ConnectionPoolCountersTest
     {
         using var collector = StartedCollector();
         var connectionString = new SqlConnectionStringBuilder(localConnectionString) { InitialCatalog = $"NoSuchDatabase{Guid.NewGuid():N}", ConnectTimeout = 15, Pooling = false, }.ConnectionString;
-        var pool = registry.For(connectionString, TestPurpose.ReadOnly);
+        var pool = registry.For(connectionString, TestPool.ReadOnly);
 
         _ = Assert.Throws<SqlException>(() => Open(connectionString));
 
@@ -172,7 +172,7 @@ public sealed class ConnectionPoolCountersTest
     [Fact]
     public void The_same_connection_string_shares_its_counters()
     {
-        var pool = UnopenedPool("Alpha", TestPurpose.ReadWrite);
+        var pool = UnopenedPool("Alpha", TestPool.ReadWrite);
         var all = registry.All.ToArray();
 
         PAssert.That(() => all.Single() == pool);
@@ -181,7 +181,7 @@ public sealed class ConnectionPoolCountersTest
     /// <summary>
     /// The counters of a pool that is never opened: only the connection string counts.
     /// </summary>
-    ConnectionPoolCounters<TestDatabase, TestPurpose> UnopenedPool(string catalog, TestPurpose purpose, int? maxPoolSize = null)
+    ConnectionPoolCounters<TestDatabase, TestPool> UnopenedPool(string catalog, TestPool pool, int? maxPoolSize = null)
     {
         var builder = new SqlConnectionStringBuilder {
             DataSource = "localhost",
@@ -193,78 +193,78 @@ public sealed class ConnectionPoolCountersTest
             builder.MaxPoolSize = size;
         }
 
-        var pool = registry.For(builder.ConnectionString, purpose);
-        PAssert.That(() => ReferenceEquals(pool, registry.For(builder.ConnectionString, purpose)));
-        return pool;
+        var counter = registry.For(builder.ConnectionString, pool);
+        PAssert.That(() => ReferenceEquals(counter, registry.For(builder.ConnectionString, pool)));
+        return counter;
     }
 
     [Fact]
-    public void A_pool_takes_its_size_and_database_from_the_connection_string_and_keeps_its_purpose()
+    public void A_pool_takes_its_size_and_database_from_the_connection_string_and_keeps_its_id()
     {
-        var pool = UnopenedPool("Beta", TestPurpose.ReadWrite, 30);
+        var pool = UnopenedPool("Beta", TestPool.ReadWrite, 30);
 
         PAssert.That(() => pool.MaxPoolSize == 30);
-        PAssert.That(() => pool.Purpose == TestPurpose.ReadWrite);
+        PAssert.That(() => pool.Pool == TestPool.ReadWrite);
         PAssert.That(() => pool.Catalog == "Beta" && pool.Database == TestDatabase.Beta);
     }
 
     [Fact]
     public void A_pool_without_a_size_gets_the_default_of_a_hundred()
     {
-        var pool = UnopenedPool("Alpha", TestPurpose.ReadWrite);
+        var pool = UnopenedPool("Alpha", TestPool.ReadWrite);
 
         PAssert.That(() => pool.MaxPoolSize == 100);
     }
 
     /// <summary>
-    /// A connection string belongs to exactly one purpose; another purpose means one of the places where it is built
-    /// is wrong, and its usage would then count for the wrong purpose.
+    /// A connection string belongs to exactly one pool; another pool means one of the places where it is built
+    /// is wrong, and its usage would then count for the wrong pool.
     /// </summary>
     [Fact]
-    public void The_same_connection_string_with_another_purpose_is_rejected()
+    public void The_same_connection_string_with_another_pool_is_rejected()
     {
         const string connectionString = "Data Source=localhost;Initial Catalog=Alpha;Integrated Security=True";
-        _ = registry.For(connectionString, TestPurpose.ReadOnly);
+        _ = registry.For(connectionString, TestPool.ReadOnly);
 
-        _ = Assert.Throws<InvalidOperationException>(() => registry.For(connectionString, TestPurpose.ReadWrite));
+        _ = Assert.Throws<InvalidOperationException>(() => registry.For(connectionString, TestPool.ReadWrite));
     }
 
     /// <summary>
     /// Summed together a full readwrite pool would be cancelled out by a practically empty debuglog pool.
     /// </summary>
     [Fact]
-    public void Pools_of_different_purposes_are_never_added_up()
+    public void Diufferent_pools_are_never_added_up()
     {
-        var sizes = ConnectionPoolRegistry<TestDatabase, TestPurpose>.PoolSizes([UnopenedPool("Alpha", TestPurpose.ReadWrite, 100), UnopenedPool("Alpha", TestPurpose.DebugLog, 10),]);
+        var sizes = ConnectionPoolRegistry<TestDatabase, TestPool>.PoolSizes([UnopenedPool("Alpha", TestPool.ReadWrite, 100), UnopenedPool("Alpha", TestPool.DebugLog, 10),]);
 
         PAssert.That(
             () => Enumerable.SequenceEqual(
                 sizes,
-                new ConnectionPoolSize<TestDatabase, TestPurpose>[] { new(TestDatabase.Alpha, TestPurpose.ReadWrite, 100), new(TestDatabase.Alpha, TestPurpose.DebugLog, 10), }
+                new ConnectionPoolSize<TestDatabase, TestPool>[] { new(TestDatabase.Alpha, TestPool.ReadWrite, 100), new(TestDatabase.Alpha, TestPool.DebugLog, 10), }
             )
         );
     }
 
     /// <summary>
-    /// Pools with the same database and the same purpose are both real room; the databases that are not tracked
+    /// Pools within the same database and are both real room; the databases that are not tracked
     /// coincide under an empty database, just as with the usage.
     /// </summary>
     [Fact]
-    public void Pools_of_the_same_database_and_purpose_are_added_up()
+    public void Pools_of_the_same_database_are_added_up()
     {
-        var sizes = ConnectionPoolRegistry<TestDatabase, TestPurpose>.PoolSizes(
+        var sizes = ConnectionPoolRegistry<TestDatabase, TestPool>.PoolSizes(
             [
-                UnopenedPool("Alpha", TestPurpose.Sysadmin, 100),
-                UnopenedPool("Alpha", TestPurpose.Sysadmin, 50),
-                UnopenedPool("master", TestPurpose.Sysadmin, 20),
-                UnopenedPool("Blob", TestPurpose.Sysadmin, 30),
+                UnopenedPool("Alpha", TestPool.Sysadmin, 100),
+                UnopenedPool("Alpha", TestPool.Sysadmin, 50),
+                UnopenedPool("master", TestPool.Sysadmin, 20),
+                UnopenedPool("Blob", TestPool.Sysadmin, 30),
             ]
         );
 
         PAssert.That(
             () => Enumerable.SequenceEqual(
                 sizes,
-                new ConnectionPoolSize<TestDatabase, TestPurpose>[] { new(null, TestPurpose.Sysadmin, 50), new(TestDatabase.Alpha, TestPurpose.Sysadmin, 150), }
+                new ConnectionPoolSize<TestDatabase, TestPool>[] { new(null, TestPool.Sysadmin, 50), new(TestDatabase.Alpha, TestPool.Sysadmin, 150), }
             )
         );
     }
@@ -279,11 +279,11 @@ public sealed class ConnectionPoolCountersTest
         var before = registry.Sizes;
         var reread = registry.Sizes;
 
-        _ = UnopenedPool("Gamma", TestPurpose.Sysadmin, 10);
+        _ = UnopenedPool("Gamma", TestPool.Sysadmin, 10);
         var after = registry.Sizes;
 
         PAssert.That(() => ReferenceEquals(before, reread));
         PAssert.That(() => !ReferenceEquals(before, after));
-        PAssert.That(() => after.Single() == new ConnectionPoolSize<TestDatabase, TestPurpose>(TestDatabase.Gamma, TestPurpose.Sysadmin, 10));
+        PAssert.That(() => after.Single() == new ConnectionPoolSize<TestDatabase, TestPool>(TestDatabase.Gamma, TestPool.Sysadmin, 10));
     }
 }

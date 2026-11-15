@@ -12,8 +12,8 @@ namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
 public class MetricsSamplerBenchmarks
 {
     ThreadPoolUsage? threadPoolUsage;
-    ConnectionPoolUsage<BenchmarkDatabase, BenchmarkPoolPurpose>? connectionPoolUsage;
-    ConnectionPoolCounters<BenchmarkDatabase, BenchmarkPoolPurpose>[]? pools;
+    ConnectionPoolUsage<BenchmarkDatabase, BenchmarkPool>? connectionPoolUsage;
+    ConnectionPoolCounters<BenchmarkDatabase, BenchmarkPool>[]? pools;
 
     [GlobalSetup]
     public void Setup()
@@ -21,12 +21,12 @@ public class MetricsSamplerBenchmarks
         var registry = BenchmarkMetrics.Registry();
         threadPoolUsage = new(new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity));
         connectionPoolUsage = new(new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity), new(new BenchmarkDatabaseDuration()), registry);
-        (string ConnectionString, BenchmarkPoolPurpose Purpose)[] connectionStrings = [
+        (string connectionString, BenchmarkPool pool)[] connectionStrings = [
             .. BenchmarkMetrics.PoolsPerDatabase(),
-            ("Initial Catalog=master", BenchmarkPoolPurpose.Sysadmin),
-            ("Initial Catalog=BenchBlob", BenchmarkPoolPurpose.Sysadmin),
+            ("Initial Catalog=master", BenchmarkPool.Sysadmin),
+            ("Initial Catalog=BenchBlob", BenchmarkPool.Sysadmin),
         ];
-        pools = connectionStrings.Select(o => registry.For(o.ConnectionString, o.Purpose)).ToArray();
+        pools = connectionStrings.Select(o => registry.For(o.connectionString, o.pool)).ToArray();
     }
 
     [Benchmark]

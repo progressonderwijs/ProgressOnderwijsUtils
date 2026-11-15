@@ -2,12 +2,12 @@ using System.Numerics;
 
 namespace ProgressOnderwijsUtils.Metrics;
 
-public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
+public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     where TEndpoint : struct, Enum
     where TDatabase : struct, Enum
-    where TPoolPurpose : struct, Enum
+    where TPool : struct, Enum
 {
-    public required MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; init; }
+    public required MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; init; }
 
     /// <summary>
     /// The last second included in this collection, on the collector's own timeline; never the second that
@@ -59,10 +59,10 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
     public required int? LockContentions { get; init; }
 
     /// <summary>
-    /// The usage of the connection pools over this window, per database and purpose (the slots of
-    /// <see cref="MetricsDescription{TEndpoint,TDatabase,TPoolPurpose}.ConnectionPools"/>), or null when no sample was
+    /// The usage of the connection pools over this window, per database or per pool (the slots of
+    /// <see cref="MetricsDescription{TEndpoint,TDatabase,TPool}.ConnectionPools"/>), or null when no sample was
     /// taken in these seconds. The three come from the same sample as the thread pool, so all three are filled or all
-    /// three are null. Use <see cref="ConnectionCount{T}"/> to sum them per database, per purpose or all together.
+    /// three are null. Use <see cref="ConnectionCount{T}"/> to sum them per database, per pool or all together.
     /// <see cref="MaxUsedConnections"/> and <see cref="MaxPendingConnections"/> are the highest levels;
     /// <see cref="OpenedConnections"/> is the increase within the window, so divide that by
     /// <see cref="SecondsCovered"/> for a rate per second.
@@ -76,14 +76,14 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
     public required int[]? OpenedConnections { get; init; }
 
     /// <summary>
-    /// A connection level of a database and purpose, or summed over all databases and/or all purposes; null when no
+    /// A connection level of a database and pool, or summed over all databases and/or all pools; null when no
     /// sample was taken in this window. For the peaks a sum is an upper bound, because not every pool peaks at the
     /// same moment.
     /// </summary>
     /// <param name="perPoolSlot">One of <see cref="MaxUsedConnections"/>, <see cref="MaxPendingConnections"/> or <see cref="OpenedConnections"/>.</param>
     /// <param name="databaseSlot">The database slot, or null for all databases.</param>
-    /// <param name="purpose">The purpose, or null for all purposes.</param>
-    public int? ConnectionCount<T>(T[]? perPoolSlot, int? databaseSlot, TPoolPurpose? purpose)
+    /// <param name="pool">The pool, or null for all pools.</param>
+    public int? ConnectionCount<T>(T[]? perPoolSlot, int? databaseSlot, TPool? pool)
         where T : struct, INumber<T>
     {
         if (perPoolSlot is null) {
@@ -94,7 +94,7 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
         var total = 0;
         for (var slot = 0; slot < perPoolSlot.Length; slot++) {
             if ((databaseSlot is null || pools.DatabaseSlotOf(slot) == databaseSlot)
-                && (purpose is not { } requested || EqualityComparer<TPoolPurpose>.Default.Equals(pools.PurposeOf(slot), requested))) {
+                && (pool is not { } requested || EqualityComparer<TPool>.Default.Equals(pools.PoolOf(slot), requested))) {
                 total += int.CreateChecked(perPoolSlot[slot]);
             }
         }

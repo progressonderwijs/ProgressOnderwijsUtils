@@ -4,27 +4,27 @@ using System.Data.Common;
 namespace ProgressOnderwijsUtils.Metrics;
 
 /// <summary>
-/// The usage of a connection pool, counted while a <see cref="MetricsCollector{TEndpoint,TDatabase,TPoolPurpose}"/> runs: from
+/// The usage of a connection pool, counted while a <see cref="MetricsCollector{TEndpoint,TDatabase,TPool}"/> runs: from
 /// the open events of SqlClient and the StateChange events of the connections.
 /// SqlClient itself publishes nothing usable about this: only EventCounters over all pools of the process together,
 /// and no count of who is waiting for a connection. SqlClient keeps a pool of its own per connection string, so
-/// these counters do too; the collector sums them per database and purpose.
+/// these counters do too; the collector sums them per database and pool.
 /// All levels are absolute, just like those of the thread pool, so that the sampler can read them at any moment.
 /// </summary>
-public sealed class ConnectionPoolCounters<TDatabase, TPoolPurpose>
+public sealed class ConnectionPoolCounters<TDatabase, TPool>
     where TDatabase : struct, Enum
-    where TPoolPurpose : struct, Enum
+    where TPool : struct, Enum
 {
     int inUse;
     int pending;
     long opened;
 
-    internal ConnectionPoolCounters(string connectionString, TPoolPurpose purpose, Func<string, TDatabase?> classifyCatalog)
+    internal ConnectionPoolCounters(string connectionString, TPool pool, Func<string, TDatabase?> classifyCatalog)
     {
         var builder = new SqlConnectionStringBuilder(connectionString);
         Catalog = builder.InitialCatalog;
         Database = classifyCatalog(Catalog);
-        Purpose = purpose;
+        Pool = pool;
         MaxPoolSize = builder.MaxPoolSize;
         StateChangeHandler = OnStateChange;
     }
@@ -32,7 +32,7 @@ public sealed class ConnectionPoolCounters<TDatabase, TPoolPurpose>
     /// <summary>
     /// What this pool is for.
     /// </summary>
-    public TPoolPurpose Purpose { get; }
+    public TPool Pool { get; }
 
     /// <summary>
     /// How many connections this pool has open at most at the same time (Max Pool Size from the connection string).

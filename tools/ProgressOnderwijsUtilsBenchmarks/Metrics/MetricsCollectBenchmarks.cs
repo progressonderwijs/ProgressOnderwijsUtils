@@ -20,7 +20,7 @@ public class MetricsCollectBenchmarks
     ActiveRequests activeRequests = null!;
     DurationHistogramRing<BenchmarkEndpoint> requestDuration = null!;
     ThreadPoolUsage threadPoolUsage = null!;
-    ConnectionPoolUsage<BenchmarkDatabase, BenchmarkPoolPurpose> connectionPoolUsage = null!;
+    ConnectionPoolUsage<BenchmarkDatabase, BenchmarkPool> connectionPoolUsage = null!;
     // ReSharper restore NullableWarningSuppressionIsUsed
     long firstSecond;
     long lastSecond;
@@ -44,7 +44,7 @@ public class MetricsCollectBenchmarks
             : null;
         KeyValuePair<string, object?>[] tags = [new("http.request.method", "GET"), new("http.route", trackedRoute), new("http.response.status_code", 200),];
         var pools = BenchmarkMetrics.PoolsPerDatabase()
-            .Select(pool => registry.For(pool.ConnectionString, pool.Purpose))
+            .Select(dbPool => registry.For(dbPool.connectionString, dbPool.pool))
             .ToArray();
 
         // Well over the length of the ring in seconds, so that every slot is filled and has been reused once already.
