@@ -73,7 +73,7 @@ public sealed class MetricsCollectorTest
         /// <summary>
         /// The real time at which that second of the timeline ended, as long as the timestamp runs in step.
         /// </summary>
-        public DateTime EndUtcOf(long second)
+        public static DateTime EndUtcOf(long second)
             => start.UtcDateTime.AddSeconds(second + 1);
 
         public void Advance(int seconds)
@@ -351,7 +351,7 @@ public sealed class MetricsCollectorTest
 
         var collection = harness.Collector.CollectRange(firstSecond + 1, firstSecond + 1);
 
-        PAssert.That(() => collection.WindowEndUtc == harness.Clock.EndUtcOf(firstSecond + 1));
+        PAssert.That(() => collection.WindowEndUtc == MutableClock.EndUtcOf(firstSecond + 1));
         PAssert.That(() => collection.SecondsCovered == 1);
         PAssert.That(() => collection.RequestDurationCounts(false).Sum() == 2);
     }
@@ -442,7 +442,7 @@ public sealed class MetricsCollectorTest
 
         // The window reaches back no further than the time that has elapsed since the start.
         PAssert.That(() => collection.SecondsCovered == 4);
-        PAssert.That(() => collection.WindowEndUtc == harness.Clock.EndUtcOf(harness.Clock.Second - 2));
+        PAssert.That(() => collection.WindowEndUtc == MutableClock.EndUtcOf(harness.Clock.Second - 2));
     }
 
     [Fact]
@@ -592,7 +592,7 @@ public sealed class MetricsCollectorTest
         // Everything up to and including the last completed second is drained, so the quiet seconds
         // between the last measurement and now are included too. The cursor points to a second from
         // before the start, so the window begins at the first second we could actually see.
-        PAssert.That(() => first.WindowEndUtc == harness.Clock.EndUtcOf(harness.Clock.Second - 2));
+        PAssert.That(() => first.WindowEndUtc == MutableClock.EndUtcOf(harness.Clock.Second - 2));
         PAssert.That(() => first.SecondsCovered == 3);
         PAssert.That(() => first.TotalRequestDurationCount(false) == 3);
 
@@ -748,11 +748,11 @@ public sealed class MetricsCollectorTest
         clock.TimestampAhead = TimeSpan.FromMilliseconds(-2500);
         var lagging = collector.Collect(1);
 
-        PAssert.That(() => inStep.WindowEndUtc == clock.EndUtcOf(inStep.LastSecond));
+        PAssert.That(() => inStep.WindowEndUtc == MutableClock.EndUtcOf(inStep.LastSecond));
         // The timeline has counted two and a half seconds fewer, so its last settled second is an earlier one, which
         // ended two and a half seconds later in real time than it would have in step.
         PAssert.That(() => lagging.LastSecond == inStep.LastSecond - 3);
-        PAssert.That(() => lagging.WindowEndUtc == clock.EndUtcOf(lagging.LastSecond).AddMilliseconds(2500));
+        PAssert.That(() => lagging.WindowEndUtc == MutableClock.EndUtcOf(lagging.LastSecond).AddMilliseconds(2500));
     }
 
     /// <summary>

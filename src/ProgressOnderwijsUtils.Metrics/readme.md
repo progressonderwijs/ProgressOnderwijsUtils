@@ -9,3 +9,6 @@ seconds can be collected at any time.
 
 The application supplies the dimensions (which database and which endpoint a measurement belongs to) and decides what
 to do with a collection; this package contains no persistence.
+
+Register it at startup with `services.AddProgressOnderwijsMetrics(collector, samplingFailed)`: this enables the
+OpenTelemetry SqlClient instrumentation and starts the collector before the web server accepts its first request.

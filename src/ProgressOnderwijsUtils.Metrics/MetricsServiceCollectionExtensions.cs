@@ -1,0 +1,67 @@
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Metrics;
+
+namespace ProgressOnderwijsUtils.Metrics;
+
+public static class MetricsServiceCollectionExtensions
+{
+    extension(IServiceCollection services)
+    {
+        /// <summary>
+        /// Enables the OpenTelemetry SqlClient instrumentation, whose <c>db.client.operation.duration</c> the collector
+        /// listens to, starts the <paramref name="collector"/> when the host starts and disposes it when the host has
+        /// stopped.
+        /// </summary>
+        /// <param name="collector">Typically a static instance, so that what it collected stays readable outside of the dependency injection container.</param>
+        /// <param name="samplingFailed">See <see cref="MetricsCollector{TEndpoint,TDatabase,TPoolPurpose}.Start"/>.</param>
+        public IServiceCollection AddProgressOnderwijsMetrics<TEndpoint, TDatabase, TPoolPurpose>(
+            MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> collector,
+            Action<Exception> samplingFailed
+        )
+            where TEndpoint : struct, Enum
+            where TDatabase : struct, Enum
+            where TPoolPurpose : struct, Enum
+        {
+            _ = services.AddOpenTelemetry().WithMetrics(builder => builder.AddSqlClientInstrumentation());
+            _ = services.AddHostedService(_ => new MetricsCollectorLifetime(() => collector.Start(samplingFailed), collector.Dispose));
+            return services;
+        }
+    }
+
+    /// <summary>
+    /// Starts in <see cref="IHostedLifecycleService.StartingAsync"/>, which the host calls on all hosted services
+    /// before any of them gets its StartAsync, so also before the web server starts accepting requests. Starting any
+    /// later misses the active_requests measurements of the first requests, and the running total stays skewed for
+    /// good.
+    /// Stops in <see cref="IHostedLifecycleService.StoppedAsync"/>, after the web server and all other hosted services
+    /// have stopped, so that the requests still running during shutdown are measured as well.
+    /// </summary>
+    sealed class MetricsCollectorLifetime(Action start, Action stop) : IHostedLifecycleService
+    {
+        public Task StartingAsync(CancellationToken cancellationToken)
+        {
+            start();
+            return Task.CompletedTask;
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task StartedAsync(CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task StoppingAsync(CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task StopAsync(CancellationToken cancellationToken)
+            => Task.CompletedTask;
+
+        public Task StoppedAsync(CancellationToken cancellationToken)
+        {
+            stop();
+            return Task.CompletedTask;
+        }
+    }
+}
