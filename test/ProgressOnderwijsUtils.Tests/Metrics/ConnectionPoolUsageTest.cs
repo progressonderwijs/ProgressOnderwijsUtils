@@ -4,15 +4,26 @@ namespace ProgressOnderwijsUtils.Tests.Metrics;
 
 public sealed class ConnectionPoolUsageTest
 {
+    /// <summary>
+    /// A clock whose timestamp starts at 0 and only moves when the test advances it, so that the second of a ring
+    /// created before the first advance is <see cref="Second"/>.
+    /// </summary>
     sealed class MutableClock : TimeProvider
     {
-        DateTimeOffset now = DateTimeOffset.UnixEpoch.AddDays(20_000);
+        static readonly DateTimeOffset start = DateTimeOffset.UnixEpoch.AddDays(20_000);
+        DateTimeOffset now = start;
 
         public override DateTimeOffset GetUtcNow()
             => now;
 
-        public long UnixSeconds
-            => now.ToUnixTimeSeconds();
+        public override long GetTimestamp()
+            => (now - start).Ticks;
+
+        public override long TimestampFrequency
+            => TimeSpan.TicksPerSecond;
+
+        public long Second
+            => (now - start).Ticks / TimeSpan.TicksPerSecond;
 
         public void Advance(int seconds)
             => now = now.AddSeconds(seconds);
@@ -37,7 +48,7 @@ public sealed class ConnectionPoolUsageTest
         => pool.StateChangeHandler(pool, new(ConnectionState.Open, ConnectionState.Closed));
 
     ConnectionPoolUsage<TestDatabase, TestPurpose> Usage(MutableClock clock, ConnectionPoolSlots<TestDatabase, TestPurpose> slots)
-        => new(new(SecondsClock.Following(clock), 64), slots, registry);
+        => new(new(new SecondsSinceStart(clock), 64), slots, registry);
 
     /// <summary>
     /// Every pool fills up on its own, so the pools of a database stay apart per purpose: a waiting caller can be
@@ -59,7 +70,7 @@ public sealed class ConnectionPoolUsageTest
         // a starting level from just before the window, so that all opens below fall within the window
         usage.Measurement();
         clock.Advance(1);
-        var firstSecond = clock.UnixSeconds;
+        var firstSecond = clock.Second;
 
         Open(alphaReadWrite);
         Open(alphaReadWrite);
@@ -74,7 +85,7 @@ public sealed class ConnectionPoolUsageTest
         clock.Advance(1);
         Close(alphaReadWrite);
         usage.Measurement();
-        var lastSecond = clock.UnixSeconds;
+        var lastSecond = clock.Second;
 
         var window = usage.Collect(firstSecond, lastSecond).AssertNotNull();
         var readWrite = slots.SlotOf(TestDatabase.Alpha, TestPurpose.ReadWrite);
@@ -101,9 +112,9 @@ public sealed class ConnectionPoolUsageTest
         _ = Pool("Gamma", TestPurpose.ReadOnly);
 
         usage.Measurement();
-        var sampled = clock.UnixSeconds;
+        var sampled = clock.Second;
         clock.Advance(1);
-        var unsampled = clock.UnixSeconds;
+        var unsampled = clock.Second;
 
         var window = usage.Collect(sampled, sampled).AssertNotNull();
         PAssert.That(() => window.MaxUsedConnections.All(used => used == 0) && window.OpenedConnections.All(opened => opened == 0));

@@ -49,18 +49,21 @@ public class MetricsCollectorBenchmarks
         var ringLength = BenchmarkMetrics.RingCapacity;
 
         var frozen = new FrozenClock();
-        steadyRing = new(SecondsClock.Following(frozen), ringLength);
-        steadyActiveRequests = new(new(SecondsClock.Following(frozen), ringLength));
-        steadyRequestDuration = new(new(SecondsClock.Following(frozen), ringLength), description.RequestDurationHistogram);
+        var steady = new SecondsSinceStart(frozen);
+        steadyRing = new(steady, ringLength);
+        steadyActiveRequests = new(new(steady, ringLength));
+        steadyRequestDuration = new(new(steady, ringLength), description.RequestDurationHistogram);
         // Accelerated but real time, so that the reset path is hit regularly without the clock itself touching
         // shared state and clouding the measurement.
         var scaled = new ScaledClock(1000);
-        rollingActiveRequests = new(new(SecondsClock.Following(scaled), ringLength));
-        rollingRequestDuration = new(new(SecondsClock.Following(scaled), ringLength), description.RequestDurationHistogram);
-        // The clock of production: rotation once per second and including the cost of reading the tick counter, so
+        var rolling = new SecondsSinceStart(scaled);
+        rollingActiveRequests = new(new(rolling, ringLength));
+        rollingRequestDuration = new(new(rolling, ringLength), description.RequestDurationHistogram);
+        // The clock of production: rotation once per second and including the cost of reading the timestamp, so
         // that this benchmark shows the real overhead per request.
-        systemActiveRequests = new(new(SecondsClock.Ticking(TimeProvider.System), ringLength));
-        systemRequestDuration = new(new(SecondsClock.Ticking(TimeProvider.System), ringLength), description.RequestDurationHistogram);
+        var system = new SecondsSinceStart(TimeProvider.System);
+        systemActiveRequests = new(new(system, ringLength));
+        systemRequestDuration = new(new(system, ringLength), description.RequestDurationHistogram);
         // A tracked route, so that the measurement also includes looking up the number of the route.
         var trackedRoute = description.RequestDurationHistogram.Values[1] is { } trackedEndpoint
             ? BenchmarkEndpointLookup.EndpointOf(trackedEndpoint)?.Route
@@ -234,10 +237,8 @@ public class MetricsCollectorBenchmarks
     /// </summary>
     sealed class FrozenClock : TimeProvider
     {
-        readonly DateTimeOffset now = DateTimeOffset.UnixEpoch.AddDays(20000);
-
-        public override DateTimeOffset GetUtcNow()
-            => now;
+        public override long GetTimestamp()
+            => 0;
     }
 
     /// <summary>
@@ -246,10 +247,7 @@ public class MetricsCollectorBenchmarks
     /// </summary>
     sealed class ScaledClock(long secondsPerRealSecond) : TimeProvider
     {
-        readonly DateTimeOffset start = DateTimeOffset.UnixEpoch.AddDays(20000);
-        readonly long startTimestamp = Stopwatch.GetTimestamp();
-
-        public override DateTimeOffset GetUtcNow()
-            => start.AddSeconds((Stopwatch.GetTimestamp() - startTimestamp) * secondsPerRealSecond / (double)Stopwatch.Frequency);
+        public override long GetTimestamp()
+            => Stopwatch.GetTimestamp() * secondsPerRealSecond;
     }
 }

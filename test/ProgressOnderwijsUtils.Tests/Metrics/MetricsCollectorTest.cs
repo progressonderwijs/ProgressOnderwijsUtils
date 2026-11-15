@@ -40,18 +40,41 @@ static class MetricsCollectionTestExtensions
 public sealed class MetricsCollectorTest
 {
     /// <summary>
-    /// The collector derives its division into seconds from the clock, so with a clock that we set to a
-    /// whole second ourselves, all measurements predictably land in the slot we intend.
+    /// The collector derives its division into seconds from the timestamp of the clock, so with a clock that we move
+    /// by whole seconds ourselves, all measurements predictably land in the slot we intend. The timestamp starts at 0
+    /// and runs in step with real time, unless a test lets it run ahead or lag with <see cref="TimestampAhead"/>.
     /// </summary>
     sealed class MutableClock : TimeProvider
     {
-        DateTimeOffset now = DateTimeOffset.UnixEpoch.AddDays(20_000);
+        static readonly DateTimeOffset start = DateTimeOffset.UnixEpoch.AddDays(20_000);
+        DateTimeOffset now = start;
 
         public override DateTimeOffset GetUtcNow()
             => now;
 
-        public long UnixSeconds
-            => now.ToUnixTimeSeconds();
+        public override long GetTimestamp()
+            => (now - start + TimestampAhead).Ticks;
+
+        public override long TimestampFrequency
+            => TimeSpan.TicksPerSecond;
+
+        /// <summary>
+        /// How far the timestamp runs ahead of real time; negative when it lags, as a drifting counter does over time.
+        /// </summary>
+        public TimeSpan TimestampAhead { get; set; }
+
+        /// <summary>
+        /// The current second of a timeline that was started before this clock was first advanced, as long as the
+        /// timestamp runs in step.
+        /// </summary>
+        public long Second
+            => (now - start).Ticks / TimeSpan.TicksPerSecond;
+
+        /// <summary>
+        /// The real time at which that second of the timeline ended, as long as the timestamp runs in step.
+        /// </summary>
+        public DateTime EndUtcOf(long second)
+            => start.UtcDateTime.AddSeconds(second + 1);
 
         public void Advance(int seconds)
             => now = now.AddSeconds(seconds);
@@ -316,7 +339,7 @@ public sealed class MetricsCollectorTest
     public void Collecting_a_range_returns_exactly_the_requested_seconds()
     {
         using var harness = new Harness();
-        var firstSecond = harness.Clock.UnixSeconds;
+        var firstSecond = harness.Clock.Second;
 
         harness.Request(0.001);
         harness.Clock.Advance(1);
@@ -328,7 +351,7 @@ public sealed class MetricsCollectorTest
 
         var collection = harness.Collector.CollectRange(firstSecond + 1, firstSecond + 1);
 
-        PAssert.That(() => collection.UnixTimeSeconds == firstSecond + 1);
+        PAssert.That(() => collection.WindowEndUtc == harness.Clock.EndUtcOf(firstSecond + 1));
         PAssert.That(() => collection.SecondsCovered == 1);
         PAssert.That(() => collection.RequestDurationCounts(false).Sum() == 2);
     }
@@ -419,7 +442,7 @@ public sealed class MetricsCollectorTest
 
         // The window reaches back no further than the time that has elapsed since the start.
         PAssert.That(() => collection.SecondsCovered == 4);
-        PAssert.That(() => collection.UnixTimeSeconds == harness.Clock.UnixSeconds - 2);
+        PAssert.That(() => collection.WindowEndUtc == harness.Clock.EndUtcOf(harness.Clock.Second - 2));
     }
 
     [Fact]
@@ -569,7 +592,7 @@ public sealed class MetricsCollectorTest
         // Everything up to and including the last completed second is drained, so the quiet seconds
         // between the last measurement and now are included too. The cursor points to a second from
         // before the start, so the window begins at the first second we could actually see.
-        PAssert.That(() => first.UnixTimeSeconds == harness.Clock.UnixSeconds - 2);
+        PAssert.That(() => first.WindowEndUtc == harness.Clock.EndUtcOf(harness.Clock.Second - 2));
         PAssert.That(() => first.SecondsCovered == 3);
         PAssert.That(() => first.TotalRequestDurationCount(false) == 3);
 
@@ -613,18 +636,18 @@ public sealed class MetricsCollectorTest
     public void A_slot_that_is_being_cleared_no_longer_holds_its_previous_second()
     {
         var clock = new MutableClock();
-        var ring = new SecondsRingBuffer(SecondsClock.Following(clock), 64);
+        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
 
         var claimed = ring.TryEnterSlot(null, out _);
         PAssert.That(() => claimed);
 
-        var previousSecond = clock.UnixSeconds;
+        var previousSecond = clock.Second;
         var index = ring.IndexOf(previousSecond);
         PAssert.That(() => ring.HoldsSecond(previousSecond, index));
 
         // Exactly one lap further, so the same index is reused for a new second.
         clock.Advance(64);
-        var currentSecond = clock.UnixSeconds;
+        var currentSecond = clock.Second;
 
         var holdsPreviousDuringReset = true;
         var entered = ring.TryEnterSlot(_ => holdsPreviousDuringReset = ring.HoldsSecond(previousSecond, index), out var resetIndex);
@@ -640,7 +663,7 @@ public sealed class MetricsCollectorTest
 
     [Fact]
     public void A_ring_length_that_is_not_a_power_of_two_is_rejected()
-        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(SecondsClock.Following(new MutableClock()), 60));
+        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 60));
 
     /// <summary>
     /// Collecting skips the most recent seconds, so the largest window starts that many seconds before
@@ -676,7 +699,7 @@ public sealed class MetricsCollectorTest
         var clock = new MutableClock();
         using var collector = TestMetrics.Collector(clock);
         var largestInterval = collector.Description.LargestInterval;
-        var ring = new SampledRing(new(SecondsClock.Following(clock), MetricsCollector.RingCapacity), 1, 1, 1);
+        var ring = new SampledRing(new(new SecondsSinceStart(clock), MetricsCollector.RingCapacity), 1, 1, 1);
 
         // The counter goes up by one every second, for longer than the ring is long.
         for (var count = 1; count <= MetricsCollector.RingCapacity * 2; count++) {
@@ -684,82 +707,73 @@ public sealed class MetricsCollectorTest
             ring.Record([0L,], [count,]);
         }
 
-        var lastSecond = clock.UnixSeconds - MetricsCollector.DefaultSettleSeconds;
+        var lastSecond = clock.Second - MetricsCollector.DefaultSettleSeconds;
         var window = ring.Collect(lastSecond - largestInterval + 1, lastSecond).AssertNotNull();
 
         PAssert.That(() => window.CounterIncreases[0] == largestInterval);
     }
 
     /// <summary>
-    /// A timeline for the rings that lags a configurable number of milliseconds behind real time, as
-    /// the tick counter does over time.
+    /// Whatever the timestamp of the clock is, second 0 begins at the start of the collector, so the first window
+    /// counts that second completely.
     /// </summary>
-    sealed class LaggingClock(MutableClock wallClock) : SecondsClock
-    {
-        public long BehindMilliseconds { get; set; }
-
-        public override long Milliseconds
-            => wallClock.GetUtcNow().ToUnixTimeMilliseconds() - BehindMilliseconds;
-    }
-
     [Fact]
-    public void A_ticking_clock_starts_at_the_real_time()
+    public void The_timeline_starts_at_second_0_when_the_collector_starts()
     {
-        var wallClock = new MutableClock();
+        var clock = new MutableClock();
+        clock.Advance(100);
+        var startedUtc = clock.GetUtcNow().UtcDateTime;
+        using var collector = TestMetrics.Collector(clock);
+        clock.Advance(5);
 
-        var ticking = SecondsClock.Ticking(wallClock);
+        var collection = collector.Collect(60);
 
-        // The tick counter simply keeps running during the test, but not for whole seconds.
-        var ahead = ticking.Second - wallClock.UnixSeconds;
-        PAssert.That(() => ahead == 0 || ahead == 1);
+        PAssert.That(() => collection.LastSecond == MetricsCollector.FirstObservableSecond + 5 - MetricsCollector.DefaultSettleSeconds);
+        PAssert.That(() => collection.SecondsCovered == collection.LastSecond - MetricsCollector.FirstObservableSecond + 1);
+        PAssert.That(() => collection.WindowEndUtc == startedUtc.AddSeconds(collection.LastSecond + 1));
     }
 
     /// <summary>
-    /// The rings count on a timeline of their own that drifts away from real time. A collection follows that
-    /// timeline for its seconds, but reports the real time of its last second, so that what is stored and
-    /// shown stays correct.
+    /// The timeline drifts away from real time. A collection follows the timeline for its seconds, but reports the
+    /// real time at which its window ended, to the millisecond.
     /// </summary>
     [Fact]
-    public void A_collection_reports_the_real_time_of_its_last_second_when_the_ring_timeline_lags()
+    public void A_window_ends_at_the_real_time_its_last_second_ended_when_the_timeline_lags()
     {
-        var wallClock = new MutableClock();
-        var secondsClock = new LaggingClock(wallClock);
-        using var collector = new MetricsCollector(TestMetrics.Description(), TestMetrics.Registry(), wallClock, secondsClock);
-        wallClock.Advance(10);
+        var clock = new MutableClock();
+        using var collector = TestMetrics.Collector(clock);
+        clock.Advance(10);
 
         var inStep = collector.Collect(1);
-        PAssert.That(() => inStep.UnixTimeSeconds == inStep.LastSecond);
-
-        secondsClock.BehindMilliseconds = 3000;
+        clock.TimestampAhead = TimeSpan.FromMilliseconds(-2500);
         var lagging = collector.Collect(1);
 
-        PAssert.That(() => lagging.UnixTimeSeconds == wallClock.UnixSeconds - MetricsCollector.DefaultSettleSeconds);
-        PAssert.That(() => lagging.LastSecond == lagging.UnixTimeSeconds - 3);
+        PAssert.That(() => inStep.WindowEndUtc == clock.EndUtcOf(inStep.LastSecond));
+        // The timeline has counted two and a half seconds fewer, so its last settled second is an earlier one, which
+        // ended two and a half seconds later in real time than it would have in step.
+        PAssert.That(() => lagging.LastSecond == inStep.LastSecond - 3);
+        PAssert.That(() => lagging.WindowEndUtc == clock.EndUtcOf(lagging.LastSecond).AddMilliseconds(2500));
     }
 
     /// <summary>
-    /// The conversion only shifts once the deviation from its current level is a full second. If it rounded at
-    /// the half second, the reported time would jump back and forth for as long as the deviation hovers there.
+    /// Two collections that follow each other on the timeline also follow each other in real time, apart by exactly
+    /// the drift of the timeline in between. Rounding to whole seconds would instead let them overlap or leave a gap
+    /// of a whole second.
     /// </summary>
     [Fact]
-    public void The_real_time_only_shifts_once_the_ring_timeline_is_a_full_second_off()
+    public void Consecutive_windows_are_apart_in_real_time_by_exactly_the_drift_in_between()
     {
-        var wallClock = new MutableClock();
-        var secondsClock = new LaggingClock(wallClock);
-        using var collector = new MetricsCollector(TestMetrics.Description(), TestMetrics.Registry(), wallClock, secondsClock);
-        wallClock.Advance(10);
+        var clock = new MutableClock();
+        using var collector = TestMetrics.Collector(clock);
+        clock.Advance(20);
+        var first = collector.CollectAfter(-1);
 
-        secondsClock.BehindMilliseconds = 900;
-        var almostASecond = collector.Collect(1);
-        PAssert.That(() => almostASecond.UnixTimeSeconds == almostASecond.LastSecond);
+        clock.Advance(20);
+        clock.TimestampAhead = TimeSpan.FromMilliseconds(1);
+        var second = collector.CollectAfter(first.LastSecond);
 
-        secondsClock.BehindMilliseconds = 1000;
-        var aFullSecond = collector.Collect(1);
-        PAssert.That(() => aFullSecond.UnixTimeSeconds == aFullSecond.LastSecond + 1);
-
-        secondsClock.BehindMilliseconds = 600;
-        var backToHalfway = collector.Collect(1);
-        PAssert.That(() => backToHalfway.UnixTimeSeconds == backToHalfway.LastSecond + 1);
+        var secondStartUtc = second.WindowEndUtc.AddSeconds(-second.SecondsCovered);
+        PAssert.That(() => secondStartUtc == first.WindowEndUtc.AddMilliseconds(-1));
     }
 
     /// <summary>
@@ -797,13 +811,13 @@ public sealed class MetricsCollectorTest
     public void A_sampled_window_reports_plausible_thread_pool_values()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(SecondsClock.Following(clock), 64));
+        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
 
-        var firstSecond = clock.UnixSeconds;
+        var firstSecond = clock.Second;
         usage.Measurement();
         clock.Advance(1);
         usage.Measurement();
-        var lastSecond = clock.UnixSeconds;
+        var lastSecond = clock.Second;
 
         var window = usage.Collect(firstSecond, lastSecond).AssertNotNull();
         PAssert.That(() => window.MaxThreadCount > 0);
@@ -821,13 +835,13 @@ public sealed class MetricsCollectorTest
     public void A_window_without_a_thread_pool_sample_reports_nothing()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(SecondsClock.Following(clock), 64));
+        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
 
         usage.Measurement();
-        var sampledSecond = clock.UnixSeconds;
+        var sampledSecond = clock.Second;
 
         clock.Advance(1);
-        var unsampledSecond = clock.UnixSeconds;
+        var unsampledSecond = clock.Second;
 
         var unsampled = usage.Collect(unsampledSecond, unsampledSecond);
         PAssert.That(() => unsampled == null);
@@ -849,15 +863,15 @@ public sealed class MetricsCollectorTest
     public void A_claimed_but_not_yet_sampled_slot_is_not_read_as_a_sample()
     {
         var clock = new MutableClock();
-        var ring = new SecondsRingBuffer(SecondsClock.Following(clock), 64);
+        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
         var usage = new ThreadPoolUsage(ring);
 
-        var sampledSecond = clock.UnixSeconds;
+        var sampledSecond = clock.Second;
         usage.Measurement();
 
         // Claim the slot of the next second without sampling writing anything into it.
         clock.Advance(1);
-        var claimedSecond = clock.UnixSeconds;
+        var claimedSecond = clock.Second;
         var entered = ring.TryEnterSlot(null, out _);
         PAssert.That(() => entered);
 
@@ -875,9 +889,9 @@ public sealed class MetricsCollectorTest
     public void A_window_keeps_the_highest_gauge_reading_of_its_seconds()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(SecondsClock.Following(clock), 64));
+        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
 
-        var firstSecond = clock.UnixSeconds;
+        var firstSecond = clock.Second;
         usage.Measurement();
         var quiet = usage.Collect(firstSecond, firstSecond).AssertNotNull();
 
@@ -890,7 +904,7 @@ public sealed class MetricsCollectorTest
         clock.Advance(1);
         usage.Measurement();
         blocked.Set();
-        var lastSecond = clock.UnixSeconds;
+        var lastSecond = clock.Second;
 
         var busy = usage.Collect(firstSecond, lastSecond).AssertNotNull();
         PAssert.That(() => busy.MaxThreadCount >= quiet.MaxThreadCount);
@@ -906,9 +920,9 @@ public sealed class MetricsCollectorTest
     public void Counters_are_reported_as_the_increase_within_the_window()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(SecondsClock.Following(clock), 64));
+        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
 
-        var firstSecond = clock.UnixSeconds;
+        var firstSecond = clock.Second;
         usage.Measurement();
 
         using var done = new CountdownEvent(50);
@@ -921,7 +935,7 @@ public sealed class MetricsCollectorTest
         clock.Advance(1);
         var completedBeforeSecondSample = ThreadPool.CompletedWorkItemCount;
         usage.Measurement();
-        var lastSecond = clock.UnixSeconds;
+        var lastSecond = clock.Second;
 
         // The offered work falls within the window, so the increase includes those work items.
         var window = usage.Collect(firstSecond, lastSecond).AssertNotNull();
@@ -934,7 +948,7 @@ public sealed class MetricsCollectorTest
         clock.Advance(1);
         usage.Measurement();
         var completedAfterThirdSample = ThreadPool.CompletedWorkItemCount;
-        var next = usage.Collect(lastSecond + 1, clock.UnixSeconds).AssertNotNull();
+        var next = usage.Collect(lastSecond + 1, clock.Second).AssertNotNull();
         PAssert.That(() => next.CompletedWorkItems <= completedAfterThirdSample - completedBeforeSecondSample);
     }
 }

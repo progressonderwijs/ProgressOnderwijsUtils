@@ -12,8 +12,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     where TDatabase : struct, Enum
     where TPoolPurpose : struct, Enum
 {
-    readonly TimeProvider wallClock;
-    readonly SecondsClock secondsClock;
+    readonly SecondsSinceStart seconds;
     readonly DurationHistogramRing<TDatabase> databaseDuration;
     readonly DurationHistogramRing<TEndpoint> requestDuration;
     readonly ActiveRequests activeRequests;
@@ -38,39 +37,34 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// </summary>
     public const int RingCapacity = 256;
 
+    /// <summary>
+    /// The first second in which this collector measured; it begins exactly when the collector starts, so it is
+    /// observed completely. Seconds before that do not exist for us and must not count as quiet.
+    /// </summary>
+    public const long FirstObservableSecond = 0;
+
     public const int DefaultSettleSeconds = 2;
     public const int DefaultMinimumWindow = 3;
 
     /// <param name="description">The dimensions the measurements are divided over, and the windows that may be requested.</param>
     /// <param name="pools">The connection pools to sample.</param>
-    /// <param name="clock">
-    /// Without a clock the rings run on the tick counter and the system clock only serves to convert to real time
-    /// when collecting. A given clock is followed exactly, so that a test decides the seconds.
+    /// <param name="time">
+    /// The rings count their seconds on its monotonic timestamp; its real time is only read when collecting. Defaults to
+    /// <see cref="TimeProvider.System"/>; a test passes a clock of its own to decide the seconds.
     /// </param>
-    public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools, TimeProvider? clock = null)
-        : this(description, pools, clock ?? TimeProvider.System, clock is null ? SecondsClock.Ticking(TimeProvider.System) : SecondsClock.Following(clock)) { }
-
-    public MetricsCollector(
-        MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description,
-        ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools,
-        TimeProvider wallClock,
-        SecondsClock secondsClock)
+    public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools, TimeProvider? time = null)
     {
         Description = description;
         if (Description.LargestInterval + DefaultSettleSeconds > RingCapacity) {
-            throw new InvalidOperationException(
-                $"A ring of {RingCapacity} seconds cannot hold a window of {Description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago."
-            );
+            throw new InvalidOperationException($"A ring of {RingCapacity} seconds cannot hold a window of {Description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago.");
         }
 
-        this.wallClock = wallClock;
-        this.secondsClock = secondsClock;
-        FirstObservableSecond = secondsClock.Second;
-        databaseDuration = new(new(secondsClock, RingCapacity), Description.DatabaseDurationHistogram);
-        requestDuration = new(new(secondsClock, RingCapacity), Description.RequestDurationHistogram);
-        activeRequests = new(new(secondsClock, RingCapacity));
-        threadPoolUsage = new(new(secondsClock, RingCapacity));
-        connectionPoolUsage = new(new(secondsClock, RingCapacity), Description.ConnectionPools, pools);
+        seconds = new(time ?? TimeProvider.System);
+        databaseDuration = new(new(seconds, RingCapacity), Description.DatabaseDurationHistogram);
+        requestDuration = new(new(seconds, RingCapacity), Description.RequestDurationHistogram);
+        activeRequests = new(new(seconds, RingCapacity));
+        threadPoolUsage = new(new(seconds, RingCapacity));
+        connectionPoolUsage = new(new(seconds, RingCapacity), Description.ConnectionPools, pools);
         listener = new();
         stopSampling = new(false);
     }
@@ -91,12 +85,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     }
 
     public MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; }
-
-    /// <summary>
-    /// The first second in which this collector could measure. Seconds before that do not exist for us and must not
-    /// count as quiet. On the timeline of the rings, which at this moment still equals Unix time.
-    /// </summary>
-    public long FirstObservableSecond { get; }
 
     /// <param name="samplingFailed">
     /// Receives the exception that stopped the sampling: the windows after that have no thread pool and connection
@@ -215,30 +203,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     long LatestCompleteSecond(int settleSeconds)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(settleSeconds);
-        return secondsClock.Second - settleSeconds;
-    }
-
-    /// <summary>
-    /// How many whole seconds real time is ahead of the timeline of the rings. It only shifts when the deviation is a
-    /// full second away from the current value: that way the conversion does not jump back and forth as long as the
-    /// deviation fluctuates around half a second.
-    /// </summary>
-    long unixOffsetSeconds;
-
-    /// <summary>
-    /// The real time of a second on the timeline of the rings. Only here is the real clock read, so once per
-    /// collection instead of on every measurement.
-    /// </summary>
-    long UnixSecondOf(long second)
-    {
-        var behindMilliseconds = wallClock.GetUtcNow().ToUnixTimeMilliseconds() - secondsClock.Milliseconds;
-        var offset = Volatile.Read(ref unixOffsetSeconds);
-        if (Math.Abs(behindMilliseconds - offset * 1000) >= 1000) {
-            offset = (long)Math.Round(behindMilliseconds / 1000.0);
-            Volatile.Write(ref unixOffsetSeconds, offset);
-        }
-
-        return second + offset;
+        return seconds.Second - settleSeconds;
     }
 
     /// <summary>
@@ -260,7 +225,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
         var connectionPools = connectionPoolUsage.Collect(firstSecond, lastSecond);
         return new() {
             LastSecond = lastSecond,
-            UnixTimeSeconds = UnixSecondOf(lastSecond),
+            WindowEndUtc = seconds.EndUtcOf(lastSecond),
             SecondsCovered = firstSecond > lastSecond ? (byte)0 : (byte)(lastSecond - firstSecond + 1),
             MaxActiveRequests = activeRequests.Collect(firstSecond, lastSecond),
             MaxThreadCount = threadPool?.MaxThreadCount,

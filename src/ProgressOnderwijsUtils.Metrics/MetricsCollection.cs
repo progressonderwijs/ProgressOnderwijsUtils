@@ -13,16 +13,17 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
     /// The last second included in this collection, on the collector's own timeline; never the second that
     /// is currently being written. Pass this value back as cursor to collect the seconds that follow it.
     /// That timeline is cheap to read and never runs backwards, but drifts away from real time, so this
-    /// is not a time to show or store; <see cref="UnixTimeSeconds"/> is.
+    /// is not a time to show or store; <see cref="WindowEndUtc"/> is.
     /// </summary>
     public required long LastSecond { get; init; }
 
     /// <summary>
-    /// The real time of <see cref="LastSecond"/>, as it was when this collection was made. Because the
-    /// collector's timeline drifts, two collections that follow each other exactly by <see cref="LastSecond"/>
-    /// can be a second closer together or further apart by this value.
+    /// The real time at which <see cref="LastSecond"/> ended, and so the window with it. The window started
+    /// <see cref="SecondsCovered"/> seconds earlier. Two collections that follow each other exactly by
+    /// <see cref="LastSecond"/> therefore also follow each other here, up to the drift between the clocks over the time
+    /// between the two collections, or a jump of the wall clock.
     /// </summary>
-    public required long UnixTimeSeconds { get; init; }
+    public required DateTime WindowEndUtc { get; init; }
 
     /// <summary>
     /// The number of seconds actually aggregated, which can exceed the requested interval because of

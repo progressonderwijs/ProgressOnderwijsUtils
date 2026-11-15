@@ -19,8 +19,8 @@ public class MetricsSamplerBenchmarks
     public void Setup()
     {
         var registry = BenchmarkMetrics.Registry();
-        threadPoolUsage = new(new(SecondsClock.Ticking(TimeProvider.System), BenchmarkMetrics.RingCapacity));
-        connectionPoolUsage = new(new(SecondsClock.Ticking(TimeProvider.System), BenchmarkMetrics.RingCapacity), new(new BenchmarkDatabaseDuration()), registry);
+        threadPoolUsage = new(new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity));
+        connectionPoolUsage = new(new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity), new(new BenchmarkDatabaseDuration()), registry);
         (string ConnectionString, BenchmarkPoolPurpose Purpose)[] connectionStrings = [
             .. BenchmarkMetrics.PoolsPerDatabase(),
             ("Initial Catalog=master", BenchmarkPoolPurpose.Sysadmin),

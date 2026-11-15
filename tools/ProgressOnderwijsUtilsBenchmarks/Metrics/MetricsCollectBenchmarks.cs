@@ -33,10 +33,11 @@ public class MetricsCollectBenchmarks
         var ringLength = BenchmarkMetrics.RingCapacity;
 
         var clock = new SteppingClock();
-        activeRequests = new(new(SecondsClock.Following(clock), ringLength));
-        requestDuration = new(new(SecondsClock.Following(clock), ringLength), description.RequestDurationHistogram);
-        threadPoolUsage = new(new(SecondsClock.Following(clock), ringLength));
-        connectionPoolUsage = new(new(SecondsClock.Following(clock), ringLength), description.ConnectionPools, registry);
+        var seconds = new SecondsSinceStart(clock);
+        activeRequests = new(new(seconds, ringLength));
+        requestDuration = new(new(seconds, ringLength), description.RequestDurationHistogram);
+        threadPoolUsage = new(new(seconds, ringLength));
+        connectionPoolUsage = new(new(seconds, ringLength), description.ConnectionPools, registry);
 
         var trackedRoute = description.RequestDurationHistogram.Values[1] is { } trackedEndpoint
             ? BenchmarkEndpointLookup.EndpointOf(trackedEndpoint)?.Route
@@ -56,7 +57,7 @@ public class MetricsCollectBenchmarks
             connectionPoolUsage.Measurement(pools);
         }
 
-        lastSecond = clock.GetUtcNow().ToUnixTimeSeconds() - BenchmarkMetrics.DefaultSettleSeconds;
+        lastSecond = seconds.Second - BenchmarkMetrics.DefaultSettleSeconds;
         firstSecond = lastSecond - Interval + 1;
     }
 
@@ -89,5 +90,11 @@ public class MetricsCollectBenchmarks
 
         public override DateTimeOffset GetUtcNow()
             => now;
+
+        public override long GetTimestamp()
+            => now.UtcTicks;
+
+        public override long TimestampFrequency
+            => TimeSpan.TicksPerSecond;
     }
 }

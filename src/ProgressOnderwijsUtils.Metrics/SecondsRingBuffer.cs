@@ -4,11 +4,17 @@ namespace ProgressOnderwijsUtils.Metrics;
 
 sealed class SecondsRingBuffer
 {
-    readonly SecondsClock clock;
+    /// <summary>
+    /// The stamp of a slot that has never held a second. The timeline starts at second 0, so the default of the array
+    /// would make every slot look as if it already holds that second, and its first writer would skip the reset.
+    /// </summary>
+    const long NoSecond = -1;
+
+    readonly SecondsSinceStart clock;
     readonly long[] slots;
     readonly long[] readySlots;
 
-    public SecondsRingBuffer(SecondsClock clock, int length)
+    public SecondsRingBuffer(SecondsSinceStart clock, int length)
     {
         if (!BitOperations.IsPow2(length)) {
             throw new ArgumentOutOfRangeException(nameof(length), length, "Expected a power of two, so that the slot of a second can be found with a mask.");
@@ -17,6 +23,8 @@ sealed class SecondsRingBuffer
         this.clock = clock;
         slots = new long[length];
         readySlots = new long[length];
+        Array.Fill(slots, NoSecond);
+        Array.Fill(readySlots, NoSecond);
     }
 
     public int Length

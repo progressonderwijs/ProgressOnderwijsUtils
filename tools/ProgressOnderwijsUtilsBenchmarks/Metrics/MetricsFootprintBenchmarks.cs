@@ -62,7 +62,7 @@ public class MetricsFootprintBenchmarks
     [Benchmark]
     public object AllocateRequestDurationRing()
         => new DurationHistogramRing<BenchmarkEndpoint>(
-            new(SecondsClock.Ticking(TimeProvider.System), BenchmarkMetrics.RingCapacity),
+            new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity),
             description.RequestDurationHistogram
         );
 }
