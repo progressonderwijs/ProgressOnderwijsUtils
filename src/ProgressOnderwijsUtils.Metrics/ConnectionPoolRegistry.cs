@@ -50,6 +50,20 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPoolPurpose>(Func<string,
         }
     }
 
+    internal void OpenStarted(SqlConnection conn)
+    {
+        if (byConnectionString.TryGetValue(conn.ConnectionString, out var counters)) {
+            counters.OpenStarted(conn);
+        }
+    }
+
+    internal void OpenFailed(SqlConnection conn)
+    {
+        if (byConnectionString.TryGetValue(conn.ConnectionString, out var counters)) {
+            counters.OpenFailed();
+        }
+    }
+
     /// <summary>
     /// All pools that have been used so far. Pools are only ever added, never removed.
     /// </summary>

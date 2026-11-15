@@ -32,20 +32,22 @@ public sealed class ConnectionPoolUsageTest
     readonly ConnectionPoolRegistry<TestDatabase, TestPurpose> registry = TestMetrics.Registry();
 
     /// <summary>
-    /// Nothing is opened; the test operates the counters along the same way as <see cref="ConnectionPoolCounters{TDatabase,TPoolPurpose}.Open"/>.
+    /// Nothing is opened; the test operates the counters along the same way as the open events of SqlClient do.
     /// </summary>
     ConnectionPoolCounters<TestDatabase, TestPurpose> Pool(string catalog, TestPurpose purpose)
         => registry.For($"Data Source=nowhere;Initial Catalog={catalog};Application Name={purpose}", purpose);
 
+    static readonly SqlConnection unopened = new();
+
     static void Open(ConnectionPoolCounters<TestDatabase, TestPurpose> pool)
     {
-        pool.OpenStarted();
-        pool.StateChangeHandler(pool, new(ConnectionState.Closed, ConnectionState.Open));
-        pool.OpenFinished(true);
+        using var connection = new SqlConnection();
+        pool.OpenStarted(connection);
+        pool.StateChangeHandler(connection, new(ConnectionState.Closed, ConnectionState.Open));
     }
 
     static void Close(ConnectionPoolCounters<TestDatabase, TestPurpose> pool)
-        => pool.StateChangeHandler(pool, new(ConnectionState.Open, ConnectionState.Closed));
+        => pool.StateChangeHandler(unopened, new(ConnectionState.Open, ConnectionState.Closed));
 
     ConnectionPoolUsage<TestDatabase, TestPurpose> Usage(MutableClock clock, ConnectionPoolSlots<TestDatabase, TestPurpose> slots)
         => new(new(new SecondsSinceStart(clock), 64), slots, registry);
@@ -78,9 +80,11 @@ public sealed class ConnectionPoolUsageTest
         Open(master);
         Open(blob);
         usage.Measurement();
-        alphaReadWrite.OpenStarted(); // someone is waiting for a connection from the readwrite pool
-        usage.Measurement();
-        alphaReadWrite.OpenFinished(false);
+        using (var waiting = new SqlConnection()) {
+            alphaReadWrite.OpenStarted(waiting); // someone is waiting for a connection from the readwrite pool
+            usage.Measurement();
+            alphaReadWrite.OpenFailed();
+        }
 
         clock.Advance(1);
         Close(alphaReadWrite);

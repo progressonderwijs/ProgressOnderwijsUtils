@@ -9,6 +9,16 @@ public sealed class ConnectionPoolCountersTest
     readonly ConnectionPoolRegistry<TestDatabase, TestPurpose> registry = TestMetrics.Registry();
 
     /// <summary>
+    /// The pools are only counted while a collector runs.
+    /// </summary>
+    MetricsCollector<TestEndpoint, TestDatabase, TestPurpose> StartedCollector()
+    {
+        var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPurpose>(TestMetrics.Description(), registry);
+        collector.Start(_ => { });
+        return collector;
+    }
+
+    /// <summary>
     /// A pool of a single connection, with an application name of its own so that it is shared with nothing else:
     /// SqlClient keeps a pool per connection string.
     /// </summary>
@@ -19,11 +29,11 @@ public sealed class ConnectionPoolCountersTest
             ConnectTimeout = 15,
         }.ConnectionString;
 
-    static SqlConnection Open(ConnectionPoolCounters<TestDatabase, TestPurpose> pool, string connectionString)
+    static SqlConnection Open(string connectionString)
     {
         var connection = new SqlConnection(connectionString);
         try {
-            pool.Open(connection);
+            connection.Open();
             return connection;
         } catch {
             connection.Dispose();
@@ -45,13 +55,14 @@ public sealed class ConnectionPoolCountersTest
     [Fact]
     public async Task A_full_pool_makes_the_next_open_wait()
     {
+        using var collector = StartedCollector();
         var connectionString = PoolOfOne();
         var pool = registry.For(connectionString, TestPurpose.ReadWrite);
 
-        var first = Open(pool, connectionString);
+        var first = Open(connectionString);
         PAssert.That(() => pool.InUse == 1 && pool.Pending == 0 && pool.Opened == 1);
 
-        var second = Task.Run(() => Open(pool, connectionString));
+        var second = Task.Run(() => Open(connectionString));
         await WaitUntil(() => pool.Pending == 1);
         PAssert.That(() => pool.Pending == 1 && pool.InUse == 1);
 
@@ -64,28 +75,96 @@ public sealed class ConnectionPoolCountersTest
     }
 
     /// <summary>
-    /// Counting is a side concern: a connection of the same pool that is opened without the counters just works.
+    /// Only registered pools are counted: the registry knows their purpose, and the opens of the rest of the process
+    /// should not register pools of their own.
     /// </summary>
     [Fact]
-    public void A_connection_that_is_opened_without_the_counters_is_not_counted()
+    public void A_connection_string_that_was_never_registered_is_not_counted()
     {
+        using var collector = StartedCollector();
+        using var connection = Open(PoolOfOne());
+        var registeredPools = registry.All.Length;
+
+        PAssert.That(() => connection.State == ConnectionState.Open);
+        PAssert.That(() => registeredPools == 0);
+    }
+
+    /// <summary>
+    /// The pool follows the connection from the start of each open until it is closed, so a reopened connection is
+    /// followed once and not twice.
+    /// </summary>
+    [Fact]
+    public void A_reopened_connection_is_in_use_once()
+    {
+        using var collector = StartedCollector();
         var connectionString = PoolOfOne();
         var pool = registry.For(connectionString, TestPurpose.ReadWrite);
 
-        using var connection = new SqlConnection(connectionString);
+        using var connection = Open(connectionString);
+        connection.Close();
         connection.Open();
+
+        PAssert.That(() => pool.InUse == 1 && pool.Pending == 0 && pool.Opened == 2);
+        connection.Close();
+        PAssert.That(() => pool.InUse == 0);
+    }
+
+    [Fact]
+    public void A_connection_that_is_opened_without_a_running_collector_is_opened_but_not_counted()
+    {
+        var connectionString = PoolOfOne();
+        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        StartedCollector().Dispose();
+
+        using var connection = Open(connectionString);
 
         PAssert.That(() => connection.State == ConnectionState.Open);
         PAssert.That(() => pool.InUse == 0 && pool.Pending == 0 && pool.Opened == 0);
     }
 
+    /// <summary>
+    /// SqlClient has several listeners with the same name; a disposed collector must have let go of all of them, or
+    /// the next collector of the same registry counts every open twice.
+    /// </summary>
+    [Fact]
+    public void A_disposed_collector_no_longer_counts_next_to_its_successor()
+    {
+        var connectionString = PoolOfOne();
+        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        StartedCollector().Dispose();
+        using var collector = StartedCollector();
+
+        using var connection = Open(connectionString);
+
+        PAssert.That(() => pool.InUse == 1 && pool.Pending == 0 && pool.Opened == 1);
+    }
+
+    /// <summary>
+    /// A connection that was counted is followed until it is closed, also when the collector stopped in the meantime;
+    /// otherwise it would stay in use forever.
+    /// </summary>
+    [Fact]
+    public void A_counted_connection_that_is_closed_after_the_collector_stopped_is_no_longer_in_use()
+    {
+        var connectionString = PoolOfOne();
+        var pool = registry.For(connectionString, TestPurpose.ReadWrite);
+        var collector = StartedCollector();
+        var connection = Open(connectionString);
+        collector.Dispose();
+
+        connection.Dispose();
+
+        PAssert.That(() => pool.InUse == 0 && pool.Opened == 1);
+    }
+
     [Fact]
     public void An_open_that_fails_is_no_longer_pending_and_not_counted_as_opened()
     {
+        using var collector = StartedCollector();
         var connectionString = new SqlConnectionStringBuilder(localConnectionString) { InitialCatalog = $"NoSuchDatabase{Guid.NewGuid():N}", ConnectTimeout = 15, Pooling = false, }.ConnectionString;
         var pool = registry.For(connectionString, TestPurpose.ReadOnly);
 
-        _ = Assert.Throws<SqlException>(() => Open(pool, connectionString));
+        _ = Assert.Throws<SqlException>(() => Open(connectionString));
 
         PAssert.That(() => pool.InUse == 0 && pool.Pending == 0 && pool.Opened == 0);
     }

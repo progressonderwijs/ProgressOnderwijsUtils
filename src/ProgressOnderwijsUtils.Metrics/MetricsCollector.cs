@@ -1,11 +1,13 @@
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using Microsoft.Data.SqlClient.Diagnostics;
 
 namespace ProgressOnderwijsUtils.Metrics;
 
 /// <summary>
 /// Collects, per second, the request durations and the number of active requests of ASP.NET Core, the operation
 /// durations of the OpenTelemetry SqlClient instrumentation, and samples of the thread pool and of the connection
-/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPoolPurpose}"/>.
+/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPoolPurpose}"/>, counted from the open events of SqlClient.
 /// </summary>
 public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisposable
     where TEndpoint : struct, Enum
@@ -18,9 +20,22 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     readonly ActiveRequests activeRequests;
     readonly ThreadPoolUsage threadPoolUsage;
     readonly ConnectionPoolUsage<TDatabase, TPoolPurpose> connectionPoolUsage;
+    readonly ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools;
     readonly MeterListener listener;
     readonly ManualResetEventSlim stopSampling;
     Thread? sampler;
+    IDisposable? allDiagnosticListenersSubscription;
+
+    /// <summary>
+    /// SqlClient has several listeners with the same name, one per class that writes events.
+    /// </summary>
+    readonly List<IDisposable> sqlClientSubscriptions = [];
+
+    /// <summary>
+    /// SqlClient creates a listener when its class is first used, possibly while we are disposing: a subscription
+    /// made after that must not stay behind and keep counting.
+    /// </summary>
+    bool sqlClientSubscriptionsDisposed;
 
     /// <summary>
     /// Sampling more often than once per second, because during a congestion the thread pool takes about half a
@@ -65,6 +80,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
         activeRequests = new(new(seconds, RingCapacity));
         threadPoolUsage = new(new(seconds, RingCapacity));
         connectionPoolUsage = new(new(seconds, RingCapacity), Description.ConnectionPools, pools);
+        this.pools = pools;
         listener = new();
         stopSampling = new(false);
     }
@@ -77,11 +93,21 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
     /// </summary>
     public void Dispose()
     {
-        listener.Dispose();
         stopSampling.Set();
         if (sampler?.Join(TimeSpan.FromSeconds(5)) is not false) {
             stopSampling.Dispose();
         }
+
+        allDiagnosticListenersSubscription?.Dispose();
+        lock (sqlClientSubscriptions) {
+            sqlClientSubscriptionsDisposed = true;
+            foreach (var subscription in sqlClientSubscriptions) {
+                subscription.Dispose();
+            }
+            sqlClientSubscriptions.Clear();
+        }
+
+        listener.Dispose();
     }
 
     public MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; }
@@ -105,7 +131,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
                 }
             }
         };
-
         listener.SetMeasurementEventCallback<long>(
             (_, measurement, _, state) => {
                 if (state is ActiveRequests request) {
@@ -122,7 +147,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
                 }
             }
         );
-
         listener.MeasurementsCompleted = (_, state) => {
             if (state is ActiveRequests target) {
                 // The instrumentation stops with requests still running: the matching -1 measurements never arrive
@@ -130,9 +154,53 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisp
                 target.Reset();
             }
         };
-
         listener.Start();
+
+        // Calls back right away for the SqlClient listener when it already exists, otherwise as soon as SqlClient creates it.
+        allDiagnosticListenersSubscription = DiagnosticListener.AllListeners.Subscribe(
+            new NextObserver<DiagnosticListener>(
+                diagnostics => {
+                    if (string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
+                        var subscription = diagnostics.Subscribe(
+                            new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
+                            name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
+                        );
+                        lock (sqlClientSubscriptions) {
+                            if (sqlClientSubscriptionsDisposed) {
+                                subscription.Dispose();
+                            } else {
+                                sqlClientSubscriptions.Add(subscription);
+                            }
+                        }
+                    }
+                }
+            )
+        );
+
         StartSampling(samplingFailed);
+    }
+
+    /// <summary>
+    /// Only the start and the failure of an open are needed: from the start on the pool follows the connection itself
+    /// through its StateChange event. Thus the pool is only looked up while the connection string still holds the
+    /// password, and an open never has to be matched to its end through a lookup on its OperationId.
+    /// Without a subscriber SqlClient skips these events altogether, so a process whose collector does not run pays
+    /// nothing. Connections that are already open when the collector starts are not counted:
+    /// <see cref="ConnectionPoolCounters{TDatabase,TPoolPurpose}.InUse"/> is too low until they are closed.
+    /// </summary>
+    void SqlClientEvent(KeyValuePair<string, object?> sqlClientEvent)
+    {
+        switch (sqlClientEvent.Value) {
+            case SqlClientConnectionOpenBefore { Connection: { } connection, }:
+                pools.OpenStarted(connection);
+                break;
+            // An empty OperationId means nobody listened when this open started, so it was never pending. When another
+            // subscriber did listen, a failing open that started just before the collector started still makes pending
+            // one too low; the collector starts before the host does, so such an open practically does not exist.
+            case SqlClientConnectionOpenError { Connection: { } connection, } openError when openError.OperationId != Guid.Empty:
+                pools.OpenFailed(connection);
+                break;
+        }
     }
 
     /// <summary>

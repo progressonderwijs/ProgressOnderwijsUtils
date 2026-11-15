@@ -4,14 +4,12 @@ using System.Data.Common;
 namespace ProgressOnderwijsUtils.Metrics;
 
 /// <summary>
-/// The usage of a connection pool, kept for the connections of that pool that are opened through <see cref="Open"/>.
-/// Counting is optional per connection: a connection that is opened without it works just as well and is simply not
-/// counted.
+/// The usage of a connection pool, counted while a <see cref="MetricsCollector{TEndpoint,TDatabase,TPoolPurpose}"/> runs: from
+/// the open events of SqlClient and the StateChange events of the connections.
 /// SqlClient itself publishes nothing usable about this: only EventCounters over all pools of the process together,
 /// and no count of who is waiting for a connection. SqlClient keeps a pool of its own per connection string, so
 /// these counters do too; the collector sums them per database and purpose.
-/// All levels are absolute, just like those of the thread pool, so that the sampler can read them at any moment and
-/// it does not matter whether connections were already open before the collector started.
+/// All levels are absolute, just like those of the thread pool, so that the sampler can read them at any moment.
 /// </summary>
 public sealed class ConnectionPoolCounters<TDatabase, TPoolPurpose>
     where TDatabase : struct, Enum
@@ -73,46 +71,40 @@ public sealed class ConnectionPoolCounters<TDatabase, TPoolPurpose>
         => Volatile.Read(ref opened);
 
     /// <summary>
-    /// Opens a connection of this pool and follows it until it is closed. The connection has to be one of the connection
-    /// string these counters were requested for, and stays the caller's to dispose, also when opening fails.
-    /// </summary>
-    public void Open(DbConnection connection)
-    {
-        // Subscribe before opening: an open that fails gives no state change, and a reopened connection counts as well this way.
-        connection.StateChange += StateChangeHandler;
-        OpenStarted();
-        var succeeded = false;
-        try {
-            connection.Open();
-            succeeded = true;
-        } finally {
-            OpenFinished(succeeded);
-        }
-    }
-
-    /// <summary>
     /// Follows a connection from open to closed. There is one per pool, so that subscribing to a connection
     /// allocates nothing. A connection that breaks (Broken) stays in use until it is closed.
     /// </summary>
     internal StateChangeEventHandler StateChangeHandler { get; }
 
+    /// <summary>
+    /// Unsubscribes when the connection closes, so that every open it counts was counted as pending first. A reopen of
+    /// the same connection object is only counted when its pool can be found again: after the first open SqlClient
+    /// leaves the password out of the connection string, and without the subscription such a reopen is then not
+    /// counted at all instead of being counted as an open that never was pending.
+    /// </summary>
     void OnStateChange(object sender, StateChangeEventArgs change)
     {
         if (change.CurrentState is ConnectionState.Open && change.OriginalState is not ConnectionState.Open) {
+            _ = Interlocked.Decrement(ref pending);
+            _ = Interlocked.Increment(ref opened);
             _ = Interlocked.Increment(ref inUse);
         } else if (change.CurrentState is ConnectionState.Closed && change.OriginalState is not ConnectionState.Closed) {
             _ = Interlocked.Decrement(ref inUse);
+            ((DbConnection)sender).StateChange -= StateChangeHandler;
         }
     }
 
-    internal void OpenStarted()
-        => Interlocked.Increment(ref pending);
-
-    internal void OpenFinished(bool succeeded)
+    /// <summary>
+    /// Unsubscribing first keeps a single subscription when the same connection object starts an open twice, for
+    /// instance a retry after a failed open.
+    /// </summary>
+    internal void OpenStarted(DbConnection connection)
     {
-        _ = Interlocked.Decrement(ref pending);
-        if (succeeded) {
-            _ = Interlocked.Increment(ref opened);
-        }
+        connection.StateChange -= StateChangeHandler;
+        connection.StateChange += StateChangeHandler;
+        _ = Interlocked.Increment(ref pending);
     }
+
+    internal void OpenFailed()
+        => Interlocked.Decrement(ref pending);
 }
