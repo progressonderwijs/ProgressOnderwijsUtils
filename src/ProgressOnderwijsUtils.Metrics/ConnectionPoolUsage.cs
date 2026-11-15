@@ -6,15 +6,15 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// the number of succeeded opens only ever increases and is kept as level, so that a window can calculate the
 /// increase.
 /// A pool fills up on its own, so the pools of a database are not summed but kept apart per purpose, on the slots of
-/// <see cref="ConnectionPoolSlots{TDatabase,TPurpose}"/>. Only pools with the same database and the same purpose
+/// <see cref="ConnectionPoolSlots{TDatabase,TPoolPurpose}"/>. Only pools with the same database and the same purpose
 /// coincide.
 /// </summary>
-sealed class ConnectionPoolUsage<TDatabase, TPurpose>
+sealed class ConnectionPoolUsage<TDatabase, TPoolPurpose>
     where TDatabase : struct, Enum
-    where TPurpose : struct, Enum
+    where TPoolPurpose : struct, Enum
 {
     /// <summary>
-    /// The usage over a window, per slot of <see cref="ConnectionPoolSlots{TDatabase,TPurpose}"/>. A pool has at most
+    /// The usage over a window, per slot of <see cref="ConnectionPoolSlots{TDatabase,TPoolPurpose}"/>. A pool has at most
     /// 100 connections by default, and summed as well, in use and waiting stay well within a short; the opens are the
     /// increase within the window.
     /// </summary>
@@ -24,11 +24,11 @@ sealed class ConnectionPoolUsage<TDatabase, TPurpose>
     const int pendingGauge = 1;
     const int gaugeCount = 2;
 
-    readonly ConnectionPoolSlots<TDatabase, TPurpose> slots;
-    readonly ConnectionPoolRegistry<TDatabase, TPurpose> pools;
+    readonly ConnectionPoolSlots<TDatabase, TPoolPurpose> slots;
+    readonly ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools;
     readonly SampledRing ring;
 
-    public ConnectionPoolUsage(SecondsRingBuffer secondsRing, ConnectionPoolSlots<TDatabase, TPurpose> slots, ConnectionPoolRegistry<TDatabase, TPurpose> pools)
+    public ConnectionPoolUsage(SecondsRingBuffer secondsRing, ConnectionPoolSlots<TDatabase, TPoolPurpose> slots, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools)
     {
         this.slots = slots;
         this.pools = pools;
@@ -42,7 +42,7 @@ sealed class ConnectionPoolUsage<TDatabase, TPurpose>
     /// Sums the levels of the pools per database and purpose and records them at the current second.
     /// The sum lives on the stack, so sampling allocates nothing.
     /// </summary>
-    internal void Measurement(ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPurpose>> sampledPools)
+    internal void Measurement(ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPoolPurpose>> sampledPools)
     {
         var slotCount = ring.SlotCount;
         Span<long> gauges = stackalloc long[slotCount * gaugeCount];

@@ -2,12 +2,12 @@ using System.Numerics;
 
 namespace ProgressOnderwijsUtils.Metrics;
 
-public sealed record MetricsCollection<TDatabase, TEndpoint, TPoolPurpose>
-    where TDatabase : struct, Enum
+public sealed record MetricsCollection<TEndpoint, TDatabase, TPoolPurpose>
     where TEndpoint : struct, Enum
+    where TDatabase : struct, Enum
     where TPoolPurpose : struct, Enum
 {
-    public required MetricsDescription<TDatabase, TEndpoint, TPoolPurpose> Description { get; init; }
+    public required MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; init; }
 
     /// <summary>
     /// The last second included in this collection, on the collector's own timeline; never the second that
@@ -59,7 +59,7 @@ public sealed record MetricsCollection<TDatabase, TEndpoint, TPoolPurpose>
 
     /// <summary>
     /// The usage of the connection pools over this window, per database and purpose (the slots of
-    /// <see cref="MetricsDescription{TDatabase,TEndpoint,TPoolPurpose}.ConnectionPools"/>), or null when no sample was
+    /// <see cref="MetricsDescription{TEndpoint,TDatabase,TPoolPurpose}.ConnectionPools"/>), or null when no sample was
     /// taken in these seconds. The three come from the same sample as the thread pool, so all three are filled or all
     /// three are null. Use <see cref="ConnectionCount{T}"/> to sum them per database, per purpose or all together.
     /// <see cref="MaxUsedConnections"/> and <see cref="MaxPendingConnections"/> are the highest levels;

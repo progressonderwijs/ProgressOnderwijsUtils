@@ -21,7 +21,7 @@ public sealed class ConnectionPoolUsageTest
     readonly ConnectionPoolRegistry<TestDatabase, TestPurpose> registry = TestMetrics.Registry();
 
     /// <summary>
-    /// Nothing is opened; the test operates the counters along the same way as <see cref="ConnectionPoolCounters{TDatabase,TPurpose}.Open"/>.
+    /// Nothing is opened; the test operates the counters along the same way as <see cref="ConnectionPoolCounters{TDatabase,TPoolPurpose}.Open"/>.
     /// </summary>
     ConnectionPoolCounters<TestDatabase, TestPurpose> Pool(string catalog, TestPurpose purpose)
         => registry.For($"Data Source=nowhere;Initial Catalog={catalog};Application Name={purpose}", purpose);

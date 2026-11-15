@@ -105,7 +105,7 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
 
 static class TestMetrics
 {
-    public static MetricsDescription<TestDatabase, TestEndpoint, TestPurpose> Description()
+    public static MetricsDescription<TestEndpoint, TestDatabase, TestPurpose> Description()
         => new() {
             SmallestInterval = 1,
             LargestInterval = 128,
@@ -119,6 +119,6 @@ static class TestMetrics
     public static ConnectionPoolRegistry<TestDatabase, TestPurpose> Registry()
         => new(TestDatabaseDuration.Classify);
 
-    public static MetricsCollector<TestDatabase, TestEndpoint, TestPurpose> Collector(TimeProvider clock)
+    public static MetricsCollector<TestEndpoint, TestDatabase, TestPurpose> Collector(TimeProvider clock)
         => new(Description(), Registry(), clock);
 }

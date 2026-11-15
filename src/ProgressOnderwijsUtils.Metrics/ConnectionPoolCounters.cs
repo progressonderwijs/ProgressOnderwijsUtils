@@ -13,15 +13,15 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// All levels are absolute, just like those of the thread pool, so that the sampler can read them at any moment and
 /// it does not matter whether connections were already open before the collector started.
 /// </summary>
-public sealed class ConnectionPoolCounters<TDatabase, TPurpose>
+public sealed class ConnectionPoolCounters<TDatabase, TPoolPurpose>
     where TDatabase : struct, Enum
-    where TPurpose : struct, Enum
+    where TPoolPurpose : struct, Enum
 {
     int inUse;
     int pending;
     long opened;
 
-    internal ConnectionPoolCounters(string connectionString, TPurpose purpose, Func<string, TDatabase?> classifyCatalog)
+    internal ConnectionPoolCounters(string connectionString, TPoolPurpose purpose, Func<string, TDatabase?> classifyCatalog)
     {
         var builder = new SqlConnectionStringBuilder(connectionString);
         Catalog = builder.InitialCatalog;
@@ -34,7 +34,7 @@ public sealed class ConnectionPoolCounters<TDatabase, TPurpose>
     /// <summary>
     /// What this pool is for.
     /// </summary>
-    public TPurpose Purpose { get; }
+    public TPoolPurpose Purpose { get; }
 
     /// <summary>
     /// How many connections this pool has open at most at the same time (Max Pool Size from the connection string).

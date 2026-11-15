@@ -5,11 +5,11 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// <summary>
 /// Collects, per second, the request durations and the number of active requests of ASP.NET Core, the operation
 /// durations of the OpenTelemetry SqlClient instrumentation, and samples of the thread pool and of the connection
-/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPurpose}"/>.
+/// pools in <see cref="ConnectionPoolRegistry{TDatabase,TPoolPurpose}"/>.
 /// </summary>
-public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisposable
-    where TDatabase : struct, Enum
+public sealed class MetricsCollector<TEndpoint, TDatabase, TPoolPurpose> : IDisposable
     where TEndpoint : struct, Enum
+    where TDatabase : struct, Enum
     where TPoolPurpose : struct, Enum
 {
     readonly TimeProvider wallClock;
@@ -47,11 +47,11 @@ public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisp
     /// Without a clock the rings run on the tick counter and the system clock only serves to convert to real time
     /// when collecting. A given clock is followed exactly, so that a test decides the seconds.
     /// </param>
-    public MetricsCollector(MetricsDescription<TDatabase, TEndpoint, TPoolPurpose> description, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools, TimeProvider? clock = null)
+    public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description, ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools, TimeProvider? clock = null)
         : this(description, pools, clock ?? TimeProvider.System, clock is null ? SecondsClock.Ticking(TimeProvider.System) : SecondsClock.Following(clock)) { }
 
     public MetricsCollector(
-        MetricsDescription<TDatabase, TEndpoint, TPoolPurpose> description,
+        MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> description,
         ConnectionPoolRegistry<TDatabase, TPoolPurpose> pools,
         TimeProvider wallClock,
         SecondsClock secondsClock)
@@ -90,7 +90,7 @@ public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisp
         }
     }
 
-    public MetricsDescription<TDatabase, TEndpoint, TPoolPurpose> Description { get; }
+    public MetricsDescription<TEndpoint, TDatabase, TPoolPurpose> Description { get; }
 
     /// <summary>
     /// The first second in which this collector could measure. Seconds before that do not exist for us and must not
@@ -187,7 +187,7 @@ public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisp
     /// The window is stretched to this so that short intervals are less jerky. The result states in SecondsCovered
     /// how many seconds it really holds.
     /// </param>
-    public MetricsCollection<TDatabase, TEndpoint, TPoolPurpose> Collect(int interval, int settleSeconds = DefaultSettleSeconds, int minimumWindow = DefaultMinimumWindow)
+    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> Collect(int interval, int settleSeconds = DefaultSettleSeconds, int minimumWindow = DefaultMinimumWindow)
     {
         if (interval < Description.SmallestInterval || interval > Description.LargestInterval) {
             throw new ArgumentOutOfRangeException(nameof(interval), "Interval must be in range of the description.");
@@ -204,9 +204,9 @@ public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisp
     /// The result states with LastSecond and SecondsCovered what was really processed, so a caller that lagged
     /// further behind than the ring can recognise the gap.
     /// </summary>
-    /// <param name="previousLastSecond">The <see cref="MetricsCollection{TDatabase,TEndpoint,TPoolPurpose}.LastSecond"/> of what the caller has already processed.</param>
+    /// <param name="previousLastSecond">The <see cref="MetricsCollection{TEndpoint,TDatabase,TPoolPurpose}.LastSecond"/> of what the caller has already processed.</param>
     /// <param name="settleSeconds">See <see cref="Collect"/>.</param>
-    public MetricsCollection<TDatabase, TEndpoint, TPoolPurpose> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
+    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
     {
         var lastSecond = LatestCompleteSecond(settleSeconds);
         return CollectRange(previousLastSecond + 1, lastSecond);
@@ -245,9 +245,9 @@ public sealed class MetricsCollector<TDatabase, TEndpoint, TPoolPurpose> : IDisp
     /// Collects exactly the requested seconds, for a caller that keeps track itself of where it left off and wants
     /// to end at the same last second as an earlier <see cref="Collect"/>.
     /// The seconds are those of the timeline of the rings, like
-    /// <see cref="MetricsCollection{TDatabase,TEndpoint,TPoolPurpose}.LastSecond"/>.
+    /// <see cref="MetricsCollection{TEndpoint,TDatabase,TPoolPurpose}.LastSecond"/>.
     /// </summary>
-    public MetricsCollection<TDatabase, TEndpoint, TPoolPurpose> CollectRange(long firstSecond, long lastSecond)
+    public MetricsCollection<TEndpoint, TDatabase, TPoolPurpose> CollectRange(long firstSecond, long lastSecond)
     {
         // A window is at most LargestInterval seconds long. The ring keeps more (RingCapacity), so that the oldest
         // seconds of such a window are still there as well. Seconds from before our own start do not exist at all:

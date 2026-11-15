@@ -37,7 +37,7 @@ public class MetricsFootprintBenchmarks
 
     // Filled in GlobalSetup before any benchmark runs.
     // ReSharper disable once NullableWarningSuppressionIsUsed
-    MetricsDescription<BenchmarkDatabase, BenchmarkEndpoint, BenchmarkPoolPurpose> description = null!;
+    MetricsDescription<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose> description = null!;
 
     [GlobalSetup]
     public void Setup()

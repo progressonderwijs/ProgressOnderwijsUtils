@@ -5,13 +5,13 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// all calculate through this layout, so that it is fixed in one place. The slots of a database lie next to each
 /// other, in the order of the purposes.
 /// </summary>
-public sealed class ConnectionPoolSlots<TDatabase, TPurpose>(MetricsDimension<TDatabase> databases)
+public sealed class ConnectionPoolSlots<TDatabase, TPoolPurpose>(MetricsDimension<TDatabase> databases)
     where TDatabase : struct, Enum
-    where TPurpose : struct, Enum
+    where TPoolPurpose : struct, Enum
 {
-    static readonly TPurpose[] purposes = Enum.GetValues<TPurpose>();
+    static readonly TPoolPurpose[] purposes = Enum.GetValues<TPoolPurpose>();
 
-    public static IReadOnlyList<TPurpose> Purposes
+    public static IReadOnlyList<TPoolPurpose> Purposes
         => purposes;
 
     public int DatabaseCount
@@ -20,19 +20,19 @@ public sealed class ConnectionPoolSlots<TDatabase, TPurpose>(MetricsDimension<TD
     public int Count
         => DatabaseCount * purposes.Length;
 
-    public int SlotOf(int databaseSlot, TPurpose purpose)
+    public int SlotOf(int databaseSlot, TPoolPurpose purpose)
         => databaseSlot * purposes.Length + PurposeIndexOf(purpose);
 
-    public int SlotOf(TDatabase? database, TPurpose purpose)
+    public int SlotOf(TDatabase? database, TPoolPurpose purpose)
         => SlotOf(databases.SlotOf(database), purpose);
 
     public int DatabaseSlotOf(int slot)
         => slot / purposes.Length;
 
-    public TPurpose PurposeOf(int slot)
+    public TPoolPurpose PurposeOf(int slot)
         => purposes[slot % purposes.Length];
 
-    static int PurposeIndexOf(TPurpose purpose)
+    static int PurposeIndexOf(TPoolPurpose purpose)
         => Array.IndexOf(purposes, purpose) is var index and >= 0
             ? index
             : throw new ArgumentOutOfRangeException(nameof(purpose), purpose, "Expected a defined connection pool purpose.");

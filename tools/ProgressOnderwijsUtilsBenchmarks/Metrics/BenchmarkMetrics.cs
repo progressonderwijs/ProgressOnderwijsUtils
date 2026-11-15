@@ -257,11 +257,11 @@ static class BenchmarkEndpointLookup
 
 static class BenchmarkMetrics
 {
-    public const int RingCapacity = MetricsCollector<BenchmarkDatabase, BenchmarkEndpoint, BenchmarkPoolPurpose>.RingCapacity;
-    public const int DefaultSettleSeconds = MetricsCollector<BenchmarkDatabase, BenchmarkEndpoint, BenchmarkPoolPurpose>.DefaultSettleSeconds;
+    public const int RingCapacity = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose>.RingCapacity;
+    public const int DefaultSettleSeconds = MetricsCollector<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose>.DefaultSettleSeconds;
     public const byte LargestInterval = 128;
 
-    public static MetricsDescription<BenchmarkDatabase, BenchmarkEndpoint, BenchmarkPoolPurpose> Description()
+    public static MetricsDescription<BenchmarkEndpoint, BenchmarkDatabase, BenchmarkPoolPurpose> Description()
         => new() {
             SmallestInterval = 1,
             LargestInterval = LargestInterval,

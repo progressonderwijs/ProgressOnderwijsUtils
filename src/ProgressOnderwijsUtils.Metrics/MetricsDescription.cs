@@ -1,8 +1,8 @@
 namespace ProgressOnderwijsUtils.Metrics;
 
-public sealed class MetricsDescription<TDatabase, TEndpoint, TPoolPurpose>
-    where TDatabase : struct, Enum
+public sealed class MetricsDescription<TEndpoint, TDatabase, TPoolPurpose>
     where TEndpoint : struct, Enum
+    where TDatabase : struct, Enum
     where TPoolPurpose : struct, Enum
 {
     /// <summary>
@@ -12,7 +12,7 @@ public sealed class MetricsDescription<TDatabase, TEndpoint, TPoolPurpose>
 
     /// <summary>
     /// Number of seconds; the largest window that may be requested. The ring keeps more seconds than that, see
-    /// <see cref="MetricsCollector{TDatabase,TEndpoint,TPoolPurpose}.RingCapacity"/>.
+    /// <see cref="MetricsCollector{TEndpoint,TDatabase,TPoolPurpose}.RingCapacity"/>.
     /// </summary>
     public required byte LargestInterval { get; init; }
 
