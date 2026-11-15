@@ -94,7 +94,7 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
                     route = tag.Value as string;
                     break;
                 case "http.response.status_code":
-                    isError = tag.Value is int statusCode && statusCode >= 400;
+                    isError = tag.Value is >= 400;
                     break;
             }
         }
