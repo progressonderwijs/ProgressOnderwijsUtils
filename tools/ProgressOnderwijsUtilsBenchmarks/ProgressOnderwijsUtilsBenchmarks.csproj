@@ -18,6 +18,7 @@
     </PackageReference>
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
+    <ProjectReference Include="..\..\src\ProgressOnderwijsUtils.Metrics\ProgressOnderwijsUtils.Metrics.csproj" />
     <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj" />
   </ItemGroup>
 </Project>

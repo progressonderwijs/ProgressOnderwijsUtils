@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31919.166
+# Visual Studio Version 18
+VisualStudioVersion = 18.12.12405.243 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
@@ -37,6 +37,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Anal
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.SeleniumWebDriverPool", "src\ProgressOnderwijsUtils.SeleniumWebDriverPool\ProgressOnderwijsUtils.SeleniumWebDriverPool.csproj", "{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Metrics", "src\ProgressOnderwijsUtils.Metrics\ProgressOnderwijsUtils.Metrics.csproj", "{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6C13FAA1-9347-4256-BCFD-F111E6121480} = {6C13FAA1-9347-4256-BCFD-F111E6121480}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +76,10 @@ Global
 		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +92,7 @@ Global
 		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
 		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6} = {720DEC45-B36A-4966-819C-128CCA14C255}
 		{AEC8B0E0-B89D-4F20-BA28-67C92D4C47F7} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
+		{7C1D2B3E-5A4F-4E6B-9D8C-0F1A2B3C4D5E} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}

@@ -11,6 +11,7 @@
     </PackageReference>
     <PackageReference Include="xunit.v3" Version="4.0.3" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
+    <ProjectReference Include="..\..\src\ProgressOnderwijsUtils.Metrics\ProgressOnderwijsUtils.Metrics.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="testCert.pfx">
