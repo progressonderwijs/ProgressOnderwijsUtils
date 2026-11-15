@@ -23,8 +23,4 @@
     <None Include="readme.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="11.0.100" />
-  </ItemGroup>
-
 </Project>
