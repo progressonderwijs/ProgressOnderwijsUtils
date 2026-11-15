@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Description>Bump dependencies</Description>
+    <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageReleaseNotes>Update Nuget packages</PackageReleaseNotes>
-    <Version>2.14.0</Version>
+    <Version>2.15.0</Version>
     <TargetFramework>netstandard2.0</TargetFramework>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <NoWarn>$(NoWarn), RS1038</NoWarn>
