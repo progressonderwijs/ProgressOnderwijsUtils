@@ -155,6 +155,18 @@ public sealed class MetricsCollectorTest
         }
     }
 
+    /// <summary>
+    /// A collector stopped early is disposed again when the host stops; the harness disposes it a third time.
+    /// </summary>
+    [Fact]
+    public void A_started_collector_can_be_disposed_more_than_once()
+    {
+        using var harness = new Harness();
+
+        harness.Collector.Dispose();
+        harness.Collector.Dispose();
+    }
+
     [Fact]
     public void Requests_are_counted_in_the_bucket_that_matches_their_duration()
     {

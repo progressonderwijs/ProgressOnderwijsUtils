@@ -14,6 +14,23 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     where TDatabase : struct, Enum
     where TPool : struct, Enum
 {
+    /// <summary>
+    /// The number of seconds every ring keeps. That is more than the largest window: collecting skips the most recent
+    /// seconds, so a window of the full length starts that many seconds earlier, and the counters need a starting
+    /// level before that still. A power of two, so that the slot of a second can be found with a mask instead of with
+    /// a division on every measurement.
+    /// </summary>
+    public const int RingCapacity = 256;
+
+    public const int DefaultSettleSeconds = 2;
+    public const int DefaultMinimumWindow = 3;
+
+    /// <summary>
+    /// The first second in which this collector measured; it begins exactly when the collector starts, so it is
+    /// observed completely. Seconds before that do not exist for us and must not count as quiet.
+    /// </summary>
+    public const long FirstObservableSecond = 0;
+
     readonly SecondsSinceStart seconds;
     readonly DurationHistogramRing<TDatabase> databaseDuration;
     readonly DurationHistogramRing<TEndpoint> requestDuration;
@@ -23,43 +40,11 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     readonly ConnectionPoolRegistry<TDatabase, TPool> pools;
     readonly MeterListener listener;
     readonly ManualResetEventSlim stopSampling;
+    readonly List<IDisposable> sqlClientSubscriptions;
+    readonly Lock lifetime;
+    bool disposed;
     Thread? sampler;
     IDisposable? allDiagnosticListenersSubscription;
-
-    /// <summary>
-    /// SqlClient has several listeners with the same name, one per class that writes events.
-    /// </summary>
-    readonly List<IDisposable> sqlClientSubscriptions = [];
-
-    /// <summary>
-    /// SqlClient creates a listener when its class is first used, possibly while we are disposing: a subscription
-    /// made after that must not stay behind and keep counting.
-    /// </summary>
-    bool sqlClientSubscriptionsDisposed;
-
-    /// <summary>
-    /// Sampling more often than once per second, because during a congestion the thread pool takes about half a
-    /// second to add a thread. At exactly one hertz that build-up could run in step with the sampling rhythm and stay
-    /// practically invisible.
-    /// </summary>
-    static readonly TimeSpan sampleInterval = TimeSpan.FromMilliseconds(250);
-
-    /// <summary>
-    /// The number of seconds every ring keeps. That is more than the largest window: collecting skips the most recent
-    /// seconds, so a window of the full length starts that many seconds earlier, and the counters need a starting
-    /// level before that still. A power of two, so that the slot of a second can be found with a mask instead of with
-    /// a division on every measurement.
-    /// </summary>
-    public const int RingCapacity = 256;
-
-    /// <summary>
-    /// The first second in which this collector measured; it begins exactly when the collector starts, so it is
-    /// observed completely. Seconds before that do not exist for us and must not count as quiet.
-    /// </summary>
-    public const long FirstObservableSecond = 0;
-
-    public const int DefaultSettleSeconds = 2;
-    public const int DefaultMinimumWindow = 3;
 
     /// <param name="description">The dimensions the measurements are divided over, and the windows that may be requested.</param>
     /// <param name="pools">The connection pools to sample.</param>
@@ -69,19 +54,21 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </param>
     public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPool> description, ConnectionPoolRegistry<TDatabase, TPool> pools, TimeProvider? time = null)
     {
-        Description = description;
-        if (Description.LargestInterval + DefaultSettleSeconds > RingCapacity) {
-            throw new InvalidOperationException($"A ring of {RingCapacity} seconds cannot hold a window of {Description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago.");
+        if (description.LargestInterval + DefaultSettleSeconds > RingCapacity) {
+            throw new InvalidOperationException($"A ring of {RingCapacity} seconds cannot hold a window of {description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago.");
         }
 
+        this.pools = pools;
+        Description = description;
         seconds = new(time ?? TimeProvider.System);
         databaseDuration = new(new(seconds, RingCapacity), Description.DatabaseDurationHistogram);
         requestDuration = new(new(seconds, RingCapacity), Description.RequestDurationHistogram);
         activeRequests = new(new(seconds, RingCapacity));
         threadPoolUsage = new(new(seconds, RingCapacity));
         connectionPoolUsage = new(new(seconds, RingCapacity), Description.ConnectionPools, pools);
-        this.pools = pools;
         listener = new();
+        lifetime = new();
+        sqlClientSubscriptions = [];
         stopSampling = new(false);
     }
 
@@ -90,24 +77,34 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// cleaned-up ring. The waiting time is ample compared to the sampling rhythm; if it hangs nevertheless, it is a
     /// background thread and does not hold up the process. The signal is not disposed then: the thread still waits
     /// on it later, and an ObjectDisposedException on a thread of our own brings down the whole process.
+    /// Only the first call cleans up: a collector stopped early is disposed again when the host stops.
     /// </summary>
     public void Dispose()
     {
-        stopSampling.Set();
-        if (sampler?.Join(TimeSpan.FromSeconds(5)) is not false) {
-            stopSampling.Dispose();
+        if (disposed) {
+            return;
         }
 
-        allDiagnosticListenersSubscription?.Dispose();
-        lock (sqlClientSubscriptions) {
-            sqlClientSubscriptionsDisposed = true;
+        lock (lifetime) {
+            if (disposed) {
+                return;
+            }
+
+            stopSampling.Set();
+            if (sampler?.Join(TimeSpan.FromSeconds(5)) is not false) {
+                stopSampling.Dispose();
+            }
+
+            allDiagnosticListenersSubscription?.Dispose();
             foreach (var subscription in sqlClientSubscriptions) {
                 subscription.Dispose();
             }
             sqlClientSubscriptions.Clear();
-        }
 
-        listener.Dispose();
+            listener.Dispose();
+
+            disposed = true;
+        }
     }
 
     public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
@@ -160,17 +157,13 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         allDiagnosticListenersSubscription = DiagnosticListener.AllListeners.Subscribe(
             new NextObserver<DiagnosticListener>(
                 diagnostics => {
-                    if (string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
-                        var subscription = diagnostics.Subscribe(
-                            new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
-                            name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
-                        );
-                        lock (sqlClientSubscriptions) {
-                            if (sqlClientSubscriptionsDisposed) {
-                                subscription.Dispose();
-                            } else {
-                                sqlClientSubscriptions.Add(subscription);
-                            }
+                    lock (lifetime) {
+                        if (!disposed && string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
+                            var subscription = diagnostics.Subscribe(
+                                new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
+                                name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
+                            );
+                            sqlClientSubscriptions.Add(subscription);
                         }
                     }
                 }
@@ -216,7 +209,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         sampler = new(
             () => MetricsSampler.SampleUntilStopped(
                 stopSampling,
-                sampleInterval,
+                TimeSpan.FromMilliseconds(250),
                 () => {
                     threadPoolUsage.Measurement();
                     connectionPoolUsage.Measurement();
