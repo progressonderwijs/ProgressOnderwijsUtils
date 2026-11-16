@@ -65,7 +65,7 @@ public sealed class EnumeratePocosTest : TransactedLocalConnection
     {
         var enumerable = SQL($"select Item1 = x.Id, Item2 = x.Content from ({ExampleQuery}) x").OfTuples<(int Id, string Content)>().ToLazilyEnumeratedCommand().Execute(Connection);
         var value = enumerable.Skip(1).First();
-        Assert.Equal(new() { Id = 37, Content = "hmm", }, value);
+        Assert.Equal((37, "hmm"), value);
     }
 
     [Fact]
