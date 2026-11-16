@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>120.1.0</Version>
-    <PackageReleaseNotes>Update NuGet packages</PackageReleaseNotes>
+    <Version>120.2.0</Version>
+    <PackageReleaseNotes>Update HTML spec</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
