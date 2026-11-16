@@ -27,16 +27,11 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
     readonly ConnectionPoolRegistry<TDatabase, TPool> pools;
     readonly SampledRing ring;
 
-    readonly long[] gauges;
-    readonly long[] opened;
-
     public ConnectionPoolUsage(SecondsRingBuffer secondsRing, ConnectionPoolSlots<TDatabase, TPool> slots, ConnectionPoolRegistry<TDatabase, TPool> pools)
     {
         this.slots = slots;
         this.pools = pools;
         ring = new(secondsRing, slots.Count, gaugeCount, 1);
-        gauges = new long[slots.Count * gaugeCount];
-        opened = new long[slots.Count];
     }
 
     internal void Measurement()
@@ -44,12 +39,15 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
 
     /// <summary>
     /// Sums the levels of the pools per database and records them at the current second.
-    /// The single sampler thread reuses these buffers, so sampling allocates nothing.
+    /// The sum lives on the stack, so sampling allocates nothing.
     /// </summary>
     internal void Measurement(ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPool>> sampledPools)
     {
-        Array.Clear(gauges);
-        Array.Clear(opened);
+        var slotCount = ring.SlotCount;
+        Span<long> gauges = stackalloc long[slotCount * gaugeCount];
+        Span<long> opened = stackalloc long[slotCount];
+        gauges.Clear();
+        opened.Clear();
 
         foreach (var pool in sampledPools) {
             var slot = slots.SlotOf(pool.Database, pool.Pool);
