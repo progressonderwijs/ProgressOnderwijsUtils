@@ -167,6 +167,26 @@ public sealed class MetricsCollectorTest
         harness.Collector.Dispose();
     }
 
+    /// <summary>
+    /// A collector that has already been disposed must not start anymore: its stop signal is gone, so a
+    /// sampler would immediately report a failure, and the listeners would stay hooked up forever.
+    /// </summary>
+    [Fact]
+    public void A_disposed_collector_does_not_start_again()
+    {
+        var failures = new ConcurrentQueue<Exception>();
+        var collector = TestMetrics.Collector(new MutableClock());
+        collector.Dispose();
+
+        collector.Start(failures.Enqueue);
+        collector.Start(failures.Enqueue);
+        // Without the guard the sampler fails right away on the disposed signal.
+        Thread.Sleep(TimeSpan.FromMilliseconds(200));
+        collector.Dispose();
+
+        PAssert.That(() => failures.IsEmpty);
+    }
+
     [Fact]
     public void Requests_are_counted_in_the_bucket_that_matches_their_duration()
     {

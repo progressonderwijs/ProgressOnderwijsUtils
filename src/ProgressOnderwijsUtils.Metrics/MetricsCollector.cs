@@ -78,6 +78,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// background thread and does not hold up the process. The signal is not disposed then: the thread still waits
     /// on it later, and an ObjectDisposedException on a thread of our own brings down the whole process.
     /// Only the first call cleans up: a collector stopped early is disposed again when the host stops.
+    /// The subscription on all diagnostic listeners is released outside the lock, for the same reason it is made
+    /// outside the lock in <see cref="Start"/>.
     /// </summary>
     public void Dispose()
     {
@@ -85,6 +87,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
             return;
         }
 
+        IDisposable? allListeners;
         lock (lifetime) {
             if (disposed) {
                 return;
@@ -95,7 +98,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                 stopSampling.Dispose();
             }
 
-            allDiagnosticListenersSubscription?.Dispose();
+            allListeners = allDiagnosticListenersSubscription;
+            allDiagnosticListenersSubscription = null;
             foreach (var subscription in sqlClientSubscriptions) {
                 subscription.Dispose();
             }
@@ -105,15 +109,62 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
             disposed = true;
         }
+
+        allListeners?.Dispose();
     }
 
     public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
 
+    /// <summary>
+    /// Starts listening and sampling. A collector that is already disposed does not start anymore: its stop signal is
+    /// gone, and listeners hooked up after the cleanup would never be released. A second call is ignored.
+    /// The subscription on all diagnostic listeners is made outside the lock: DiagnosticListener calls our observer
+    /// while holding its own global lock, and the observer takes ours; the other way around could deadlock.
+    /// </summary>
     /// <param name="samplingFailed">
     /// Receives the exception that stopped the sampling: the windows after that have no thread pool and connection
     /// pool levels anymore.
     /// </param>
     public void Start(Action<Exception> samplingFailed)
+    {
+        lock (lifetime) {
+            if (disposed || sampler is not null) {
+                return;
+            }
+
+            StartListening();
+            StartSampling(samplingFailed);
+        }
+
+        // Calls back right away for the SqlClient listener when it already exists, otherwise as soon as SqlClient creates it.
+        var subscription = DiagnosticListener.AllListeners.Subscribe(
+            new NextObserver<DiagnosticListener>(
+                diagnostics => {
+                    lock (lifetime) {
+                        if (!disposed && string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
+                            var sqlClientSubscription = diagnostics.Subscribe(
+                                new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
+                                name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
+                            );
+                            sqlClientSubscriptions.Add(sqlClientSubscription);
+                        }
+                    }
+                }
+            )
+        );
+
+        lock (lifetime) {
+            if (!disposed) {
+                allDiagnosticListenersSubscription = subscription;
+                return;
+            }
+        }
+
+        // Disposed in the meantime, without having seen this subscription.
+        subscription.Dispose();
+    }
+
+    void StartListening()
     {
         listener.InstrumentPublished = (instrument, l) => {
             if (string.Equals(instrument.Meter.Name, "Microsoft.AspNetCore.Hosting", StringComparison.Ordinal)) {
@@ -152,25 +203,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
             }
         };
         listener.Start();
-
-        // Calls back right away for the SqlClient listener when it already exists, otherwise as soon as SqlClient creates it.
-        allDiagnosticListenersSubscription = DiagnosticListener.AllListeners.Subscribe(
-            new NextObserver<DiagnosticListener>(
-                diagnostics => {
-                    lock (lifetime) {
-                        if (!disposed && string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
-                            var subscription = diagnostics.Subscribe(
-                                new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
-                                name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
-                            );
-                            sqlClientSubscriptions.Add(subscription);
-                        }
-                    }
-                }
-            )
-        );
-
-        StartSampling(samplingFailed);
     }
 
     /// <summary>
