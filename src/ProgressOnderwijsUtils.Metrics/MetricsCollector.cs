@@ -116,15 +116,24 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
     /// <summary>
     /// Starts listening and sampling. A collector that is already disposed does not start anymore: its stop signal is
-    /// gone, and listeners hooked up after the cleanup would never be released. A second call is ignored.
+    /// gone, and listeners hooked up after the cleanup would never be released. A second call is ignored. A start that is
+    /// rejected because another host already published its ASP.NET Core instruments leaves the collector disposed, so
+    /// starting it again does nothing.
     /// The subscription on all diagnostic listeners is made outside the lock: DiagnosticListener calls our observer
     /// while holding its own global lock, and the observer takes ours; the other way around could deadlock.
     /// </summary>
+    /// <param name="hostMeters">
+    /// The meter factory of the host whose requests are measured. Every host creates its own ASP.NET Core instruments
+    /// through its own factory, and the listener sees those of all hosts in the process. Measuring more than one host is
+    /// not supported: the ASP.NET Core instruments of any other factory are rejected with a
+    /// <see cref="NotSupportedException"/>, which ends up in the code that creates them, typically the startup of that
+    /// other host. The SqlClient sources are static and therefore always process-wide.
+    /// </param>
     /// <param name="samplingFailed">
     /// Receives the exception that stopped the sampling: the windows after that have no thread pool and connection
     /// pool levels anymore.
     /// </param>
-    public void Start(Action<Exception> samplingFailed)
+    public void Start(IMeterFactory hostMeters, Action<Exception> samplingFailed)
     {
         if (started) {
             return;
@@ -135,9 +144,14 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                 return;
             }
 
-            StartListening();
+            try {
+                StartListening();
+            } catch {
+                listener.Dispose();
+                disposed = true;
+                throw;
+            }
             StartSampling();
-
             started = true;
         }
 
@@ -155,7 +169,15 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         {
             listener.InstrumentPublished = (instrument, l) => {
                 if (string.Equals(instrument.Meter.Name, "Microsoft.AspNetCore.Hosting", StringComparison.Ordinal)) {
-                    if (string.Equals(instrument.Name, "http.server.active_requests", StringComparison.Ordinal)) {
+                    if (instrument.Meter.Scope != hostMeters) {
+                        throw new NotSupportedException(
+                            """
+                            The metrics collector cannot measure the requests of more than one host: a second host published its ASP.NET Core
+                            instruments while the collector measures the host it was registered on.
+                            Register the metrics collector on one host only, and run no other web hosts in the same process while it runs.
+                            """
+                        );
+                    } else if (string.Equals(instrument.Name, "http.server.active_requests", StringComparison.Ordinal)) {
                         l.EnableMeasurementEvents(instrument, activeRequests);
                     } else if (string.Equals(instrument.Name, "http.server.request.duration", StringComparison.Ordinal)) {
                         l.EnableMeasurementEvents(instrument, requestDuration);

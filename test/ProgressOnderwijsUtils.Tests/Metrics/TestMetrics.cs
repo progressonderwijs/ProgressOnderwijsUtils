@@ -1,3 +1,5 @@
+using System.Diagnostics.Metrics;
+using Microsoft.Extensions.DependencyInjection;
 using ProgressOnderwijsUtils.Metrics;
 
 namespace ProgressOnderwijsUtils.Tests.Metrics;
@@ -107,6 +109,13 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
     }
 }
 
+/// <summary>
+/// A running collector sees the ASP.NET Core instruments of all hosts in the process and rejects those of every host
+/// but its own, so the test classes that run collectors or create such instruments must not run alongside each other.
+/// </summary>
+[CollectionDefinition(nameof(MetricsCollectorCollection))]
+public sealed class MetricsCollectorCollection;
+
 static class TestMetrics
 {
     public static MetricsDescription<TestEndpoint, TestDatabase, TestPool> Description(TestDatabaseDuration? databaseDuration = null)
@@ -125,4 +134,15 @@ static class TestMetrics
 
     public static MetricsCollector<TestEndpoint, TestDatabase, TestPool> Collector(TimeProvider clock)
         => new(Description(), Registry(), clock);
+
+    /// <summary>
+    /// The services of a host, with a meter factory of its own as ASP.NET Core creates its instruments with.
+    /// </summary>
+    public static ServiceProvider HostServices()
+        => new ServiceCollection().AddMetrics().BuildServiceProvider();
+
+    /// <summary>
+    /// The meter factory of a host that never creates any instruments, for tests that do not measure requests.
+    /// </summary>
+    public static readonly IMeterFactory HostWithoutRequests = HostServices().GetRequiredService<IMeterFactory>();
 }

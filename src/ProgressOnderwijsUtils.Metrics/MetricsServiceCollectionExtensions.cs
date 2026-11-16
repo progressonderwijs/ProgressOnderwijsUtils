@@ -1,3 +1,4 @@
+using System.Diagnostics.Metrics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,7 +13,8 @@ public static class MetricsServiceCollectionExtensions
         /// <summary>
         /// Enables the OpenTelemetry SqlClient instrumentation, whose <c>db.client.operation.duration</c> the collector
         /// listens to, starts the <paramref name="collector"/> when the host starts and disposes it when the host has
-        /// stopped.
+        /// stopped. The collector measures the requests of this host; another web host in the same process fails to
+        /// start while the collector runs.
         /// </summary>
         /// <param name="collector">Typically a static instance, so that what it collected stays readable outside of the dependency injection container.</param>
         /// <param name="samplingFailed">See <see cref="MetricsCollector{TEndpoint,TDatabase,TPool}.Start"/>.</param>
@@ -25,7 +27,12 @@ public static class MetricsServiceCollectionExtensions
             where TPool : struct, Enum
         {
             _ = services.AddOpenTelemetry().WithMetrics(builder => builder.AddSqlClientInstrumentation());
-            _ = services.AddHostedService(_ => new MetricsCollectorLifetime(() => collector.Start(samplingFailed), collector.Dispose));
+            _ = services.AddHostedService(
+                provider => {
+                    var hostMeters = provider.GetRequiredService<IMeterFactory>();
+                    return new MetricsCollectorLifetime(() => collector.Start(hostMeters, samplingFailed), collector.Dispose);
+                }
+            );
             return services;
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProgressOnderwijsUtils.Metrics;
 using ProgressOnderwijsUtils.Tests.Data;
@@ -39,6 +40,7 @@ static class MetricsCollectionTestExtensions
     }
 }
 
+[Collection(nameof(MetricsCollectorCollection))]
 public sealed class MetricsCollectorTest
 {
     /// <summary>
@@ -83,21 +85,23 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
-    /// A meter of our own under the name the collector listens to, so that the test comes in along the
-    /// same path as the real ASP.NET instrumentation.
+    /// A meter of our own under the name the collector listens to, created through the meter factory of a host, so
+    /// that the test comes in along the same path as the real ASP.NET instrumentation.
     /// </summary>
     sealed class Harness : IDisposable
     {
-        readonly Meter meter = new("Microsoft.AspNetCore.Hosting");
+        readonly ServiceProvider host = TestMetrics.HostServices();
         readonly UpDownCounter<long> activeRequests;
         readonly Histogram<double> requestDuration;
 
         public Harness()
         {
+            var hostMeters = host.GetRequiredService<IMeterFactory>();
+            var meter = hostMeters.Create("Microsoft.AspNetCore.Hosting");
             activeRequests = meter.CreateUpDownCounter<long>("http.server.active_requests");
             requestDuration = meter.CreateHistogram<double>("http.server.request.duration");
             Collector = TestMetrics.Collector(Clock);
-            Collector.Start(samplingFailures.Enqueue);
+            Collector.Start(hostMeters, samplingFailures.Enqueue);
         }
 
         readonly ConcurrentQueue<Exception> samplingFailures = new();
@@ -144,15 +148,15 @@ public sealed class MetricsCollectorTest
 
         /// <summary>
         /// Stops the instrumentation while the collector stays alive, as when the application shuts
-        /// down with requests still running.
+        /// down with requests still running. A meter of a factory is only disposed together with that factory.
         /// </summary>
         public void StopInstrumentation()
-            => meter.Dispose();
+            => host.Dispose();
 
         public void Dispose()
         {
             Collector.Dispose();
-            meter.Dispose();
+            host.Dispose();
             PAssert.That(() => samplingFailures.IsEmpty);
         }
     }
@@ -180,9 +184,37 @@ public sealed class MetricsCollectorTest
         var collector = TestMetrics.Collector(new MutableClock());
         collector.Dispose();
 
-        collector.Start(failures.Enqueue);
-        collector.Start(failures.Enqueue);
+        collector.Start(TestMetrics.HostWithoutRequests, failures.Enqueue);
+        collector.Start(TestMetrics.HostWithoutRequests, failures.Enqueue);
         // Without the guard the sampler fails right away on the disposed signal.
+        Thread.Sleep(TimeSpan.FromMilliseconds(200));
+        collector.Dispose();
+
+        PAssert.That(() => failures.IsEmpty);
+    }
+
+    /// <summary>
+    /// When another host has already published its ASP.NET Core instruments, the start is rejected. The collector must
+    /// then release its listener instead of keeping it hooked up for the rest of the process, and stays disposed.
+    /// </summary>
+    [Fact]
+    public void A_start_rejected_because_of_another_host_releases_the_listener_and_leaves_the_collector_disposed()
+    {
+        using var otherHost = TestMetrics.HostServices();
+        var otherMeter = otherHost.GetRequiredService<IMeterFactory>().Create("Microsoft.AspNetCore.Hosting");
+        _ = otherMeter.CreateHistogram<double>("http.server.request.duration");
+        using var ownHost = TestMetrics.HostServices();
+        var ownMeters = ownHost.GetRequiredService<IMeterFactory>();
+        var failures = new ConcurrentQueue<Exception>();
+        var collector = TestMetrics.Collector(new MutableClock());
+
+        _ = Assert.Throws<NotSupportedException>(() => collector.Start(ownMeters, failures.Enqueue));
+
+        // A listener that was still hooked up would reject this instrument of the other host as well.
+        _ = otherMeter.CreateUpDownCounter<long>("http.server.active_requests");
+
+        collector.Start(ownMeters, failures.Enqueue);
+        // A sampler started on the second attempt would fail right away on the disposed signal.
         Thread.Sleep(TimeSpan.FromMilliseconds(200));
         collector.Dispose();
 
@@ -294,6 +326,31 @@ public sealed class MetricsCollectorTest
         PAssert.That(() => collection.RequestDurationCount(endpointSlot, 0, false) == 1);
         PAssert.That(() => collection.RequestDurationCount(endpointSlot, 0, true) == 1);
         PAssert.That(() => collection.TotalRequestDurationCount(MetricsDimension<TestEndpoint>.OtherSlot, false) == 0);
+    }
+
+    /// <summary>
+    /// Every host creates its own ASP.NET Core instruments, and the listener sees those of all hosts in the process.
+    /// Measuring more than one host is not supported, so the instruments of a second host are rejected where they are
+    /// created, and the requests of the measured host are still counted.
+    /// </summary>
+    [Fact]
+    public void A_second_host_in_the_same_process_is_rejected()
+    {
+        using var harness = new Harness();
+        using var otherHost = TestMetrics.HostServices();
+        var otherMeter = otherHost.GetRequiredService<IMeterFactory>().Create("Microsoft.AspNetCore.Hosting");
+
+        _ = Assert.Throws<NotSupportedException>(() => otherMeter.CreateUpDownCounter<long>("http.server.active_requests"));
+        _ = Assert.Throws<NotSupportedException>(() => otherMeter.CreateHistogram<double>("http.server.request.duration"));
+
+        harness.RequestStarted();
+        harness.Request(0.001);
+        harness.Clock.Advance(2);
+
+        var collection = harness.Collector.Collect(1, minimumWindow: 1);
+
+        PAssert.That(() => collection.TotalRequestDurationCount(false) == 1);
+        PAssert.That(() => collection.MaxActiveRequests == 1);
     }
 
     [Fact]

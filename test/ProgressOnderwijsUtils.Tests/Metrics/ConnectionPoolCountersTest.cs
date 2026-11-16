@@ -7,6 +7,7 @@ namespace ProgressOnderwijsUtils.Tests.Metrics;
 /// Builds its own connection strings on top of the local server of <see cref="TransactedLocalConnection"/>: these tests
 /// are about opening, closing and the pool itself, which that class hides behind one open connection in a transaction.
 /// </summary>
+[Collection(nameof(MetricsCollectorCollection))]
 public sealed class ConnectionPoolCountersTest
 {
     readonly ConnectionPoolRegistry<TestDatabase, TestPool> registry = TestMetrics.Registry();
@@ -17,7 +18,7 @@ public sealed class ConnectionPoolCountersTest
     MetricsCollector<TestEndpoint, TestDatabase, TestPool> StartedCollector()
     {
         var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPool>(TestMetrics.Description(), registry);
-        collector.Start(_ => { });
+        collector.Start(TestMetrics.HostWithoutRequests, _ => { });
         return collector;
     }
 
