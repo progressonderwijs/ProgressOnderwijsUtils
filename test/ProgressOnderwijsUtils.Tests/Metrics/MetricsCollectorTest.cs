@@ -908,14 +908,24 @@ public sealed class MetricsCollectorTest
         var quiet = usage.Collect(firstSecond, firstSecond).AssertNotNull();
 
         // Offering work pushes the thread pool up; if it drops back afterwards, the peak remains.
+        // The work items must all be finished before the events are disposed: some only start after Set().
         using var blocked = new ManualResetEventSlim();
-        for (var i = 0; i < Environment.ProcessorCount * 4; i++) {
-            _ = ThreadPool.UnsafeQueueUserWorkItem(_ => blocked.Wait(), null);
+        var workItems = Environment.ProcessorCount * 4;
+        using var finished = new CountdownEvent(workItems);
+        for (var i = 0; i < workItems; i++) {
+            _ = ThreadPool.UnsafeQueueUserWorkItem(
+                _callback => {
+                    blocked.Wait();
+                    _ = finished.Signal();
+                },
+                null
+            );
         }
 
         clock.Advance(1);
         usage.Measurement();
         blocked.Set();
+        PAssert.That(() => finished.Wait(TimeSpan.FromSeconds(30)));
         var lastSecond = clock.Second;
 
         var busy = usage.Collect(firstSecond, lastSecond).AssertNotNull();
