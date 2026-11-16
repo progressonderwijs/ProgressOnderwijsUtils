@@ -764,14 +764,14 @@ public sealed class MetricsCollectorTest
     /// slot back to its own, older second: the writers of the newer second would wait for a release that never comes.
     /// </summary>
     [Fact]
-    public void A_reset_that_finishes_after_a_newer_claim_does_not_block_the_newer_second()
+    public async Task A_reset_that_finishes_after_a_newer_claim_does_not_block_the_newer_second()
     {
         var clock = new MutableClock();
         var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
 
         // The first writer claims second 0; during its reset a full rotation passes and second 64 claims the slot.
         var newerClaimed = false;
-        _ = ring.TryEnterSlot(_ => {
+        _ = ring.TryEnterSlot(_reset => {
             clock.Advance(64);
             newerClaimed = ring.TryEnterSlot(null, out _);
         }, out _);
@@ -779,12 +779,12 @@ public sealed class MetricsCollectorTest
 
         // Another writer in second 64.
         var next = Task.Run(() => ring.TryEnterSlot(null, out _), TestContext.Current.CancellationToken);
-        var finished = next.Wait(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
+        var finished = await next.WaitAsync(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
 
         // Let a waiting writer go in any case: the next rotation makes its second stale.
         clock.Advance(64);
         _ = ring.TryEnterSlot(null, out _);
-        _ = next.Wait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        _ = await next.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
         PAssert.That(() => finished);
     }
