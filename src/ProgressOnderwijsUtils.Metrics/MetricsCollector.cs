@@ -31,6 +31,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </summary>
     public const long FirstObservableSecond = 0;
 
+    public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
     readonly SecondsSinceStart seconds;
     readonly DurationHistogramRing<TDatabase> databaseDuration;
     readonly DurationHistogramRing<TEndpoint> requestDuration;
@@ -42,6 +43,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     readonly ManualResetEventSlim stopSampling;
     readonly List<IDisposable> sqlClientSubscriptions;
     readonly Lock lifetime;
+    bool started;
     bool disposed;
     Thread? sampler;
     IDisposable? allDiagnosticListenersSubscription;
@@ -89,13 +91,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
         IDisposable? allListeners;
         lock (lifetime) {
-            if (disposed) {
+            if (disposed || !started) {
                 return;
-            }
-
-            stopSampling.Set();
-            if (sampler?.Join(TimeSpan.FromSeconds(5)) is not false) {
-                stopSampling.Dispose();
             }
 
             allListeners = allDiagnosticListenersSubscription;
@@ -105,15 +102,17 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
             }
             sqlClientSubscriptions.Clear();
 
+            stopSampling.Set();
+            if (sampler.AssertNotNull().Join(TimeSpan.FromSeconds(5))) {
+                stopSampling.Dispose();
+            }
+
             listener.Dispose();
 
             disposed = true;
         }
-
         allListeners?.Dispose();
     }
-
-    public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
 
     /// <summary>
     /// Starts listening and sampling. A collector that is already disposed does not start anymore: its stop signal is
@@ -127,82 +126,114 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </param>
     public void Start(Action<Exception> samplingFailed)
     {
+        if (started) {
+            return;
+        }
+
         lock (lifetime) {
-            if (disposed || sampler is not null) {
+            if (started || disposed) {
                 return;
             }
 
             StartListening();
-            StartSampling(samplingFailed);
+            StartSampling();
+
+            started = true;
+        }
+
+        var subscription = StartDiagnosing();
+
+        lock (lifetime) {
+            if (disposed) {
+                subscription.Dispose();
+            } else {
+                allDiagnosticListenersSubscription = subscription;
+            }
+        }
+
+        void StartListening()
+        {
+            listener.InstrumentPublished = (instrument, l) => {
+                if (string.Equals(instrument.Meter.Name, "Microsoft.AspNetCore.Hosting", StringComparison.Ordinal)) {
+                    if (string.Equals(instrument.Name, "http.server.active_requests", StringComparison.Ordinal)) {
+                        l.EnableMeasurementEvents(instrument, activeRequests);
+                    } else if (string.Equals(instrument.Name, "http.server.request.duration", StringComparison.Ordinal)) {
+                        l.EnableMeasurementEvents(instrument, requestDuration);
+                    }
+                } else if (string.Equals(instrument.Meter.Name, "OpenTelemetry.Instrumentation.SqlClient", StringComparison.Ordinal)) {
+                    if (string.Equals(instrument.Name, "db.client.operation.duration", StringComparison.Ordinal)) {
+                        l.EnableMeasurementEvents(instrument, databaseDuration);
+                    }
+                }
+            };
+            listener.SetMeasurementEventCallback<long>(
+                (_, measurement, _, state) => {
+                    if (state is ActiveRequests request) {
+                        request.Measurement(measurement);
+                    }
+                }
+            );
+            listener.SetMeasurementEventCallback<double>(
+                (_, measurement, tags, state) => {
+                    if (ReferenceEquals(state, requestDuration)) {
+                        requestDuration.Measurement(measurement, tags);
+                    } else if (ReferenceEquals(state, databaseDuration)) {
+                        databaseDuration.Measurement(measurement, tags);
+                    }
+                }
+            );
+            listener.MeasurementsCompleted = (_, state) => {
+                if (state is ActiveRequests target) {
+                    // The instrumentation stops with requests still running: the matching -1 measurements never arrive
+                    // anymore, so the running total would stay stuck.
+                    target.Reset();
+                }
+            };
+            listener.Start();
+        }
+
+        // Samples the thread pool and the connection pools from a thread of its own instead of from a timer on the
+        // thread pool. A thread pool timer is offered as a work item and so ends up in the same queue as all other work:
+        // exactly during the congestion this measurement has to demonstrate, the sampling itself would be left waiting.
+        // The peak in the queue is then already gone by the time it runs, or the window holds no sample at all and falls
+        // back to null. A thread of its own is scheduled by the operating system and so is independent of what it
+        // measures.
+        void StartSampling()
+        {
+            sampler = new(
+                () => MetricsSampler.SampleUntilStopped(
+                    stopSampling,
+                    TimeSpan.FromMilliseconds(250),
+                    () => {
+                        threadPoolUsage.Measurement();
+                        connectionPoolUsage.Measurement();
+                    },
+                    samplingFailed
+                )
+            ) {
+                IsBackground = true,
+                Name = "MetricsSampler",
+            };
+            sampler.Start();
         }
 
         // Calls back right away for the SqlClient listener when it already exists, otherwise as soon as SqlClient creates it.
-        var subscription = DiagnosticListener.AllListeners.Subscribe(
-            new NextObserver<DiagnosticListener>(
-                diagnostics => {
-                    lock (lifetime) {
-                        if (!disposed && string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
-                            var sqlClientSubscription = diagnostics.Subscribe(
-                                new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
-                                name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
-                            );
-                            sqlClientSubscriptions.Add(sqlClientSubscription);
+        IDisposable StartDiagnosing()
+            => DiagnosticListener.AllListeners.Subscribe(
+                new NextObserver<DiagnosticListener>(
+                    diagnostics => {
+                        lock (lifetime) {
+                            if (!disposed && string.Equals(diagnostics.Name, "SqlClientDiagnosticListener", StringComparison.Ordinal)) {
+                                var sqlClientSubscription = diagnostics.Subscribe(
+                                    new NextObserver<KeyValuePair<string, object?>>(SqlClientEvent),
+                                    name => name is SqlClientConnectionOpenBefore.Name or SqlClientConnectionOpenError.Name
+                                );
+                                sqlClientSubscriptions.Add(sqlClientSubscription);
+                            }
                         }
                     }
-                }
-            )
-        );
-
-        lock (lifetime) {
-            if (!disposed) {
-                allDiagnosticListenersSubscription = subscription;
-                return;
-            }
-        }
-
-        // Disposed in the meantime, without having seen this subscription.
-        subscription.Dispose();
-    }
-
-    void StartListening()
-    {
-        listener.InstrumentPublished = (instrument, l) => {
-            if (string.Equals(instrument.Meter.Name, "Microsoft.AspNetCore.Hosting", StringComparison.Ordinal)) {
-                if (string.Equals(instrument.Name, "http.server.active_requests", StringComparison.Ordinal)) {
-                    l.EnableMeasurementEvents(instrument, activeRequests);
-                } else if (string.Equals(instrument.Name, "http.server.request.duration", StringComparison.Ordinal)) {
-                    l.EnableMeasurementEvents(instrument, requestDuration);
-                }
-            } else if (string.Equals(instrument.Meter.Name, "OpenTelemetry.Instrumentation.SqlClient", StringComparison.Ordinal)) {
-                if (string.Equals(instrument.Name, "db.client.operation.duration", StringComparison.Ordinal)) {
-                    l.EnableMeasurementEvents(instrument, databaseDuration);
-                }
-            }
-        };
-        listener.SetMeasurementEventCallback<long>(
-            (_, measurement, _, state) => {
-                if (state is ActiveRequests request) {
-                    request.Measurement(measurement);
-                }
-            }
-        );
-        listener.SetMeasurementEventCallback<double>(
-            (_, measurement, tags, state) => {
-                if (ReferenceEquals(state, requestDuration)) {
-                    requestDuration.Measurement(measurement, tags);
-                } else if (ReferenceEquals(state, databaseDuration)) {
-                    databaseDuration.Measurement(measurement, tags);
-                }
-            }
-        );
-        listener.MeasurementsCompleted = (_, state) => {
-            if (state is ActiveRequests target) {
-                // The instrumentation stops with requests still running: the matching -1 measurements never arrive
-                // anymore, so the running total would stay stuck.
-                target.Reset();
-            }
-        };
-        listener.Start();
+                )
+            );
     }
 
     /// <summary>
@@ -226,33 +257,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                 pools.OpenFailed(connection);
                 break;
         }
-    }
-
-    /// <summary>
-    /// Samples the thread pool and the connection pools from a thread of its own instead of from a timer on the
-    /// thread pool. A thread pool timer is offered as a work item and so ends up in the same queue as all other work:
-    /// exactly during the congestion this measurement has to demonstrate, the sampling itself would be left waiting.
-    /// The peak in the queue is then already gone by the time it runs, or the window holds no sample at all and falls
-    /// back to null. A thread of its own is scheduled by the operating system and so is independent of what it
-    /// measures.
-    /// </summary>
-    void StartSampling(Action<Exception> samplingFailed)
-    {
-        sampler = new(
-            () => MetricsSampler.SampleUntilStopped(
-                stopSampling,
-                TimeSpan.FromMilliseconds(250),
-                () => {
-                    threadPoolUsage.Measurement();
-                    connectionPoolUsage.Measurement();
-                },
-                samplingFailed
-            )
-        ) {
-            IsBackground = true,
-            Name = "MetricsSampler",
-        };
-        sampler.Start();
     }
 
     /// <summary>
