@@ -242,7 +242,7 @@ public sealed class ConnectionPoolCountersTest
     /// Summed together a full readwrite pool would be cancelled out by a practically empty debuglog pool.
     /// </summary>
     [Fact]
-    public void Diufferent_pools_are_never_added_up()
+    public void Different_pools_are_never_added_up()
     {
         var sizes = ConnectionPoolRegistry<TestDatabase, TestPool>.PoolSizes([UnopenedPool("Alpha", TestPool.ReadWrite, 100), UnopenedPool("Alpha", TestPool.DebugLog, 10),]);
 
