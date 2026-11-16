@@ -1894,6 +1894,7 @@ public static class AttributeLookupTable
                 ["size"] = "_size",
                 ["src"] = "_src",
                 ["step"] = "_step",
+                ["switch"] = "_switch",
                 ["type"] = "_type",
                 ["value"] = "_value",
                 ["width"] = "_width"
