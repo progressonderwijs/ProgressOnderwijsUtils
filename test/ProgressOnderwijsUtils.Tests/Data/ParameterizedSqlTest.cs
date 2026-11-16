@@ -294,7 +294,7 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void DealsWithApparentlyNestedParameterPlaceholders()
     {
-        var badQuery = SQL($@"A{{x{1}}}Z");
+        var badQuery = SQL($"A{{x{1}}}Z");
         var debugText = badQuery.DebugText();
         PAssert.That(() => debugText == "A{x1}Z");
     }
@@ -302,11 +302,11 @@ public sealed class ParameterizedSqlTest
     [Fact]
     public void SupportsNestedParameterizedSql()
     {
-        var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
+        var result = SQL($"A{0}{SQL($"[{1}{0}]")}Z");
 
         using var cmd = result.CreateSqlCommand(new(), CommandTimeout.WithoutTimeout);
 
-        var commandText = @"A@par0[@par1@par0]Z";
+        var commandText = "A@par0[@par1@par0]Z";
         PAssert.That(() => cmd.Command.CommandText == commandText);
         PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 0, 1, }));
     }

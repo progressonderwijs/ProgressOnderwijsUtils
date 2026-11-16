@@ -104,19 +104,19 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void MailtoHrefsCantHaveFragments()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com#unsupported"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com#unsupported"">a link</a>.").Sanitize().ToStringWithoutDoctype() == "This is a link.");
 
     [Fact]
     public void NoImgMailTos()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <img src=""mailto:bla@example.com"">").Sanitize().ToStringWithoutDoctype() == @"This is ");
+        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <img src=""mailto:bla@example.com"">").Sanitize().ToStringWithoutDoctype() == "This is ");
 
     [Fact]
     public void MailtoHrefsCantHavePaths()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com/lala"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com/lala"">a link</a>.").Sanitize().ToStringWithoutDoctype() == "This is a link.");
 
     [Fact]
     public void MailtoHrefsHaveSingleTo()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com,foo@bar.com"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:bla@example.com,foo@bar.com"">a link</a>.").Sanitize().ToStringWithoutDoctype() == "This is a link.");
 
     [Fact]
     public void MailtoHrefsCanHaveSubjectAndBody()
@@ -124,7 +124,7 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void MailtoHrefsCannotHaveArbitraryQueries()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:foo@bar.com?sUbJect=asfdasdf&Arbitrary=asdf"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is a link.");
+        => PAssert.That(() => HtmlFragment.ParseFragment(@"This is <a href=""mailto:foo@bar.com?sUbJect=asfdasdf&Arbitrary=asdf"">a link</a>.").Sanitize().ToStringWithoutDoctype() == "This is a link.");
 
     [Fact]
     public void AllowsMarginStyleTags()
@@ -132,7 +132,7 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void OwaspCaseInsensitiveXssAttackVector()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"This link is a nice <IMG SRC=JaVaScRiPt:alert('XSS')> image.").Sanitize().ToStringWithoutDoctype() == "This link is a nice  image.");
+        => PAssert.That(() => HtmlFragment.ParseFragment("This link is a nice <IMG SRC=JaVaScRiPt:alert('XSS')> image.").Sanitize().ToStringWithoutDoctype() == "This link is a nice  image.");
 
     [Fact]
     public void Owasp_Malformed_IMG_tags()
@@ -157,7 +157,7 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void Owasp_Double_open_angle_brackets()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:<iframe src=http://xss.rocks/scriptlet.html <").Sanitize().ToStringWithoutDoctype() == "Test element:");
+        => PAssert.That(() => HtmlFragment.ParseFragment("Test element:<iframe src=http://xss.rocks/scriptlet.html <").Sanitize().ToStringWithoutDoctype() == "Test element:");
 
     [Fact]
     public void Owasp_IMG_Dynsrc()
@@ -181,7 +181,7 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void Owasp_Svg_object_tag()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:<svg/onload=alert('XSS')>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+        => PAssert.That(() => HtmlFragment.ParseFragment("Test element:<svg/onload=alert('XSS')>").Sanitize().ToStringWithoutDoctype() == "Test element:");
 
     [Fact]
     public void Owasp_STYLE_sheet()
@@ -193,7 +193,7 @@ public sealed class HtmlSanitizerTest
 
     [Fact]
     public void Owasp_Remote_style_sheet_part_2()
-        => PAssert.That(() => HtmlFragment.ParseFragment(@"Test element:<STYLE>@import'http://xss.rocks/xss.css';</STYLE>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+        => PAssert.That(() => HtmlFragment.ParseFragment("Test element:<STYLE>@import'http://xss.rocks/xss.css';</STYLE>").Sanitize().ToStringWithoutDoctype() == "Test element:");
 
     [Fact]
     public void Owasp_Remote_style_sheet_part_3()
