@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Diagnostics.Metrics;
+using Microsoft.Extensions.Hosting;
 using ProgressOnderwijsUtils.Metrics;
+using ProgressOnderwijsUtils.Tests.Data;
 using MetricsCollection = ProgressOnderwijsUtils.Metrics.MetricsCollection<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPool>;
 using MetricsCollector = ProgressOnderwijsUtils.Metrics.MetricsCollector<ProgressOnderwijsUtils.Tests.Metrics.TestEndpoint, ProgressOnderwijsUtils.Tests.Metrics.TestDatabase, ProgressOnderwijsUtils.Tests.Metrics.TestPool>;
 
@@ -185,6 +187,57 @@ public sealed class MetricsCollectorTest
         collector.Dispose();
 
         PAssert.That(() => failures.IsEmpty);
+    }
+
+    /// <summary>
+    /// The whole path an application uses: the OpenTelemetry SqlClient instrumentation that
+    /// <see cref="MetricsServiceCollectionExtensions.AddProgressOnderwijsMetrics{TEndpoint,TDatabase,TPool}"/> enables,
+    /// against a real database. A different meter or instrument name, unit or tag would otherwise silently leave
+    /// the database histograms empty, or count the measurements under the wrong database or outcome.
+    /// </summary>
+    [Fact]
+    public async Task Sql_commands_are_counted_per_database_in_the_bucket_of_their_duration_and_outcome()
+    {
+        var clock = new MutableClock();
+        var databaseDuration = new TestDatabaseDuration(catalog => catalog == "tempdb" ? TestDatabase.Alpha : null);
+        var collector = new MetricsCollector(TestMetrics.Description(databaseDuration), TestMetrics.Registry(), clock);
+        var samplingFailures = new ConcurrentQueue<Exception>();
+        var builder = Host.CreateEmptyApplicationBuilder(new());
+        _ = builder.Services.AddProgressOnderwijsMetrics(collector, samplingFailures.Enqueue);
+        using var host = builder.Build();
+        await host.StartAsync(TestContext.Current.CancellationToken);
+
+        var connectionString = new SqlConnectionStringBuilder(TransactedLocalConnection.ConnectionString) { InitialCatalog = "tempdb", }.ConnectionString;
+        await using (var connection = new SqlConnection(connectionString)) {
+            await connection.OpenAsync(TestContext.Current.CancellationToken);
+            foreach (var sql in new[] { "select 1", "select 1", "waitfor delay '00:00:00.300'", }) {
+                await using var command = new SqlCommand(sql, connection);
+                _ = await command.ExecuteNonQueryAsync(TestContext.Current.CancellationToken);
+            }
+
+            await using var failing = new SqlCommand("select 1/0", connection);
+            _ = await Assert.ThrowsAsync<SqlException>(() => failing.ExecuteNonQueryAsync(TestContext.Current.CancellationToken));
+        }
+
+        clock.Advance(2);
+        var collection = collector.Collect(1, minimumWindow: 1);
+        await host.StopAsync(TestContext.Current.CancellationToken);
+
+        var histogram = collection.Description.DatabaseDurationHistogram;
+        var alpha = histogram.SlotOf(TestDatabase.Alpha);
+        var succeeded = collection.DatabaseDurationCounts(alpha, false);
+        var failed = collection.DatabaseDurationCounts(alpha, true);
+        var other = collection.DatabaseDurationCounts(MetricsDimension<TestDatabase>.OtherSlot, false).Sum() + collection.DatabaseDurationCounts(MetricsDimension<TestDatabase>.OtherSlot, true).Sum();
+
+        // db.namespace names the database, error.type marks the failure.
+        PAssert.That(() => succeeded.Sum() == 3 && failed.Sum() == 1 && other == 0);
+
+        // The duration is in seconds: the two quick selects stay below 0.3 s, the delay lands between 0.3 s and 2 s.
+        var delayBucket = histogram.Histogram.GetBucketIndex(0.3);
+        var quick = succeeded[..delayBucket].Sum();
+        var delayed = succeeded[delayBucket..(histogram.Histogram.GetBucketIndex(2.0) + 1)].Sum();
+        PAssert.That(() => quick == 2 && delayed == 1);
+        PAssert.That(() => samplingFailures.IsEmpty);
     }
 
     [Fact]

@@ -26,10 +26,14 @@ public enum TestPool
 }
 
 /// <summary>
-/// Tracks every <see cref="TestDatabase"/>; a database is recognised by a catalog with the name of the enum value.
+/// Tracks every <see cref="TestDatabase"/>; a database is recognised by a catalog with the name of the enum value,
+/// unless a test that runs against a real database maps an existing catalog itself.
 /// </summary>
-sealed class TestDatabaseDuration() : MetricsDimension<TestDatabase>(MetricsHistogram.ExponentialLatencyBuckets(), Enum.GetValues<TestDatabase>())
+sealed class TestDatabaseDuration(Func<string, TestDatabase?>? classify = null)
+    : MetricsDimension<TestDatabase>(MetricsHistogram.ExponentialLatencyBuckets(), Enum.GetValues<TestDatabase>())
 {
+    readonly Func<string, TestDatabase?> classify = classify ?? Classify;
+
     public static TestDatabase? Classify(string catalog)
         => Enum.TryParse<TestDatabase>(catalog, out var database) && Enum.IsDefined(database) ? database : null;
 
@@ -40,7 +44,7 @@ sealed class TestDatabaseDuration() : MetricsDimension<TestDatabase>(MetricsHist
         foreach (var tag in tags) {
             switch (tag.Key) {
                 case "db.namespace":
-                    database = tag.Value is string catalog ? Classify(catalog) : database;
+                    database = tag.Value is string dbNamespace ? SqlClientDbNamespace.Classify(dbNamespace, classify) : database;
                     break;
                 case "error.type":
                     failed = tag.Value is not null;
@@ -105,11 +109,11 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
 
 static class TestMetrics
 {
-    public static MetricsDescription<TestEndpoint, TestDatabase, TestPool> Description()
+    public static MetricsDescription<TestEndpoint, TestDatabase, TestPool> Description(TestDatabaseDuration? databaseDuration = null)
         => new() {
             SmallestInterval = 1,
             LargestInterval = 128,
-            DatabaseDurationHistogram = new TestDatabaseDuration(),
+            DatabaseDurationHistogram = databaseDuration ?? new TestDatabaseDuration(),
             RequestDurationHistogram = new TestRequestDuration(),
         };
 
