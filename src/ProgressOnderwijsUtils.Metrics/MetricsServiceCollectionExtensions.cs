@@ -38,8 +38,11 @@ public static class MetricsServiceCollectionExtensions
     /// Stops in <see cref="IHostedLifecycleService.StoppedAsync"/>, after the web server and all other hosted services
     /// have stopped, so that the requests still running during shutdown are measured as well.
     /// </summary>
-    sealed class MetricsCollectorLifetime(Action start, Action stop) : IHostedLifecycleService
+    sealed class MetricsCollectorLifetime(Action start, Action stop) : IHostedLifecycleService, IDisposable
     {
+        public void Dispose()
+            => stop();
+
         public Task StartingAsync(CancellationToken cancellationToken)
         {
             start();

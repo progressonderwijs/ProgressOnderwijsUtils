@@ -60,6 +60,9 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
     internal void OpenFailed(SqlConnection conn)
     {
         if (byConnectionString.TryGetValue(conn.ConnectionString, out var counters)) {
+            if (conn.State is System.Data.ConnectionState.Closed) {
+                conn.StateChange -= counters.StateChangeHandler;
+            }
             counters.OpenFailed();
         }
     }

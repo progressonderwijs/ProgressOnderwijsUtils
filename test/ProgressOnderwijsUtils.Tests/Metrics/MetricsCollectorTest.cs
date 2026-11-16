@@ -966,6 +966,7 @@ public sealed class MetricsCollectorTest
 
         var firstSecond = clock.Second;
         usage.Measurement();
+        var completedAfterFirstSample = ThreadPool.CompletedWorkItemCount;
 
         using var done = new CountdownEvent(50);
         for (var i = 0; i < done.InitialCount; i++) {
@@ -973,6 +974,7 @@ public sealed class MetricsCollectorTest
         }
 
         PAssert.That(() => done.Wait(TimeSpan.FromSeconds(10)));
+        PAssert.That(() => SpinWait.SpinUntil(() => ThreadPool.CompletedWorkItemCount >= completedAfterFirstSample + done.InitialCount, TimeSpan.FromSeconds(10)));
 
         clock.Advance(1);
         var completedBeforeSecondSample = ThreadPool.CompletedWorkItemCount;

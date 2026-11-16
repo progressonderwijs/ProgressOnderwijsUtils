@@ -54,7 +54,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </param>
     public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPool> description, ConnectionPoolRegistry<TDatabase, TPool> pools, TimeProvider? time = null)
     {
-        if (description.LargestInterval + DefaultSettleSeconds > RingCapacity) {
+        if (description.LargestInterval + DefaultSettleSeconds >= RingCapacity) {
             throw new InvalidOperationException($"A ring of {RingCapacity} seconds cannot hold a window of {description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago.");
         }
 
@@ -295,7 +295,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
     long LatestCompleteSecond(int settleSeconds)
     {
-        ArgumentOutOfRangeException.ThrowIfNegative(settleSeconds);
+        ArgumentOutOfRangeException.ThrowIfLessThan(settleSeconds, 1);
         return seconds.Second - settleSeconds;
     }
 
@@ -312,7 +312,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         // counting those as quiet would make the traffic right after starting seem structurally too low for whoever
         // divides by SecondsCovered. This limit is also the reason SecondsCovered fits in a byte.
         firstSecond = Math.Max(firstSecond, lastSecond - Description.LargestInterval + 1);
-        firstSecond = Math.Max(firstSecond, FirstObservableSecond);
+        firstSecond = Math.Max(firstSecond, Math.Max(FirstObservableSecond, seconds.Second - RingCapacity + 1));
 
         var threadPool = threadPoolUsage.Collect(firstSecond, lastSecond);
         var connectionPools = connectionPoolUsage.Collect(firstSecond, lastSecond);
