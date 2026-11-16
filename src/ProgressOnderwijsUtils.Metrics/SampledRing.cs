@@ -40,6 +40,7 @@ sealed class SampledRing
         gauges = new long[secondsRing.Length * GaugesPerSecond];
         counters = new long[secondsRing.Length * CountersPerSecond];
         sampledSeconds = new long[secondsRing.Length];
+        Array.Fill(sampledSeconds, long.MinValue);
         resetSlot = ResetSlot;
     }
 
