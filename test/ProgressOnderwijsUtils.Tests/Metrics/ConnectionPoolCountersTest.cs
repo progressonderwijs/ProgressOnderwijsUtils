@@ -1,11 +1,14 @@
 using ProgressOnderwijsUtils.Metrics;
+using ProgressOnderwijsUtils.Tests.Data;
 
 namespace ProgressOnderwijsUtils.Tests.Metrics;
 
+/// <summary>
+/// Builds its own connection strings on top of the local server of <see cref="TransactedLocalConnection"/>: these tests
+/// are about opening, closing and the pool itself, which that class hides behind one open connection in a transaction.
+/// </summary>
 public sealed class ConnectionPoolCountersTest
 {
-    static readonly string localConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
-
     readonly ConnectionPoolRegistry<TestDatabase, TestPool> registry = TestMetrics.Registry();
 
     /// <summary>
@@ -23,7 +26,7 @@ public sealed class ConnectionPoolCountersTest
     /// SqlClient keeps a pool per connection string.
     /// </summary>
     static string PoolOfOne()
-        => new SqlConnectionStringBuilder(localConnectionString) {
+        => new SqlConnectionStringBuilder(TransactedLocalConnection.ConnectionString) {
             MaxPoolSize = 1,
             ApplicationName = $"{nameof(ConnectionPoolCountersTest)}-{Guid.NewGuid():N}",
             ConnectTimeout = 15,
@@ -161,7 +164,13 @@ public sealed class ConnectionPoolCountersTest
     public void An_open_that_fails_is_no_longer_pending_and_not_counted_as_opened()
     {
         using var collector = StartedCollector();
-        var connectionString = new SqlConnectionStringBuilder(localConnectionString) { InitialCatalog = $"NoSuchDatabase{Guid.NewGuid():N}", ConnectTimeout = 15, Pooling = false, }.ConnectionString;
+        var connectionString = new SqlConnectionStringBuilder(TransactedLocalConnection.ConnectionString) {
+            InitialCatalog = $"NoSuchDatabase{Guid.NewGuid():N}",
+            ConnectTimeout = 15,
+            // SqlClient counts "cannot open database" as transient and would otherwise wait 10 seconds and try again.
+            ConnectRetryCount = 0,
+            Pooling = false,
+        }.ConnectionString;
         var pool = registry.For(connectionString, TestPool.ReadOnly);
 
         _ = Assert.Throws<SqlException>(() => Open(connectionString));
