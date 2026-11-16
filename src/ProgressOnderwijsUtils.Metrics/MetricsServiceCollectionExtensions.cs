@@ -43,25 +43,25 @@ public static class MetricsServiceCollectionExtensions
         public void Dispose()
             => stop();
 
-        public Task StartingAsync(CancellationToken cancellationToken)
+        public Task StartingAsync(CancellationToken cancel)
         {
             start();
             return Task.CompletedTask;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancel)
             => Task.CompletedTask;
 
-        public Task StartedAsync(CancellationToken cancellationToken)
+        public Task StartedAsync(CancellationToken cancel)
             => Task.CompletedTask;
 
-        public Task StoppingAsync(CancellationToken cancellationToken)
+        public Task StoppingAsync(CancellationToken cancel)
             => Task.CompletedTask;
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public Task StopAsync(CancellationToken cancel)
             => Task.CompletedTask;
 
-        public Task StoppedAsync(CancellationToken cancellationToken)
+        public Task StoppedAsync(CancellationToken cancel)
         {
             stop();
             return Task.CompletedTask;
