@@ -5,8 +5,8 @@ public sealed class UriExtensionsTest
     [Fact]
     public void Combine_works_safely()
     {
-        PAssert.That(() => new Uri(@"c:\file").Combine(@"file").LocalPath == @"c:\file");
-        PAssert.That(() => new Uri(@"c:\dir\").Combine(@"file").LocalPath == @"c:\dir\file");
+        PAssert.That(() => new Uri(@"c:\file").Combine("file").LocalPath == @"c:\file");
+        PAssert.That(() => new Uri(@"c:\dir\").Combine("file").LocalPath == @"c:\dir\file");
         PAssert.That(() => new Uri(@"c:\file").Combine(@"\file").LocalPath == @"c:\file");
         PAssert.That(() => new Uri(@"c:\dir\").Combine(@"dir\").LocalPath == @"c:\dir\dir\");
     }

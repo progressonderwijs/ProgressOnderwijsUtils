@@ -136,7 +136,7 @@ static class BulkInsertImplementation
         }
     }
 
-    static readonly Regex colidMessageRegex = new(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
+    static readonly Regex colidMessageRegex = new("Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 
     static int? ParseDestinationColumnIndexFromMessage(string message)
     {
