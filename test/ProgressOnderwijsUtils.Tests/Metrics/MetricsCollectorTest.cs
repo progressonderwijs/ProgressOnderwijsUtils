@@ -746,6 +746,18 @@ public sealed class MetricsCollectorTest
         PAssert.That(() => !ring.HoldsSecond(previousSecond, index));
     }
 
+    /// <summary>
+    /// An unused slot carries the empty stamp -1. Whoever looks back from second 0 asks for second -1, and must not
+    /// take that empty slot for a recorded second.
+    /// </summary>
+    [Fact]
+    public void An_unused_slot_does_not_hold_the_second_before_the_start()
+    {
+        var ring = new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 64);
+
+        PAssert.That(() => !ring.HoldsSecond(-1, ring.IndexOf(-1)));
+    }
+
     [Fact]
     public void A_ring_length_that_is_not_a_power_of_two_is_rejected()
         => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 60));

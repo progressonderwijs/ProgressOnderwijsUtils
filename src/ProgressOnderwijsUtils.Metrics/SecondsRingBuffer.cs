@@ -93,7 +93,9 @@ sealed class SecondsRingBuffer
     /// Both stamps count: a writer claims the slot in <see cref="slots"/> before clearing it and only releases it
     /// after that in <see cref="readySlots"/>. Whoever only looks at the release, still sees the old second in that
     /// window while the data is already wiped, and would take an empty slot for a valid measurement.
+    /// A slot that has never been used carries <see cref="NoSecond"/>; that is not a second of the timeline, so
+    /// whoever looks back before the start (second -1) must not take such an empty slot for a recorded second.
     /// </summary>
     public bool HoldsSecond(long second, int index)
-        => Volatile.Read(ref slots[index]) == second && Volatile.Read(ref readySlots[index]) == second;
+        => second >= 0 && Volatile.Read(ref slots[index]) == second && Volatile.Read(ref readySlots[index]) == second;
 }
