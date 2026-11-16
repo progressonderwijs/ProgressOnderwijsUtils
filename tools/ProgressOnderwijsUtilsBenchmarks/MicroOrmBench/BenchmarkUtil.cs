@@ -83,7 +83,7 @@ sealed class Benchmarker
     {
         var sqliteConn = new SQLiteConnection(
             new SQLiteConnectionStringBuilder {
-                DataSource = @":memory:", //benchmark.db
+                DataSource = ":memory:", //benchmark.db
                 JournalMode = SQLiteJournalModeEnum.Wal,
                 FailIfMissing = false,
                 DateTimeFormat = SQLiteDateFormats.Ticks,
