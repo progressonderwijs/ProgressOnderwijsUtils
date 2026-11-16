@@ -76,6 +76,10 @@ public sealed class MetricsHistogram
             throw new ArgumentException($"Expected {boundaries.Length - 1} histogram labels to match the boundaries, but got {labels.Length}.", nameof(labels));
         }
 
+        if (boundaries[^1] != double.MaxValue && !double.IsPositiveInfinity(boundaries[^1])) {
+            throw new ArgumentException("Expected an open-ended final bucket, ending at double.MaxValue or positive infinity.", nameof(boundaries));
+        }
+
         Boundaries = boundaries;
         Labels = labels;
         thresholds = Thresholds(boundaries);

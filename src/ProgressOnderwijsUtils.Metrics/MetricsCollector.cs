@@ -290,7 +290,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     public MetricsCollection<TEndpoint, TDatabase, TPool> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
     {
         var lastSecond = LatestCompleteSecond(settleSeconds);
-        return CollectRange(previousLastSecond + 1, lastSecond);
+        return CollectRange(previousLastSecond + 1, Math.Max(previousLastSecond, lastSecond));
     }
 
     long LatestCompleteSecond(int settleSeconds)
@@ -311,6 +311,10 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         // seconds of such a window are still there as well. Seconds from before our own start do not exist at all:
         // counting those as quiet would make the traffic right after starting seem structurally too low for whoever
         // divides by SecondsCovered. This limit is also the reason SecondsCovered fits in a byte.
+        if (lastSecond >= seconds.Second) {
+            throw new ArgumentOutOfRangeException(nameof(lastSecond), lastSecond, "Expected a completed second before the current second.");
+        }
+
         firstSecond = Math.Max(firstSecond, lastSecond - Description.LargestInterval + 1);
         firstSecond = Math.Max(firstSecond, Math.Max(FirstObservableSecond, seconds.Second - RingCapacity + 1));
 

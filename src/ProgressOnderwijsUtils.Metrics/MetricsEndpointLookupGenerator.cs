@@ -273,6 +273,6 @@ public sealed partial record MetricsEndpointLookupGenerator(string Namespace, st
     /// Were that slash in it, then no measurement would find its endpoint anymore and every number would shift when
     /// regenerating, without anything complaining about it.
     /// </summary>
-    [GeneratedRegex("""^(?:\*|[A-Z]+) (?!/)\S*$""")]
+    [GeneratedRegex("""^(?:\*|[A-Z]+) (?!/)\S*\z""")]
     private static partial Regex EndpointLine();
 }

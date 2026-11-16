@@ -82,8 +82,9 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
         => Volatile.Read(ref sizes);
 
     /// <summary>
-    /// The size of the pools per database. Pools are never summed: a full pool of
-    /// would then be cancelled out by a barely used pool of the same database. 
+    /// The size of the pools per database and pool type. Connection strings sharing a database and pool type are
+    /// summed; different pool types remain separate, so a full pool is not cancelled out by a barely used pool
+    /// of another type in the same database.
     /// </summary>
     public static ConnectionPoolSize<TDatabase, TPool>[] PoolSizes(IEnumerable<ConnectionPoolCounters<TDatabase, TPool>> counters
     )
