@@ -62,16 +62,21 @@ sealed class SecondsRingBuffer
 
         // In by far the most cases the stamp is already right and a plain read suffices.
         var previous = Volatile.Read(ref slots[index]);
-        if (previous != current) {
-            if (previous > current) {
-                return false;
-            }
-
-            if (Interlocked.CompareExchange(ref slots[index], current, previous) == previous) {
+        while (previous < current) {
+            var witnessed = Interlocked.CompareExchange(ref slots[index], current, previous);
+            if (witnessed == previous) {
                 resetSlot?.Invoke(index);
-                Volatile.Write(ref readySlots[index], current);
+                Release(index, current);
                 return true;
             }
+
+            // Another writer claimed in between. If that was an older second (a writer that stalled for a whole
+            // rotation), nobody has claimed ours yet: waiting would then last until the next rotation, so claim again.
+            previous = witnessed;
+        }
+
+        if (previous > current) {
+            return false;
         }
 
         var spin = new SpinWait();
@@ -84,6 +89,26 @@ sealed class SecondsRingBuffer
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Marks the slot as ready for <paramref name="second"/>, but never moves it back. A writer that stalled for a whole
+    /// rotation during its reset finishes after a newer second has already claimed and released the slot; were it to
+    /// write its older second here, the writers of the newer second would wait for a release that never comes. Its
+    /// reset may then have cleared the newer measurements; that costs at most one second, as for a writer that stalls
+    /// after claiming (see <see cref="TryEnterSlot(Action{int}?,out int)"/>).
+    /// </summary>
+    void Release(int index, long second)
+    {
+        var ready = Volatile.Read(ref readySlots[index]);
+        while (ready < second) {
+            var witnessed = Interlocked.CompareExchange(ref readySlots[index], second, ready);
+            if (witnessed == ready) {
+                return;
+            }
+
+            ready = witnessed;
+        }
     }
 
     /// <summary>

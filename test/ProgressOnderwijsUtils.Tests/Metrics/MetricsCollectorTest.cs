@@ -758,6 +758,37 @@ public sealed class MetricsCollectorTest
         PAssert.That(() => !ring.HoldsSecond(-1, ring.IndexOf(-1)));
     }
 
+    /// <summary>
+    /// A writer that is paused in the middle of its reset for a whole rotation, while another writer claims the same
+    /// slot for the second one rotation later. When the first writer then finishes, its release must not move the
+    /// slot back to its own, older second: the writers of the newer second would wait for a release that never comes.
+    /// </summary>
+    [Fact]
+    public void A_reset_that_finishes_after_a_newer_claim_does_not_block_the_newer_second()
+    {
+        var clock = new MutableClock();
+        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
+
+        // The first writer claims second 0; during its reset a full rotation passes and second 64 claims the slot.
+        var newerClaimed = false;
+        _ = ring.TryEnterSlot(_ => {
+            clock.Advance(64);
+            newerClaimed = ring.TryEnterSlot(null, out _);
+        }, out _);
+        PAssert.That(() => newerClaimed);
+
+        // Another writer in second 64.
+        var next = Task.Run(() => ring.TryEnterSlot(null, out _), TestContext.Current.CancellationToken);
+        var finished = next.Wait(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
+
+        // Let a waiting writer go in any case: the next rotation makes its second stale.
+        clock.Advance(64);
+        _ = ring.TryEnterSlot(null, out _);
+        _ = next.Wait(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+
+        PAssert.That(() => finished);
+    }
+
     [Fact]
     public void A_ring_length_that_is_not_a_power_of_two_is_rejected()
         => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 60));
