@@ -33,9 +33,6 @@ public abstract class MetricsDimension<T>
     /// </summary>
     readonly int[] slotByValue;
 
-    protected int Index(T? value, bool failed, int bucketIndex)
-        => CellIndex(SlotOf(value), failed, bucketIndex);
-
     protected abstract (T? Value, bool Failed) ReadTags(ReadOnlySpan<KeyValuePair<string, object?>> tags);
 
     /// <summary>
@@ -108,7 +105,7 @@ public abstract class MetricsDimension<T>
         => value is { } v && KeyOf(v) is >= 0 and var key && key < slotByValue.Length ? slotByValue[key] : OtherSlot;
 
     public int Index(T? value, bool failed, double duration)
-        => Index(value, failed, Histogram.GetBucketIndex(duration));
+        => CellIndex(SlotOf(value), failed, Histogram.GetBucketIndex(duration));
 
     public int Index(ReadOnlySpan<KeyValuePair<string, object?>> tags, double duration)
     {
