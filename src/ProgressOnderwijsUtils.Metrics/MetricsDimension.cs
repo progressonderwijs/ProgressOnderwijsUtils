@@ -88,7 +88,7 @@ public abstract class MetricsDimension<T>
     /// The slot a value gets; values that are not tracked separately end up on <see cref="OtherSlot"/>.
     /// </summary>
     public int SlotOf(T? value)
-        => value is { } v && (uint)KeyOf(v) < (uint)slotByValue.Length ? slotByValue[KeyOf(v)] : OtherSlot;
+        => value is { } v && KeyOf(v) is >= 0 and var key && key < slotByValue.Length ? slotByValue[key] : OtherSlot;
 
     public int Index(T? value, bool failed, double duration)
         => Index(value, failed, Histogram.GetBucketIndex(duration));

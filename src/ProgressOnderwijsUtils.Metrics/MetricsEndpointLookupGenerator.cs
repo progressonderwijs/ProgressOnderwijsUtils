@@ -209,14 +209,14 @@ public sealed partial record MetricsEndpointLookupGenerator(string Namespace, st
                 /// and this is not a search.
                 /// </summary>
                 public static (string Method, string Route)? EndpointOf({{IdTypeName}} id)
-                    => (uint)id < (uint)endpoints.Length && endpoints[(int)id] is (var method, var route, false) ? (method, route) : null;
+                    => (int)id is >= 0 and var index && index < endpoints.Length && endpoints[index] is (var method, var route, false) ? (method, route) : null;
 
                 /// <summary>
                 /// The retired endpoint of an id, or null when the endpoint still exists or the id does not
                 /// exist. Old measurements still refer to such an id and stay recognisable this way.
                 /// </summary>
                 public static (string Method, string Route)? RetiredEndpointOf({{IdTypeName}} id)
-                    => (uint)id < (uint)endpoints.Length && endpoints[(int)id] is (var method, var route, true) ? (method, route) : null;
+                    => (int)id is >= 0 and var index && index < endpoints.Length && endpoints[index] is (var method, var route, true) ? (method, route) : null;
 
                 /// <summary>
                 /// All ids that point at an existing endpoint, without the retired ones. With this it can be
