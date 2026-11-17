@@ -90,6 +90,7 @@ public interface IHasAttr_readonly { }
 public interface IHasAttr_required { }
 public interface IHasAttr_size { }
 public interface IHasAttr_step { }
+public interface IHasAttr_switch { }
 public interface IHasAttr_for { }
 public interface IHasAttr_as { }
 public interface IHasAttr_media { }

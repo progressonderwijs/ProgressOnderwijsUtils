@@ -479,6 +479,15 @@ public static class AttributeConstructionMethods
     public static THtmlTag _step<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_step, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("step", attrValue);
+    public static THtmlTag _switch<THtmlTag>(this THtmlTag htmlTagExpr, bool attrValue)
+        where THtmlTag : struct, IHasAttr_switch, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("switch", attrValue ? "" : null);
+    public static THtmlTag _switch<THtmlTag>(this THtmlTag htmlTagExpr)
+        where THtmlTag : struct, IHasAttr_switch, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("switch", "");
+    public static THtmlTag _switch<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
+        where THtmlTag : struct, IHasAttr_switch, IHtmlElement<THtmlTag>
+        => htmlTagExpr.Attribute("switch", attrValue);
     public static THtmlTag _for<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
         where THtmlTag : struct, IHasAttr_for, IHtmlElement<THtmlTag>
         => htmlTagExpr.Attribute("for", attrValue);

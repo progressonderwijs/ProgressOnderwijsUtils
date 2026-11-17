@@ -1076,7 +1076,7 @@ public static class HtmlTagKinds
         public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
         public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
     }
-    public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alpha, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_colorspace, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
+    public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alpha, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_checked, IHasAttr_colorspace, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_popovertarget, IHasAttr_popovertargetaction, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_switch, IHasAttr_type, IHasAttr_value, IHasAttr_width
     {
         public string TagName => "input";
         string IHtmlElement.TagStart => "<input";
