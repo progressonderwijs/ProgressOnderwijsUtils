@@ -81,32 +81,22 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     }
 
     /// <summary>
-    /// Signals the sampler thread to stop and waits until it is done, so that it does not still write into a half
-    /// cleaned-up ring. The waiting time is ample compared to the sampling rhythm; if it hangs nevertheless, it is a
-    /// background thread and does not hold up the process. The signal is not disposed then: the thread still waits
-    /// on it later, and an ObjectDisposedException on a thread of our own brings down the whole process.
-    /// Only the first call cleans up: a collector stopped early is disposed again when the host stops.
+    /// Stops listening and signals the sampler thread to stop. Only the first call cleans up: a collector stopped
+    /// early is disposed again when the host stops.
     /// The subscription on all diagnostic listeners is released outside the lock, for the same reason it is made
-    /// outside the lock in <see cref="Start"/>.
+    /// outside the lock in <see cref="Start"/>. Waiting for the sampler happens outside the lock as well: our
+    /// diagnostic observer takes this lock while DiagnosticListener holds its global one, so a sampler that hangs
+    /// must not keep it occupied. The waiting time is ample compared to the sampling rhythm; if the sampler hangs
+    /// nevertheless, it is a background thread and does not hold up the process.
     /// </summary>
     public void Dispose()
     {
-        if (disposed) {
-            return;
-        }
-
         IDisposable? allListeners;
         lock (lifetime) {
             if (disposed) {
                 return;
             }
-
-            if (!started) {
-                listener.Dispose();
-                stopSampling.Dispose();
-                disposed = true;
-                return;
-            }
+            disposed = true;
 
             allListeners = allDiagnosticListenersSubscription;
             allDiagnosticListenersSubscription = null;
@@ -114,22 +104,16 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                 subscription.Dispose();
             }
             sqlClientSubscriptions.Clear();
-
             stopSampling.Set();
-            if (sampler.AssertNotNull().Join(TimeSpan.FromSeconds(5))) {
-                stopSampling.Dispose();
-            }
-
             listener.Dispose();
-
-            disposed = true;
         }
         allListeners?.Dispose();
+        _ = sampler?.Join(TimeSpan.FromSeconds(5));
     }
 
     /// <summary>
-    /// Starts listening and sampling. A collector that is already disposed does not start anymore: its stop signal is
-    /// gone, and listeners hooked up after the cleanup would never be released. A second call is ignored. A start that is
+    /// Starts listening and sampling. A collector that is already disposed does not start anymore: its sampler would
+    /// never be stopped, and listeners hooked up after the cleanup would never be released. A second call is ignored. A start that is
     /// rejected because another host already published its ASP.NET Core instruments leaves the collector disposed, so
     /// starting it again does nothing.
     /// The subscription on all diagnostic listeners is made outside the lock: DiagnosticListener calls our observer
@@ -148,10 +132,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </param>
     public void Start(IMeterFactory hostMeters, Action<Exception> samplingFailed)
     {
-        if (started) {
-            return;
-        }
-
         lock (lifetime) {
             if (started || disposed) {
                 return;

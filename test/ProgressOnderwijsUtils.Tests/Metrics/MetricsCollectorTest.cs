@@ -174,8 +174,8 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
-    /// A collector that has already been disposed must not start anymore: its stop signal is gone, so a
-    /// sampler would immediately report a failure, and the listeners would stay hooked up forever.
+    /// A collector that has already been disposed must not start anymore: nobody would stop its sampler, and the
+    /// listeners would stay hooked up forever.
     /// </summary>
     [Fact]
     public void A_disposed_collector_does_not_start_again()
@@ -186,8 +186,6 @@ public sealed class MetricsCollectorTest
 
         collector.Start(TestMetrics.HostWithoutRequests, failures.Enqueue);
         collector.Start(TestMetrics.HostWithoutRequests, failures.Enqueue);
-        // Without the guard the sampler fails right away on the disposed signal.
-        Thread.Sleep(TimeSpan.FromMilliseconds(200));
         collector.Dispose();
 
         PAssert.That(() => failures.IsEmpty);
@@ -214,8 +212,6 @@ public sealed class MetricsCollectorTest
         _ = otherMeter.CreateUpDownCounter<long>("http.server.active_requests");
 
         collector.Start(ownMeters, failures.Enqueue);
-        // A sampler started on the second attempt would fail right away on the disposed signal.
-        Thread.Sleep(TimeSpan.FromMilliseconds(200));
         collector.Dispose();
 
         PAssert.That(() => failures.IsEmpty);
