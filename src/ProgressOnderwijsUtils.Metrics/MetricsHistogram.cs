@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
-using System.Numerics;
-using System.Runtime.Intrinsics;
 
 namespace ProgressOnderwijsUtils.Metrics;
 
@@ -49,8 +47,6 @@ public sealed class MetricsHistogram
             ]
         );
 
-    readonly Vector256<double>[] thresholds;
-
     /// <summary>
     /// A label belongs to exactly one bucket. When those get out of step, an index points at the wrong label and that
     /// only surfaces as skewed data once it is stored; that is why such a histogram is refused on creation. The same
@@ -82,7 +78,6 @@ public sealed class MetricsHistogram
 
         Boundaries = boundaries;
         Labels = labels;
-        thresholds = Thresholds(boundaries);
     }
 
     /// <summary>
@@ -210,39 +205,21 @@ public sealed class MetricsHistogram
     }
 
     /// <summary>
-    /// The bucket index is the number of inner boundaries the duration reaches: the boundaries ascend, so whoever
-    /// reaches k of them, reaches exactly the first k. That counting happens four boundaries at a time.
+    /// The bucket index is the number of inner boundaries the duration reaches, so without the 0 where the first
+    /// bucket starts and without the closing upper bound of the last bucket. The boundaries ascend, so the first one
+    /// that is not reached ends the count.
     /// A negative duration or NaN reaches no boundary at all and ends up in the first bucket; everything from the
     /// last inner boundary on, infinity included, in the last.
     /// </summary>
     public int GetBucketIndex(double duration)
     {
-        var value = Vector256.Create(duration);
         var index = 0;
-        foreach (var chunk in thresholds) {
-            index += BitOperations.PopCount(Vector256.GreaterThanOrEqual(value, chunk).ExtractMostSignificantBits());
+        foreach (var boundary in Boundaries.AsSpan()[1..^1]) {
+            if (!(duration >= boundary)) {
+                break;
+            }
+            index++;
         }
-
         return index;
-    }
-
-    /// <summary>
-    /// The inner boundaries, so without the 0 where the first bucket starts and without the closing upper bound of
-    /// the last bucket, in blocks of a vector. The last block is padded with NaN: every comparison with it is false
-    /// and so never counts. Infinity would count for an infinite duration, and then place it past the last bucket.
-    /// </summary>
-    static Vector256<double>[] Thresholds(ImmutableArray<double> boundaries)
-    {
-        var inner = boundaries.AsSpan()[1..^1];
-        var padded = new double[(inner.Length + Vector256<double>.Count - 1) / Vector256<double>.Count * Vector256<double>.Count];
-        padded.AsSpan().Fill(double.NaN);
-        inner.CopyTo(padded);
-
-        var chunks = new Vector256<double>[padded.Length / Vector256<double>.Count];
-        for (var i = 0; i < chunks.Length; i++) {
-            chunks[i] = Vector256.Create(padded.AsSpan(i * Vector256<double>.Count, Vector256<double>.Count));
-        }
-
-        return chunks;
     }
 }
