@@ -836,12 +836,15 @@ public sealed class MetricsCollectorTest
 
         // Another writer in second 64.
         var next = Task.Run(() => ring.TryEnterSlot(null, out _), TestContext.Current.CancellationToken);
-        var finished = await next.WaitAsync(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
-
-        // Let a waiting writer go in any case: the next rotation makes its second stale.
-        clock.Advance(64);
-        _ = ring.TryEnterSlot(null, out _);
-        _ = await next.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+        bool finished;
+        try {
+            finished = await next.WaitAsync(TimeSpan.FromSeconds(2), TestContext.Current.CancellationToken);
+        } finally {
+            // Let a waiting writer go even when the first wait times out or is cancelled.
+            clock.Advance(64);
+            _ = ring.TryEnterSlot(null, out _);
+            _ = await next.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None);
+        }
 
         PAssert.That(() => finished);
     }

@@ -97,7 +97,14 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
         IDisposable? allListeners;
         lock (lifetime) {
-            if (disposed || !started) {
+            if (disposed) {
+                return;
+            }
+
+            if (!started) {
+                listener.Dispose();
+                stopSampling.Dispose();
+                disposed = true;
                 return;
             }
 
@@ -164,12 +171,12 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         var subscription = StartDiagnosing();
 
         lock (lifetime) {
-            if (disposed) {
-                subscription.Dispose();
-            } else {
+            if (!disposed) {
                 allDiagnosticListenersSubscription = subscription;
+                return;
             }
         }
+        subscription.Dispose();
 
         void StartListening()
         {
