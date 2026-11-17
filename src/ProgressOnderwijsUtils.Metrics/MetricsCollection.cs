@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace ProgressOnderwijsUtils.Metrics;
 
 public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
@@ -30,12 +28,12 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// smoothing, and can be lower than requested when the ring buffer could not reach that far back.
     /// The histograms are raw sums over these seconds, so divide by this to get a rate per second.
     /// </summary>
-    public required byte SecondsCovered { get; init; }
+    public required long SecondsCovered { get; init; }
 
     /// <summary>
     /// The peak of the number of concurrent requests.
     /// </summary>
-    public required short MaxActiveRequests { get; init; }
+    public required long MaxActiveRequests { get; init; }
 
     /// <summary>
     /// The thread pool usage over this window, or null when no sample was taken in these seconds.
@@ -44,36 +42,36 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// the other two are the increase within the window, so divide those by <see cref="SecondsCovered"/> for a rate
     /// per second.
     /// </summary>
-    public required short? MaxThreadCount { get; init; }
+    public required int? MaxThreadCount { get; init; }
 
     /// <inheritdoc cref="MaxThreadCount"/>
-    public required short? MinThreadCount { get; init; }
+    public required int? MinThreadCount { get; init; }
 
     /// <inheritdoc cref="MaxThreadCount"/>
-    public required int? MaxPendingWorkItems { get; init; }
+    public required long? MaxPendingWorkItems { get; init; }
 
     /// <inheritdoc cref="MaxThreadCount"/>
-    public required int? CompletedWorkItems { get; init; }
+    public required long? CompletedWorkItems { get; init; }
 
     /// <inheritdoc cref="MaxThreadCount"/>
-    public required int? LockContentions { get; init; }
+    public required long? LockContentions { get; init; }
 
     /// <summary>
     /// The usage of the connection pools over this window, per database or per pool (the slots of
     /// <see cref="MetricsDescription{TEndpoint,TDatabase,TPool}.ConnectionPools"/>), or null when no sample was
     /// taken in these seconds. The three come from the same sample as the thread pool, so all three are filled or all
-    /// three are null. Use <see cref="ConnectionCount{T}"/> to sum them per database, per pool or all together.
+    /// three are null. Use <see cref="ConnectionCount"/> to sum them per database, per pool or all together.
     /// <see cref="MaxUsedConnections"/> and <see cref="MaxPendingConnections"/> are the highest levels;
     /// <see cref="OpenedConnections"/> is the increase within the window, so divide that by
     /// <see cref="SecondsCovered"/> for a rate per second.
     /// </summary>
-    public required short[]? MaxUsedConnections { get; init; }
+    public required long[]? MaxUsedConnections { get; init; }
 
     /// <inheritdoc cref="MaxUsedConnections"/>
-    public required short[]? MaxPendingConnections { get; init; }
+    public required long[]? MaxPendingConnections { get; init; }
 
     /// <inheritdoc cref="MaxUsedConnections"/>
-    public required int[]? OpenedConnections { get; init; }
+    public required long[]? OpenedConnections { get; init; }
 
     /// <summary>
     /// A connection level of a database and pool, or summed over all databases and/or all pools; null when no
@@ -83,19 +81,18 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// <param name="perPoolSlot">One of <see cref="MaxUsedConnections"/>, <see cref="MaxPendingConnections"/> or <see cref="OpenedConnections"/>.</param>
     /// <param name="databaseSlot">The database slot, or null for all databases.</param>
     /// <param name="pool">The pool, or null for all pools.</param>
-    public int? ConnectionCount<T>(T[]? perPoolSlot, int? databaseSlot, TPool? pool)
-        where T : struct, INumber<T>
+    public long? ConnectionCount(long[]? perPoolSlot, int? databaseSlot, TPool? pool)
     {
         if (perPoolSlot is null) {
             return null;
         }
 
         var pools = Description.ConnectionPools;
-        var total = 0;
+        var total = 0L;
         for (var slot = 0; slot < perPoolSlot.Length; slot++) {
             if ((databaseSlot is null || pools.DatabaseSlotOf(slot) == databaseSlot)
                 && (pool is not { } requested || EqualityComparer<TPool>.Default.Equals(pools.PoolOf(slot), requested))) {
-                total += int.CreateChecked(perPoolSlot[slot]);
+                total += perPoolSlot[slot];
             }
         }
 

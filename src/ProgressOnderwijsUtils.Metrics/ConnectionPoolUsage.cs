@@ -13,11 +13,10 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
     where TPool : struct, Enum
 {
     /// <summary>
-    /// The usage over a window, per slot of <see cref="ConnectionPoolSlots{TDatabase,TPool}"/>. A pool has at most
-    /// 100 connections by default, and summed as well, in use and waiting stay well within a short; the opens are the
+    /// The usage over a window, per slot of <see cref="ConnectionPoolSlots{TDatabase,TPool}"/>; the opens are the
     /// increase within the window.
     /// </summary>
-    public sealed record Window(short[] MaxUsedConnections, short[] MaxPendingConnections, int[] OpenedConnections);
+    public sealed record Window(long[] MaxUsedConnections, long[] MaxPendingConnections, long[] OpenedConnections);
 
     const int usedGauge = 0;
     const int pendingGauge = 1;
@@ -70,15 +69,13 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
         }
 
         var slotCount = ring.SlotCount;
-        var maxUsed = new short[slotCount];
-        var maxPending = new short[slotCount];
-        var openedConnections = new int[slotCount];
+        var maxUsed = new long[slotCount];
+        var maxPending = new long[slotCount];
         for (var slot = 0; slot < slotCount; slot++) {
-            maxUsed[slot] = checked((short)window.GaugePeaks[slot * gaugeCount + usedGauge]);
-            maxPending[slot] = checked((short)window.GaugePeaks[slot * gaugeCount + pendingGauge]);
-            openedConnections[slot] = checked((int)window.CounterIncreases[slot]);
+            maxUsed[slot] = window.GaugePeaks[slot * gaugeCount + usedGauge];
+            maxPending[slot] = window.GaugePeaks[slot * gaugeCount + pendingGauge];
         }
 
-        return new(maxUsed, maxPending, openedConnections);
+        return new(maxUsed, maxPending, window.CounterIncreases);
     }
 }

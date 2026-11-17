@@ -62,7 +62,7 @@ public class MetricsCollectBenchmarks
     }
 
     [Benchmark]
-    public short ActiveRequests_Collect()
+    public long ActiveRequests_Collect()
         => activeRequests.Collect(firstSecond, lastSecond);
 
     [Benchmark]

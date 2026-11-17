@@ -18,14 +18,10 @@ namespace ProgressOnderwijsUtils.Metrics;
 sealed class ThreadPoolUsage
 {
     /// <summary>
-    /// The thread pool usage over a window; the counters are the increase within that window here.
-    /// The number of threads and the minimum fit in a short, because the thread pool limits itself to
-    /// <see cref="short.MaxValue"/> threads by default and the minimum cannot exceed that. The queue does not: during
-    /// a congestion there are easily tens of thousands of work items, so that one is an int; a queue of over two
-    /// billion work items does not survive the memory. The increases cover at most the largest interval of the
-    /// description in seconds and so fit in an int as well.
+    /// The thread pool usage over a window, each in the type the runtime reports it in; the counters are the increase
+    /// within that window here.
     /// </summary>
-    public readonly record struct Window(short MaxThreadCount, short MinThreadCount, int MaxPendingWorkItems, int CompletedWorkItems, int LockContentions);
+    public readonly record struct Window(int MaxThreadCount, int MinThreadCount, long MaxPendingWorkItems, long CompletedWorkItems, long LockContentions);
 
     const int threadCountGauge = 0;
     const int pendingWorkItemsGauge = 1;
@@ -59,13 +55,13 @@ sealed class ThreadPoolUsage
     public Window? Collect(long firstSecond, long lastSecond)
         => ring.Collect(firstSecond, lastSecond) is { } window
             ? new(
-                checked((short)window.GaugePeaks[threadCountGauge]),
-                checked((short)window.GaugePeaks[minThreadCountGauge]),
-                checked((int)window.GaugePeaks[pendingWorkItemsGauge]),
-                // The increase over a window fits in an int: the window lasts at most the largest interval, and no
-                // process reaches that many work items per second.
-                checked((int)window.CounterIncreases[0]),
-                checked((int)window.CounterIncreases[1])
+                // The ring keeps every gauge as a long, but these two only ever received ints, and the peak of ints is
+                // one of them; the conversion restores their type and fails only on a bug.
+                checked((int)window.GaugePeaks[threadCountGauge]),
+                checked((int)window.GaugePeaks[minThreadCountGauge]),
+                window.GaugePeaks[pendingWorkItemsGauge],
+                window.CounterIncreases[0],
+                window.CounterIncreases[1]
             )
             : null;
 }

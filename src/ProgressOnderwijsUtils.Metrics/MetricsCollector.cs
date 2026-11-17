@@ -336,7 +336,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         // A window is at most LargestInterval seconds long. The ring keeps more (RingCapacity), so that the oldest
         // seconds of such a window are still there as well. Seconds from before our own start do not exist at all:
         // counting those as quiet would make the traffic right after starting seem structurally too low for whoever
-        // divides by SecondsCovered. This limit is also the reason SecondsCovered fits in a byte.
+        // divides by SecondsCovered.
         if (lastSecond >= seconds.Second) {
             throw new ArgumentOutOfRangeException(nameof(lastSecond), lastSecond, "Expected a completed second before the current second.");
         }
@@ -349,7 +349,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         return new() {
             LastSecond = lastSecond,
             WindowEndUtc = seconds.EndUtcOf(lastSecond),
-            SecondsCovered = firstSecond > lastSecond ? (byte)0 : (byte)(lastSecond - firstSecond + 1),
+            SecondsCovered = Math.Max(0, lastSecond - firstSecond + 1),
             MaxActiveRequests = activeRequests.Collect(firstSecond, lastSecond),
             MaxThreadCount = threadPool?.MaxThreadCount,
             MinThreadCount = threadPool?.MinThreadCount,

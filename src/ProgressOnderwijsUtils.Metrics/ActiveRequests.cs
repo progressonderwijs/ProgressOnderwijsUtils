@@ -77,12 +77,9 @@ sealed class ActiveRequests
 
     /// <summary>
     /// The highest peak over the requested seconds. A slot without a stamp means the gauge did not move that second;
-    /// those seconds yield no peak of their own but do sit at the level the window ended with. The running total is a
-    /// long because it is updated with <see cref="Interlocked"/>, but the result goes out as a short because that
-    /// many concurrent requests do not exist. The conversion is deliberately checked: if it does not fit after all,
-    /// we want to notice instead of silently storing a truncated value.
+    /// those seconds yield no peak of their own but do sit at the level the window ended with.
     /// </summary>
-    public short Collect(long firstSecond, long lastSecond)
+    public long Collect(long firstSecond, long lastSecond)
     {
         var peak = ValueAt(lastSecond);
         for (var second = firstSecond; second <= lastSecond; second++) {
@@ -99,7 +96,7 @@ sealed class ActiveRequests
             peak = Math.Max(peak, value);
         }
 
-        return checked((short)peak);
+        return peak;
     }
 
     /// <summary>
