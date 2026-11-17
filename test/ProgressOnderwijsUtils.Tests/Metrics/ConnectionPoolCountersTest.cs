@@ -104,7 +104,9 @@ public sealed class ConnectionPoolCountersTest
     public void A_reopened_connection_is_in_use_once()
     {
         using var collector = StartedCollector();
-        var connectionString = PoolOfOne();
+        // Otherwise SqlClient leaves the password out of the connection string after the first open (as on the CI, with
+        // SQL authentication), and the reopen can no longer find its pool.
+        var connectionString = new SqlConnectionStringBuilder(PoolOfOne()) { PersistSecurityInfo = true, }.ConnectionString;
         var pool = registry.For(connectionString, TestPool.ReadWrite);
 
         using var connection = Open(connectionString);
