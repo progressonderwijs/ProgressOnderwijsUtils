@@ -273,7 +273,7 @@ public sealed class MetricsCollectorTest
         harness.Clock.Advance(2);
 
         var collection = harness.Collector.Collect(1, minimumWindow: 1);
-        var overflowBucket = collection.Description.RequestDurationHistogram.Histogram.Labels.Length - 1;
+        var overflowBucket = collection.Description.RequestDurationHistogram.Histogram.BucketCount - 1;
 
         // [0 - 4) ms, [4 - 8) ms and the overflow bucket >= 16.384 s.
         var requestDurationCount = collection.RequestDurationCount(0, false);
@@ -426,7 +426,7 @@ public sealed class MetricsCollectorTest
         PAssert.That(() => collection.RequestDurationCount(MetricsDimension<TestEndpoint>.OtherSlot, 0, false) == 1);
 
         var everyBucketAddsUpToTheTotal = Enumerable
-            .Range(0, collection.Description.RequestDurationHistogram.Histogram.Labels.Length)
+            .Range(0, collection.Description.RequestDurationHistogram.Histogram.BucketCount)
             .All(
                 bucketIndex => Enumerable
                         .Range(0, collection.Description.RequestDurationHistogram.Values.Length)

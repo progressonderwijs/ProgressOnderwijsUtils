@@ -25,7 +25,7 @@ public sealed class MetricsHistogramTest
         var histogram = Histogram(name);
 
         for (var bucket = 1; bucket < histogram.BucketCount; bucket++) {
-            var boundary = histogram.Boundaries[bucket];
+            var boundary = histogram.Buckets[bucket].LowerBoundSeconds;
             var atBoundary = histogram.GetBucketIndex(boundary);
             var justBelow = histogram.GetBucketIndex(Math.BitDecrement(boundary));
             var expected = bucket;
@@ -78,10 +78,11 @@ public sealed class MetricsHistogramTest
 
     /// <summary>
     /// A percentile is always exactly one of the boundaries, so we check which boundary it is instead of
-    /// comparing floating-point numbers with each other. Null if it is not a boundary.
+    /// comparing floating-point numbers with each other. The index is that of the bucket starting at the boundary.
+    /// Null if it is not a boundary.
     /// </summary>
     static int? BoundaryIndexOf(MetricsHistogram histogram, double? seconds)
-        => seconds is { } value && histogram.Boundaries.IndexOf(value) is var index and >= 0 ? index : null;
+        => seconds is { } value && histogram.Buckets.Select(bucket => bucket.LowerBoundSeconds).ToList().IndexOf(value) is var index and >= 0 ? index : null;
 
     [Fact]
     public void An_empty_histogram_has_no_percentile()
@@ -160,7 +161,7 @@ public sealed class MetricsHistogramTest
 
         var p95 = histogram.PercentileSeconds(counts, 0.95);
 
-        var highestFiniteBoundaryIndex = histogram.Boundaries.Length - 2;
+        var highestFiniteBoundaryIndex = histogram.BucketCount - 1;
         PAssert.That(() => BoundaryIndexOf(histogram, p95) == highestFiniteBoundaryIndex);
     }
 
