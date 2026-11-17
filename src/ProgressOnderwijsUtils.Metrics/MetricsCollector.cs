@@ -169,7 +169,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         }
 
         var subscription = StartDiagnosing();
-
         lock (lifetime) {
             if (!disposed) {
                 allDiagnosticListenersSubscription = subscription;

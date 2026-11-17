@@ -1008,6 +1008,29 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
+    /// Reporting typically writes to a log, which can fail just as well; that exception would bring down the
+    /// process from the sampler thread too.
+    /// </summary>
+    [Fact]
+    public void An_exception_while_reporting_a_sampling_failure_does_not_escape_the_sampler_thread()
+    {
+        using var stop = new ManualResetEventSlim();
+        var reports = 0;
+
+        MetricsSampler.SampleUntilStopped(
+            stop,
+            TimeSpan.FromMilliseconds(1),
+            () => throw new InvalidOperationException("Sampling went wrong."),
+            _ => {
+                reports++;
+                throw new InvalidOperationException("Reporting went wrong.");
+            }
+        );
+
+        PAssert.That(() => reports == 1);
+    }
+
+    /// <summary>
     /// The thread pool measurement reads the actual runtime, so the exact numbers are not fixed.
     /// A sampled window must nevertheless yield plausible levels: at least one thread is running,
     /// and an increase can never be negative.
