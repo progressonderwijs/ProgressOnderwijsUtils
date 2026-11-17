@@ -11,8 +11,12 @@ sealed class SecondsRingBuffer
     const int NoSecond = -1;
 
     readonly SecondsSinceStart clock;
-    readonly int[] slots;
-    readonly int[] readySlots;
+
+    /// <summary>
+    /// Per slot the second it holds, <see cref="NoSecond"/>, or <see cref="BeingResetFor"/> a second: the first
+    /// writer of a second marks the slot that way while it resets it, and only after that stamps the second itself.
+    /// </summary>
+    readonly int[] stamps;
 
     public SecondsRingBuffer(SecondsSinceStart clock, int length)
     {
@@ -21,106 +25,84 @@ sealed class SecondsRingBuffer
         }
 
         this.clock = clock;
-        slots = new int[length];
-        readySlots = new int[length];
-        Array.Fill(slots, NoSecond);
-        Array.Fill(readySlots, NoSecond);
+        stamps = new int[length];
+        Array.Fill(stamps, NoSecond);
     }
 
     public int Length
-        => slots.Length;
+        => stamps.Length;
 
     /// <summary>
     /// Every slot is reused every <see cref="Length"/> seconds, so the index alone does not tell which second it
-    /// holds now; that is what the stamp in the slot itself is for.
+    /// holds now; that is what the stamp of the slot is for.
     /// </summary>
     public int IndexOf(int second)
-        => second & (slots.Length - 1);
+        => second & (stamps.Length - 1);
 
     /// <summary>
-    /// Claims the slot for the current second. The first writer of a second resets the slot through
-    /// <paramref name="resetSlot"/> and only releases it after that; other writers wait for that release so that
-    /// their measurement is not wiped after all.
-    /// Returns false when the measurement belongs to a second the ring has already overwritten.
-    /// The result does not hold on to ownership of this generation: a writer that is scheduled out for longer than
-    /// <see cref="Length"/> seconds between this return and its own mutation, writes into a slot that has been reused
-    /// and cleared in the meantime and so attributes its measurement to the wrong second. That costs at most that one
-    /// measurement, whereas the alternative (a reservation per slot that clearing has to wait for) would slow down
-    /// the measuring path of every request; that trade is not worth it.
+    /// The stamp of a slot while it is being reset for <paramref name="second"/>: below <see cref="NoSecond"/>, so
+    /// it is never mistaken for a second of the timeline.
     /// </summary>
-    public bool TryEnterSlot(Action<int>? resetSlot, out int index)
-        => TryEnterSlot(resetSlot, out index, out _);
+    static int BeingResetFor(int second)
+        => -second - 2;
 
-    /// <inheritdoc cref="TryEnterSlot(Action{int}?,out int)"/>
-    /// <param name="index">The index of the claimed slot.</param>
-    /// <param name="current">The second the slot was claimed for.</param>
+    /// <summary>
+    /// The second a stamp is about, whether the slot already holds it or is still being reset for it.
+    /// </summary>
+    static int SecondOf(int stamp)
+        => stamp < NoSecond ? -stamp - 2 : stamp;
+
+    /// <summary>
+    /// Enters the slot of the current second. The first writer of a second resets the slot through
+    /// <paramref name="resetSlot"/> and only stamps the second after that; other writers of that second wait for
+    /// that stamp so that their measurement is not wiped after all.
+    /// Returns false when the measurement belongs to a second the ring has already overwritten.
+    /// A slot that is still being reset for an older second is taken over: its writer stalled for a whole rotation,
+    /// and waiting for it would hold up every writer of the current second. Its late reset may then clear the newer
+    /// measurements; that costs at most one second.
+    /// The result does not hold on to ownership of this generation either: a writer that is scheduled out for longer
+    /// than <see cref="Length"/> seconds between this return and its own mutation, writes into a slot that has been
+    /// reused and cleared in the meantime and so attributes its measurement to the wrong second. That costs at most
+    /// that one measurement, whereas the alternative (a reservation per slot that clearing has to wait for) would
+    /// slow down the measuring path of every request; that trade is not worth it.
+    /// </summary>
     /// <param name="resetSlot">The action that resets the slot to its initial state.</param>
-    public bool TryEnterSlot(Action<int>? resetSlot, out int index, out int current)
+    /// <param name="index">The index of the entered slot.</param>
+    public bool TryEnterSlot(Action<int>? resetSlot, out int index)
     {
-        current = clock.Second;
+        var current = clock.Second;
         index = IndexOf(current);
 
-        // In by far the most cases the stamp is already right and a plain read suffices.
-        var previous = Volatile.Read(ref slots[index]);
-        while (previous < current) {
-            var witnessed = Interlocked.CompareExchange(ref slots[index], current, previous);
-            if (witnessed == previous) {
-                resetSlot?.Invoke(index);
-                Release(index, current);
+        var spin = new SpinWait();
+        while (true) {
+            // In by far the most cases the stamp is already right and this single read suffices.
+            var stamp = Volatile.Read(ref stamps[index]);
+            if (stamp == current) {
                 return true;
             }
 
-            // Another writer claimed in between. If that was an older second (a writer that stalled for a whole
-            // rotation), nobody has claimed ours yet: waiting would then last until the next rotation, so claim again.
-            previous = witnessed;
-        }
-
-        if (previous > current) {
-            return false;
-        }
-
-        var spin = new SpinWait();
-        while (Volatile.Read(ref readySlots[index]) is var ready && ready != current) {
-            if (ready > current) {
+            var held = SecondOf(stamp);
+            if (held > current) {
                 return false;
+            } else if (held == current) {
+                spin.SpinOnce();
+            } else if (Interlocked.CompareExchange(ref stamps[index], BeingResetFor(current), stamp) == stamp) {
+                resetSlot?.Invoke(index);
+                // Fails when a newer second took the slot over during our reset; that second then holds the slot.
+                _ = Interlocked.CompareExchange(ref stamps[index], current, BeingResetFor(current));
+                return true;
             }
-
-            spin.SpinOnce();
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Marks the slot as ready for <paramref name="second"/>, but never moves it back. A writer that stalled for a whole
-    /// rotation during its reset finishes after a newer second has already claimed and released the slot; were it to
-    /// write its older second here, the writers of the newer second would wait for a release that never comes. Its
-    /// reset may then have cleared the newer measurements; that costs at most one second, as for a writer that stalls
-    /// after claiming (see <see cref="TryEnterSlot(Action{int}?,out int)"/>).
-    /// </summary>
-    void Release(int index, int second)
-    {
-        var ready = Volatile.Read(ref readySlots[index]);
-        while (ready < second) {
-            var witnessed = Interlocked.CompareExchange(ref readySlots[index], second, ready);
-            if (witnessed == ready) {
-                return;
-            }
-
-            ready = witnessed;
         }
     }
 
     /// <summary>
     /// Whether the slot holds the requested second right now. Readers call this before and after reading: only when
     /// the stamp is right both times does the data read really belong to that second and has no writer cleared the
-    /// slot for a new second in the meantime.
-    /// Both stamps count: a writer claims the slot in <see cref="slots"/> before clearing it and only releases it
-    /// after that in <see cref="readySlots"/>. Whoever only looks at the release, still sees the old second in that
-    /// window while the data is already wiped, and would take an empty slot for a valid measurement.
-    /// A slot that has never been used carries <see cref="NoSecond"/>; that is not a second of the timeline, so
-    /// whoever looks back before the start (second -1) must not take such an empty slot for a recorded second.
+    /// slot for a new second in the meantime. A slot that is being reset holds no second at all, so a reader never
+    /// takes its half cleared data for a measurement.
+    /// The stamps below zero are no seconds of the timeline, so whoever looks back before the start (second -1)
+    /// must not take such a slot for a recorded second.
     /// </summary>
     public bool HoldsSecond(int second, int index)
-        => second >= 0 && Volatile.Read(ref slots[index]) == second && Volatile.Read(ref readySlots[index]) == second;
+        => second >= 0 && Volatile.Read(ref stamps[index]) == second;
 }

@@ -22,8 +22,8 @@ sealed class DurationHistogramRing<T>
     }
 
     void ClearSlot(int index)
-        // The release of the slot in TryEnterSlot acts as a release barrier, so plain writes are sufficiently
-        // visible to the other writers here.
+        // TryEnterSlot stamps the second with an interlocked write after this, which acts as a barrier, so plain
+        // writes are sufficiently visible to the other writers here.
         => counts.AsSpan(index * dimension.Size, dimension.Size).Clear();
 
     /// <summary>

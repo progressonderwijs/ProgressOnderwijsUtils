@@ -765,10 +765,9 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
-    /// The reset callback runs exactly in the window where a writer has already claimed the slot
-    /// but not yet released it: the data has then been cleared while the release stamp still names
-    /// the old second. A reader that only looks at that release would accept a cleared slot as a
-    /// valid measurement, so HoldsSecond must return false here.
+    /// The reset callback runs exactly in the window where a writer has already taken the slot for a new second
+    /// but not yet stamped that second: the data is then being cleared. A reader that still found the old second
+    /// there would accept a cleared slot as a valid measurement, so HoldsSecond must return false here.
     /// </summary>
     [Fact]
     public void A_slot_that_is_being_cleared_no_longer_holds_its_previous_second()
@@ -794,7 +793,7 @@ public sealed class MetricsCollectorTest
         PAssert.That(() => resetIndex == index);
         PAssert.That(() => !holdsPreviousDuringReset);
 
-        // As soon as the writer releases, the slot indisputably belongs to the new second.
+        // As soon as the writer has stamped it, the slot indisputably belongs to the new second.
         PAssert.That(() => ring.HoldsSecond(currentSecond, index));
         PAssert.That(() => !ring.HoldsSecond(previousSecond, index));
     }
@@ -812,9 +811,9 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
-    /// A writer that is paused in the middle of its reset for a whole rotation, while another writer claims the same
-    /// slot for the second one rotation later. When the first writer then finishes, its release must not move the
-    /// slot back to its own, older second: the writers of the newer second would wait for a release that never comes.
+    /// A writer that is paused in the middle of its reset for a whole rotation, while another writer takes the same
+    /// slot over for the second one rotation later. When the first writer then finishes, it must not stamp the
+    /// slot back to its own, older second: the writers of the newer second would wait for a stamp that never comes.
     /// </summary>
     [Fact]
     public async Task A_reset_that_finishes_after_a_newer_claim_does_not_block_the_newer_second()
