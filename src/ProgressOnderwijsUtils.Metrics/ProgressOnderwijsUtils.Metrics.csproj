@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\NugetPackagesCommon.props" />
+    <PropertyGroup Label="Configuration">
+        <Version>1.0.0</Version>
+        <PackageReleaseNotes>Initial version</PackageReleaseNotes>
+        <Title>ProgressOnderwijsUtils.Metrics</Title>
+        <Description>In-process collector for request durations, database operation durations, thread pool usage and SqlClient connection pool usage, kept per second in lock-free ring buffers</Description>
+        <PackageTags>ProgressOnderwijsUtils Metrics Histogram SqlClient</PackageTags>
+        <TargetFramework>net11.0-windows</TargetFramework>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="readme.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.20.1" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="1.20.1" />
+        <ProjectReference Include="..\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
+    </ItemGroup>
+</Project>
