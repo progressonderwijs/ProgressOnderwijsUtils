@@ -16,8 +16,11 @@ public sealed class ConnectionPoolCountersTest
     /// The pools are only counted while a collector runs.
     /// </summary>
     MetricsCollector<TestEndpoint, TestDatabase, TestPool> StartedCollector()
+        => StartedCollector(registry);
+
+    static MetricsCollector<TestEndpoint, TestDatabase, TestPool> StartedCollector(ConnectionPoolRegistry<TestDatabase, TestPool> pools)
     {
-        var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPool>(TestMetrics.Description(), registry);
+        var collector = new MetricsCollector<TestEndpoint, TestDatabase, TestPool>(TestMetrics.Description(), pools);
         collector.Start(TestMetrics.HostWithoutRequests, _ => { });
         return collector;
     }
@@ -127,20 +130,36 @@ public sealed class ConnectionPoolCountersTest
     }
 
     /// <summary>
-    /// SqlClient has several listeners with the same name; a disposed collector must have let go of all of them, or
-    /// the next collector of the same registry counts every open twice.
+    /// A successor would miss the failure of an open its predecessor counted as pending, and report a waiter that is
+    /// not there for good; so a registry is counted by one collector only.
     /// </summary>
     [Fact]
-    public void A_disposed_collector_no_longer_counts_next_to_its_successor()
+    public void A_second_collector_cannot_start_on_a_registry_that_was_already_counted()
+    {
+        StartedCollector().Dispose();
+        using var successor = new MetricsCollector<TestEndpoint, TestDatabase, TestPool>(TestMetrics.Description(), registry);
+
+        _ = Assert.Throws<InvalidOperationException>(() => successor.Start(TestMetrics.HostWithoutRequests, _ => { }));
+    }
+
+    /// <summary>
+    /// SqlClient has several listeners with the same name; a disposed collector must have let go of all of them, or
+    /// it keeps counting next to a new collector.
+    /// </summary>
+    [Fact]
+    public void A_disposed_collector_no_longer_counts_next_to_a_new_one()
     {
         var connectionString = PoolOfOne();
-        var pool = registry.For(connectionString, TestPool.ReadWrite);
+        var disposedPool = registry.For(connectionString, TestPool.ReadWrite);
         StartedCollector().Dispose();
-        using var collector = StartedCollector();
+        var newRegistry = TestMetrics.Registry();
+        var newPool = newRegistry.For(connectionString, TestPool.ReadWrite);
+        using var collector = StartedCollector(newRegistry);
 
         using var connection = Open(connectionString);
 
-        PAssert.That(() => pool.InUse == 1 && pool.Pending == 0 && pool.Opened == 1);
+        PAssert.That(() => disposedPool.InUse == 0 && disposedPool.Pending == 0 && disposedPool.Opened == 0);
+        PAssert.That(() => newPool.InUse == 1 && newPool.Pending == 0 && newPool.Opened == 1);
     }
 
     /// <summary>

@@ -113,7 +113,9 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
 
     /// <summary>
     /// Starts listening and sampling. A collector that is already disposed does not start anymore: its sampler would
-    /// never be stopped, and listeners hooked up after the cleanup would never be released. A second call is ignored. A start that is
+    /// never be stopped, and listeners hooked up after the cleanup would never be released. A second call is ignored. A
+    /// collector whose registry was already started by another collector throws; see
+    /// <see cref="ConnectionPoolRegistry{TDatabase,TPool}.StartCounting"/>. A start that is
     /// rejected because another host already published its ASP.NET Core instruments leaves the collector disposed, so
     /// starting it again does nothing.
     /// The subscription on all diagnostic listeners is made outside the lock: DiagnosticListener calls our observer
@@ -137,6 +139,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                 return;
             }
 
+            pools.StartCounting();
             try {
                 StartListening();
             } catch {

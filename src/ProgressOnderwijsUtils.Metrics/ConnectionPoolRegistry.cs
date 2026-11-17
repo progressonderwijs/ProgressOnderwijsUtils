@@ -18,6 +18,25 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
     readonly Lock registration = new();
     ConnectionPoolCounters<TDatabase, TPool>[] all = [];
     ConnectionPoolSize<TDatabase, TPool>[] sizes = [];
+    int counting;
+
+    /// <summary>
+    /// A registry is counted by one collector for its whole life. A collector that takes over from a disposed one would
+    /// miss the failure of an open its predecessor counted as pending, or see the failure of an open nobody counted,
+    /// and from then on report a level that is off for good.
+    /// </summary>
+    internal void StartCounting()
+    {
+        if (Interlocked.Exchange(ref counting, 1) is 1) {
+            throw new InvalidOperationException(
+                """
+                The metrics collector cannot start: another collector has already counted the connection pools of this registry.
+                A successor that takes over the counting would leave the number of pending opens off for good, because an open that is in flight during the handover fails unnoticed.
+                Start one collector per registry for the lifetime of the process, or give every collector a registry of its own.
+                """
+            );
+        }
+    }
 
     /// <summary>
     /// The counters of the pool of this connection string; every connection string gets exactly one. A connection
@@ -34,6 +53,10 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
 
     ConnectionPoolCounters<TDatabase, TPool> Register(string connectionString, TPool pool)
     {
+        if (!Enum.IsDefined(pool)) {
+            throw new ArgumentOutOfRangeException(nameof(pool), pool, "Expected a defined connection pool.");
+        }
+
         lock (registration) {
             if (byConnectionString.TryGetValue(connectionString, out var existing)) {
                 return EnsurePool(existing, pool);
@@ -102,8 +125,7 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
     /// summed; different pool types remain separate, so a full pool is not cancelled out by a barely used pool
     /// of another type in the same database.
     /// </summary>
-    public static ConnectionPoolSize<TDatabase, TPool>[] PoolSizes(IEnumerable<ConnectionPoolCounters<TDatabase, TPool>> counters
-    )
+    public static ConnectionPoolSize<TDatabase, TPool>[] PoolSizes(IEnumerable<ConnectionPoolCounters<TDatabase, TPool>> counters)
         => [
             .. counters
                 .GroupBy(counter => (counter.Database, counter.Pool))
