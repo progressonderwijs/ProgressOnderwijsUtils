@@ -898,7 +898,7 @@ public sealed class MetricsCollectorTest
         var clock = new MutableClock();
         using var collector = TestMetrics.Collector(clock);
         var largestInterval = collector.Description.LargestInterval;
-        var ring = new SampledRing(new(new SecondsSinceStart(clock), MetricsCollector.RingCapacity), 1, 1, 1);
+        var ring = new SampledRing(new SecondsSinceStart(clock), MetricsCollector.RingCapacity, 1, 1, 1);
 
         // The counter goes up by one every second, for longer than the ring is long.
         for (var count = 1; count <= MetricsCollector.RingCapacity * 2; count++) {
@@ -1035,7 +1035,7 @@ public sealed class MetricsCollectorTest
     public void A_sampled_window_reports_plausible_thread_pool_values()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
+        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();
@@ -1059,7 +1059,7 @@ public sealed class MetricsCollectorTest
     public void A_window_without_a_thread_pool_sample_reports_nothing()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
+        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
 
         usage.Measurement();
         var sampledSecond = clock.Second;
@@ -1079,33 +1079,6 @@ public sealed class MetricsCollectorTest
     }
 
     /// <summary>
-    /// A slot is released before sampling writes anything into it. Whoever reads at that moment already
-    /// sees the second in place but still the zeros from clearing; those must not count as a level,
-    /// because then the counter drops back to zero and the increase over the window becomes negative.
-    /// </summary>
-    [Fact]
-    public void A_claimed_but_not_yet_sampled_slot_is_not_read_as_a_sample()
-    {
-        var clock = new MutableClock();
-        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
-        var usage = new ThreadPoolUsage(ring);
-
-        var sampledSecond = clock.Second;
-        usage.Measurement();
-
-        // Claim the slot of the next second without sampling writing anything into it.
-        clock.Advance(1);
-        var claimedSecond = clock.Second;
-        var entered = ring.TryEnterSlot(null, out _);
-        PAssert.That(() => entered);
-
-        PAssert.That(() => usage.Collect(claimedSecond, claimedSecond) == null);
-        var window = usage.Collect(sampledSecond, claimedSecond).AssertNotNull();
-        PAssert.That(() => window.CompletedWorkItems >= 0);
-        PAssert.That(() => window.LockContentions >= 0);
-    }
-
-    /// <summary>
     /// The gauges describe a level, so within a window the highest reading counts: a peak that
     /// subsides again between two samples would otherwise remain invisible.
     /// </summary>
@@ -1113,7 +1086,7 @@ public sealed class MetricsCollectorTest
     public void A_window_keeps_the_highest_gauge_reading_of_its_seconds()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
+        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();
@@ -1154,7 +1127,7 @@ public sealed class MetricsCollectorTest
     public void Counters_are_reported_as_the_increase_within_the_window()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new(new SecondsSinceStart(clock), 64));
+        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();

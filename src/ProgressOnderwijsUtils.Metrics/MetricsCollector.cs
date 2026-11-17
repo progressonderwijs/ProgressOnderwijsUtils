@@ -72,8 +72,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
         databaseDuration = new(new(seconds, RingCapacity), Description.DatabaseDurationHistogram);
         requestDuration = new(new(seconds, RingCapacity), Description.RequestDurationHistogram);
         activeRequests = new(new(seconds, RingCapacity));
-        threadPoolUsage = new(new(seconds, RingCapacity));
-        connectionPoolUsage = new(new(seconds, RingCapacity), Description.ConnectionPools, pools);
+        threadPoolUsage = new(seconds, RingCapacity);
+        connectionPoolUsage = new(seconds, RingCapacity, Description.ConnectionPools, pools);
         listener = new();
         lifetime = new();
         sqlClientSubscriptions = [];

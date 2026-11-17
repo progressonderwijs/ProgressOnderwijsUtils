@@ -50,7 +50,7 @@ public sealed class ConnectionPoolUsageTest
         => pool.StateChangeHandler(unopened, new(ConnectionState.Open, ConnectionState.Closed));
 
     ConnectionPoolUsage<TestDatabase, TestPool> Usage(MutableClock clock, ConnectionPoolSlots<TestDatabase, TestPool> slots)
-        => new(new(new SecondsSinceStart(clock), 64), slots, registry);
+        => new(new SecondsSinceStart(clock), 64, slots, registry);
 
     /// <summary>
     /// Every pool fills up on its own, so the pools of a database stay apart: a waiting caller can be

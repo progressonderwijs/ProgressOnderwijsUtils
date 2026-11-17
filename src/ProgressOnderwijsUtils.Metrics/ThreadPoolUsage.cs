@@ -30,12 +30,12 @@ sealed class ThreadPoolUsage
     // per second: one slot, with three gauges (threads, queue, minimum) and two counters (completed, lock contention)
     readonly SampledRing ring;
 
-    public ThreadPoolUsage(SecondsRingBuffer secondsRing)
-        => ring = new(secondsRing, 1, 3, 2);
+    public ThreadPoolUsage(SecondsSinceStart clock, int length)
+        => ring = new(clock, length, 1, 3, 2);
 
     /// <summary>
-    /// Reads the state of the thread pool and records it at the current second. First read and only then claim the
-    /// slot: that way the measurement belongs as closely as possible to the moment it was taken.
+    /// Reads the state of the thread pool and records it at the current second. First read and only then determine
+    /// the second: that way the measurement belongs as closely as possible to the moment it was taken.
     /// </summary>
     internal void Measurement()
     {

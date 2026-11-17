@@ -36,8 +36,8 @@ public class MetricsCollectBenchmarks
         var seconds = new SecondsSinceStart(clock);
         activeRequests = new(new(seconds, ringLength));
         requestDuration = new(new(seconds, ringLength), description.RequestDurationHistogram);
-        threadPoolUsage = new(new(seconds, ringLength));
-        connectionPoolUsage = new(new(seconds, ringLength), description.ConnectionPools, registry);
+        threadPoolUsage = new(seconds, ringLength);
+        connectionPoolUsage = new(seconds, ringLength, description.ConnectionPools, registry);
 
         var trackedRoute = description.RequestDurationHistogram.Values[1] is { } trackedEndpoint
             ? BenchmarkEndpointLookup.EndpointOf(trackedEndpoint)?.Route

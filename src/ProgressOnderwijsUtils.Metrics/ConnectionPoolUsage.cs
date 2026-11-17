@@ -26,11 +26,11 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
     readonly ConnectionPoolRegistry<TDatabase, TPool> pools;
     readonly SampledRing ring;
 
-    public ConnectionPoolUsage(SecondsRingBuffer secondsRing, ConnectionPoolSlots<TDatabase, TPool> slots, ConnectionPoolRegistry<TDatabase, TPool> pools)
+    public ConnectionPoolUsage(SecondsSinceStart clock, int length, ConnectionPoolSlots<TDatabase, TPool> slots, ConnectionPoolRegistry<TDatabase, TPool> pools)
     {
         this.slots = slots;
         this.pools = pools;
-        ring = new(secondsRing, slots.Count, gaugeCount, 1);
+        ring = new(clock, length, slots.Count, gaugeCount, 1);
     }
 
     internal void Measurement()

@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace ProgressOnderwijsUtils.Metrics;
 
 /// <summary>
@@ -5,37 +7,43 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// of which the highest sampled level within a second is kept, and counters that only ever increase, of which the
 /// last level is kept so that a window can later calculate the difference over that window.
 /// Only the sampler thread of the collector writes, one sample after the other; so there is never more than one
-/// writer at a time. That is why a read-compare-write suffices and no
-/// <see cref="Interlocked.CompareExchange(ref long,long,long)"/> is needed as in <see cref="ActiveRequests"/>, which
-/// is called from arbitrary request threads.
+/// writer at a time. That is why a stamp per second suffices here, and the claiming of
+/// <see cref="SecondsRingBuffer"/>, which is called from arbitrary request threads, is not needed.
 /// The writes do stay <see cref="Volatile"/>, because the collecting thread reads along.
 /// </summary>
 sealed class SampledRing
 {
-    readonly SecondsRingBuffer secondsRing;
-    readonly Action<int> resetSlot;
+    /// <summary>
+    /// The stamp of a second that has never been sampled, or is being written right now. Not a second of the
+    /// timeline, also not for whoever looks back before the start.
+    /// </summary>
+    const int NoSecond = int.MinValue;
+
+    readonly SecondsSinceStart clock;
     readonly long[] gauges;
     readonly long[] counters;
 
     /// <summary>
-    /// Per slot the second of which the levels have been written completely. The slot itself is already released
-    /// before the sample writes anything into it; whoever reads in between, still sees the zeros of
-    /// <see cref="ResetSlot"/>. A zero can however also be a real level (a database without opens), so the sample
-    /// only sets this stamp after the levels, and readers require it.
+    /// Per second of the ring the second of which the levels have been written completely. The sample takes the
+    /// stamp away before it writes and only puts it back after; readers require it before and after reading, so
+    /// they never take a half written sample or the levels of another second for a sample.
     /// </summary>
     readonly int[] sampledSeconds;
 
-    public SampledRing(SecondsRingBuffer secondsRing, int slotCount, int gaugeCount, int counterCount)
+    public SampledRing(SecondsSinceStart clock, int length, int slotCount, int gaugeCount, int counterCount)
     {
-        this.secondsRing = secondsRing;
+        if (!BitOperations.IsPow2(length)) {
+            throw new ArgumentOutOfRangeException(nameof(length), length, "Expected a power of two, so that the index of a second can be found with a mask.");
+        }
+
+        this.clock = clock;
         SlotCount = slotCount;
         GaugesPerSecond = slotCount * gaugeCount;
         CountersPerSecond = slotCount * counterCount;
-        gauges = new long[secondsRing.Length * GaugesPerSecond];
-        counters = new long[secondsRing.Length * CountersPerSecond];
-        sampledSeconds = new int[secondsRing.Length];
-        Array.Fill(sampledSeconds, int.MinValue);
-        resetSlot = ResetSlot;
+        gauges = new long[length * GaugesPerSecond];
+        counters = new long[length * CountersPerSecond];
+        sampledSeconds = new int[length];
+        Array.Fill(sampledSeconds, NoSecond);
     }
 
     public int SlotCount { get; }
@@ -43,36 +51,37 @@ sealed class SampledRing
     public int CountersPerSecond { get; }
 
     /// <summary>
-    /// A reused slot starts empty; otherwise the peak of the second that was in this slot a round earlier would
-    /// still count. The release of the slot in TryEnterSlot acts as a release barrier.
+    /// Every index is reused every length of the ring, so the index alone does not tell which second it holds now;
+    /// that is what the stamp is for.
     /// </summary>
-    void ResetSlot(int index)
-    {
-        gauges.AsSpan(index * GaugesPerSecond, GaugesPerSecond).Clear();
-        counters.AsSpan(index * CountersPerSecond, CountersPerSecond).Clear();
-    }
+    int IndexOf(int second)
+        => second & (sampledSeconds.Length - 1);
 
     /// <summary>
     /// Records a sample at the current second: the gauges as peak, the counters as last level.
     /// The last level within a second, not the highest: counters only ever increase, so the last level is at the same
     /// time the highest and leads to the smallest gap with the second after it.
+    /// The first sample of a second overwrites what the second that was at this index a round earlier left behind;
+    /// otherwise the peak of that second would still count.
     /// </summary>
     public void Record(ReadOnlySpan<long> gaugeValues, ReadOnlySpan<long> counterValues)
     {
-        if (!secondsRing.TryEnterSlot(resetSlot, out var index, out var second)) {
-            return;
-        }
+        var second = clock.Second;
+        var index = IndexOf(second);
 
-        var gaugeSlot = gauges.AsSpan(index * GaugesPerSecond, GaugesPerSecond);
-        for (var i = 0; i < gaugeSlot.Length; i++) {
-            if (gaugeValues[i] > Volatile.Read(ref gaugeSlot[i])) {
-                Volatile.Write(ref gaugeSlot[i], gaugeValues[i]);
+        // An exchange and not a volatile write: the writes below may not become visible before the stamp is gone.
+        var isFirstSampleOfSecond = Interlocked.Exchange(ref sampledSeconds[index], NoSecond) != second;
+
+        var gaugesOfSecond = gauges.AsSpan(index * GaugesPerSecond, GaugesPerSecond);
+        for (var i = 0; i < gaugesOfSecond.Length; i++) {
+            if (isFirstSampleOfSecond || gaugeValues[i] > Volatile.Read(ref gaugesOfSecond[i])) {
+                Volatile.Write(ref gaugesOfSecond[i], gaugeValues[i]);
             }
         }
 
-        var counterSlot = counters.AsSpan(index * CountersPerSecond, CountersPerSecond);
-        for (var i = 0; i < counterSlot.Length; i++) {
-            Volatile.Write(ref counterSlot[i], counterValues[i]);
+        var countersOfSecond = counters.AsSpan(index * CountersPerSecond, CountersPerSecond);
+        for (var i = 0; i < countersOfSecond.Length; i++) {
+            Volatile.Write(ref countersOfSecond[i], counterValues[i]);
         }
 
         Volatile.Write(ref sampledSeconds[index], second);
@@ -135,13 +144,13 @@ sealed class SampledRing
     }
 
     /// <summary>
-    /// The last levels from before <paramref name="second"/> that the ring still holds. The slot of the second
-    /// before it is usually not sampled, so we search for the nearest one that is.
+    /// The last levels from before <paramref name="second"/> that the ring still holds. The second before it is
+    /// usually not sampled, so we search for the nearest one that is.
     /// The buffers are scratch space and hold the levels of that second afterwards.
     /// </summary>
     bool TryReadLastBefore(int second, Span<long> gaugeBuffer, Span<long> counterBuffer)
     {
-        for (var earlier = second - 1; earlier > second - secondsRing.Length; earlier--) {
+        for (var earlier = second - 1; earlier > second - sampledSeconds.Length; earlier--) {
             if (TryRead(earlier, gaugeBuffer, counterBuffer)) {
                 return true;
             }
@@ -156,22 +165,22 @@ sealed class SampledRing
     /// </summary>
     bool TryRead(int second, Span<long> gaugesOut, Span<long> countersOut)
     {
-        var index = secondsRing.IndexOf(second);
-        if (!secondsRing.HoldsSecond(second, index) || Volatile.Read(ref sampledSeconds[index]) != second) {
+        var index = IndexOf(second);
+        if (Volatile.Read(ref sampledSeconds[index]) != second) {
             return false;
         }
 
-        var gaugeSlot = gauges.AsSpan(index * GaugesPerSecond, GaugesPerSecond);
-        for (var i = 0; i < gaugeSlot.Length; i++) {
-            gaugesOut[i] = Volatile.Read(ref gaugeSlot[i]);
+        var gaugesOfSecond = gauges.AsSpan(index * GaugesPerSecond, GaugesPerSecond);
+        for (var i = 0; i < gaugesOfSecond.Length; i++) {
+            gaugesOut[i] = Volatile.Read(ref gaugesOfSecond[i]);
         }
 
-        var counterSlot = counters.AsSpan(index * CountersPerSecond, CountersPerSecond);
-        for (var i = 0; i < counterSlot.Length; i++) {
-            countersOut[i] = Volatile.Read(ref counterSlot[i]);
+        var countersOfSecond = counters.AsSpan(index * CountersPerSecond, CountersPerSecond);
+        for (var i = 0; i < countersOfSecond.Length; i++) {
+            countersOut[i] = Volatile.Read(ref countersOfSecond[i]);
         }
 
-        // A slot that was switched while reading describes a different second by now.
-        return secondsRing.HoldsSecond(second, index);
+        // An index that was reused while reading describes a different second by now.
+        return Volatile.Read(ref sampledSeconds[index]) == second;
     }
 }
