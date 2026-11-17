@@ -9,9 +9,9 @@ public static class BenchmarkProgram
 {
     static void Main()
         //=> RunTreeBenchmarks();
-    => MicroOrmBenchmarkProgram.RunBenchmarks();
+    //=> MicroOrmBenchmarkProgram.RunBenchmarks();
     //=> RunArrayBuilderBenchmarks();
-    //=> RunMetricsBenchmarks();
+    => RunMetricsBenchmarks();
     //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
     //=> BenchmarkRunner.Run<NullabilityBenchmark>();
     //=> BenchmarkRunner.Run<RandomHelperBenchmark>();
