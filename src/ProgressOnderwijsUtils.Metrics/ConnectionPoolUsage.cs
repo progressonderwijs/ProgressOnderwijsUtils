@@ -62,7 +62,7 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
     /// The usage over the requested seconds, or null when no sample was taken in that window; see
     /// <see cref="SampledRing.Collect"/>.
     /// </summary>
-    public Window? Collect(long firstSecond, long lastSecond)
+    public Window? Collect(int firstSecond, int lastSecond)
     {
         if (ring.Collect(firstSecond, lastSecond) is not { } window) {
             return null;

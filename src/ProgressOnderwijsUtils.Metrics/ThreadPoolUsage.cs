@@ -52,7 +52,7 @@ sealed class ThreadPoolUsage
     /// The thread pool usage over the requested seconds, or null when no sample was taken in that window; see
     /// <see cref="SampledRing.Collect"/>.
     /// </summary>
-    public Window? Collect(long firstSecond, long lastSecond)
+    public Window? Collect(int firstSecond, int lastSecond)
         => ring.Collect(firstSecond, lastSecond) is { } window
             ? new(
                 // The ring keeps every gauge as a long, but these two only ever received ints, and the peak of ints is

@@ -71,13 +71,13 @@ public sealed class MetricsCollectorTest
         /// The current second of a timeline that was started before this clock was first advanced, as long as the
         /// timestamp runs in step.
         /// </summary>
-        public long Second
-            => (now - start).Ticks / TimeSpan.TicksPerSecond;
+        public int Second
+            => checked((int)((now - start).Ticks / TimeSpan.TicksPerSecond));
 
         /// <summary>
         /// The real time at which that second of the timeline ended, as long as the timestamp runs in step.
         /// </summary>
-        public static DateTime EndUtcOf(long second)
+        public static DateTime EndUtcOf(int second)
             => start.UtcDateTime.AddSeconds(second + 1);
 
         public void Advance(int seconds)
@@ -844,6 +844,21 @@ public sealed class MetricsCollectorTest
         _ = await next.WaitAsync(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
 
         PAssert.That(() => finished);
+    }
+
+    [Fact]
+    public void A_smallest_interval_below_one_second_or_above_the_largest_is_rejected()
+    {
+        foreach (var smallestInterval in new[] { 0, -1, 129, }) {
+            var description = new MetricsDescription<TestEndpoint, TestDatabase, TestPool> {
+                SmallestInterval = smallestInterval,
+                LargestInterval = 128,
+                DatabaseDurationHistogram = new TestDatabaseDuration(),
+                RequestDurationHistogram = new TestRequestDuration(),
+            };
+
+            _ = Assert.Throws<InvalidOperationException>(() => new MetricsCollector(description, TestMetrics.Registry()));
+        }
     }
 
     [Fact]

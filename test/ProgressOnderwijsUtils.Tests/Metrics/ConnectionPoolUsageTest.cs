@@ -22,8 +22,8 @@ public sealed class ConnectionPoolUsageTest
         public override long TimestampFrequency
             => TimeSpan.TicksPerSecond;
 
-        public long Second
-            => (now - start).Ticks / TimeSpan.TicksPerSecond;
+        public int Second
+            => checked((int)((now - start).Ticks / TimeSpan.TicksPerSecond));
 
         public void Advance(int seconds)
             => now = now.AddSeconds(seconds);

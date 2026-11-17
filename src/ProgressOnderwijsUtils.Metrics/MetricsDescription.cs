@@ -8,13 +8,13 @@ public sealed class MetricsDescription<TEndpoint, TDatabase, TPool>
     /// <summary>
     /// Number of seconds.
     /// </summary>
-    public required byte SmallestInterval { get; init; }
+    public required int SmallestInterval { get; init; }
 
     /// <summary>
     /// Number of seconds; the largest window that may be requested. The ring keeps more seconds than that, see
     /// <see cref="MetricsCollector{TEndpoint,TDatabase,TPool}.RingCapacity"/>.
     /// </summary>
-    public required byte LargestInterval { get; init; }
+    public required int LargestInterval { get; init; }
 
     public required MetricsDimension<TDatabase> DatabaseDurationHistogram { get; init; }
 

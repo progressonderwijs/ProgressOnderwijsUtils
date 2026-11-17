@@ -22,8 +22,8 @@ public class MetricsCollectBenchmarks
     ThreadPoolUsage threadPoolUsage = null!;
     ConnectionPoolUsage<BenchmarkDatabase, BenchmarkPool> connectionPoolUsage = null!;
     // ReSharper restore NullableWarningSuppressionIsUsed
-    long firstSecond;
-    long lastSecond;
+    int firstSecond;
+    int lastSecond;
 
     [GlobalSetup]
     public void Setup()

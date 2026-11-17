@@ -64,6 +64,19 @@ public sealed class MetricsHistogramTest
     }
 
     /// <summary>
+    /// The counts of a single second, as the collector delivers them.
+    /// </summary>
+    static int[] SecondCounts(MetricsHistogram histogram, params (int BucketIndex, int Count)[] filled)
+    {
+        var counts = new int[histogram.BucketCount];
+        foreach (var (bucketIndex, count) in filled) {
+            counts[bucketIndex] = count;
+        }
+
+        return counts;
+    }
+
+    /// <summary>
     /// A percentile is always exactly one of the boundaries, so we check which boundary it is instead of
     /// comparing floating-point numbers with each other. Null if it is not a boundary.
     /// </summary>
@@ -111,19 +124,6 @@ public sealed class MetricsHistogramTest
 
         PAssert.That(() => BoundaryIndexOf(histogram, p50) == 4);
         PAssert.That(() => BoundaryIndexOf(histogram, p95) == 4);
-    }
-
-    [Fact]
-    public void Int_and_long_counts_give_the_same_percentile()
-    {
-        var histogram = MetricsHistogram.ExponentialLatencyBuckets();
-        int[] intCounts = [0, 4, 3, 2, 1, 0, 0, 0,];
-        var longCounts = intCounts.Select(count => (long)count).ToArray();
-
-        var fromInts = histogram.PercentileSeconds(intCounts, 0.5);
-        var fromLongs = histogram.PercentileSeconds(longCounts, 0.5);
-
-        PAssert.That(() => BoundaryIndexOf(histogram, fromInts) == BoundaryIndexOf(histogram, fromLongs));
     }
 
     [Fact]
@@ -179,14 +179,14 @@ public sealed class MetricsHistogramTest
     }
 
     [Fact]
-    public void Totals_add_and_subtract_counts_of_any_integer_type()
+    public void Totals_add_and_subtract_the_counts_of_seconds()
     {
         var histogram = MetricsHistogram.Log2Buckets();
         var totals = histogram.CreateTotals();
 
-        totals.Add(Counts(histogram, (2, 3)).Select(count => (int)count).ToArray());
-        totals.Add(Counts(histogram, (2, 1), (5, 4)));
-        totals.Subtract(Counts(histogram, (5, 4)).Select(count => (int)count).ToArray());
+        totals.Add(SecondCounts(histogram, (2, 3)));
+        totals.Add(SecondCounts(histogram, (2, 1), (5, 4)));
+        totals.Subtract(SecondCounts(histogram, (5, 4)));
 
         PAssert.That(() => totals.Count == 4);
         PAssert.That(() => BoundaryIndexOf(histogram, totals.PercentileSeconds(0.95)) == 3);
@@ -196,9 +196,9 @@ public sealed class MetricsHistogramTest
     public void Totals_give_the_same_percentile_as_the_summed_counts()
     {
         var histogram = MetricsHistogram.Log2Buckets();
-        var first = Counts(histogram, (1, 5), (4, 2));
-        var second = Counts(histogram, (4, 3), (9, 1));
-        var summed = first.Zip(second, (a, b) => a + b).ToArray();
+        var first = SecondCounts(histogram, (1, 5), (4, 2));
+        var second = SecondCounts(histogram, (4, 3), (9, 1));
+        var summed = first.Zip(second, (a, b) => (long)a + b).ToArray();
         var totals = histogram.CreateTotals();
 
         totals.Add(first);
@@ -215,8 +215,8 @@ public sealed class MetricsHistogramTest
         var histogram = MetricsHistogram.Log2Buckets();
         var totals = histogram.CreateTotals();
 
-        _ = Assert.Throws<ArgumentException>(() => totals.Add(new long[histogram.BucketCount + 1]));
-        _ = Assert.Throws<ArgumentException>(() => totals.Subtract(new long[histogram.BucketCount + 1]));
+        _ = Assert.Throws<ArgumentException>(() => totals.Add(new int[histogram.BucketCount + 1]));
+        _ = Assert.Throws<ArgumentException>(() => totals.Subtract(new int[histogram.BucketCount + 1]));
     }
 
     [Fact]
@@ -224,9 +224,9 @@ public sealed class MetricsHistogramTest
     {
         var histogram = MetricsHistogram.Log2Buckets();
         var totals = histogram.CreateTotals();
-        totals.Add(Counts(histogram, (1, 2), (2, 1)));
+        totals.Add(SecondCounts(histogram, (1, 2), (2, 1)));
 
-        _ = Assert.Throws<InvalidOperationException>(() => totals.Subtract(Counts(histogram, (1, 1), (2, 2))));
+        _ = Assert.Throws<InvalidOperationException>(() => totals.Subtract(SecondCounts(histogram, (1, 1), (2, 2))));
 
         PAssert.That(() => totals.Count == 3);
     }
@@ -236,7 +236,7 @@ public sealed class MetricsHistogramTest
     {
         var histogram = MetricsHistogram.Log2Buckets();
         var totals = histogram.CreateTotals();
-        totals.Add(Counts(histogram, (1, 2)));
+        totals.Add(SecondCounts(histogram, (1, 2)));
 
         totals.Clear();
 

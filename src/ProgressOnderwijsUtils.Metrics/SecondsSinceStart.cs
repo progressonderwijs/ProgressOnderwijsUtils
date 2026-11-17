@@ -20,17 +20,18 @@ sealed class SecondsSinceStart
     }
 
     /// <summary>
-    /// The current second; every measurement reads this.
+    /// The current second; every measurement reads this. An int lasts some 68 years since the start; the conversion is
+    /// checked so that a process running even longer fails instead of wrapping to negative seconds.
     /// </summary>
-    public long Second
-        => (time.GetTimestamp() - startTimestamp) / timestampsPerSecond;
+    public int Second
+        => checked((int)((time.GetTimestamp() - startTimestamp) / timestampsPerSecond));
 
     /// <summary>
     /// The real time at which <paramref name="second"/> ended: the current real time minus how long ago that was on the
     /// timeline. Both clocks are read at the same moment, so the drift between them since the start does not count; only
     /// the drift over the few seconds since <paramref name="second"/> ended does.
     /// </summary>
-    public DateTime EndUtcOf(long second)
+    public DateTime EndUtcOf(int second)
     {
         var utcNow = time.GetUtcNow().UtcDateTime;
         var now = time.GetTimestamp();

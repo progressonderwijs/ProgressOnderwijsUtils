@@ -43,7 +43,7 @@ sealed class DurationHistogramRing<T>
     /// Sums the histograms of the requested seconds. A slot without a stamp is a second without measurements and so
     /// counts as zero.
     /// </summary>
-    public int[] Collect(long firstSecond, long lastSecond)
+    public int[] Collect(int firstSecond, int lastSecond)
     {
         var cellsPerSecond = dimension.Size;
         var totals = new int[cellsPerSecond];

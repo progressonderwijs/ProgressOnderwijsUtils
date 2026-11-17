@@ -8,11 +8,11 @@ sealed class SecondsRingBuffer
     /// The stamp of a slot that has never held a second. The timeline starts at second 0, so the default of the array
     /// would make every slot look as if it already holds that second, and its first writer would skip the reset.
     /// </summary>
-    const long NoSecond = -1;
+    const int NoSecond = -1;
 
     readonly SecondsSinceStart clock;
-    readonly long[] slots;
-    readonly long[] readySlots;
+    readonly int[] slots;
+    readonly int[] readySlots;
 
     public SecondsRingBuffer(SecondsSinceStart clock, int length)
     {
@@ -21,8 +21,8 @@ sealed class SecondsRingBuffer
         }
 
         this.clock = clock;
-        slots = new long[length];
-        readySlots = new long[length];
+        slots = new int[length];
+        readySlots = new int[length];
         Array.Fill(slots, NoSecond);
         Array.Fill(readySlots, NoSecond);
     }
@@ -34,8 +34,8 @@ sealed class SecondsRingBuffer
     /// Every slot is reused every <see cref="Length"/> seconds, so the index alone does not tell which second it
     /// holds now; that is what the stamp in the slot itself is for.
     /// </summary>
-    public int IndexOf(long second)
-        => (int)(second & (slots.Length - 1));
+    public int IndexOf(int second)
+        => second & (slots.Length - 1);
 
     /// <summary>
     /// Claims the slot for the current second. The first writer of a second resets the slot through
@@ -55,7 +55,7 @@ sealed class SecondsRingBuffer
     /// <param name="index">The index of the claimed slot.</param>
     /// <param name="current">The second the slot was claimed for.</param>
     /// <param name="resetSlot">The action that resets the slot to its initial state.</param>
-    public bool TryEnterSlot(Action<int>? resetSlot, out int index, out long current)
+    public bool TryEnterSlot(Action<int>? resetSlot, out int index, out int current)
     {
         current = clock.Second;
         index = IndexOf(current);
@@ -98,7 +98,7 @@ sealed class SecondsRingBuffer
     /// reset may then have cleared the newer measurements; that costs at most one second, as for a writer that stalls
     /// after claiming (see <see cref="TryEnterSlot(Action{int}?,out int)"/>).
     /// </summary>
-    void Release(int index, long second)
+    void Release(int index, int second)
     {
         var ready = Volatile.Read(ref readySlots[index]);
         while (ready < second) {
@@ -121,6 +121,6 @@ sealed class SecondsRingBuffer
     /// A slot that has never been used carries <see cref="NoSecond"/>; that is not a second of the timeline, so
     /// whoever looks back before the start (second -1) must not take such an empty slot for a recorded second.
     /// </summary>
-    public bool HoldsSecond(long second, int index)
+    public bool HoldsSecond(int second, int index)
         => second >= 0 && Volatile.Read(ref slots[index]) == second && Volatile.Read(ref readySlots[index]) == second;
 }

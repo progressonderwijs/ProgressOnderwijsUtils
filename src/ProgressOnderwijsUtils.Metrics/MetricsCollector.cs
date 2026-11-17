@@ -29,7 +29,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// The first second in which this collector measured; it begins exactly when the collector starts, so it is
     /// observed completely. Seconds before that do not exist for us and must not count as quiet.
     /// </summary>
-    public const long FirstObservableSecond = 0;
+    public const int FirstObservableSecond = 0;
 
     public MetricsDescription<TEndpoint, TDatabase, TPool> Description { get; }
     readonly SecondsSinceStart seconds;
@@ -56,6 +56,12 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </param>
     public MetricsCollector(MetricsDescription<TEndpoint, TDatabase, TPool> description, ConnectionPoolRegistry<TDatabase, TPool> pools, TimeProvider? time = null)
     {
+        if (description.SmallestInterval < 1 || description.SmallestInterval > description.LargestInterval) {
+            throw new InvalidOperationException(
+                $"The smallest interval of {description.SmallestInterval} seconds must be at least 1 second and at most the largest interval of {description.LargestInterval} seconds."
+            );
+        }
+
         if (description.LargestInterval + DefaultSettleSeconds >= RingCapacity) {
             throw new InvalidOperationException($"A ring of {RingCapacity} seconds cannot hold a window of {description.LargestInterval} seconds that ends {DefaultSettleSeconds} seconds ago.");
         }
@@ -313,13 +319,13 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// </summary>
     /// <param name="previousLastSecond">The <see cref="MetricsCollection{TEndpoint,TDatabase,TPool}.LastSecond"/> of what the caller has already processed.</param>
     /// <param name="settleSeconds">See <see cref="Collect"/>.</param>
-    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectAfter(long previousLastSecond, int settleSeconds = DefaultSettleSeconds)
+    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectAfter(int previousLastSecond, int settleSeconds = DefaultSettleSeconds)
     {
         var lastSecond = LatestCompleteSecond(settleSeconds);
         return CollectRange(previousLastSecond + 1, Math.Max(previousLastSecond, lastSecond));
     }
 
-    long LatestCompleteSecond(int settleSeconds)
+    int LatestCompleteSecond(int settleSeconds)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(settleSeconds, 1);
         return seconds.Second - settleSeconds;
@@ -331,7 +337,7 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     /// The seconds are those of the timeline of the rings, like
     /// <see cref="MetricsCollection{TEndpoint,TDatabase,TPool}.LastSecond"/>.
     /// </summary>
-    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectRange(long firstSecond, long lastSecond)
+    public MetricsCollection<TEndpoint, TDatabase, TPool> CollectRange(int firstSecond, int lastSecond)
     {
         // A window is at most LargestInterval seconds long. The ring keeps more (RingCapacity), so that the oldest
         // seconds of such a window are still there as well. Seconds from before our own start do not exist at all:

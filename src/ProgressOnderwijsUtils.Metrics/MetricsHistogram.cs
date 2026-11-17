@@ -105,7 +105,7 @@ public sealed class MetricsHistogram
 
     /// <summary>
     /// The inner boundaries in milliseconds, so without the 0 where the first bucket starts and without the closing
-    /// upper bound of the last bucket: exactly the values <see cref="PercentileSeconds{T}"/> can return, and with that
+    /// upper bound of the last bucket: exactly the values <see cref="PercentileSeconds"/> can return, and with that
     /// the ticks on an axis of percentiles.
     /// </summary>
     public ImmutableArray<double> InnerBoundariesMilliseconds
@@ -119,8 +119,7 @@ public sealed class MetricsHistogram
     /// </summary>
     /// <param name="counts">The number of measurements per bucket of a single histogram.</param>
     /// <param name="quantile">The percentile as a fraction, greater than 0 and at most 1.</param>
-    public double? PercentileSeconds<T>(ReadOnlySpan<T> counts, double quantile)
-        where T : IBinaryInteger<T>
+    public double? PercentileSeconds(ReadOnlySpan<long> counts, double quantile)
     {
         EnsureBucketCount(counts.Length, nameof(counts));
         // as the negation of the valid range, so that NaN is refused as well: every comparison with NaN is false
@@ -130,7 +129,7 @@ public sealed class MetricsHistogram
 
         var total = 0L;
         foreach (var count in counts) {
-            total += long.CreateChecked(count);
+            total += count;
         }
 
         if (total == 0) {
@@ -140,7 +139,7 @@ public sealed class MetricsHistogram
         var rank = (long)Math.Ceiling(quantile * total);
         var cumulative = 0L;
         for (var bucketIndex = 0; bucketIndex < counts.Length; bucketIndex++) {
-            cumulative += long.CreateChecked(counts[bucketIndex]);
+            cumulative += counts[bucketIndex];
             if (cumulative >= rank) {
                 return bucketIndex == BucketCount - 1 ? Boundaries[^2] : Boundaries[bucketIndex + 1];
             }
@@ -160,8 +159,8 @@ public sealed class MetricsHistogram
     }
 
     /// <summary>
-    /// Summed bucket counts of a histogram, for example over a series of seconds or over several slots. The totals
-    /// are longs: enough seconds of int counts together no longer fit in an int.
+    /// Summed bucket counts of a histogram, for example over a series of seconds or over several slots. The collector
+    /// counts per second in ints; the totals are longs, because enough seconds together no longer fit in an int.
     /// </summary>
     public sealed class Totals
     {
@@ -177,12 +176,11 @@ public sealed class MetricsHistogram
         public long Count
             => counts.Sum();
 
-        public void Add<T>(ReadOnlySpan<T> added)
-            where T : IBinaryInteger<T>
+        public void Add(ReadOnlySpan<int> added)
         {
             histogram.EnsureBucketCount(added.Length, nameof(added));
             for (var bucketIndex = 0; bucketIndex < counts.Length; bucketIndex++) {
-                counts[bucketIndex] += long.CreateChecked(added[bucketIndex]);
+                counts[bucketIndex] += added[bucketIndex];
             }
         }
 
@@ -190,18 +188,17 @@ public sealed class MetricsHistogram
         /// Takes previously added counts off again. When a bucket would drop below zero, something is being
         /// subtracted that was never added; the totals are then left untouched and this throws.
         /// </summary>
-        public void Subtract<T>(ReadOnlySpan<T> subtracted)
-            where T : IBinaryInteger<T>
+        public void Subtract(ReadOnlySpan<int> subtracted)
         {
             histogram.EnsureBucketCount(subtracted.Length, nameof(subtracted));
             for (var bucketIndex = 0; bucketIndex < counts.Length; bucketIndex++) {
-                if (counts[bucketIndex] < long.CreateChecked(subtracted[bucketIndex])) {
+                if (counts[bucketIndex] < subtracted[bucketIndex]) {
                     throw new InvalidOperationException($"Subtracting {subtracted[bucketIndex]} from bucket {bucketIndex} would make its total of {counts[bucketIndex]} negative.");
                 }
             }
 
             for (var bucketIndex = 0; bucketIndex < counts.Length; bucketIndex++) {
-                counts[bucketIndex] -= long.CreateChecked(subtracted[bucketIndex]);
+                counts[bucketIndex] -= subtracted[bucketIndex];
             }
         }
 

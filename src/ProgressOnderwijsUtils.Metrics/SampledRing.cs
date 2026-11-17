@@ -29,7 +29,7 @@ sealed class SampledRing
     /// <see cref="ResetSlot"/>. A zero can however also be a real level (a database without opens), so the sample
     /// only sets this stamp after the levels, and readers require it.
     /// </summary>
-    readonly long[] sampledSeconds;
+    readonly int[] sampledSeconds;
 
     public SampledRing(SecondsRingBuffer secondsRing, int slotCount, int gaugeCount, int counterCount)
     {
@@ -39,8 +39,8 @@ sealed class SampledRing
         CountersPerSecond = slotCount * counterCount;
         gauges = new long[secondsRing.Length * GaugesPerSecond];
         counters = new long[secondsRing.Length * CountersPerSecond];
-        sampledSeconds = new long[secondsRing.Length];
-        Array.Fill(sampledSeconds, long.MinValue);
+        sampledSeconds = new int[secondsRing.Length];
+        Array.Fill(sampledSeconds, int.MinValue);
         resetSlot = ResetSlot;
     }
 
@@ -91,7 +91,7 @@ sealed class SampledRing
     /// The counters yield their increase over the window: that is the level at the end of the last sampled second
     /// minus the level from just before the window.
     /// </summary>
-    public Window? Collect(long firstSecond, long lastSecond)
+    public Window? Collect(int firstSecond, int lastSecond)
     {
         var gaugeBuffer = new long[GaugesPerSecond];
         var counterBuffer = new long[CountersPerSecond];
@@ -136,7 +136,7 @@ sealed class SampledRing
     /// before it is usually not sampled, so we search for the nearest one that is.
     /// The buffers are scratch space and hold the levels of that second afterwards.
     /// </summary>
-    bool TryReadLastBefore(long second, long[] gaugeBuffer, long[] counterBuffer)
+    bool TryReadLastBefore(int second, long[] gaugeBuffer, long[] counterBuffer)
     {
         for (var earlier = second - 1; earlier > second - secondsRing.Length; earlier--) {
             if (TryRead(earlier, gaugeBuffer, counterBuffer)) {
@@ -151,7 +151,7 @@ sealed class SampledRing
     /// What is recorded for <paramref name="second"/>, or false when that second was not sampled (completely) or has
     /// been overwritten by the ring in the meantime.
     /// </summary>
-    bool TryRead(long second, Span<long> gaugesOut, Span<long> countersOut)
+    bool TryRead(int second, Span<long> gaugesOut, Span<long> countersOut)
     {
         var index = secondsRing.IndexOf(second);
         if (!secondsRing.HoldsSecond(second, index) || Volatile.Read(ref sampledSeconds[index]) != second) {

@@ -79,7 +79,7 @@ sealed class ActiveRequests
     /// The highest peak over the requested seconds. A slot without a stamp means the gauge did not move that second;
     /// those seconds yield no peak of their own but do sit at the level the window ended with.
     /// </summary>
-    public long Collect(long firstSecond, long lastSecond)
+    public long Collect(int firstSecond, int lastSecond)
     {
         var peak = ValueAt(lastSecond);
         for (var second = firstSecond; second <= lastSecond; second++) {
@@ -106,7 +106,7 @@ sealed class ActiveRequests
     /// Without this calculation a window without measurements would report the level of now, and then a window full
     /// of running requests drops back to zero as soon as those finish during the settle time.
     /// </summary>
-    long ValueAt(long second)
+    long ValueAt(int second)
     {
         // The running total is read before searching: a measurement that opens a new second during the search is
         // then not already part of the level we fall back on.

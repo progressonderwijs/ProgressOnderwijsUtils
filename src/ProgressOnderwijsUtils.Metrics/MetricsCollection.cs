@@ -13,7 +13,7 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// That timeline is cheap to read and never runs backwards, but drifts away from real time, so this
     /// is not a time to show or store; <see cref="WindowEndUtc"/> is.
     /// </summary>
-    public required long LastSecond { get; init; }
+    public required int LastSecond { get; init; }
 
     /// <summary>
     /// The real time at which <see cref="LastSecond"/> ended, and so the window with it. The window started
@@ -28,7 +28,7 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// smoothing, and can be lower than requested when the ring buffer could not reach that far back.
     /// The histograms are raw sums over these seconds, so divide by this to get a rate per second.
     /// </summary>
-    public required long SecondsCovered { get; init; }
+    public required int SecondsCovered { get; init; }
 
     /// <summary>
     /// The peak of the number of concurrent requests.
