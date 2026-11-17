@@ -196,13 +196,6 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
                     }
                 }
             );
-            listener.MeasurementsCompleted = (_, state) => {
-                if (state is ActiveRequests target) {
-                    // The instrumentation stops with requests still running: the matching -1 measurements never arrive
-                    // anymore, so the running total would stay stuck.
-                    target.Reset();
-                }
-            };
             listener.Start();
         }
 

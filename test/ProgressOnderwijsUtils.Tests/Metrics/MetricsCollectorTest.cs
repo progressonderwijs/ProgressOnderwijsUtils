@@ -146,13 +146,6 @@ public sealed class MetricsCollectorTest
                 new("http.route", route)
             );
 
-        /// <summary>
-        /// Stops the instrumentation while the collector stays alive, as when the application shuts
-        /// down with requests still running. A meter of a factory is only disposed together with that factory.
-        /// </summary>
-        public void StopInstrumentation()
-            => host.Dispose();
-
         public void Dispose()
         {
             Collector.Dispose();
@@ -606,29 +599,6 @@ public sealed class MetricsCollectorTest
         harness.Clock.Advance(2);
 
         var collection = harness.Collector.Collect(1, minimumWindow: 1);
-
-        PAssert.That(() => collection.MaxActiveRequests == 3);
-    }
-
-    [Fact]
-    public void Stopping_instrumentation_does_not_erase_the_peak_of_an_earlier_window()
-    {
-        using var harness = new Harness();
-
-        harness.RequestStarted();
-        harness.RequestStarted();
-        harness.RequestStarted();
-
-        // A second without measurements: it has no peak of its own and must therefore be derived
-        // from the starting level of a later second.
-        harness.Clock.Advance(1);
-
-        // The application stops with three requests running: the corresponding -1 measurements never arrive.
-        harness.Clock.Advance(1);
-        harness.StopInstrumentation();
-
-        // The window from before the stop should still show the peak of that time.
-        var collection = harness.Collector.Collect(1, minimumWindow: 1, settleSeconds: 1);
 
         PAssert.That(() => collection.MaxActiveRequests == 3);
     }

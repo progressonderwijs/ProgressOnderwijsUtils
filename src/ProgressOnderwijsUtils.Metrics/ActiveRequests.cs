@@ -64,18 +64,6 @@ sealed class ActiveRequests
     }
 
     /// <summary>
-    /// Resets the running total to zero because the instrumentation stops with requests still running. First claim
-    /// the slot of this second, just like <see cref="Measurement"/>: with that <see cref="ResetSlot"/> records the
-    /// level from before clearing, so that a window from before this moment can still calculate that level back
-    /// instead of dropping to zero.
-    /// </summary>
-    public void Reset()
-    {
-        _ = secondsRing.TryEnterSlot(resetSlot, out _);
-        _ = Interlocked.Exchange(ref current, 0);
-    }
-
-    /// <summary>
     /// The highest peak over the requested seconds. A slot without a stamp means the gauge did not move that second;
     /// those seconds yield no peak of their own but do sit at the level the window ended with.
     /// </summary>
