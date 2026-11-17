@@ -50,9 +50,25 @@ public sealed class ConnectionPoolRegistry<TDatabase, TPool>(Func<string, TDatab
         }
     }
 
-    internal void OpenStarted(SqlConnection conn)
+    /// <summary>
+    /// Only a synchronous open is counted. SqlClient reports a cancelled OpenAsync as succeeded while the connection
+    /// never opens, so it would stay pending forever; rather than silently counting too high, an asynchronous open of
+    /// a registered pool is refused.
+    /// </summary>
+    /// <param name="conn">The connection that is about to open.</param>
+    /// <param name="operation">The SqlClient method that opens it, as its open event names it.</param>
+    internal void OpenStarted(SqlConnection conn, string operation)
     {
         if (byConnectionString.TryGetValue(conn.ConnectionString, out var counters)) {
+            if (operation.EndsWith("Async", StringComparison.Ordinal)) {
+                throw new NotSupportedException(
+                    $"""
+                    The connection to database {counters.Catalog} cannot be opened asynchronously while its pool is measured:
+                    a cancelled OpenAsync would be counted as waiting for a connection forever.
+                    Open the connection with Open(), or do not register its connection string in the {nameof(ConnectionPoolRegistry<,>)}.
+                    """
+                );
+            }
             counters.OpenStarted(conn);
         }
     }

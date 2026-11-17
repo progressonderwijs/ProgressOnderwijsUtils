@@ -281,8 +281,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
     void SqlClientEvent(KeyValuePair<string, object?> sqlClientEvent)
     {
         switch (sqlClientEvent.Value) {
-            case SqlClientConnectionOpenBefore { Connection: { } connection, }:
-                pools.OpenStarted(connection);
+            case SqlClientConnectionOpenBefore { Connection: { } connection, } openBefore:
+                pools.OpenStarted(connection, openBefore.Operation);
                 break;
             // An empty OperationId means nobody listened when this open started, so it was never pending. When another
             // subscriber did listen, a failing open that started just before the collector started still makes pending

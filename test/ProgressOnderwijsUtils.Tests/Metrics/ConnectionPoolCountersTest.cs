@@ -179,6 +179,34 @@ public sealed class ConnectionPoolCountersTest
         PAssert.That(() => pool.InUse == 0 && pool.Pending == 0 && pool.Opened == 0);
     }
 
+    /// <summary>
+    /// SqlClient reports a cancelled OpenAsync as succeeded while the connection never opens, which would leave it
+    /// pending forever; so an asynchronous open of a measured pool is refused before it is counted.
+    /// </summary>
+    [Fact]
+    public async Task An_asynchronous_open_of_a_registered_pool_is_refused_and_not_counted()
+    {
+        using var collector = StartedCollector();
+        var connectionString = PoolOfOne();
+        var pool = registry.For(connectionString, TestPool.ReadWrite);
+        await using var connection = new SqlConnection(connectionString);
+
+        _ = await Assert.ThrowsAsync<NotSupportedException>(() => connection.OpenAsync(TestContext.Current.CancellationToken));
+
+        PAssert.That(() => pool.InUse == 0 && pool.Pending == 0 && pool.Opened == 0);
+    }
+
+    [Fact]
+    public async Task An_asynchronous_open_of_a_connection_string_that_was_never_registered_is_left_alone()
+    {
+        using var collector = StartedCollector();
+        await using var connection = new SqlConnection(PoolOfOne());
+
+        await connection.OpenAsync(TestContext.Current.CancellationToken);
+
+        PAssert.That(() => connection.State == ConnectionState.Open);
+    }
+
     [Fact]
     public void The_same_connection_string_shares_its_counters()
     {
