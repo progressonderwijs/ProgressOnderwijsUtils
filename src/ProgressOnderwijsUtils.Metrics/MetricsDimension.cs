@@ -16,9 +16,15 @@ public abstract class MetricsDimension<T>
 
     /// <summary>
     /// The lookup table is as long as the highest tracked value; a value above this limit would cost an unreasonably
-    /// large table for a handful of slots.
+    /// large table for a handful of slots. With ints the table stays within 16 KB.
     /// </summary>
-    const int MaxTrackedValue = ushort.MaxValue;
+    const int MaxTrackedValue = 4096;
+
+    /// <summary>
+    /// The cells of a second are summed on the stack when collecting, so that collecting allocates nothing but its
+    /// result; with ints that is at most 4 KB. This bounds the number of tracked values times the number of buckets.
+    /// </summary>
+    public const int MaxCellsPerSecond = 1024;
 
     /// <summary>
     /// The slot of every value, at the position of its enum value. An array is fastest here: the enums are small and
@@ -62,6 +68,17 @@ public abstract class MetricsDimension<T>
         }
 
         Histogram = histogram;
+
+        if (Size > MaxCellsPerSecond) {
+            throw new ArgumentException(
+                $"""
+                The metrics dimension of {typeof(T)} is too large: {trackedValues.Length} tracked values with {histogram.BucketCount} buckets need {Size} cells per second,
+                but at most {MaxCellsPerSecond} fit on the stack when collecting.
+                Track fewer values separately, or use a histogram with fewer buckets.
+                """,
+                nameof(tracked)
+            );
+        }
     }
 
     static int KeyOf(T value)

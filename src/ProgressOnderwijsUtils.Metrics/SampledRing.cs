@@ -93,11 +93,12 @@ sealed class SampledRing
     /// </summary>
     public Window? Collect(int firstSecond, int lastSecond)
     {
-        var gaugeBuffer = new long[GaugesPerSecond];
-        var counterBuffer = new long[CountersPerSecond];
+        // The slots are bounded by ConnectionPoolSlots.MaxCount, so only the result is allocated.
+        Span<long> gaugeBuffer = stackalloc long[GaugesPerSecond];
+        Span<long> counterBuffer = stackalloc long[CountersPerSecond];
+        Span<long> firstCounters = stackalloc long[CountersPerSecond];
+        Span<long> lastCounters = stackalloc long[CountersPerSecond];
         var peaks = new long[GaugesPerSecond];
-        var firstCounters = new long[CountersPerSecond];
-        var lastCounters = new long[CountersPerSecond];
         var sawSample = false;
 
         for (var second = firstSecond; second <= lastSecond; second++) {
@@ -109,9 +110,9 @@ sealed class SampledRing
                 peaks[i] = Math.Max(peaks[i], gaugeBuffer[i]);
             }
 
-            counterBuffer.CopyTo(lastCounters, 0);
+            counterBuffer.CopyTo(lastCounters);
             if (!sawSample) {
-                counterBuffer.CopyTo(firstCounters, 0);
+                counterBuffer.CopyTo(firstCounters);
                 sawSample = true;
             }
         }
@@ -136,7 +137,7 @@ sealed class SampledRing
     /// before it is usually not sampled, so we search for the nearest one that is.
     /// The buffers are scratch space and hold the levels of that second afterwards.
     /// </summary>
-    bool TryReadLastBefore(int second, long[] gaugeBuffer, long[] counterBuffer)
+    bool TryReadLastBefore(int second, Span<long> gaugeBuffer, Span<long> counterBuffer)
     {
         for (var earlier = second - 1; earlier > second - secondsRing.Length; earlier--) {
             if (TryRead(earlier, gaugeBuffer, counterBuffer)) {

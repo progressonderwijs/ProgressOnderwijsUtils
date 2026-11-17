@@ -5,11 +5,35 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// all calculate through this layout, so that it is fixed in one place. The slots of a database lie next to each
 /// other, in the order of the pools.
 /// </summary>
-public sealed class ConnectionPoolSlots<TDatabase, TPool>(MetricsDimension<TDatabase> databases)
+public sealed class ConnectionPoolSlots<TDatabase, TPool>
     where TDatabase : struct, Enum
     where TPool : struct, Enum
 {
+    /// <summary>
+    /// Sampling and collecting keep a few longs per slot on the stack, so that neither allocates anything but the
+    /// collected result; at this maximum that stays within 5 KB.
+    /// </summary>
+    public const int MaxCount = 128;
+
     static readonly TPool[] pools = Enum.GetValues<TPool>();
+
+    readonly MetricsDimension<TDatabase> databases;
+
+    public ConnectionPoolSlots(MetricsDimension<TDatabase> databases)
+    {
+        if (databases.Values.Length * pools.Length > MaxCount) {
+            throw new ArgumentException(
+                $"""
+                The connection usage is too large: {databases.Values.Length} database slots of {typeof(TDatabase)} times {pools.Length} pools of {typeof(TPool)}
+                need {databases.Values.Length * pools.Length} slots, but at most {MaxCount} fit on the stack when sampling and collecting.
+                Track fewer databases separately, or define fewer pools.
+                """,
+                nameof(databases)
+            );
+        }
+
+        this.databases = databases;
+    }
 
     public static IReadOnlyList<TPool> Pools
         => pools;

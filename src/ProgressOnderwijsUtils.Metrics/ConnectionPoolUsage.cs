@@ -38,7 +38,8 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
 
     /// <summary>
     /// Sums the levels of the pools per database and records them at the current second.
-    /// The sum lives on the stack, so sampling allocates nothing.
+    /// The sum lives on the stack, bounded by <see cref="ConnectionPoolSlots{TDatabase,TPool}.MaxCount"/>, so sampling
+    /// allocates nothing.
     /// </summary>
     internal void Measurement(ReadOnlySpan<ConnectionPoolCounters<TDatabase, TPool>> sampledPools)
     {

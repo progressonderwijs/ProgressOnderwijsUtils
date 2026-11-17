@@ -47,9 +47,8 @@ sealed class DurationHistogramRing<T>
     {
         var cellsPerSecond = dimension.Size;
         var totals = new int[cellsPerSecond];
-        // With a slot per tracked value a second is too large for the stack, so the snapshot lives on the heap;
-        // collecting happens rarely enough to afford that.
-        var snapshot = new int[cellsPerSecond];
+        // Bounded by MetricsDimension.MaxCellsPerSecond, so only the result is allocated.
+        Span<int> snapshot = stackalloc int[cellsPerSecond];
         for (var second = firstSecond; second <= lastSecond; second++) {
             var index = secondsRing.IndexOf(second);
             if (!secondsRing.HoldsSecond(second, index)) {

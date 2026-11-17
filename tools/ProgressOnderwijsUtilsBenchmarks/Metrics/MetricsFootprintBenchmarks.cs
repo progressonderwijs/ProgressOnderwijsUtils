@@ -30,9 +30,10 @@ public class MetricsFootprintBenchmarks
     }
 
     /// <summary>
-    /// 7 is what an application tracks now; the higher values show how the ring grows along.
+    /// 7 is what an application tracks now; the higher values show how the ring grows along, up to 35: the most that
+    /// fits within <see cref="MetricsDimension{T}.MaxCellsPerSecond"/> with these buckets.
     /// </summary>
-    [Params(0, 7, 32, 128)]
+    [Params(0, 7, 16, 35)]
     public int TrackedEndpointCount { get; set; }
 
     // Filled in GlobalSetup before any benchmark runs.

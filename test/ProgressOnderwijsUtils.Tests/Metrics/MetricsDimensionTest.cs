@@ -90,9 +90,57 @@ public sealed class MetricsDimensionTest
     public void A_negative_value_cannot_be_tracked()
         => _ = Assert.Throws<ArgumentException>(() => new TrackedEndpoints([(TestEndpoint)(-2),]));
 
+    /// <summary>
+    /// The lookup table is as long as the highest tracked value, so a high value would cost a large table for a single
+    /// slot.
+    /// </summary>
+    [Fact]
+    public void A_value_above_the_lookup_table_limit_cannot_be_tracked()
+    {
+        var highest = new TrackedEndpoints([(TestEndpoint)4096,]);
+
+        PAssert.That(() => highest.SlotOf((TestEndpoint)4096) == 1);
+        _ = Assert.Throws<ArgumentException>(() => new TrackedEndpoints([(TestEndpoint)4097,]));
+    }
+
     [Fact]
     public void An_enum_that_is_not_int_based_is_refused()
         => _ = Assert.Throws<ArgumentException>(() => new ByteBasedDimension());
+
+    static TestEndpoint[] Endpoints(int count)
+        => [.. Enumerable.Range(1, count).Select(value => (TestEndpoint)value),];
+
+    /// <summary>
+    /// Collecting sums the cells of a second on the stack, so a dimension that does not fit there must stand out at
+    /// startup already.
+    /// </summary>
+    [Fact]
+    public void A_dimension_whose_cells_per_second_do_not_fit_on_the_stack_is_refused()
+    {
+        var cellsPerSlot = MetricsHistogram.Log2Buckets().BucketCount * 2;
+        var mostTracked = MetricsDimension<TestEndpoint>.MaxCellsPerSecond / cellsPerSlot - 1;
+
+        var largest = new TrackedEndpoints(Endpoints(mostTracked));
+
+        PAssert.That(() => largest.Size <= MetricsDimension<TestEndpoint>.MaxCellsPerSecond);
+        _ = Assert.Throws<ArgumentException>(() => new TrackedEndpoints(Endpoints(mostTracked + 1)));
+    }
+
+    /// <summary>
+    /// Sampling and collecting the connection usage keep their slots on the stack, so a layout that does not fit there
+    /// must stand out at startup already.
+    /// </summary>
+    [Fact]
+    public void A_connection_pool_layout_that_does_not_fit_on_the_stack_is_refused()
+    {
+        var poolCount = Enum.GetValues<TestPool>().Length;
+        var mostTracked = ConnectionPoolSlots<TestEndpoint, TestPool>.MaxCount / poolCount - 1;
+
+        var largest = new ConnectionPoolSlots<TestEndpoint, TestPool>(new TrackedEndpoints(Endpoints(mostTracked)));
+
+        PAssert.That(() => largest.Count <= ConnectionPoolSlots<TestEndpoint, TestPool>.MaxCount);
+        _ = Assert.Throws<ArgumentException>(() => new ConnectionPoolSlots<TestEndpoint, TestPool>(new TrackedEndpoints(Endpoints(mostTracked + 1))));
+    }
 
     [Fact]
     public void A_dimension_without_tracked_values_puts_everything_in_the_other_slot()
