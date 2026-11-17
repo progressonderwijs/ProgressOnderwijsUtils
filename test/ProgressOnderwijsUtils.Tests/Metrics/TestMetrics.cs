@@ -113,7 +113,7 @@ sealed class TestRequestDuration() : MetricsDimension<TestEndpoint>(MetricsHisto
 /// A running collector sees the ASP.NET Core instruments of all hosts in the process and rejects those of every host
 /// but its own, so the test classes that run collectors or create such instruments must not run alongside each other.
 /// </summary>
-[CollectionDefinition(nameof(MetricsCollectorCollection))]
+[CollectionDefinition(nameof(MetricsCollectorCollection), DisableParallelization = true)]
 public sealed class MetricsCollectorCollection;
 
 static class TestMetrics
