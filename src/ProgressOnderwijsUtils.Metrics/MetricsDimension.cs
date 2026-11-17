@@ -115,4 +115,42 @@ public abstract class MetricsDimension<T>
 
     public bool IsFailed(int index)
         => (index & 1) is 1;
+
+    /// <summary>
+    /// The number of measurements in a bucket of a value slot, for succeeded or for failed measurements.
+    /// </summary>
+    /// <param name="cells">The cells of this dimension, as collected over a window.</param>
+    /// <param name="valueSlot">The slot of the value.</param>
+    /// <param name="bucketIndex">The bucket of the histogram.</param>
+    /// <param name="failed">Whether the failed or the succeeded measurements are counted.</param>
+    public int Count(int[] cells, int valueSlot, int bucketIndex, bool failed)
+        => cells[CellIndex(valueSlot, failed, bucketIndex)];
+
+    /// <summary>
+    /// The number of measurements in a bucket across all value slots.
+    /// </summary>
+    /// <inheritdoc cref="Count(int[],int,int,bool)" path="/param"/>
+    public int Count(int[] cells, int bucketIndex, bool failed)
+    {
+        var total = 0;
+        for (var valueSlot = 0; valueSlot < Values.Length; valueSlot++) {
+            total += Count(cells, valueSlot, bucketIndex, failed);
+        }
+
+        return total;
+    }
+
+    /// <summary>
+    /// The histogram of a value slot: per bucket the number of succeeded or of failed measurements.
+    /// </summary>
+    /// <inheritdoc cref="Count(int[],int,int,bool)" path="/param"/>
+    public int[] Counts(int[] cells, int valueSlot, bool failed)
+        => [.. Enumerable.Range(0, Histogram.BucketCount).Select(bucketIndex => Count(cells, valueSlot, bucketIndex, failed)),];
+
+    /// <summary>
+    /// The histogram across all value slots: per bucket the number of succeeded or of failed measurements.
+    /// </summary>
+    /// <inheritdoc cref="Count(int[],int,int,bool)" path="/param"/>
+    public int[] Counts(int[] cells, bool failed)
+        => [.. Enumerable.Range(0, Histogram.BucketCount).Select(bucketIndex => Count(cells, bucketIndex, failed)),];
 }

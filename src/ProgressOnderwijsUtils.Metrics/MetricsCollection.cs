@@ -105,32 +105,25 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// The number of measurements in a bucket of a database slot, for succeeded or for failed operations.
     /// </summary>
     public int DatabaseDurationCount(int databaseSlot, int bucketIndex, bool isError)
-        => DatabaseDurationHistogram[Description.DatabaseDurationHistogram.CellIndex(databaseSlot, isError, bucketIndex)];
+        => Description.DatabaseDurationHistogram.Count(DatabaseDurationHistogram, databaseSlot, bucketIndex, isError);
 
     /// <summary>
     /// The number of measurements in a bucket across all databases.
     /// </summary>
     public int DatabaseDurationCount(int bucketIndex, bool isError)
-    {
-        var total = 0;
-        for (var databaseSlot = 0; databaseSlot < Description.DatabaseDurationHistogram.Values.Length; databaseSlot++) {
-            total += DatabaseDurationCount(databaseSlot, bucketIndex, isError);
-        }
-
-        return total;
-    }
+        => Description.DatabaseDurationHistogram.Count(DatabaseDurationHistogram, bucketIndex, isError);
 
     /// <summary>
     /// The histogram of a database slot: per bucket the number of succeeded or of failed operations.
     /// </summary>
     public int[] DatabaseDurationCounts(int databaseSlot, bool isError)
-        => [.. Enumerable.Range(0, Description.DatabaseDurationHistogram.Histogram.BucketCount).Select(bucketIndex => DatabaseDurationCount(databaseSlot, bucketIndex, isError)),];
+        => Description.DatabaseDurationHistogram.Counts(DatabaseDurationHistogram, databaseSlot, isError);
 
     /// <summary>
     /// The histogram across all databases: per bucket the number of succeeded or of failed operations.
     /// </summary>
     public int[] DatabaseDurationCounts(bool isError)
-        => [.. Enumerable.Range(0, Description.DatabaseDurationHistogram.Histogram.BucketCount).Select(bucketIndex => DatabaseDurationCount(bucketIndex, isError)),];
+        => Description.DatabaseDurationHistogram.Counts(DatabaseDurationHistogram, isError);
 
     /// <summary>
     /// The succeeded and the failed measurements sit in a single array; see
@@ -142,30 +135,23 @@ public sealed record MetricsCollection<TEndpoint, TDatabase, TPool>
     /// The number of measurements in a bucket of an endpoint slot, for succeeded or for failed requests.
     /// </summary>
     public int RequestDurationCount(int endpointSlot, int bucketIndex, bool isError)
-        => RequestDurationHistogram[Description.RequestDurationHistogram.CellIndex(endpointSlot, isError, bucketIndex)];
+        => Description.RequestDurationHistogram.Count(RequestDurationHistogram, endpointSlot, bucketIndex, isError);
 
     /// <summary>
     /// The number of measurements in a bucket across all endpoints.
     /// </summary>
     public int RequestDurationCount(int bucketIndex, bool isError)
-    {
-        var total = 0;
-        for (var endpointSlot = 0; endpointSlot < Description.RequestDurationHistogram.Values.Length; endpointSlot++) {
-            total += RequestDurationCount(endpointSlot, bucketIndex, isError);
-        }
-
-        return total;
-    }
+        => Description.RequestDurationHistogram.Count(RequestDurationHistogram, bucketIndex, isError);
 
     /// <summary>
     /// The histogram of an endpoint slot: per bucket the number of succeeded or of failed requests.
     /// </summary>
     public int[] RequestDurationCounts(int endpointSlot, bool isError)
-        => [.. Enumerable.Range(0, Description.RequestDurationHistogram.Histogram.BucketCount).Select(bucketIndex => RequestDurationCount(endpointSlot, bucketIndex, isError)),];
+        => Description.RequestDurationHistogram.Counts(RequestDurationHistogram, endpointSlot, isError);
 
     /// <summary>
     /// The histogram across all endpoints: per bucket the number of succeeded or of failed requests.
     /// </summary>
     public int[] RequestDurationCounts(bool isError)
-        => [.. Enumerable.Range(0, Description.RequestDurationHistogram.Histogram.BucketCount).Select(bucketIndex => RequestDurationCount(bucketIndex, isError)),];
+        => Description.RequestDurationHistogram.Counts(RequestDurationHistogram, isError);
 }
