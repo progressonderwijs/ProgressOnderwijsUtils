@@ -182,8 +182,8 @@ public sealed class MetricsCollector<TEndpoint, TDatabase, TPool> : IDisposable
             };
             listener.SetMeasurementEventCallback<long>(
                 (_, measurement, _, state) => {
-                    if (state is ActiveRequests request) {
-                        request.Measurement(measurement);
+                    if (ReferenceEquals(state, activeRequests)) {
+                        activeRequests.Measurement(measurement);
                     }
                 }
             );
