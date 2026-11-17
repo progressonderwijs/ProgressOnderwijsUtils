@@ -50,18 +50,24 @@ sealed class ThreadPoolUsage
 
     /// <summary>
     /// The thread pool usage over the requested seconds, or null when no sample was taken in that window; see
-    /// <see cref="SampledRing.Collect"/>.
+    /// <see cref="SampledRing.TryCollect"/>.
     /// </summary>
     public Window? Collect(int firstSecond, int lastSecond)
-        => ring.Collect(firstSecond, lastSecond) is { } window
-            ? new(
-                // The ring keeps every gauge as a long, but these two only ever received ints, and the peak of ints is
-                // one of them; the conversion restores their type and fails only on a bug.
-                checked((int)window.GaugePeaks[threadCountGauge]),
-                checked((int)window.GaugePeaks[minThreadCountGauge]),
-                window.GaugePeaks[pendingWorkItemsGauge],
-                window.CounterIncreases[0],
-                window.CounterIncreases[1]
-            )
-            : null;
+    {
+        Span<long> gaugePeaks = stackalloc long[ring.GaugesPerSecond];
+        Span<long> counterIncreases = stackalloc long[ring.CountersPerSecond];
+        if (!ring.TryCollect(firstSecond, lastSecond, gaugePeaks, counterIncreases)) {
+            return null;
+        }
+
+        return new(
+            // The ring keeps every gauge as a long, but these two only ever received ints, and the peak of ints is one
+            // of them; the conversion restores their type and fails only on a bug.
+            checked((int)gaugePeaks[threadCountGauge]),
+            checked((int)gaugePeaks[minThreadCountGauge]),
+            gaugePeaks[pendingWorkItemsGauge],
+            counterIncreases[0],
+            counterIncreases[1]
+        );
+    }
 }

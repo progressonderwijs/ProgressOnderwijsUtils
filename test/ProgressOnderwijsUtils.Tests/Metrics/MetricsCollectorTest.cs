@@ -908,9 +908,11 @@ public sealed class MetricsCollectorTest
         }
 
         var lastSecond = clock.Second - MetricsCollector.DefaultSettleSeconds;
-        var window = ring.Collect(lastSecond - largestInterval + 1, lastSecond).AssertNotNull();
+        var counterIncreases = new long[ring.CountersPerSecond];
+        var collected = ring.TryCollect(lastSecond - largestInterval + 1, lastSecond, new long[ring.GaugesPerSecond], counterIncreases);
 
-        PAssert.That(() => window.CounterIncreases[0] == largestInterval);
+        PAssert.That(() => collected);
+        PAssert.That(() => counterIncreases[0] == largestInterval);
     }
 
     /// <summary>

@@ -12,12 +12,6 @@ namespace ProgressOnderwijsUtils.Metrics;
 /// </summary>
 sealed class SampledRing
 {
-    /// <summary>
-    /// The course over a window: per slot and gauge the highest level, and per slot and counter the increase.
-    /// The layout is slot times count plus number, as when sampling.
-    /// </summary>
-    public sealed record Window(long[] GaugePeaks, long[] CounterIncreases);
-
     readonly SecondsRingBuffer secondsRing;
     readonly Action<int> resetSlot;
     readonly long[] gauges;
@@ -45,8 +39,8 @@ sealed class SampledRing
     }
 
     public int SlotCount { get; }
-    int GaugesPerSecond { get; }
-    int CountersPerSecond { get; }
+    public int GaugesPerSecond { get; }
+    public int CountersPerSecond { get; }
 
     /// <summary>
     /// A reused slot starts empty; otherwise the peak of the second that was in this slot a round earlier would
@@ -85,20 +79,29 @@ sealed class SampledRing
     }
 
     /// <summary>
-    /// The course over the requested seconds, or null when no sample was taken in that window.
+    /// The course over the requested seconds, into spans of the caller of exactly <see cref="GaugesPerSecond"/> and
+    /// <see cref="CountersPerSecond"/> values, so that collecting allocates nothing here; the layout is slot times
+    /// count plus number, as when sampling. False when no sample was taken in that window; the spans then hold nothing
+    /// meaningful.
     /// The gauges yield their highest level in the window; seconds without a sample are skipped, because those say
     /// nothing about the level and could, as zero, only lower the peak.
     /// The counters yield their increase over the window: that is the level at the end of the last sampled second
     /// minus the level from just before the window.
     /// </summary>
-    public Window? Collect(int firstSecond, int lastSecond)
+    public bool TryCollect(int firstSecond, int lastSecond, Span<long> gaugePeaks, Span<long> counterIncreases)
     {
-        // The slots are bounded by ConnectionPoolSlots.MaxCount, so only the result is allocated.
+        if (gaugePeaks.Length != GaugesPerSecond || counterIncreases.Length != CountersPerSecond) {
+            throw new ArgumentException(
+                $"Expected {GaugesPerSecond} gauge peaks and {CountersPerSecond} counter increases, but got {gaugePeaks.Length} and {counterIncreases.Length}."
+            );
+        }
+
+        // The slots are bounded by ConnectionPoolSlots.MaxCount, so this fits on the stack.
         Span<long> gaugeBuffer = stackalloc long[GaugesPerSecond];
         Span<long> counterBuffer = stackalloc long[CountersPerSecond];
         Span<long> firstCounters = stackalloc long[CountersPerSecond];
         Span<long> lastCounters = stackalloc long[CountersPerSecond];
-        var peaks = new long[GaugesPerSecond];
+        gaugePeaks.Clear();
         var sawSample = false;
 
         for (var second = firstSecond; second <= lastSecond; second++) {
@@ -106,8 +109,8 @@ sealed class SampledRing
                 continue;
             }
 
-            for (var i = 0; i < peaks.Length; i++) {
-                peaks[i] = Math.Max(peaks[i], gaugeBuffer[i]);
+            for (var i = 0; i < gaugePeaks.Length; i++) {
+                gaugePeaks[i] = Math.Max(gaugePeaks[i], gaugeBuffer[i]);
             }
 
             counterBuffer.CopyTo(lastCounters);
@@ -118,18 +121,17 @@ sealed class SampledRing
         }
 
         if (!sawSample) {
-            return null;
+            return false;
         }
 
         // Without a starting level from just before the window the increase within the first sampled second does
         // not count; that second then has no earlier level to calculate from.
         var baseCounters = TryReadLastBefore(firstSecond, gaugeBuffer, counterBuffer) ? counterBuffer : firstCounters;
-        var increases = new long[CountersPerSecond];
-        for (var i = 0; i < increases.Length; i++) {
-            increases[i] = lastCounters[i] - baseCounters[i];
+        for (var i = 0; i < counterIncreases.Length; i++) {
+            counterIncreases[i] = lastCounters[i] - baseCounters[i];
         }
 
-        return new(peaks, increases);
+        return true;
     }
 
     /// <summary>

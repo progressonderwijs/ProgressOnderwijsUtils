@@ -61,11 +61,14 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
 
     /// <summary>
     /// The usage over the requested seconds, or null when no sample was taken in that window; see
-    /// <see cref="SampledRing.Collect"/>.
+    /// <see cref="SampledRing.TryCollect"/>. Only the result is allocated: the ring writes into spans on the stack,
+    /// bounded by <see cref="ConnectionPoolSlots{TDatabase,TPool}.MaxCount"/>.
     /// </summary>
     public Window? Collect(int firstSecond, int lastSecond)
     {
-        if (ring.Collect(firstSecond, lastSecond) is not { } window) {
+        Span<long> gaugePeaks = stackalloc long[ring.GaugesPerSecond];
+        Span<long> openedIncreases = stackalloc long[ring.CountersPerSecond];
+        if (!ring.TryCollect(firstSecond, lastSecond, gaugePeaks, openedIncreases)) {
             return null;
         }
 
@@ -73,10 +76,10 @@ sealed class ConnectionPoolUsage<TDatabase, TPool>
         var maxUsed = new long[slotCount];
         var maxPending = new long[slotCount];
         for (var slot = 0; slot < slotCount; slot++) {
-            maxUsed[slot] = window.GaugePeaks[slot * gaugeCount + usedGauge];
-            maxPending[slot] = window.GaugePeaks[slot * gaugeCount + pendingGauge];
+            maxUsed[slot] = gaugePeaks[slot * gaugeCount + usedGauge];
+            maxPending[slot] = gaugePeaks[slot * gaugeCount + pendingGauge];
         }
 
-        return new(maxUsed, maxPending, window.CounterIncreases);
+        return new(maxUsed, maxPending, openedIncreases.ToArray());
     }
 }

@@ -6,9 +6,7 @@ namespace ProgressOnderwijsUtils.Tests.Metrics;
 
 public enum TestDatabase
 {
-    Alpha = 1,
-    Beta = 2,
-    Gamma = 3,
+    Alpha = 1, Beta = 2, Gamma = 3,
 }
 
 public enum TestEndpoint
