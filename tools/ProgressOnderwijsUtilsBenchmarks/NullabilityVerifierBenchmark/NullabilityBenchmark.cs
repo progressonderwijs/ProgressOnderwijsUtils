@@ -9,7 +9,8 @@ namespace ProgressOnderwijsUtils.Benchmarks.NullabilityVerifierBenchmark;
 
 [Config(typeof(Config))]
 [MemoryDiagnoser]
-public sealed class NullabilityBenchmark
+// ReSharper disable once ClassCanBeSealed.Global - BenchmarkDotNet complexity
+public class NullabilityBenchmark
 {
     sealed class Config : ManualConfig
     {
