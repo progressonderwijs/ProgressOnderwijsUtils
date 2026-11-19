@@ -1,7 +1,7 @@
 using System.Data.SQLite;
 using Dapper;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 public sealed class ExampleObject : IWrittenImplicitly
 {

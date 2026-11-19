@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 sealed class EntityFrameworkBench : DbContext
 {

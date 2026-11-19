@@ -2,7 +2,7 @@ using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils.Tests.Data;
 
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 // ReSharper disable once ClassCanBeSealed.Global - BenchmarkDotNet complexity
 [Config(typeof(Config))]

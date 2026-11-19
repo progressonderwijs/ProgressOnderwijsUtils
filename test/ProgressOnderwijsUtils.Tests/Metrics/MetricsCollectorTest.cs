@@ -743,7 +743,7 @@ public sealed class MetricsCollectorTest
     public void A_slot_that_is_being_cleared_no_longer_holds_its_previous_second()
     {
         var clock = new MutableClock();
-        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
+        var ring = new SecondsRingBuffer(new(clock), 64);
 
         var claimed = ring.TryEnterSlot(null, out _);
         PAssert.That(() => claimed);
@@ -775,7 +775,7 @@ public sealed class MetricsCollectorTest
     [Fact]
     public void An_unused_slot_does_not_hold_the_second_before_the_start()
     {
-        var ring = new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 64);
+        var ring = new SecondsRingBuffer(new(new MutableClock()), 64);
 
         PAssert.That(() => !ring.HoldsSecond(-1, ring.IndexOf(-1)));
     }
@@ -789,7 +789,7 @@ public sealed class MetricsCollectorTest
     public async Task A_reset_that_finishes_after_a_newer_claim_does_not_block_the_newer_second()
     {
         var clock = new MutableClock();
-        var ring = new SecondsRingBuffer(new SecondsSinceStart(clock), 64);
+        var ring = new SecondsRingBuffer(new(clock), 64);
 
         // The first writer claims second 0; during its reset a full rotation passes and second 64 claims the slot.
         var newerClaimed = false;
@@ -831,7 +831,7 @@ public sealed class MetricsCollectorTest
 
     [Fact]
     public void A_ring_length_that_is_not_a_power_of_two_is_rejected()
-        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(new SecondsSinceStart(new MutableClock()), 60));
+        => _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SecondsRingBuffer(new(new MutableClock()), 60));
 
     /// <summary>
     /// Collecting skips the most recent seconds, so the largest window starts that many seconds before
@@ -867,7 +867,7 @@ public sealed class MetricsCollectorTest
         var clock = new MutableClock();
         using var collector = TestMetrics.Collector(clock);
         var largestInterval = collector.Description.LargestInterval;
-        var ring = new SampledRing(new SecondsSinceStart(clock), MetricsCollector.RingCapacity, 1, 1, 1);
+        var ring = new SampledRing(new(clock), MetricsCollector.RingCapacity, 1, 1, 1);
 
         // The counter goes up by one every second, for longer than the ring is long.
         for (var count = 1; count <= MetricsCollector.RingCapacity * 2; count++) {
@@ -1004,7 +1004,7 @@ public sealed class MetricsCollectorTest
     public void A_sampled_window_reports_plausible_thread_pool_values()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
+        var usage = new ThreadPoolUsage(new(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();
@@ -1028,7 +1028,7 @@ public sealed class MetricsCollectorTest
     public void A_window_without_a_thread_pool_sample_reports_nothing()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
+        var usage = new ThreadPoolUsage(new(clock), 64);
 
         usage.Measurement();
         var sampledSecond = clock.Second;
@@ -1055,7 +1055,7 @@ public sealed class MetricsCollectorTest
     public void A_window_keeps_the_highest_gauge_reading_of_its_seconds()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
+        var usage = new ThreadPoolUsage(new(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();
@@ -1096,7 +1096,7 @@ public sealed class MetricsCollectorTest
     public void Counters_are_reported_as_the_increase_within_the_window()
     {
         var clock = new MutableClock();
-        var usage = new ThreadPoolUsage(new SecondsSinceStart(clock), 64);
+        var usage = new ThreadPoolUsage(new(clock), 64);
 
         var firstSecond = clock.Second;
         usage.Measurement();

@@ -1,6 +1,6 @@
 using Dapper;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 static class DapperExecutor
 {

@@ -1,4 +1,4 @@
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 static class ParameterizedSqlExecutor
 {

@@ -6,4 +6,4 @@ global using Microsoft.Data.SqlClient;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("ProgressOnderwijsUtils.Tests")]
-[assembly: InternalsVisibleTo("ProgressOnderwijsUtilsBenchmarks")]
+[assembly: InternalsVisibleTo("ProgressOnderwijsUtils.Benchmarks")]

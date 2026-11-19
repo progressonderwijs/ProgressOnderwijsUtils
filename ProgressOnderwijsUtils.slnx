@@ -25,6 +25,6 @@
     <Project Path="test/ProgressOnderwijsUtils.Tests/ProgressOnderwijsUtils.Tests.csproj" />
   </Folder>
   <Folder Name="/tools/">
-    <Project Path="tools/ProgressOnderwijsUtilsBenchmarks/ProgressOnderwijsUtilsBenchmarks.csproj" />
+    <Project Path="tools/ProgressOnderwijsUtilsBenchmarks/ProgressOnderwijsUtils.Benchmarks.csproj" />
   </Folder>
 </Solution>

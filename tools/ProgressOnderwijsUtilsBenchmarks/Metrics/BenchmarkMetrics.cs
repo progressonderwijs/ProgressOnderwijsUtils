@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 /// <summary>
 /// The tracked databases. The values lie far apart on purpose, like the ids of a real application, so that the

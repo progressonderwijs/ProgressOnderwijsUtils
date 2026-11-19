@@ -1,4 +1,4 @@
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 [MemoryDiagnoser]
 // ReSharper disable once ClassCanBeSealed.Global

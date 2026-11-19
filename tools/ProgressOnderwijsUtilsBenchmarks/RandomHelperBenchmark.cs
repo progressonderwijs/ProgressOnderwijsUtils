@@ -1,4 +1,4 @@
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 [MedianColumn]
 [MemoryDiagnoser]

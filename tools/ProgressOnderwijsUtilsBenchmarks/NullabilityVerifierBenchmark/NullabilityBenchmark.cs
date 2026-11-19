@@ -5,7 +5,7 @@ using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils.Tests;
 
-namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
+namespace ProgressOnderwijsUtils.Benchmarks.NullabilityVerifierBenchmark;
 
 [Config(typeof(Config))]
 [MemoryDiagnoser]
