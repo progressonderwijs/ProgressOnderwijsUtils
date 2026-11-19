@@ -1,0 +1,30 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="appveyor.yml" />
+    <File Path="How-to-push-to-nuget.txt" />
+    <File Path="Performance1.psess" />
+    <File Path="README.md" />
+    <File Path="src/Common.props" />
+    <File Path="src/NugetPackagesCommon.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/ProgressOnderwijsUtils.Analyzers/ProgressOnderwijsUtils.Analyzers.csproj" />
+    <Project Path="src/ProgressOnderwijsUtils.AspNetCore/ProgressOnderwijsUtils.AspNetCore.csproj" />
+    <Project Path="src/ProgressOnderwijsUtils.Metrics/ProgressOnderwijsUtils.Metrics.csproj">
+      <BuildDependency Project="src/ProgressOnderwijsUtils/ProgressOnderwijsUtils.csproj" />
+    </Project>
+    <Project Path="src/ProgressOnderwijsUtils.SeleniumWebDriverPool/ProgressOnderwijsUtils.SeleniumWebDriverPool.csproj" />
+    <Project Path="src/ProgressOnderwijsUtils/ProgressOnderwijsUtils.csproj">
+      <BuildDependency Project="src/ProgressOnderwijsUtils.Analyzers/ProgressOnderwijsUtils.Analyzers.csproj" />
+    </Project>
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/ProgressOnderwijsUtils.Analyzers.Tests/ProgressOnderwijsUtils.Analyzers.Tests.csproj" />
+    <Project Path="test/ProgressOnderwijsUtils.Tests/ProgressOnderwijsUtils.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/ProgressOnderwijsUtilsBenchmarks/ProgressOnderwijsUtilsBenchmarks.csproj" />
+  </Folder>
+</Solution>
