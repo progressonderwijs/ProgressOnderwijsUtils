@@ -3,3 +3,4 @@
  - [![NuGet Badge](https://buildstats.info/nuget/ProgressOnderwijsUtils.Analyzers) ProgressOnderwijsUtils.Analyzers nuget package](https://www.nuget.org/packages/ProgressOnderwijsUtils.Analyzers/)
  - [![NuGet Badge](https://buildstats.info/nuget/ProgressOnderwijsUtils.AspNetCore) ProgressOnderwijsUtils.AspNetCore nuget package](https://www.nuget.org/packages/ProgressOnderwijsUtils.AspNetCore/)
  - [![NuGet Badge](https://buildstats.info/nuget/ProgressOnderwijsUtils.SeleniumWebDriverPool) ProgressOnderwijsUtils.SeleniumWebDriverPool nuget package](https://www.nuget.org/packages/ProgressOnderwijsUtils.SeleniumWebDriverPool/)
+ - [![NuGet Badge](https://buildstats.info/nuget/ProgressOnderwijsUtils.Metrics) ProgressOnderwijsUtils.Metrics nuget package](https://www.nuget.org/packages/ProgressOnderwijsUtils.Metrics/)

@@ -3,7 +3,7 @@ namespace ProgressOnderwijsUtils.Tests.Data;
 public class TransactedLocalConnection : IDisposable
 {
     public readonly System.Transactions.CommittableTransaction Transaction = new();
-    protected static readonly string ConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
+    public static readonly string ConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
 
     public TransactedLocalConnection()
     {
