@@ -1,6 +1,6 @@
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 [MemoryDiagnoser]
 //[Microsoft.VSDiagnostics.CPUUsageDiagnoser] // uncomment if you want to measure this

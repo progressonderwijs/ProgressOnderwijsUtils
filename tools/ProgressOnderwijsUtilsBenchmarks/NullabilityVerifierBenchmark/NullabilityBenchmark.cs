@@ -5,11 +5,12 @@ using BenchmarkDotNet.Toolchains.InProcess.NoEmit;
 using Perfolizer.Mathematics.OutlierDetection;
 using ProgressOnderwijsUtils.Tests;
 
-namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
+namespace ProgressOnderwijsUtils.Benchmarks.NullabilityVerifierBenchmark;
 
 [Config(typeof(Config))]
 [MemoryDiagnoser]
-public sealed class NullabilityBenchmark
+// ReSharper disable once ClassCanBeSealed.Global - BenchmarkDotNet complexity
+public class NullabilityBenchmark
 {
     sealed class Config : ManualConfig
     {

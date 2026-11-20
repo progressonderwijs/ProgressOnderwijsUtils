@@ -3,7 +3,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using static ProgressOnderwijsUtils.BackingFieldDetector;
 
-namespace ProgressOnderwijsUtilsBenchmarks.NullabilityVerifierBenchmark;
+namespace ProgressOnderwijsUtils.Benchmarks.NullabilityVerifierBenchmark;
 
 public static class NonNullableFieldVerifier5
 {

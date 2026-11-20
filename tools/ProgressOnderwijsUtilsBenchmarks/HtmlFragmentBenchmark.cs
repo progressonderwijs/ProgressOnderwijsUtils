@@ -1,7 +1,7 @@
 using System.IO.Pipelines;
 using ProgressOnderwijsUtils.Tests;
 
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 [MemoryDiagnoser]
 [Config(typeof(Config))]

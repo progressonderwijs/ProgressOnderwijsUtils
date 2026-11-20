@@ -1,7 +1,7 @@
 using System.Data.SQLite;
 using System.Data.SqlTypes;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 static class HandrolledAdoNetExecutor
 {

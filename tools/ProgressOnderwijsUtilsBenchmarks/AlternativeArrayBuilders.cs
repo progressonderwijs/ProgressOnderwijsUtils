@@ -2,7 +2,7 @@
 #pragma warning disable IDE0044 // make readonly
 #pragma warning disable 169 // ... is never used
 
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 static class AlternativeArrayBuilders
 {

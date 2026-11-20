@@ -1,6 +1,6 @@
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 /// <summary>
 /// The cost of looking up a bucket, apart from the ring around it: this happens on every measured request and
@@ -8,6 +8,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
 /// keep guessing the same way.
 /// </summary>
 [MemoryDiagnoser]
+// ReSharper disable once ClassCanBeSealed.Global
 public class MetricsHistogramBenchmarks
 {
     const int DurationCount = 1024;

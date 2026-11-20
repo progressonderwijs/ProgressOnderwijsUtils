@@ -1,20 +1,39 @@
 using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Toolchains.InProcess.Emit;
-using ProgressOnderwijsUtilsBenchmarks.Metrics;
-using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+using ProgressOnderwijsUtils.Benchmarks.Metrics;
+using ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
+using ProgressOnderwijsUtils.Benchmarks.NullabilityVerifierBenchmark;
 
-namespace ProgressOnderwijsUtilsBenchmarks;
+namespace ProgressOnderwijsUtils.Benchmarks;
 
 public static class BenchmarkProgram
 {
-    static void Main()
-        //=> RunTreeBenchmarks();
-        //=> MicroOrmBenchmarkProgram.RunBenchmarks();
-        //=> RunArrayBuilderBenchmarks();
-        => RunMetricsBenchmarks();
-        //=> BenchmarkRunner.Run<SmallBatchInsertBench>();
-        //=> BenchmarkRunner.Run<NullabilityBenchmark>();
-        //=> BenchmarkRunner.Run<RandomHelperBenchmark>();
+    /// <summary>
+    /// Usage: dotnet run -- &lt;benchmark&gt;
+    /// </summary>
+    /// <example>
+    /// cd tools\ProgressOnderwijsUtilsBenchmarks
+    /// dotnet run -c Release -- metrics
+    /// </example>
+    static void Main(string[] args)
+    {
+        var benchmarks = new Dictionary<string, Action>(StringComparer.OrdinalIgnoreCase) {
+            ["metrics"] = RunMetricsBenchmarks,
+            ["tree"] = RunTreeBenchmarks,
+            ["arraybuilder"] = RunArrayBuilderBenchmarks,
+            ["microorm"] = MicroOrmBenchmarkProgram.RunBenchmarks,
+            ["smallbatchinsert"] = () => BenchmarkRunner.Run<SmallBatchInsertBench>(),
+            ["nullability"] = () => BenchmarkRunner.Run<NullabilityBenchmark>(),
+            ["randomhelper"] = () => BenchmarkRunner.Run<RandomHelperBenchmark>(),
+        };
+
+        if (args is { Length: 1, } && benchmarks.TryGetValue(args[0], out var selected)) {
+            selected();
+        } else {
+            Console.Error.WriteLine($"Unknown option(s) '{args.JoinStrings(", ")}'. Choose one of: {benchmarks.Keys.JoinStrings(", ")}");
+            Environment.ExitCode = 1;
+        }
+    }
 
     [UsedImplicitly]
     static void RunArrayBuilderBenchmarks()

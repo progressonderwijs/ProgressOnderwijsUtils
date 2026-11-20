@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VSPerformanceSession Version="1.00">
   <Options>
-    <Solution>ProgressOnderwijsUtils.sln</Solution>
+    <Solution>ProgressOnderwijsUtils.slnx</Solution>
     <CollectionMethod>Sampling</CollectionMethod>
     <AllocationMethod>None</AllocationMethod>
     <AddReport>true</AddReport>

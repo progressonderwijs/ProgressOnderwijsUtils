@@ -1,10 +1,9 @@
 #pragma warning disable VSTHRD002, VSTHRD105 // Benchmarks intentionally use synchronous task waits
 //#define SINGLETHREADED
-
 using System.Data.SQLite;
 using IncrementalMeanVarianceAccumulator;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
+namespace ProgressOnderwijsUtils.Benchmarks.MicroOrmBench;
 
 sealed class Benchmarker
 {

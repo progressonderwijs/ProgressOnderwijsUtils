@@ -1,6 +1,6 @@
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 /// <summary>
 /// Measures what a collector costs in memory for an increasing number of tracked endpoints. Every tracked endpoint
@@ -63,7 +63,7 @@ public class MetricsFootprintBenchmarks
     [Benchmark]
     public object AllocateRequestDurationRing()
         => new DurationHistogramRing<BenchmarkEndpoint>(
-            new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity),
+            new(new(TimeProvider.System), BenchmarkMetrics.RingCapacity),
             description.RequestDurationHistogram
         );
 }

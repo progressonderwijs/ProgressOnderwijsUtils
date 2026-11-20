@@ -1,6 +1,6 @@
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 /// <summary>
 /// The cost of one sampling by the sampler thread: it runs every 250 ms, so speed hardly matters, but it must not
@@ -19,8 +19,8 @@ public class MetricsSamplerBenchmarks
     public void Setup()
     {
         var registry = BenchmarkMetrics.Registry();
-        threadPoolUsage = new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity);
-        connectionPoolUsage = new(new SecondsSinceStart(TimeProvider.System), BenchmarkMetrics.RingCapacity, new(new BenchmarkDatabaseDuration()), registry);
+        threadPoolUsage = new(new(TimeProvider.System), BenchmarkMetrics.RingCapacity);
+        connectionPoolUsage = new(new(TimeProvider.System), BenchmarkMetrics.RingCapacity, new(new BenchmarkDatabaseDuration()), registry);
         (string connectionString, BenchmarkPool pool)[] connectionStrings = [
             .. BenchmarkMetrics.PoolsPerDatabase(),
             ("Initial Catalog=master", BenchmarkPool.Sysadmin),

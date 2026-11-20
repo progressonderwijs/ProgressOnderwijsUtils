@@ -1,6 +1,6 @@
 using ProgressOnderwijsUtils.Metrics;
 
-namespace ProgressOnderwijsUtilsBenchmarks.Metrics;
+namespace ProgressOnderwijsUtils.Benchmarks.Metrics;
 
 /// <summary>
 /// The cost of reading out the rings. Every viewer of the live chart collects once per second and the storage once
